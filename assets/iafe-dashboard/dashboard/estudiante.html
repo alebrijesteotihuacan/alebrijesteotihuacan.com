@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Panel de Estudiante - Instituto Azteca de Formación Empresarial.">
+    <title>Dashboard Estudiante | IAFE Portal Académico</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../../assets/Escuela/FotoPerfil.png">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../styles/variables.css">
+    <link rel="stylesheet" href="../styles/base.css">
+    <link rel="stylesheet" href="../styles/components.css">
+    <link rel="stylesheet" href="../styles/dashboard.css">
+
+    <!-- Student Theme -->
+    <style>
+        :root {
+            --theme-primary: #003366;
+            --theme-primary-dark: #002244;
+            --theme-accent: #2563EB;
+            --theme-accent-light: #DBEAFE;
+        }
+
+        .sidebar {
+            background: linear-gradient(180deg, #003366 0%, #001a33 100%);
+        }
+
+        .sidebar-nav-link.active {
+            background-color: var(--theme-accent);
+            color: white;
+        }
+
+        .sidebar-profile-avatar {
+            background-color: var(--theme-accent);
+            color: white;
+        }
+
+        .user-type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: linear-gradient(135deg, #2563EB 0%, #1d4ed8 100%);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .user-type-badge svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .page-content {
+            background: linear-gradient(180deg, #f0f7ff 0%, #f8f9fa 100%);
+        }
+
+        .stat-card {
+            border-left: 4px solid var(--theme-accent);
+        }
+
+        .btn-primary {
+            background-color: var(--theme-accent);
+            border-color: var(--theme-accent);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background-color: #1d4ed8;
+            border-color: #1d4ed8;
+        }
+
+        .top-header {
+            border-bottom: 3px solid var(--theme-accent);
+        }
+
+        .avatar {
+            background-color: var(--theme-accent);
+        }
+
+        /* Chat Styles */
+        .chat-message {
+            display: flex;
+            gap: var(--space-3);
+            margin-bottom: var(--space-4);
+            max-width: 80%;
+        }
+
+        .chat-message.sent {
+            margin-left: auto;
+            flex-direction: row-reverse;
+        }
+
+        .chat-message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--theme-accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .chat-message.docente .chat-message-avatar {
+            background: linear-gradient(135deg, #C9A961 0%, #B8944D 100%);
+        }
+
+        .chat-message-content {
+            background: white;
+            padding: var(--space-3) var(--space-4);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .chat-message.sent .chat-message-content {
+            background: var(--theme-accent);
+            color: white;
+        }
+
+        .chat-message-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            margin-bottom: var(--space-1);
+        }
+
+        .chat-message-name {
+            font-weight: 600;
+            font-size: var(--text-sm);
+        }
+
+        .chat-message-badge {
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            background: linear-gradient(135deg, #C9A961 0%, #B8944D 100%);
+            color: white;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .chat-message-time {
+            font-size: var(--text-xs);
+            color: var(--gray-400);
+        }
+
+        .chat-message.sent .chat-message-time {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .chat-message-text {
+            font-size: var(--text-sm);
+            line-height: 1.5;
+        }
+
+        .chat-private-notice {
+            background: rgba(201, 169, 97, 0.1);
+            border-left: 3px solid #C9A961;
+            padding: var(--space-2) var(--space-3);
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            margin-bottom: var(--space-4);
+            font-size: var(--text-sm);
+            color: #8a7340;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar Overlay (Mobile) -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <!-- Sidebar Header -->
+            <div class="sidebar-header">
+                <img src="../../assets/Escuela/FotoPerfil.png" alt="IAFE" class="sidebar-logo">
+                <div class="sidebar-brand">
+                    <span class="sidebar-brand-name">Instituto Azteca</span>
+                    <span class="sidebar-brand-tagline">Portal Académico</span>
+                </div>
+            </div>
+
+            <!-- User Profile -->
+            <div class="sidebar-profile">
+                <div class="sidebar-profile-avatar" id="userAvatar">JP</div>
+                <div class="sidebar-profile-info">
+                    <span class="sidebar-profile-name" id="userName">Juan Pérez</span>
+                    <span class="sidebar-profile-role">Estudiante</span>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+                <div class="sidebar-nav-section">
+                    <span class="sidebar-nav-title">Principal</span>
+                    <ul class="sidebar-nav-list">
+                        <li class="sidebar-nav-item">
+                            <a href="#" class="sidebar-nav-link active" data-section="inicio">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
+                                Inicio
+                            </a>
+                        </li>
+                        <li class="sidebar-nav-item">
+                            <a href="#" class="sidebar-nav-link" data-section="materias">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                </svg>
+                                Mis Materias
+                            </a>
+                        </li>
+                        <li class="sidebar-nav-item">
+                            <a href="#" class="sidebar-nav-link" data-section="tareas">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M9 11l3 3L22 4"></path>
+                                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                                </svg>
+                                Tareas
+                                <span class="sidebar-nav-badge" id="tareasBadge">3</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-nav-item">
+                            <a href="#" class="sidebar-nav-link" data-section="temarios">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <polyline points="10 9 9 9 8 9"></polyline>
+                                </svg>
+                                Temarios
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-nav-section">
+                    <span class="sidebar-nav-title">Académico</span>
+                    <ul class="sidebar-nav-list">
+                        <li class="sidebar-nav-item">
+                            <a href="#" class="sidebar-nav-link" data-section="calificaciones">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                                </svg>
+                                Calificaciones
+                            </a>
+                        </li>
+                        <li class="sidebar-nav-item">
+                            <a href="#" class="sidebar-nav-link" data-section="documentos">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                Documentos
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-nav-section">
+                    <span class="sidebar-nav-title">Comunicación</span>
+                    <ul class="sidebar-nav-list">
+                        <li class="sidebar-nav-item">
+                            <a href="#" class="sidebar-nav-link" data-section="chat">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                                Chat Grupal
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Sidebar Footer -->
+            <div class="sidebar-footer">
+                <a href="#" class="sidebar-footer-link" id="logoutBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    Cerrar Sesión
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="top-header-left">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                    <div class="breadcrumb">
+                        <a href="#">Panel</a>
+                        <span class="breadcrumb-separator">/</span>
+                        <span class="breadcrumb-current" id="breadcrumbCurrent">Inicio</span>
+                    </div>
+                </div>
+                <div class="top-header-right">
+                    <div class="search-bar">
+                        <span class="search-bar-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </span>
+                        <input type="text" placeholder="Buscar...">
+                    </div>
+                    <button class="notification-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span class="notification-badge">2</span>
+                    </button>
+                    <div class="user-menu-trigger dropdown" id="userMenuDropdown">
+                        <div class="avatar avatar-md">
+                            <span id="headerAvatar">JP</span>
+                        </div>
+                        <div style="text-align: left; margin-left: var(--space-2);">
+                            <span class="user-menu-name" id="headerUserName">Juan Pérez</span>
+                            <span class="user-menu-role">Estudiante</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="page-content">
+                <!-- Section: Inicio -->
+                <section id="section-inicio" class="dashboard-section active">
+                    <!-- Welcome Section -->
+                    <div class="page-header"
+                        style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
+                        <div>
+                            <h1 class="page-title" id="welcomeTitle">Buenos días, Juan</h1>
+                            <p class="page-subtitle">Bienvenido a tu panel de estudiante</p>
+                        </div>
+                        <div class="page-actions">
+                            <span class="badge badge-primary" id="nivelBadge"
+                                style="font-size: var(--text-sm); padding: var(--space-2) var(--space-4);">Bachillerato
+                                2024-A</span>
+                        </div>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-card-icon primary">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                </svg>
+                            </div>
+                            <span class="stat-card-value" id="materiasCount">6</span>
+                            <span class="stat-card-label">Materias Activas</span>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-icon warning">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M9 11l3 3L22 4"></path>
+                                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                                </svg>
+                            </div>
+                            <span class="stat-card-value" id="tareasPendientes">3</span>
+                            <span class="stat-card-label">Tareas Pendientes</span>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-icon success">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                                </svg>
+                            </div>
+                            <span class="stat-card-value" id="promedioGeneral">8.5</span>
+                            <span class="stat-card-label">Promedio General</span>
+                        </div>
+                    </div>
+
+                    <!-- Content Grid -->
+                    <div class="content-grid">
+                        <!-- Tareas Pendientes -->
+                        <div class="card">
+                            <div class="card-header"
+                                style="display: flex; justify-content: space-between; align-items: center;">
+                                <h3 class="card-title" style="margin: 0;">Tareas Pendientes</h3>
+                                <a href="#" class="text-sm text-primary font-medium" data-section="tareas">Ver todas</a>
+                            </div>
+                            <div class="card-body" style="padding: 0;">
+                                <ul class="task-list" id="tareasList">
+                                    <!-- Tasks will be injected here -->
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Constancia de Estudios -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title" style="margin: 0;">Documentos Oficiales</h3>
+                            </div>
+                            <div class="card-body">
+                                <div id="constanciaSection">
+                                    <!-- Constancia content will be injected here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Calificaciones Preview -->
+                    <div class="card mt-6">
+                        <div class="card-header"
+                            style="display: flex; justify-content: space-between; align-items: center;">
+                            <h3 class="card-title" style="margin: 0;">Mis Calificaciones</h3>
+                            <a href="#" class="text-sm text-primary font-medium" data-section="calificaciones">Ver
+                                detalle</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-container" style="box-shadow: none;">
+                                <table class="table table-responsive-stack">
+                                    <thead>
+                                        <tr>
+                                            <th>Materia</th>
+                                            <th>Calificación</th>
+                                            <th>Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="calificacionesTable">
+                                        <!-- Grades will be injected here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Materias -->
+                <section id="section-materias" class="dashboard-section" style="display: none;">
+                    <div class="page-header">
+                        <h1 class="page-title">Mis Materias</h1>
+                        <p class="page-subtitle">Consulta tus materias activas y temarios</p>
+                    </div>
+                    <div class="content-grid" id="materiasGrid">
+                        <!-- Materias will be loaded here -->
+                    </div>
+                </section>
+
+                <!-- Section: Tareas -->
+                <section id="section-tareas" class="dashboard-section" style="display: none;">
+                    <div class="page-header">
+                        <h1 class="page-title">Mis Tareas</h1>
+                        <p class="page-subtitle">Gestiona tus entregas y tareas pendientes</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-body" style="padding: 0;">
+                            <ul class="task-list" id="tareasFullList">
+                                <!-- All tasks will be loaded here -->
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Temarios -->
+                <section id="section-temarios" class="dashboard-section" style="display: none;">
+                    <div class="page-header">
+                        <h1 class="page-title">Temarios</h1>
+                        <p class="page-subtitle">Descarga los temarios de tus materias</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="empty-state">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                                <h3>Temarios disponibles</h3>
+                                <p>Los temarios para tus materias se mostrarán aquí cuando estén disponibles.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Calificaciones -->
+                <section id="section-calificaciones" class="dashboard-section" style="display: none;">
+                    <div class="page-header">
+                        <h1 class="page-title">Mis Calificaciones</h1>
+                        <p class="page-subtitle">Consulta el detalle de tus calificaciones</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-container" style="box-shadow: none;">
+                                <table class="table table-responsive-stack">
+                                    <thead>
+                                        <tr>
+                                            <th>Materia</th>
+                                            <th>Parcial 1</th>
+                                            <th>Parcial 2</th>
+                                            <th>Parcial 3</th>
+                                            <th>Final</th>
+                                            <th>Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="calificacionesFullTable">
+                                        <!-- Full grades will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Documentos -->
+                <section id="section-documentos" class="dashboard-section" style="display: none;">
+                    <div class="page-header">
+                        <h1 class="page-title">Documentos</h1>
+                        <p class="page-subtitle">Descarga tus documentos oficiales</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div id="documentosSection">
+                                <!-- Documents content will be injected here -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Chat -->
+                <section id="section-chat" class="dashboard-section" style="display: none;">
+                    <div class="page-header">
+                        <h1 class="page-title">Chat Grupal</h1>
+                        <p class="page-subtitle">Comunícate con tu grupo y docentes</p>
+                    </div>
+                    <div class="card" style="height: calc(100vh - 280px); min-height: 400px;">
+                        <div class="card-body" style="display: flex; flex-direction: column; height: 100%; padding: 0;">
+                            <!-- Chat Messages Container -->
+                            <div id="chatMessages"
+                                style="flex: 1; overflow-y: auto; padding: var(--space-4); background: var(--gray-50);">
+                                <!-- Messages will be loaded here -->
+                            </div>
+                            <!-- Chat Input -->
+                            <div
+                                style="padding: var(--space-4); border-top: 1px solid var(--gray-200); background: white;">
+                                <form id="chatForm" style="display: flex; gap: var(--space-3);">
+                                    <input type="text" id="chatInput" class="form-input"
+                                        placeholder="Escribe un mensaje..." style="flex: 1;">
+                                    <button type="submit" class="btn btn-primary">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                        </svg>
+                                        Enviar
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../scripts/firebase-config.js"></script>
+    <script src="../scripts/auth.js"></script>
+    <script>
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function () {
+            // Demo mode - set user data
+            const user = {
+                nombre: 'Juan',
+                apellidos: 'Pérez García',
+                email: 'estudiante@iafe.edu.mx',
+                userType: 'estudiante',
+                nivelAcademico: 'bachillerato',
+                grupoId: 'grupo-bachillerato-2024a',
+                pagoVerificado: true
+            };
+
+            // Save to session for demo
+            sessionStorage.setItem('iafe_user', JSON.stringify(user));
+
+            // Update UI with user data
+            const initials = getUserInitials(user);
+            document.getElementById('userAvatar').textContent = initials;
+            document.getElementById('headerAvatar').textContent = initials;
+            document.getElementById('userName').textContent = getUserFullName(user);
+            document.getElementById('headerUserName').textContent = getUserFullName(user);
+
+            // Welcome message with time of day
+            const hour = new Date().getHours();
+            let greeting = 'Buenos días';
+            if (hour >= 12 && hour < 19) greeting = 'Buenas tardes';
+            else if (hour >= 19) greeting = 'Buenas noches';
+            document.getElementById('welcomeTitle').textContent = `${greeting}, ${user.nombre}`;
+
+            // Load tasks
+            loadTareas();
+
+            // Load grades
+            loadCalificaciones();
+
+            // Load constancia section
+            loadConstancia(user.pagoVerificado);
+
+            // Mobile menu toggle
+            document.getElementById('mobileMenuBtn').addEventListener('click', toggleMobileMenu);
+            document.getElementById('sidebarOverlay').addEventListener('click', closeMobileMenu);
+
+            // Navigation - sidebar links
+            document.querySelectorAll('.sidebar-nav-link').forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const section = this.dataset.section;
+                    showSection(section);
+                    setActiveNav(this);
+                    document.getElementById('breadcrumbCurrent').textContent = this.textContent.trim();
+                    closeMobileMenu();
+                });
+            });
+
+            // Navigation - inline links (like "Ver todas", "Ver detalle")
+            document.querySelectorAll('[data-section]').forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const section = this.dataset.section;
+                    showSection(section);
+                    // Also update the sidebar active state
+                    const sidebarLink = document.querySelector(`.sidebar-nav-link[data-section="${section}"]`);
+                    if (sidebarLink) {
+                        setActiveNav(sidebarLink);
+                        document.getElementById('breadcrumbCurrent').textContent = sidebarLink.textContent.trim();
+                    }
+                });
+            });
+
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', function (e) {
+                e.preventDefault();
+                if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+                    sessionStorage.removeItem('iafe_user');
+                    window.location.href = '../login-estudiante.html';
+                }
+            });
+
+            // Load additional sections content
+            loadMaterias();
+            loadFullTareas();
+            loadFullCalificaciones();
+            loadDocumentos(user.pagoVerificado);
+        });
+
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.dashboard-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            // Show the target section
+            const targetSection = document.getElementById('section-' + sectionId);
+            if (targetSection) {
+                targetSection.style.display = 'block';
+            }
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('active');
+        }
+
+        function closeMobileMenu() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+        }
+
+        function setActiveNav(activeLink) {
+            document.querySelectorAll('.sidebar-nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            activeLink.classList.add('active');
+        }
+
+        function loadTareas() {
+            const tareas = getDemoTareas('grupo-bachillerato-2024a');
+            const tareasList = document.getElementById('tareasList');
+
+            tareasList.innerHTML = tareas.map(tarea => `
+                <li class="task-item">
+                    <input type="checkbox" class="task-checkbox form-check-input">
+                    <div class="task-content">
+                        <span class="task-title">${tarea.titulo}</span>
+                        <div class="task-meta">
+                            <span>${tarea.materia}</span>
+                            <span>Vence: ${formatRelativeDate(tarea.fechaLimite)}</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-sm btn-primary">Entregar</button>
+                </li>
+            `).join('');
+
+            document.getElementById('tareasBadge').textContent = tareas.length;
+            document.getElementById('tareasPendientes').textContent = tareas.length;
+        }
+
+        function loadCalificaciones() {
+            const calificaciones = getDemoCalificaciones('demo-estudiante-1');
+            const table = document.getElementById('calificacionesTable');
+
+            table.innerHTML = calificaciones.materias.map(materia => `
+                <tr>
+                    <td data-label="Materia">${materia.nombre}</td>
+                    <td data-label="Calificación">
+                        <span class="font-semibold">${materia.calificacion.toFixed(1)}</span>
+                    </td>
+                    <td data-label="Estado">
+                        <span class="badge ${materia.calificacion >= 6 ? 'badge-success' : 'badge-error'}">
+                            ${materia.calificacion >= 6 ? 'Aprobado' : 'Reprobado'}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('promedioGeneral').textContent = calificaciones.promedio.toFixed(1);
+            document.getElementById('materiasCount').textContent = calificaciones.materias.length;
+        }
+
+        function loadConstancia(pagoVerificado) {
+            const section = document.getElementById('constanciaSection');
+
+            if (pagoVerificado) {
+                section.innerHTML = `
+                    <div class="alert alert-success mb-4">
+                        <svg class="alert-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        <div class="alert-content">
+                            <span class="alert-title">Pago Verificado</span>
+                            <p style="margin: 0;">Tu pago de $150 MXN ha sido verificado.</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: var(--space-3); flex-wrap: wrap;">
+                        <button class="btn btn-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            Descargar Constancia
+                        </button>
+                        <button class="btn btn-outline">Ver Historial</button>
+                    </div>
+                `;
+            } else {
+                section.innerHTML = `
+                    <div class="alert alert-warning mb-4">
+                        <svg class="alert-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        <div class="alert-content">
+                            <span class="alert-title">Pago Pendiente</span>
+                            <p style="margin: 0;">Para descargar tu constancia, realiza el pago de $150 MXN.</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary w-full">Realizar Pago</button>
+                `;
+            }
+        }
+
+        function loadMaterias() {
+            const materias = [
+                { nombre: 'Matemáticas', docente: 'Prof. García', horario: 'Lun-Mie 9:00-10:30' },
+                { nombre: 'Español', docente: 'Prof. López', horario: 'Mar-Jue 9:00-10:30' },
+                { nombre: 'Historia', docente: 'Prof. Martínez', horario: 'Lun-Mie 10:30-12:00' },
+                { nombre: 'Ciencias', docente: 'Prof. Rodríguez', horario: 'Mar-Jue 10:30-12:00' },
+                { nombre: 'Inglés', docente: 'Prof. Hernández', horario: 'Vie 9:00-12:00' },
+                { nombre: 'Computación', docente: 'Prof. Sánchez', horario: 'Vie 12:00-14:00' }
+            ];
+
+            const grid = document.getElementById('materiasGrid');
+            grid.innerHTML = materias.map(materia => `
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title" style="margin: 0;">${materia.nombre}</h3>
+                    </div>
+                    <div class="card-body">
+                        <p style="margin: 0 0 8px; color: var(--gray-600);"><strong>Docente:</strong> ${materia.docente}</p>
+                        <p style="margin: 0; color: var(--gray-500); font-size: var(--text-sm);"><strong>Horario:</strong> ${materia.horario}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadFullTareas() {
+            const tareas = getDemoTareas('grupo-bachillerato-2024a');
+            const tareasFullList = document.getElementById('tareasFullList');
+
+            tareasFullList.innerHTML = tareas.map(tarea => `
+                <li class="task-item">
+                    <input type="checkbox" class="task-checkbox form-check-input">
+                    <div class="task-content">
+                        <span class="task-title">${tarea.titulo}</span>
+                        <div class="task-meta">
+                            <span>${tarea.materia}</span>
+                            <span>Vence: ${formatRelativeDate(tarea.fechaLimite)}</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-sm btn-primary">Entregar</button>
+                </li>
+            `).join('');
+        }
+
+        function loadFullCalificaciones() {
+            const calificaciones = getDemoCalificaciones('demo-estudiante-1');
+            const table = document.getElementById('calificacionesFullTable');
+
+            table.innerHTML = calificaciones.materias.map(materia => {
+                const p1 = (Math.random() * 4 + 6).toFixed(1);
+                const p2 = (Math.random() * 4 + 6).toFixed(1);
+                const p3 = (Math.random() * 4 + 6).toFixed(1);
+                return `
+                <tr>
+                    <td data-label="Materia">${materia.nombre}</td>
+                    <td data-label="Parcial 1">${p1}</td>
+                    <td data-label="Parcial 2">${p2}</td>
+                    <td data-label="Parcial 3">${p3}</td>
+                    <td data-label="Final"><span class="font-semibold">${materia.calificacion.toFixed(1)}</span></td>
+                    <td data-label="Estado">
+                        <span class="badge ${materia.calificacion >= 6 ? 'badge-success' : 'badge-error'}">
+                            ${materia.calificacion >= 6 ? 'Aprobado' : 'Reprobado'}
+                        </span>
+                    </td>
+                </tr>
+            `}).join('');
+        }
+
+        function loadDocumentos(pagoVerificado) {
+            const section = document.getElementById('documentosSection');
+
+            if (pagoVerificado) {
+                section.innerHTML = `
+                    <div style="display: grid; gap: var(--space-4);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-4); background: var(--gray-50); border-radius: var(--radius-md);">
+                            <div>
+                                <strong>Constancia de Estudios</strong>
+                                <p style="margin: 4px 0 0; font-size: var(--text-sm); color: var(--gray-500);">Documento oficial que acredita tu inscripción</p>
+                            </div>
+                            <button class="btn btn-primary btn-sm">Descargar PDF</button>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-4); background: var(--gray-50); border-radius: var(--radius-md);">
+                            <div>
+                                <strong>Boleta de Calificaciones</strong>
+                                <p style="margin: 4px 0 0; font-size: var(--text-sm); color: var(--gray-500);">Documento con tus calificaciones del período actual</p>
+                            </div>
+                            <button class="btn btn-primary btn-sm">Descargar PDF</button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                section.innerHTML = `
+                    <div class="alert alert-warning">
+                        <svg class="alert-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        <div class="alert-content">
+                            <span class="alert-title">Pago Requerido</span>
+                            <p style="margin: 0;">Para descargar documentos oficiales, es necesario realizar el pago correspondiente.</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Chat functionality
+        function initChat() {
+            loadChatMessages();
+
+            const chatForm = document.getElementById('chatForm');
+            if (chatForm) {
+                chatForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    sendMessage();
+                });
+            }
+        }
+
+        function loadChatMessages() {
+            const messages = [
+                {
+                    id: 1,
+                    sender: 'Prof. García',
+                    initials: 'PG',
+                    isDocente: true,
+                    text: 'Buenos días a todos. Recuerden que el viernes es la fecha límite para entregar el reporte de lectura.',
+                    time: '9:30 AM',
+                    isPrivate: false
+                },
+                {
+                    id: 2,
+                    sender: 'Ana García',
+                    initials: 'AG',
+                    isDocente: false,
+                    text: '¿El reporte debe incluir la bibliografía del libro?',
+                    time: '9:45 AM',
+                    isPrivate: false
+                },
+                {
+                    id: 3,
+                    sender: 'Prof. García',
+                    initials: 'PG',
+                    isDocente: true,
+                    text: 'Sí, al final del documento incluyan las referencias bibliográficas.',
+                    time: '9:48 AM',
+                    isPrivate: false
+                },
+                {
+                    id: 4,
+                    sender: 'Carlos López',
+                    initials: 'CL',
+                    isDocente: false,
+                    text: 'Gracias por la aclaración, profesor.',
+                    time: '10:00 AM',
+                    isPrivate: false
+                },
+                {
+                    id: 5,
+                    sender: 'Prof. García',
+                    initials: 'PG',
+                    isDocente: true,
+                    text: 'Juan, te envié un mensaje privado sobre tu calificación del parcial. Por favor revísalo.',
+                    time: '10:15 AM',
+                    isPrivate: true,
+                    privateFor: 'Juan Pérez'
+                }
+            ];
+
+            const container = document.getElementById('chatMessages');
+            const currentUser = 'Juan Pérez';
+
+            container.innerHTML = messages.map(msg => {
+                const isSent = msg.sender === currentUser;
+                const isPrivate = msg.isPrivate && msg.privateFor === currentUser;
+
+                if (msg.isPrivate && msg.privateFor !== currentUser && !msg.isDocente) {
+                    return ''; // Don't show private messages not for this user
+                }
+
+                let html = '';
+                if (isPrivate) {
+                    html += `<div class="chat-private-notice">Mensaje privado del docente:</div>`;
+                }
+
+                html += `
+                    <div class="chat-message ${isSent ? 'sent' : ''} ${msg.isDocente ? 'docente' : ''}">
+                        <div class="chat-message-avatar">${msg.initials}</div>
+                        <div class="chat-message-content">
+                            <div class="chat-message-header">
+                                <span class="chat-message-name">${msg.sender}</span>
+                                ${msg.isDocente ? '<span class="chat-message-badge">DOCENTE</span>' : ''}
+                                <span class="chat-message-time">${msg.time}</span>
+                            </div>
+                            <p class="chat-message-text">${msg.text}</p>
+                        </div>
+                    </div>
+                `;
+                return html;
+            }).join('');
+
+            // Scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+
+            if (!text) return;
+
+            const container = document.getElementById('chatMessages');
+            const now = new Date();
+            const time = now.toLocaleTimeString('es-MX', { hour: 'numeric', minute: '2-digit', hour12: true });
+
+            const messageHtml = `
+                <div class="chat-message sent">
+                    <div class="chat-message-avatar">JP</div>
+                    <div class="chat-message-content">
+                        <div class="chat-message-header">
+                            <span class="chat-message-name">Tú</span>
+                            <span class="chat-message-time">${time}</span>
+                        </div>
+                        <p class="chat-message-text">${text}</p>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML += messageHtml;
+            input.value = '';
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Initialize chat when section is shown
+        const originalShowSection = showSection;
+        showSection = function (sectionId) {
+            originalShowSection(sectionId);
+            if (sectionId === 'chat') {
+                initChat();
+            }
+        };
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1799 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Rendimiento | Alebrijes de Oaxaca Teotihuacan</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Main Styles -->
+    <link rel="stylesheet" href="../styles/styles.css">
+    <link rel="stylesheet" href="../styles/login.css">
+
+    <style>
+        /* ================================
+           PLAYER DASHBOARD - WHITE PROFESSIONAL THEME
+           ================================ */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        .dashboard-page {
+            min-height: 100vh;
+            padding: 100px 20px 60px;
+            background: #f5f6fa;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .dashboard-container {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        /* Loading */
+        .loading-spinner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+        }
+
+        .spinner {
+            width: 44px;
+            height: 44px;
+            border: 3px solid #e5e7eb;
+            border-top-color: #F36A21;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* Generic Avatar */
+        .generic-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
+            border: 2px solid #F36A21;
+            background: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .generic-avatar svg {
+            width: 36px;
+            height: 36px;
+            color: #94a3b8;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ---- PLAYER HEADER CARD ---- */
+        .player-header {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            padding: 32px 36px;
+            background: linear-gradient(135deg, #fff 0%, #fdf8f4 100%);
+            border-radius: 18px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .player-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(180deg, #F36A21 0%, #e85d10 100%);
+            border-radius: 18px 0 0 18px;
+        }
+
+        .player-header-avatar img {
+            width: 160px;
+            height: 160px;
+            border-radius: 22px;
+            object-fit: cover;
+            border: 3px solid #F36A21;
+            box-shadow: 0 8px 28px rgba(243, 106, 33, 0.25);
+        }
+
+        .player-header-info {
+            flex: 1;
+        }
+
+        .player-header-name {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin: 0 0 8px;
+            letter-spacing: -0.3px;
+            line-height: 1.2;
+        }
+
+        .player-header-meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .player-header-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #475569;
+            background: rgba(243, 106, 33, 0.06);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .player-header-meta span svg {
+            width: 15px;
+            height: 15px;
+            color: #F36A21;
+        }
+
+        .btn-logout {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 16px;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            color: #64748b;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn-logout:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .btn-logout svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* ---- SECTION TITLE ---- */
+        .section-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #1e293b;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title svg {
+            width: 18px;
+            height: 18px;
+            color: #F36A21;
+        }
+
+        /* ---- STAT OVERVIEW CARDS ---- */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 18px 14px;
+            text-align: center;
+            transition: border-color 0.2s;
+        }
+
+        .stat-box:hover {
+            border-color: #cbd5e1;
+        }
+
+        .stat-box.promedio {
+            border-left: 3px solid #F36A21;
+        }
+
+        .stat-box-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+        }
+
+        .stat-box-icon svg {
+            width: 18px;
+            height: 18px;
+            color: #fff;
+        }
+
+        .stat-box-icon.i-tecnico {
+            background: #6366f1;
+        }
+
+        .stat-box-icon.i-tactico {
+            background: #0ea5e9;
+        }
+
+        .stat-box-icon.i-fisico {
+            background: #8b5cf6;
+        }
+
+        .stat-box-icon.i-mental {
+            background: #10b981;
+        }
+
+        .stat-box-icon.i-dcancha {
+            background: #f59e0b;
+        }
+
+        .stat-box-icon.i-dcasa {
+            background: #ec4899;
+        }
+
+        .stat-box-icon.i-asistencia {
+            background: #f97316;
+        }
+
+        .stat-box-icon.i-general {
+            background: #F36A21;
+        }
+
+        .stat-box-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #1e293b;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .stat-box-label {
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* ---- DOT CHART SECTION ---- */
+        .chart-card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .dot-chart-container {
+            width: 100%;
+            padding: 10px 0 0;
+        }
+
+        .dot-chart-row {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .dot-chart-row:last-child {
+            border-bottom: none;
+        }
+
+        .dot-chart-label {
+            width: 90px;
+            flex-shrink: 0;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #475569;
+            text-align: right;
+            padding-right: 14px;
+        }
+
+        .dot-chart-track {
+            flex: 1;
+            height: 30px;
+            position: relative;
+            background: #f8fafc;
+            border-radius: 15px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .dot-chart-gridlines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 14px;
+            pointer-events: none;
+        }
+
+        .dot-chart-gridline {
+            width: 1px;
+            height: 100%;
+            background: #e5e7eb;
+        }
+
+        .dot-chart-point {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+            z-index: 2;
+        }
+
+        .dot-chart-value {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #1e293b;
+            white-space: nowrap;
+        }
+
+        .dot-chart-scale {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 90px 0 90px;
+            margin-left: 14px;
+        }
+
+        .dot-chart-scale span {
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: #94a3b8;
+        }
+
+        .dot-color-tecnico {
+            background: #6366f1;
+        }
+
+        .dot-color-tactico {
+            background: #0ea5e9;
+        }
+
+        .dot-color-fisico {
+            background: #8b5cf6;
+        }
+
+        .dot-color-mental {
+            background: #10b981;
+        }
+
+        .dot-color-dcancha {
+            background: #f59e0b;
+        }
+
+        .dot-color-dcasa {
+            background: #ec4899;
+        }
+
+        .dot-color-asistencia {
+            background: #f97316;
+        }
+
+        /* ---- PIE / DONUT CHART ---- */
+        .pie-card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+
+        .pie-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px 0;
+        }
+
+        .pie-svg {
+            max-width: 320px;
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.06));
+        }
+
+        .pie-center-label {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            fill: #1e293b;
+        }
+
+        .pie-center-sub {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 10px;
+            font-weight: 600;
+            fill: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .pie-legend {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .pie-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #475569;
+            padding: 8px 12px;
+            background: #f8fafc;
+            border-radius: 10px;
+            transition: background 0.2s;
+        }
+
+        .pie-legend-item:hover {
+            background: #f1f5f9;
+        }
+
+        .pie-legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .pie-legend-value {
+            margin-left: auto;
+            font-weight: 800;
+            color: #1e293b;
+            font-size: 0.82rem;
+        }
+
+
+        /* ---- RADAR / SPIDER CHART ---- */
+        .radar-card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .radar-wrapper {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+
+        .radar-svg {
+            max-width: 380px;
+            width: 100%;
+            height: auto;
+        }
+
+        .radar-grid-line {
+            fill: none;
+            stroke: #e5e7eb;
+            stroke-width: 1;
+        }
+
+        .radar-axis {
+            stroke: #e5e7eb;
+            stroke-width: 0.5;
+        }
+
+        .radar-area {
+            fill: rgba(243, 106, 33, 0.15);
+            stroke: #F36A21;
+            stroke-width: 2;
+        }
+
+        .radar-dot {
+            fill: #F36A21;
+            stroke: #fff;
+            stroke-width: 2;
+        }
+
+        .radar-label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 10px;
+            font-weight: 600;
+            fill: #475569;
+            text-anchor: middle;
+        }
+
+        .radar-value-label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 9px;
+            font-weight: 700;
+            fill: #F36A21;
+            text-anchor: middle;
+        }
+
+        .radar-legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .radar-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .radar-legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #F36A21;
+        }
+
+        /* ---- OBSERVACIONES ---- */
+        .observaciones-card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .observaciones-content {
+            color: #475569;
+            font-size: 0.88rem;
+            line-height: 1.7;
+            padding: 14px 16px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 3px solid #F36A21;
+        }
+
+        /* ---- EVALUATIONS HISTORY ---- */
+        .history-card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .history-item:first-child {
+            padding-top: 0;
+        }
+
+        .history-date-badge {
+            text-align: center;
+            min-width: 50px;
+            padding: 8px 10px;
+            background: #F36A21;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+
+        .history-date-badge .h-day {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1;
+        }
+
+        .history-date-badge .h-month {
+            display: block;
+            font-size: 0.58rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.85);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-top: 2px;
+        }
+
+        .history-info {
+            flex: 1;
+        }
+
+        .history-type {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 2px;
+        }
+
+        .history-evaluator {
+            font-size: 0.72rem;
+            font-weight: 500;
+            color: #94a3b8;
+        }
+
+        .history-score {
+            text-align: right;
+        }
+
+        .history-score-value {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #F36A21;
+        }
+
+        .history-score-label {
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
+
+        /* ---- NO DATA ---- */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        .empty-state svg {
+            width: 48px;
+            height: 48px;
+            color: #cbd5e1;
+            margin-bottom: 14px;
+        }
+
+        .empty-state h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 6px;
+        }
+
+        .empty-state p {
+            font-size: 0.82rem;
+            color: #94a3b8;
+            max-width: 340px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        /* ---- RESPONSIVE ---- */
+        @media (max-width: 768px) {
+            .player-header {
+                flex-direction: column;
+                text-align: center;
+                padding: 24px 20px;
+            }
+
+            .player-header::before {
+                width: 100%;
+                height: 4px;
+                border-radius: 18px 18px 0 0;
+            }
+
+            .player-header-name {
+                font-size: 1.35rem;
+            }
+
+            .player-header-meta {
+                justify-content: center;
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .bar-chart {
+                height: 160px;
+                gap: 8px;
+            }
+
+            .bar-name {
+                font-size: 0.55rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dashboard-page {
+                padding: 85px 10px 30px;
+            }
+
+            .player-header-avatar img {
+                width: 110px;
+                height: 110px;
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+
+            .stat-box {
+                padding: 14px 8px;
+            }
+
+            .stat-box-value {
+                font-size: 1.2rem;
+            }
+
+            .pie-legend {
+                grid-template-columns: 1fr;
+            }
+
+            .bar-chart {
+                height: 140px;
+                gap: 6px;
+                padding: 0 4px;
+            }
+
+            .bar-fill {
+                max-width: 32px;
+            }
+
+            .bar-name {
+                font-size: 0.5rem;
+                max-width: 44px;
+            }
+
+            .metric-inline-bar {
+                min-width: 80px;
+            }
+        }
+
+        /* ========== Rendimiento en Cancha Card ========== */
+        .rendimiento-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.04);
+            border: 1px solid #f0f0f0;
+            margin-bottom: 20px;
+        }
+
+        .rendimiento-display {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            margin-bottom: 20px;
+        }
+
+        .rendimiento-score-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+        }
+
+        .rendimiento-badge {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            background: #f3f4f6;
+            color: #6b7280;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .rendimiento-label {
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .rendimiento-status {
+            font-size: 0.78rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .rendimiento-minutes-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .minutes-icon svg {
+            width: 28px;
+            height: 28px;
+            color: #f36a21;
+        }
+
+        .minutes-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #1e293b;
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1;
+        }
+
+        .minutes-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* Player Catalog */
+        .rendimiento-catalog-player {
+            padding: 14px 16px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+        }
+
+        .catalog-p-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .catalog-p-rows {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .catalog-p-row {
+            padding: 8px 10px;
+            border-radius: 8px;
+            border-left: 3px solid transparent;
+        }
+
+        .catalog-p-row.cpg {
+            background: rgba(16, 185, 129, 0.06);
+            border-left-color: #10b981;
+        }
+
+        .catalog-p-row.cpy {
+            background: rgba(245, 158, 11, 0.06);
+            border-left-color: #f59e0b;
+        }
+
+        .catalog-p-row.cpr {
+            background: rgba(239, 68, 68, 0.06);
+            border-left-color: #ef4444;
+        }
+
+        .catalog-p-header {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .catalog-p-badges {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .cpb {
+            padding: 2px 8px;
+            border-radius: 16px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            white-space: nowrap;
+            transition: opacity 0.3s ease;
+        }
+
+        .cpb-10 {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .cpb-9 {
+            background: #a7f3d0;
+            color: #065f46;
+        }
+
+        .cpb-8 {
+            background: #6ee7b7;
+            color: #065f46;
+        }
+
+        .cpb-7 {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .cpb-6 {
+            background: #fde68a;
+            color: #92400e;
+        }
+
+        .cpb-5 {
+            background: #fcd34d;
+            color: #92400e;
+        }
+
+        .cpb-rp {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        @media (max-width: 480px) {
+            .rendimiento-display {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .rendimiento-minutes-area {
+                flex-direction: row;
+                gap: 10px;
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="../index.html" class="logo">
+                <img src="../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png" alt="Alebrijes Fuerzas Basicas Logo">
+                <span class="logo-text">Alebrijes <br> Teotihuacan</span>
+            </a>
+
+            <button class="mobile-menu-btn" aria-label="Menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+
+            <ul class="nav-links">
+                <li class="nav-item">
+                    <a href="../index.html" class="nav-link">Inicio</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        Club
+                        <svg class="arrow-icon" viewBox="0 0 24 24">
+                            <path d="M7 10l5 5 5-5z" />
+                        </svg>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="nosotros.html">Nosotros</a></li>
+                        <li><a href="estadio.html">Estadio</a></li>
+                        <li><a href="casaclub.html">Casa Club</a></li>
+                        <li><a href="contacto.html">Contacto</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        Deportivo
+                        <svg class="arrow-icon" viewBox="0 0 24 24">
+                            <path d="M7 10l5 5 5-5z" />
+                        </svg>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="ligatdp.html">Liga TDP</a></li>
+                        <li><a href="fuerzasbasicas.html">Fuerzas Basicas</a></li>
+                        <li><a href="calendario.html">Calendario</a></li>
+                        <li class="dropdown-submenu-container">
+                            <a href="proyeccion.html" class="submenu-toggle">Proyeccion <span
+                                    class="arrow-right"></span></a>
+                            <ul class="submenu">
+                                <li><a href="equipos-tdp.html">Equipos TDP</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="articulos.html">Articulos</a></li>
+                        <li><a href="noticias.html">Noticias</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="escuela.html" class="nav-link">Escuela</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="brijitienda.html" class="nav-link">Brijitienda</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="../webvisorias/FormularioDeRegistroVisoria-main/index.html" class="nav-link nav-btn-cta"
+                        target="_blank" rel="noopener noreferrer">Visorias</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="mi-rendimiento.html" id="nav-login-btn" class="nav-link nav-btn-login active">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        Mi Rendimiento
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Dashboard -->
+    <section class="dashboard-page">
+        <div class="dashboard-container">
+
+            <!-- Loading -->
+            <div class="loading-spinner" id="loadingState">
+                <div class="spinner"></div>
+            </div>
+
+            <!-- Dashboard Content -->
+            <div id="dashboardContent" style="display: none;">
+
+                <!-- Player Header -->
+                <div class="player-header">
+                    <div class="player-header-avatar">
+                        <img src="../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png" alt="Foto del jugador"
+                            id="playerPhoto">
+                    </div>
+                    <div class="player-header-info">
+                        <h1 class="player-header-name" id="playerName">Cargando...</h1>
+                        <div class="player-header-meta">
+                            <span id="playerPosition">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                </svg>
+                                Posicion
+                            </span>
+                            <span id="playerCategory">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                </svg>
+                                Categoria
+                            </span>
+                            <span id="playerNumber">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                </svg>
+                                #--
+                            </span>
+                        </div>
+                    </div>
+                    <button class="btn-logout" id="logoutBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        Cerrar Sesion
+                    </button>
+                </div>
+
+                <!-- Stats Overview -->
+                <div class="stats-row" id="statsRow">
+                    <!-- Dynamically populated -->
+                </div>
+
+                <!-- Rendimiento en Cancha Card -->
+                <div class="rendimiento-card" id="rendimientoCard" style="display: none;">
+                    <h2 class="section-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polygon points="10 8 16 12 10 16 10 8"></polygon>
+                        </svg>
+                        Rendimiento en Cancha
+                    </h2>
+                    <div class="rendimiento-display">
+                        <div class="rendimiento-score-area">
+                            <div class="rendimiento-badge" id="rendimientoBadge">--</div>
+                            <div class="rendimiento-label" id="rendimientoLabel">Sin evaluación</div>
+                            <div class="rendimiento-status" id="rendimientoStatus"></div>
+                        </div>
+                        <div class="rendimiento-minutes-area">
+                            <div class="minutes-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                            </div>
+                            <div class="minutes-value" id="minutosValue">0</div>
+                            <div class="minutes-label">Min. Jugados</div>
+                        </div>
+                    </div>
+
+                    <!-- Inline Visual Catalog -->
+                    <div class="rendimiento-catalog-player">
+                        <div class="catalog-p-title">Tabla de Referencia - Escala de Rendimiento</div>
+                        <div class="catalog-p-rows">
+                            <div class="catalog-p-row cpg">
+                                <div class="catalog-p-header">Convocado - Participo en el Partido</div>
+                                <div class="catalog-p-badges">
+                                    <span class="cpb cpb-10">10 Excelente</span>
+                                    <span class="cpb cpb-9">9 Muy Bueno</span>
+                                    <span class="cpb cpb-8">8 Bueno</span>
+                                </div>
+                            </div>
+                            <div class="catalog-p-row cpy">
+                                <div class="catalog-p-header">Convocado - No Participo en el Partido</div>
+                                <div class="catalog-p-badges">
+                                    <span class="cpb cpb-7">7 Normal</span>
+                                    <span class="cpb cpb-6">6 Bajo</span>
+                                    <span class="cpb cpb-5">5 Deficiente</span>
+                                </div>
+                            </div>
+                            <div class="catalog-p-row cpr">
+                                <div class="catalog-p-header">No Convocado</div>
+                                <div class="catalog-p-badges">
+                                    <span class="cpb cpb-rp">RP Reprobatorio (No Suficiente)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dot Chart -->
+                <div class="chart-card" id="chartCard">
+                    <h2 class="section-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="7" cy="12" r="3"></circle>
+                            <circle cx="17" cy="8" r="3"></circle>
+                            <circle cx="12" cy="16" r="3"></circle>
+                        </svg>
+                        Rendimiento por Criterio
+                    </h2>
+                    <div class="dot-chart-container" id="dotChart">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+
+                <!-- Radar / Spider Chart -->
+                <div class="radar-card" id="radarCard">
+                    <h2 class="section-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <circle cx="12" cy="12" r="6"></circle>
+                            <circle cx="12" cy="12" r="2"></circle>
+                        </svg>
+                        Perfil de Rendimiento
+                    </h2>
+                    <div class="radar-wrapper">
+                        <svg class="radar-svg" id="radarChart" viewBox="0 0 400 400"></svg>
+                    </div>
+                    <div class="radar-legend" id="radarLegend"></div>
+                </div>
+
+                <!-- Pie / Donut Chart -->
+                <div class="pie-card" id="pieCard">
+                    <h2 class="section-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 2a10 10 0 0 1 10 10h-10z"></path>
+                        </svg>
+                        Distribucion de Rendimiento
+                    </h2>
+                    <div class="pie-wrapper">
+                        <svg class="pie-svg" id="pieChart" viewBox="0 0 300 300"></svg>
+                    </div>
+                    <div class="pie-legend" id="pieLegend"></div>
+                </div>
+
+                <!-- Observaciones -->
+                <div class="observaciones-card" id="observacionesCard" style="display: none;">
+                    <h2 class="section-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                        </svg>
+                        Observaciones del Cuerpo Tecnico
+                    </h2>
+                    <div class="observaciones-content" id="observacionesText"></div>
+                </div>
+
+                <!-- Evaluation History -->
+                <div class="history-card">
+                    <h2 class="section-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        Historial de Evaluaciones
+                    </h2>
+                    <div id="evaluationsList">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- No Data -->
+            <div class="empty-state" id="noDataState" style="display: none;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.5">
+                    <path
+                        d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                    </path>
+                </svg>
+                <h3>Sin evaluaciones disponibles</h3>
+                <p>No se han registrado evaluaciones para este perfil. Las evaluaciones seran visibles una vez que el
+                    cuerpo tecnico las registre en el sistema.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contacto">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <img src="../assets/Alebrijes Teotihuacan.png" alt="Logo Footer" class="footer-logo-img">
+                <p>Formacion deportiva con identidad.</p>
+            </div>
+
+            <div class="footer-links">
+                <h4>Navegacion</h4>
+                <ul>
+                    <li><a href="../index.html">Inicio</a></li>
+                    <li><a href="nosotros.html">Nosotros</a></li>
+                    <li><a href="../webvisorias/FormularioDeRegistroVisoria-main/index.html" target="_blank"
+                            rel="noopener noreferrer">Visorias</a></li>
+                    <li><a href="ligatdp.html">Liga TDP</a></li>
+                    <li><a href="noticias.html">Noticias</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-contact">
+                <h4>Contacto</h4>
+                <p>
+                    <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                    </svg>
+                    Centro Deportivo Pascual Boing
+                </p>
+                <p>
+                    <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                    </svg>
+                    alebrijesclub6@gmail.com
+                </p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Alebrijes de Oaxaca Teotihuacan. | <a href="politica-privacidad.html">Politica de
+                    Privacidad</a> | <a href="terminos-condiciones.html">Terminos y Condiciones</a></p>
+        </div>
+    </footer>
+
+    <script src="../scripts/script.js"></script>
+    <script type="module" src="../scripts/nav-auth.js"></script>
+    <script type="module">
+        import {
+            checkAuthState,
+            handleLogout,
+            getPlayerProfile,
+            getLatestEvaluation,
+            getPlayerEvaluations,
+            formatDateCard
+        } from '../scripts/auth.js';
+
+        // DOM
+        const loadingState = document.getElementById('loadingState');
+        const dashboardContent = document.getElementById('dashboardContent');
+        const noDataState = document.getElementById('noDataState');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const playerName = document.getElementById('playerName');
+        const playerPhoto = document.getElementById('playerPhoto');
+        const playerPosition = document.getElementById('playerPosition');
+        const playerCategory = document.getElementById('playerCategory');
+        const playerNumber = document.getElementById('playerNumber');
+        const statsRow = document.getElementById('statsRow');
+        const dotChart = document.getElementById('dotChart');
+        const radarChart = document.getElementById('radarChart');
+        const radarLegend = document.getElementById('radarLegend');
+        const pieChartEl = document.getElementById('pieChart');
+        const pieLegendEl = document.getElementById('pieLegend');
+        const evaluationsList = document.getElementById('evaluationsList');
+        const observacionesCard = document.getElementById('observacionesCard');
+        const observacionesText = document.getElementById('observacionesText');
+        const rendimientoCard = document.getElementById('rendimientoCard');
+        const rendimientoBadge = document.getElementById('rendimientoBadge');
+        const rendimientoLabel = document.getElementById('rendimientoLabel');
+        const rendimientoStatus = document.getElementById('rendimientoStatus');
+        const minutosValue = document.getElementById('minutosValue');
+
+        // Metric definitions
+        const metrics = [
+            {
+                key: 'tecnico', label: 'Tecnico', icon: 'i-tecnico', bar: 'bar-tecnico', dot: 'dot-tecnico', color: '#6366f1',
+                svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>'
+            },
+            {
+                key: 'tactico', label: 'Tactico', icon: 'i-tactico', bar: 'bar-tactico', dot: 'dot-tactico', color: '#0ea5e9',
+                svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>'
+            },
+            {
+                key: 'fisico', label: 'Fisico', icon: 'i-fisico', bar: 'bar-fisico', dot: 'dot-fisico', color: '#8b5cf6',
+                svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>'
+            },
+            {
+                key: 'mental', label: 'Mental', icon: 'i-mental', bar: 'bar-mental', dot: 'dot-mental', color: '#10b981',
+                svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>'
+            },
+            {
+                key: 'disciplinaCancha', label: 'Disciplina en Cancha', icon: 'i-dcancha', bar: 'bar-dcancha', dot: 'dot-dcancha', color: '#f59e0b',
+                svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>'
+            },
+            {
+                key: 'disciplinaCasaClub', label: 'Disciplina Casa Club', icon: 'i-dcasa', bar: 'bar-dcasa', dot: 'dot-dcasa', color: '#ec4899',
+                svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>'
+            },
+            {
+                key: 'asistencia', label: 'Asistencia', icon: 'i-asistencia', bar: 'bar-asistencia', dot: 'dot-asistencia', color: '#f97316',
+                svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>'
+            }
+        ];
+
+        // Auth check
+        checkAuthState(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            await loadPlayerData(user.uid);
+        });
+
+        // Photo matching
+        function findPlayerPhoto(nombre, apellido) {
+            const fullName = `${nombre || ''} ${apellido || ''}`.trim();
+            if (!fullName) return null;
+
+            const parts = fullName.split(/\s+/);
+            const baseDirs = [
+                '../assets/PlantillaLigaTDP_2026/',
+                '../assets/Jugadores/'
+            ];
+
+            const photoFiles = [
+                'Abimael_Torres_Nava_DirectorTecnico', 'Alan_Mauricio_Chimal_Barajas', 'Alexander_Peralta_Selvan', 'Alexis_Armando_Espinosa_Domínguez_Delantero', 'Baruk_Martín_Curiel_Cornejo_Medio', 'Cristian_Alexander_García_Morales_Medio', 'Cristian_Miguel_Padierna_Mojica_Defensa', 'Darío_Magariño_Castillejos_Defensa', 'David_Eduardo_Delgadillo_Hernández', 'Diego_Alberto_Váldez_Sánchez_Defensa', 'Diego_Efraín_Martínez_Ríos_Portero', 'Emiliano_Gutiérrez_Castro_Defensa', 'Gabriel_Villagran_Toledo', 'Horus_Axel_Minor_Ortíz', 'Ignacio_Jesús_López_Joachín_Defensa', 'Iker_Baizabal_Hernández_Defensa', 'Jireh_Ismael_Alvarado_Sánchez', 'Jocsan_Adrián_Sánchez_Ballona_Medio', 'Jorge_Salazar_Jiménez_Medio', 'Jose_Luis_Tavares_Torres', 'Joshua_Alejo_Hernández', 'Juan_Carlos_Guerrero_Peña_Medio', 'Juan_José_Salazar_Sánchez', 'Luis_Alberto_Olvera_Perez_Medio', 'Luis_Alfonso_Martínez_Lupercio', 'Luis_Gustavo_Emeterio_Hernandez_Defensa', 'Martín_Magaña_Vázquez_Defensa', 'Mauro_Exsael_Paredes_Sánchez', 'Melvin_Rafael_Maximo_Delantero', 'Noé_Miguel_Estefes_Medio', 'Oliver_De_La_Torre_Pérez', 'Orbi_Ríos_Rodríguez', 'Oscar_Gabriel_Ortega_Ramos_Medio', 'Rizieri_Pérez_Valenzo_Defensa', 'Rodrigo_Samuel_Camacho_Rodriguez', 'Salvador_Gallardo_Lopez', 'Santiago_Mael_Ortíz_Olivera'
+            ];
+
+            function normalize(str) {
+                return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+            }
+
+            const normalizedParts = parts.map(p => normalize(p));
+
+            for (const file of photoFiles) {
+                const fileParts = file.split('_').map(p => normalize(p));
+                let matchCount = 0;
+                for (const part of normalizedParts) {
+                    if (fileParts.includes(part)) matchCount++;
+                }
+                if (matchCount >= 2) {
+                    return baseDirs[0] + file + '.jpg';
+                }
+            }
+            return null;
+        }
+
+        function setPlayerPhoto(nombre, apellido, fotoUrl) {
+            const avatarContainer = document.querySelector('.player-header-avatar');
+            if (fotoUrl) {
+                playerPhoto.src = fotoUrl;
+                return;
+            }
+            const matched = findPlayerPhoto(nombre, apellido);
+            if (matched) {
+                playerPhoto.src = matched;
+                playerPhoto.onerror = () => { showGenericAvatar(avatarContainer); };
+            } else {
+                showGenericAvatar(avatarContainer);
+            }
+        }
+
+        function showGenericAvatar(container) {
+            container.innerHTML = `<div class="generic-avatar"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>`;
+        }
+
+        async function loadPlayerData(userId) {
+            try {
+                const profileResult = await getPlayerProfile(userId);
+                if (!profileResult.success) { showNoData(); return; }
+
+                const profile = profileResult.data;
+
+                // Player info
+                playerName.textContent = `${profile.nombre || ''} ${profile.apellido || ''}`.trim() || 'Jugador';
+                playerPosition.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg> ${profile.posicion || 'Sin posicion'}`;
+                playerCategory.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg> ${profile.categoria || 'Sin categoria'}`;
+                playerNumber.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg> #${profile.numeroCamiseta || '--'}`;
+
+                setPlayerPhoto(profile.nombre, profile.apellido, profile.fotoUrl);
+
+                // Latest evaluation
+                const evalResult = await getLatestEvaluation(userId);
+
+                if (evalResult.success && evalResult.data) {
+                    const ev = evalResult.data;
+                    renderStatCards(ev);
+                    renderDotChart(ev);
+                    renderRadarChart(ev);
+                    renderPieChart(ev);
+                    renderObservaciones(ev);
+                    renderRendimientoCancha(ev);
+                } else {
+                    renderEmptyStatCards();
+                    dotChart.innerHTML = '<div class="empty-state" style="padding:30px"><p>No se han registrado evaluaciones para este periodo.</p></div>';
+                    radarChart.innerHTML = '';
+                    pieChartEl.innerHTML = '';
+                }
+
+                // History
+                const historyResult = await getPlayerEvaluations(userId, 10);
+                if (historyResult.success && historyResult.data.length > 0) {
+                    renderHistory(historyResult.data);
+                } else {
+                    evaluationsList.innerHTML = '<div class="empty-state" style="padding:20px"><p>No hay registros en el historial.</p></div>';
+                }
+
+                loadingState.style.display = 'none';
+                dashboardContent.style.display = 'block';
+
+            } catch (error) {
+                console.error('Error loading player data:', error);
+                showNoData();
+            }
+        }
+
+        // Stat cards
+        function renderStatCards(ev) {
+            const generalSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>';
+
+            let html = '';
+            metrics.forEach(m => {
+                const v = ev[m.key];
+                html += `<div class="stat-box"><div class="stat-box-icon ${m.icon}">${m.svg}</div><div class="stat-box-value">${v !== undefined && v !== null ? v : '--'}</div><div class="stat-box-label">${m.label}</div></div>`;
+            });
+
+            const prom = ev.promedioGeneral;
+            html += `<div class="stat-box promedio"><div class="stat-box-icon i-general">${generalSvg}</div><div class="stat-box-value">${typeof prom === 'number' ? prom.toFixed(1) : '--'}</div><div class="stat-box-label">Promedio General</div></div>`;
+
+            statsRow.innerHTML = html;
+        }
+
+        function renderEmptyStatCards() {
+            const generalSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>';
+
+            let html = '';
+            metrics.forEach(m => {
+                html += `<div class="stat-box"><div class="stat-box-icon ${m.icon}">${m.svg}</div><div class="stat-box-value">--</div><div class="stat-box-label">${m.label}</div></div>`;
+            });
+            html += `<div class="stat-box promedio"><div class="stat-box-icon i-general">${generalSvg}</div><div class="stat-box-value">--</div><div class="stat-box-label">Promedio General</div></div>`;
+            statsRow.innerHTML = html;
+        }
+
+        // Dot chart
+        function renderDotChart(ev) {
+            const dotColors = ['dot-color-tecnico', 'dot-color-tactico', 'dot-color-fisico', 'dot-color-mental', 'dot-color-dcancha', 'dot-color-dcasa', 'dot-color-asistencia'];
+            let html = '';
+            metrics.forEach((m, i) => {
+                const v = ev[m.key] || 0;
+                const pct = (v / 10) * 100;
+                const leftPos = 14 + (pct / 100) * (100 - 28);
+                html += `
+                    <div class="dot-chart-row">
+                        <span class="dot-chart-label">${m.label}</span>
+                        <div class="dot-chart-track">
+                            <div class="dot-chart-gridlines">${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(() => '<div class="dot-chart-gridline"></div>').join('')}</div>
+                            <div class="dot-chart-point ${dotColors[i]}" style="left: ${leftPos}%">
+                                <span class="dot-chart-value">${v}</span>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+            html += `<div class="dot-chart-scale"><span>0</span><span>2</span><span>4</span><span>6</span><span>8</span><span>10</span></div>`;
+            dotChart.innerHTML = html;
+        }
+
+        // Radar / Spider chart
+        function renderRadarChart(ev) {
+            const cx = 200, cy = 195, maxR = 140;
+            const n = metrics.length;
+            const angleStep = (2 * Math.PI) / n;
+            const startAngle = -Math.PI / 2;
+
+            let svgContent = '';
+
+            // Grid rings (2, 4, 6, 8, 10)
+            [2, 4, 6, 8, 10].forEach(level => {
+                const r = (level / 10) * maxR;
+                let points = '';
+                for (let i = 0; i < n; i++) {
+                    const angle = startAngle + i * angleStep;
+                    const x = cx + r * Math.cos(angle);
+                    const y = cy + r * Math.sin(angle);
+                    points += `${x},${y} `;
+                }
+                svgContent += `<polygon points="${points.trim()}" class="radar-grid-line"/>`;
+            });
+
+            // Axis lines
+            for (let i = 0; i < n; i++) {
+                const angle = startAngle + i * angleStep;
+                const x2 = cx + maxR * Math.cos(angle);
+                const y2 = cy + maxR * Math.sin(angle);
+                svgContent += `<line x1="${cx}" y1="${cy}" x2="${x2}" y2="${y2}" class="radar-axis"/>`;
+            }
+
+            // Data polygon + dots
+            let dataPoints = '';
+            const dots = [];
+            const values = [];
+            for (let i = 0; i < n; i++) {
+                const v = ev[metrics[i].key] || 0;
+                values.push(v);
+                const r = (v / 10) * maxR;
+                const angle = startAngle + i * angleStep;
+                const x = cx + r * Math.cos(angle);
+                const y = cy + r * Math.sin(angle);
+                dataPoints += `${x},${y} `;
+                dots.push({ x, y, v });
+            }
+            svgContent += `<polygon points="${dataPoints.trim()}" class="radar-area"/>`;
+
+            // Dots
+            dots.forEach(d => {
+                svgContent += `<circle cx="${d.x}" cy="${d.y}" r="5" class="radar-dot"/>`;
+            });
+
+            // Labels + values
+            for (let i = 0; i < n; i++) {
+                const angle = startAngle + i * angleStep;
+                const labelR = maxR + 28;
+                const lx = cx + labelR * Math.cos(angle);
+                const ly = cy + labelR * Math.sin(angle);
+                svgContent += `<text x="${lx}" y="${ly}" class="radar-label" dominant-baseline="central">${metrics[i].label}</text>`;
+
+                const valR = maxR + 42;
+                const vx = cx + valR * Math.cos(angle);
+                const vy = cy + valR * Math.sin(angle);
+                svgContent += `<text x="${vx}" y="${vy}" class="radar-value-label" dominant-baseline="central">${values[i]}</text>`;
+            }
+
+            // Scale labels on first axis
+            [2, 4, 6, 8, 10].forEach(level => {
+                const r = (level / 10) * maxR;
+                const x = cx + 8;
+                const y = cy - r - 2;
+                svgContent += `<text x="${x}" y="${y}" font-size="8" fill="#94a3b8" font-family="Montserrat, sans-serif" font-weight="500">${level}</text>`;
+            });
+
+            radarChart.innerHTML = svgContent;
+
+            // Legend
+            radarLegend.innerHTML = metrics.map(m => `<span class="radar-legend-item"><span class="radar-legend-dot"></span>${m.label}</span>`).join('');
+        }
+
+        // Pie / Donut chart
+        function renderPieChart(ev) {
+            const pieColors = ['#6366f1', '#0ea5e9', '#8b5cf6', '#10b981', '#f59e0b', '#ec4899', '#f97316'];
+            const cx = 150, cy = 150, outerR = 120, innerR = 70;
+            const values = metrics.map(m => ev[m.key] || 0);
+            const total = values.reduce((a, b) => a + b, 0);
+            if (total === 0) { pieChartEl.innerHTML = ''; pieLegendEl.innerHTML = ''; return; }
+
+            let svgContent = '';
+            let currentAngle = -Math.PI / 2;
+
+            values.forEach((v, i) => {
+                const sliceAngle = (v / total) * 2 * Math.PI;
+                const endAngle = currentAngle + sliceAngle;
+                const largeArc = sliceAngle > Math.PI ? 1 : 0;
+
+                const x1o = cx + outerR * Math.cos(currentAngle);
+                const y1o = cy + outerR * Math.sin(currentAngle);
+                const x2o = cx + outerR * Math.cos(endAngle);
+                const y2o = cy + outerR * Math.sin(endAngle);
+                const x1i = cx + innerR * Math.cos(endAngle);
+                const y1i = cy + innerR * Math.sin(endAngle);
+                const x2i = cx + innerR * Math.cos(currentAngle);
+                const y2i = cy + innerR * Math.sin(currentAngle);
+
+                const d = `M ${x1o} ${y1o} A ${outerR} ${outerR} 0 ${largeArc} 1 ${x2o} ${y2o} L ${x1i} ${y1i} A ${innerR} ${innerR} 0 ${largeArc} 0 ${x2i} ${y2i} Z`;
+                svgContent += `<path d="${d}" fill="${pieColors[i]}" stroke="#fff" stroke-width="2"/>`;
+                currentAngle = endAngle;
+            });
+
+            // Center text
+            const avg = ev.promedioGeneral;
+            const avgText = typeof avg === 'number' ? avg.toFixed(1) : '--';
+            svgContent += `<text x="${cx}" y="${cy - 6}" text-anchor="middle" class="pie-center-label" font-size="28">${avgText}</text>`;
+            svgContent += `<text x="${cx}" y="${cy + 14}" text-anchor="middle" class="pie-center-sub">Promedio</text>`;
+
+            pieChartEl.innerHTML = svgContent;
+
+            // Legend
+            pieLegendEl.innerHTML = metrics.map((m, i) => {
+                const v = values[i];
+                return `<div class="pie-legend-item"><span class="pie-legend-dot" style="background:${pieColors[i]}"></span>${m.label}<span class="pie-legend-value">${v}/10</span></div>`;
+            }).join('');
+        }
+
+        // Observaciones
+        function renderObservaciones(ev) {
+            if (ev.observaciones && ev.observaciones.trim()) {
+                observacionesText.textContent = ev.observaciones;
+                observacionesCard.style.display = 'block';
+            } else {
+                observacionesCard.style.display = 'none';
+            }
+        }
+
+        // Rendimiento en Cancha
+        function renderRendimientoCancha(ev) {
+            const rc = ev.rendimientoCancha;
+            if (rc === undefined || rc === null) return;
+
+            rendimientoCard.style.display = 'block';
+
+            const scaleMap = {
+                10: { label: 'Excelente', status: 'Convocado - Participo', color: '#10b981', bg: '#d1fae5' },
+                9: { label: 'Muy Bueno', status: 'Convocado - Participo', color: '#10b981', bg: '#a7f3d0' },
+                8: { label: 'Bueno', status: 'Convocado - Participo', color: '#10b981', bg: '#6ee7b7' },
+                7: { label: 'Normal', status: 'Convocado - No Participo', color: '#f59e0b', bg: '#fef3c7' },
+                6: { label: 'Bajo', status: 'Convocado - No Participo', color: '#f59e0b', bg: '#fde68a' },
+                5: { label: 'Deficiente', status: 'Convocado - No Participo', color: '#f59e0b', bg: '#fcd34d' },
+                'RP': { label: 'Reprobatorio (No Suficiente)', status: 'No Convocado', color: '#ef4444', bg: '#fee2e2' }
+            };
+
+            const info = scaleMap[rc] || scaleMap['RP'];
+            const displayValue = rc === 'RP' ? 'RP' : rc;
+
+            rendimientoBadge.textContent = displayValue;
+            rendimientoBadge.style.background = info.bg;
+            rendimientoBadge.style.color = info.color;
+            rendimientoLabel.textContent = info.label;
+            rendimientoLabel.style.color = info.color;
+            rendimientoStatus.textContent = info.status;
+
+            // Minutes
+            minutosValue.textContent = ev.minutosJugados || 0;
+
+            // Highlight active badge in catalog
+            const allBadges = rendimientoCard.querySelectorAll('.cpb');
+            allBadges.forEach(b => b.style.opacity = '0.4');
+            const activeClass = rc === 'RP' ? 'cpb-rp' : `cpb-${rc}`;
+            const activeBadge = rendimientoCard.querySelector(`.${activeClass}`);
+            if (activeBadge) activeBadge.style.opacity = '1';
+        }
+
+        // History
+        function renderHistory(evaluations) {
+            const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+            evaluationsList.innerHTML = '';
+            evaluations.forEach(ev => {
+                let d;
+                if (ev.fechaFin) {
+                    const parts = ev.fechaFin.split('-');
+                    d = { day: parseInt(parts[2], 10).toString(), month: months[parseInt(parts[1], 10) - 1] };
+                } else {
+                    d = formatDateCard(ev.fecha);
+                }
+                const score = ev.promedioGeneral?.toFixed(1) || '--';
+                evaluationsList.innerHTML += `
+                    <div class="history-item">
+                        <div class="history-date-badge">
+                            <span class="h-day">${d.day}</span>
+                            <span class="h-month">${d.month}</span>
+                        </div>
+                        <div class="history-info">
+                            <div class="history-type">${ev.tipo || 'Evaluacion Semanal'}</div>
+                            <div class="history-evaluator">Por: ${ev.evaluadorNombre || 'Cuerpo Tecnico'}</div>
+                        </div>
+                        <div class="history-score">
+                            <div class="history-score-value">${score}</div>
+                            <div class="history-score-label">Promedio</div>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        // No data
+        function showNoData() {
+            loadingState.style.display = 'none';
+            noDataState.style.display = 'block';
+        }
+
+        // Logout
+        logoutBtn.addEventListener('click', async () => {
+            const result = await handleLogout();
+            if (result.success) window.location.href = 'login.html';
+        });
+    </script>
+</body>
+
+</html>

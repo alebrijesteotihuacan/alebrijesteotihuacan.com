@@ -1,0 +1,150 @@
+<!-- ============================================
+     PLANTILLA PARA NUEVAS NOTICIAS
+     Alebrijes de Oaxaca Teotihuacán
+     ============================================
+     
+     INSTRUCCIONES:
+     1. Copia esta plantilla
+     2. Pégalo al INICIO del <div class="news-grid-container" id="news-grid"> en pages/noticias.html
+     3. Reemplaza todos los valores entre [CORCHETES]
+     4. Para la fecha, usa formato ISO: YYYY-MM-DDTHH:MM:SS (ej: 2025-12-19T18:44:57)
+     5. Elige el tipo de tarjeta: news-card-large (grande), regular (normal), o news-card-text (solo texto)
+     
+     CATEGORÍAS DISPONIBLES:
+     - liga-tdp
+     - visorias
+     - fuerzas-basicas
+     - club
+     ============================================ -->
+
+<!-- TARJETA GRANDE (Destacada) - Para noticias importantes -->
+<article class="news-card-modern news-card-large" 
+         data-category="[CATEGORIA]" 
+         data-title="[TÍTULO COMPLETO]" 
+         data-content="[DESCRIPCIÓN BREVE PARA BÚSQUEDA]"
+         data-date="[FECHA_ISO]">
+    <div class="news-card-image">
+        <img src="../assets/[NOMBRE_IMAGEN]" alt="[TEXTO_ALT_IMAGEN]">
+        <button class="news-card-share" aria-label="Compartir">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="18" cy="5" r="3"></circle>
+                <circle cx="6" cy="12" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+            </svg>
+        </button>
+    </div>
+    <div class="news-card-content">
+        <div class="news-card-meta">
+            <span class="news-card-time" data-date="[FECHA_ISO]">Ahora</span>
+            <span class="news-card-separator">|</span>
+            <span class="news-card-type" data-category-dynamic="true">noticia</span>
+        </div>
+        <h3 class="news-card-title">[TÍTULO EN MAYÚSCULAS]</h3>
+        <p class="news-card-subtitle">[SUBTÍTULO O DESCRIPCIÓN COMPLETA DE LA NOTICIA. Este texto aparecerá en la tarjeta y debe ser descriptivo pero conciso.]</p>
+    </div>
+</article>
+
+<!-- ============================================
+     TARJETA REGULAR (Normal) - Para noticias estándar
+     ============================================ -->
+
+<!--
+<article class="news-card-modern" 
+         data-category="[CATEGORIA]" 
+         data-title="[TÍTULO COMPLETO]" 
+         data-content="[DESCRIPCIÓN BREVE PARA BÚSQUEDA]"
+         data-date="[FECHA_ISO]">
+    <div class="news-card-image">
+        <img src="../assets/[NOMBRE_IMAGEN]" alt="[TEXTO_ALT_IMAGEN]">
+        <button class="news-card-share" aria-label="Compartir">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="18" cy="5" r="3"></circle>
+                <circle cx="6" cy="12" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+            </svg>
+        </button>
+    </div>
+    <div class="news-card-content">
+        <div class="news-card-meta">
+            <span class="news-card-time" data-date="[FECHA_ISO]">Ahora</span>
+            <span class="news-card-separator">|</span>
+            <span class="news-card-type" data-category-dynamic="true">noticia</span>
+        </div>
+        <h3 class="news-card-title">[TÍTULO EN MAYÚSCULAS]</h3>
+        <p class="news-card-subtitle">[SUBTÍTULO O DESCRIPCIÓN COMPLETA DE LA NOTICIA]</p>
+    </div>
+</article>
+-->
+
+<!-- ============================================
+     TARJETA SOLO TEXTO - Para noticias sin imagen destacada
+     ============================================ -->
+
+<!--
+<article class="news-card-modern news-card-text" 
+         data-category="[CATEGORIA]" 
+         data-title="[TÍTULO COMPLETO]" 
+         data-content="[DESCRIPCIÓN BREVE PARA BÚSQUEDA]"
+         data-date="[FECHA_ISO]">
+    <div class="news-card-image">
+        <img src="../assets/[NOMBRE_IMAGEN]" alt="[TEXTO_ALT_IMAGEN]">
+    </div>
+    <div class="news-card-content">
+        <div class="news-card-meta">
+            <span class="news-card-time" data-date="[FECHA_ISO]">Ahora</span>
+            <span class="news-card-separator">|</span>
+            <span class="news-card-type" data-category-dynamic="true">noticia</span>
+        </div>
+        <h3 class="news-card-title">[TÍTULO EN MAYÚSCULAS]</h3>
+        <p class="news-card-subtitle">[SUBTÍTULO O DESCRIPCIÓN COMPLETA DE LA NOTICIA]</p>
+        <button class="news-card-share" aria-label="Compartir">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="18" cy="5" r="3"></circle>
+                <circle cx="6" cy="12" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+            </svg>
+        </button>
+    </div>
+</article>
+-->
+
+<!-- ============================================
+     EJEMPLO DE USO COMPLETO:
+     ============================================
+     
+     <article class="news-card-modern news-card-large" 
+              data-category="liga-tdp" 
+              data-title="Victoria contundente ante Aguilas de Teotihuacán" 
+              data-content="El equipo logró una victoria contundente ante Aguilas de Teotihuacán con un marcador de 4-0."
+              data-date="2025-12-19T18:44:57">
+         <div class="news-card-image">
+             <img src="../assets/victoria-aguilas.jpg" alt="Victoria ante Aguilas">
+             <button class="news-card-share" aria-label="Compartir">
+                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                     <circle cx="18" cy="5" r="3"></circle>
+                     <circle cx="6" cy="12" r="3"></circle>
+                     <circle cx="18" cy="19" r="3"></circle>
+                     <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                     <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                 </svg>
+             </button>
+         </div>
+         <div class="news-card-content">
+             <div class="news-card-meta">
+                 <span class="news-card-time" data-date="2025-12-19T18:44:57">Ahora</span>
+                 <span class="news-card-separator">|</span>
+                 <span class="news-card-type" data-category-dynamic="true">noticia</span>
+             </div>
+             <h3 class="news-card-title">VICTORIA CONTUNDENTE ANTE AGUILAS DE TEOTIHUACÁN</h3>
+             <p class="news-card-subtitle">En un partido lleno de emoción, los Alebrijes demostraron su superioridad sobre el campo, logrando una victoria por 4-0 que los consolida en los primeros lugares de la tabla.</p>
+         </div>
+     </article>
+     
+     ============================================ -->
+

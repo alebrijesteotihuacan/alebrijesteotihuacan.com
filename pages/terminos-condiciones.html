@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Términos y Condiciones | Alebrijes de Oaxaca Teotihuacán</title>
+    <link rel="icon" type="image/png" href="../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../styles/styles.css">
+    <style>
+        .legal-page {
+            padding: calc(var(--header-height) + 40px) 0 80px 0;
+            background: linear-gradient(to bottom, #fafafa 0%, #ffffff 100%);
+        }
+
+        .legal-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .legal-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .legal-header .section-label {
+            display: inline-block;
+            color: var(--primary);
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+        }
+
+        .legal-header h1 {
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            font-weight: 900;
+            color: var(--dark);
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+
+        .legal-header p {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            line-height: 1.7;
+        }
+
+        .legal-content {
+            background: var(--white);
+            padding: 50px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            line-height: 1.8;
+        }
+
+        .legal-content h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .legal-content h2:first-child {
+            margin-top: 0;
+        }
+
+        .legal-content h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .legal-content p {
+            font-size: 1rem;
+            color: var(--text);
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        .legal-content ul {
+            margin: 20px 0;
+            padding-left: 30px;
+        }
+
+        .legal-content li {
+            font-size: 1rem;
+            color: var(--text);
+            margin-bottom: 10px;
+            line-height: 1.8;
+        }
+
+        .legal-content strong {
+            color: var(--dark);
+            font-weight: 700;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: var(--primary-dark);
+            transform: translateX(-5px);
+        }
+
+        .back-link svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .legal-content {
+                padding: 30px 20px;
+            }
+
+            .legal-content h2 {
+                font-size: 1.5rem;
+            }
+
+            .legal-content h3 {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="../index.html" class="logo">
+                <img src="../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png" alt="Alebrijes Fuerzas Básicas Logo">
+                <span class="logo-text">Alebrijes <br> Teotihuacán</span>
+            </a>
+
+            <button class="mobile-menu-btn" aria-label="Menú">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+
+            <ul class="nav-links">
+                <li class="nav-item">
+                    <a href="../index.html" class="nav-link">Inicio</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        Club
+                        <svg class="arrow-icon" viewBox="0 0 24 24">
+                            <path d="M7 10l5 5 5-5z" />
+                        </svg>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="nosotros.html">Nosotros</a></li>
+                        <li><a href="estadio.html">Estadio</a></li>
+                        <li><a href="casaclub.html">Casa Club</a></li>
+                        <li><a href="contacto.html">Contacto</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        Deportivo
+                        <svg class="arrow-icon" viewBox="0 0 24 24">
+                            <path d="M7 10l5 5 5-5z" />
+                        </svg>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="ligatdp.html">Liga TDP</a></li>
+                        <li><a href="fuerzasbasicas.html">Fuerzas Básicas</a></li>
+                        <li><a href="calendario.html">Calendario</a></li>
+                        <li class="dropdown-submenu-container">
+                            <a href="proyeccion.html" class="submenu-toggle">Proyección <span
+                                    class="arrow-right"></span></a>
+                            <ul class="submenu">
+                                <li><a href="equipos-tdp.html">Equipos TDP</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="articulos.html">Artículos</a></li>
+                        <li><a href="noticias.html">Noticias</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="escuela.html" class="nav-link">Escuela</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="brijitienda.html" class="nav-link">Brijitienda</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="../webvisorias/FormularioDeRegistroVisoria-main/index.html" class="nav-link nav-btn-cta"
+                        target="_blank" rel="noopener noreferrer">Visorias</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="login.html" id="nav-login-btn" class="nav-link nav-btn-login">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                            <polyline points="10 17 15 12 10 7"></polyline>
+                            <line x1="15" y1="12" x2="3" y2="12"></line>
+                        </svg>
+                        Iniciar Sesión
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Legal Page Content -->
+    <section class="legal-page">
+        <div class="legal-container">
+            <a href="../index.html" class="back-link">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                Volver al inicio
+            </a>
+
+            <div class="legal-header">
+                <span class="section-label">INFORMACIÓN LEGAL</span>
+                <h1>Términos y Condiciones</h1>
+                <p>Última actualización: Enero 2025</p>
+            </div>
+
+            <div class="legal-content">
+                <h2>1. Aceptación de los Términos</h2>
+                <p>
+                    Al acceder y utilizar el sitio web de los Alebrijes de Oaxaca Teotihuacán, usted acepta estar
+                    sujeto a estos Términos y Condiciones de uso. Si no está de acuerdo con alguna parte de estos
+                    términos, no debe utilizar nuestro sitio web.
+                </p>
+
+                <h2>2. Uso del Sitio Web</h2>
+                <h3>2.1. Uso Permitido</h3>
+                <p>Usted puede utilizar nuestro sitio web para:</p>
+                <ul>
+                    <li>Obtener información sobre el club y sus actividades</li>
+                    <li>Registrarse para visorías y eventos</li>
+                    <li>Acceder a contenido relacionado con el fútbol y el club</li>
+                    <li>Contactarnos para consultas y solicitudes</li>
+                </ul>
+
+                <h3>2.2. Uso Prohibido</h3>
+                <p>Está prohibido:</p>
+                <ul>
+                    <li>Utilizar el sitio web para fines ilegales o no autorizados</li>
+                    <li>Intentar acceder a áreas restringidas del sitio</li>
+                    <li>Interferir con el funcionamiento del sitio web</li>
+                    <li>Transmitir virus, malware o código malicioso</li>
+                    <li>Copiar, modificar o distribuir el contenido sin autorización</li>
+                </ul>
+
+                <h2>3. Propiedad Intelectual</h2>
+                <p>
+                    Todo el contenido del sitio web, incluyendo pero no limitado a textos, gráficos, logotipos, iconos,
+                    imágenes, clips de audio, descargas digitales y compilaciones de datos, es propiedad de los
+                    Alebrijes de Oaxaca Teotihuacán o de sus proveedores de contenido y está protegido por las leyes de
+                    propiedad intelectual.
+                </p>
+
+                <h2>4. Registro y Cuentas de Usuario</h2>
+                <p>
+                    Al registrarse en nuestro sitio web, usted es responsable de mantener la confidencialidad de su
+                    cuenta y contraseña. Usted acepta la responsabilidad de todas las actividades que ocurran bajo su
+                    cuenta.
+                </p>
+
+                <h2>5. Contenido del Usuario</h2>
+                <p>
+                    Si envía contenido a nuestro sitio web (comentarios, imágenes, etc.), usted nos otorga el derecho
+                    no exclusivo de usar, reproducir, modificar y distribuir dicho contenido. Usted garantiza que tiene
+                    todos los derechos necesarios para otorgar esta licencia.
+                </p>
+
+                <h2>6. Enlaces a Terceros</h2>
+                <p>
+                    Nuestro sitio web puede contener enlaces a sitios web de terceros. No somos responsables del
+                    contenido, políticas de privacidad o prácticas de estos sitios web externos. Le recomendamos
+                    revisar los términos y condiciones de cualquier sitio web de terceros que visite.
+                </p>
+
+                <h2>7. Limitación de Responsabilidad</h2>
+                <p>
+                    En la máxima medida permitida por la ley, los Alebrijes de Oaxaca Teotihuacán no serán responsables
+                    de ningún daño directo, indirecto, incidental, especial o consecuente que resulte del uso o la
+                    imposibilidad de usar nuestro sitio web.
+                </p>
+
+                <h2>8. Disponibilidad del Servicio</h2>
+                <p>
+                    Nos esforzamos por mantener el sitio web disponible en todo momento, pero no garantizamos que el
+                    servicio esté libre de interrupciones, errores o defectos. Podemos suspender o modificar el servicio
+                    en cualquier momento sin previo aviso.
+                </p>
+
+                <h2>9. Modificaciones de los Términos</h2>
+                <p>
+                    Nos reservamos el derecho de modificar estos Términos y Condiciones en cualquier momento. Los
+                    cambios entrarán en vigor inmediatamente después de su publicación en el sitio web. Su uso
+                    continuado
+                    del sitio web después de los cambios constituye su aceptación de los nuevos términos.
+                </p>
+
+                <h2>10. Ley Aplicable</h2>
+                <p>
+                    Estos Términos y Condiciones se rigen por las leyes de los Estados Unidos Mexicanos. Cualquier
+                    disputa relacionada con estos términos será resuelta en los tribunales competentes de México.
+                </p>
+
+                <h2>11. Contacto</h2>
+                <p>
+                    Si tiene preguntas sobre estos Términos y Condiciones, puede contactarnos en:
+                </p>
+                <p>
+                    <strong>Email:</strong> alebrijesclub6@gmail.com<br>
+                    <strong>Dirección:</strong> Centro Deportivo Pascual Boing, Curva la Garita s/n, Atlatongo, 55823
+                    Teotihuacán de Arista, Méx.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contacto">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <img src="../assets/Alebrijes Teotihuacan.png" alt="Logo Footer" class="footer-logo-img">
+                <p>Pasión y formación deportiva con identidad oaxaqueña.</p>
+            </div>
+
+            <div class="footer-links">
+                <h4>Navegación</h4>
+                <ul>
+                    <li><a href="../index.html">Inicio</a></li>
+                    <li><a href="nosotros.html">Nosotros</a></li>
+                    <li><a href="../webvisorias/FormularioDeRegistroVisoria-main/index.html" target="_blank"
+                            rel="noopener noreferrer">Visorias</a></li>
+                    <li><a href="ligatdp.html">Liga TDP</a></li>
+                    <li><a href="noticias.html">Noticias</a></li>
+                    <li><a href="fuerzasbasicas.html">Fuerzas Básicas</a></li>
+                    <li><a href="casaclub.html">Casa Club</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-contact">
+                <h4>Contacto</h4>
+                <p>
+                    <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                    </svg>
+                    Centro Deportivo Pascual Boing
+                </p>
+                <p>
+                    <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                    </svg>
+                    alebrijesclub6@gmail.com
+                </p>
+            </div>
+
+            <div class="footer-social">
+                <h4>Alebrijes de Oaxaca</h4>
+                <div class="social-links-footer">
+                    <a href="https://www.facebook.com/AlebrijesOficial/" target="_blank" class="social-link-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                        </svg>
+                        <span>Facebook</span>
+                    </a>
+                    <a href="https://www.instagram.com/alebrijesoaxacaoficial/" target="_blank"
+                        class="social-link-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                        </svg>
+                        <span>Instagram</span>
+                    </a>
+                    <a href="https://www.tiktok.com/@alebrijesoaxacaoficial?lang=es" target="_blank"
+                        class="social-link-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path
+                                d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
+                        </svg>
+                        <span>TikTok</span>
+                    </a>
+                    <a href="https://x.com/AlebrijesOaxaca" target="_blank" class="social-link-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path
+                                d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                        </svg>
+                        <span>X (Twitter)</span>
+                    </a>
+                    <a href="https://www.youtube.com/user/AlebrijesTV" target="_blank" class="social-link-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path
+                                d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                        </svg>
+                        <span>YouTube</span>
+                    </a>
+                </div>
+                <h4 style="margin-top: 20px;">Alebrijes Teotihuacán</h4>
+                <div class="social-links-footer">
+                    <a href="https://www.facebook.com/profile.php?id=100083182488673&locale=es_LA" target="_blank"
+                        class="social-link-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                        </svg>
+                        <span>Facebook</span>
+                    </a>
+                    <a href="https://www.instagram.com/alebrijes_teoti" target="_blank" class="social-link-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                        </svg>
+                        <span>Instagram</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Alebrijes de Oaxaca Teotihuacán. | <a href="politica-privacidad.html">Política de
+                    Privacidad</a> | <a href="terminos-condiciones.html">Términos y Condiciones</a></p>
+        </div>
+    </footer>
+
+    <script src="../scripts/script.js"></script>
+    <script type="module" src="../scripts/nav-auth.js"></script>
+</body>
+
+</html>

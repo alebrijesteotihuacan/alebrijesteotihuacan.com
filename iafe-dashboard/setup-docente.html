@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Configuración inicial del sistema IAFE - Crear primer docente.">
+    <title>Configuración Inicial | IAFE Portal Académico</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/Escuela/FotoPerfil.png">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="styles/variables.css">
+    <link rel="stylesheet" href="styles/base.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/forms.css">
+
+    <style>
+        :root {
+            --theme-accent: #C9A961;
+            --theme-accent-dark: #B8944D;
+        }
+
+        .setup-layout {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1a 50%, #16213e 100%);
+            padding: 20px;
+        }
+
+        .setup-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+            border-top: 4px solid var(--theme-accent);
+        }
+
+        .setup-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .setup-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+
+        .setup-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 0 8px;
+            color: var(--gray-900);
+        }
+
+        .setup-subtitle {
+            color: var(--gray-500);
+            margin: 0;
+        }
+
+        .info-box {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .info-box h4 {
+            margin: 0 0 8px;
+            color: #92400e;
+            font-size: 0.875rem;
+        }
+
+        .info-box p {
+            margin: 0;
+            color: #78350f;
+            font-size: 0.813rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #C9A961 0%, #B8944D 100%);
+            border-color: #C9A961;
+            color: white;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #B8944D 0%, #a6813f 100%);
+        }
+
+        .form-input:focus {
+            border-color: var(--theme-accent);
+            box-shadow: 0 0 0 3px rgba(201, 169, 97, 0.15);
+        }
+
+        .success-container {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .success-icon {
+            width: 64px;
+            height: 64px;
+            background: #d1fae5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            color: #10b981;
+        }
+
+        .credentials-box {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin: 16px 0;
+            text-align: left;
+        }
+
+        .credentials-box p {
+            margin: 4px 0;
+            font-size: 0.875rem;
+        }
+
+        .credentials-box strong {
+            color: var(--theme-accent);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="setup-layout">
+        <div class="setup-card">
+            <div class="setup-header">
+                <img src="assets/Escuela/FotoPerfil.png" alt="IAFE Logo" class="setup-logo">
+                <h1 class="setup-title">Configuración Inicial</h1>
+                <p class="setup-subtitle">Crear cuenta de docente administrador</p>
+            </div>
+
+            <div id="setupForm">
+                <div class="info-box">
+                    <h4>⚠️ Configuración única</h4>
+                    <p>Esta página es para crear la primera cuenta de docente/administrador del sistema. Solo debe
+                        usarse una vez durante la configuración inicial.</p>
+                </div>
+
+                <form id="createDocenteForm">
+                    <div class="form-group">
+                        <label for="nombre" class="form-label required">Nombre(s)</label>
+                        <input type="text" id="nombre" class="form-input" placeholder="María" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="apellidos" class="form-label required">Apellidos</label>
+                        <input type="text" id="apellidos" class="form-input" placeholder="López Hernández" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="form-label required">Correo Electrónico</label>
+                        <input type="email" id="email" class="form-input" placeholder="docente@iafe.edu.mx" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="form-label required">Contraseña</label>
+                        <input type="password" id="password" class="form-input" placeholder="Mínimo 6 caracteres"
+                            required minlength="6">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword" class="form-label required">Confirmar Contraseña</label>
+                        <input type="password" id="confirmPassword" class="form-input" placeholder="Repetir contraseña"
+                            required minlength="6">
+                    </div>
+
+                    <div id="errorAlert" class="alert alert-error" style="display: none;">
+                        <span id="errorMessage"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-full" id="submitBtn">
+                        <span id="submitBtnText">Crear Cuenta de Docente</span>
+                        <span id="submitBtnLoader" class="loader loader-sm" style="display: none;"></span>
+                    </button>
+                </form>
+            </div>
+
+            <div id="successContainer" class="success-container" style="display: none;">
+                <div class="success-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+                <h2 style="margin: 0 0 8px; color: var(--gray-900);">¡Cuenta creada exitosamente!</h2>
+                <p style="color: var(--gray-500); margin: 0 0 16px;">El docente administrador ha sido registrado.</p>
+
+                <div class="credentials-box">
+                    <p><strong>Email:</strong> <span id="createdEmail"></span></p>
+                    <p><strong>Contraseña:</strong> La que ingresaste</p>
+                </div>
+
+                <a href="login-docente.html" class="btn btn-primary w-full">Ir a Iniciar Sesión</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <!-- App Scripts -->
+    <script src="scripts/firebase-config.js"></script>
+    <script src="scripts/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function () {
+            await initializeFirebaseApp();
+        });
+
+        document.getElementById('createDocenteForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const nombre = document.getElementById('nombre').value;
+            const apellidos = document.getElementById('apellidos').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            const submitBtn = document.getElementById('submitBtn');
+            const submitBtnText = document.getElementById('submitBtnText');
+            const submitBtnLoader = document.getElementById('submitBtnLoader');
+            const errorAlert = document.getElementById('errorAlert');
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Validate passwords match
+            if (password !== confirmPassword) {
+                errorAlert.style.display = 'flex';
+                errorMessage.textContent = 'Las contraseñas no coinciden.';
+                return;
+            }
+
+            errorAlert.style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtnText.style.display = 'none';
+            submitBtnLoader.style.display = 'inline-block';
+
+            try {
+                await createInitialTeacher({
+                    nombre,
+                    apellidos,
+                    email,
+                    password
+                });
+
+                // Show success
+                document.getElementById('setupForm').style.display = 'none';
+                document.getElementById('successContainer').style.display = 'block';
+                document.getElementById('createdEmail').textContent = email;
+
+            } catch (error) {
+                errorAlert.style.display = 'flex';
+
+                // Translate error messages
+                let message = error.message;
+                if (error.code === 'auth/email-already-in-use') {
+                    message = 'Ya existe una cuenta con este correo electrónico.';
+                } else if (error.code === 'auth/weak-password') {
+                    message = 'La contraseña debe tener al menos 6 caracteres.';
+                } else if (error.code === 'auth/invalid-email') {
+                    message = 'El correo electrónico no es válido.';
+                }
+
+                errorMessage.textContent = message;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtnText.style.display = 'inline';
+                submitBtnLoader.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+
+</html>

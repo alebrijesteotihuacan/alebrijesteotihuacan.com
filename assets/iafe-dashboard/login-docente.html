@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Acceso para Docentes - Instituto Azteca de Formación Empresarial.">
+    <title>Acceso Docente | IAFE Portal Académico</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../assets/Escuela/FotoPerfil.png">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="styles/variables.css">
+    <link rel="stylesheet" href="styles/base.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/forms.css">
+
+    <!-- Teacher Theme - Gold/Amber -->
+    <style>
+        :root {
+            --theme-accent: #C9A961;
+            --theme-accent-dark: #B8944D;
+        }
+
+        .auth-layout {
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1a 50%, #16213e 100%);
+        }
+
+        .auth-layout::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(201, 169, 97, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(201, 169, 97, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(201, 169, 97, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .auth-back-link {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .auth-back-link:hover {
+            color: var(--theme-accent);
+        }
+
+        .auth-card {
+            border-top: 4px solid var(--theme-accent);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(201, 169, 97, 0.1);
+        }
+
+        .user-type-indicator {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 8px 16px;
+            background-color: rgba(201, 169, 97, 0.1);
+            color: var(--theme-accent);
+            border: 1px solid rgba(201, 169, 97, 0.3);
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+
+
+        .btn-primary {
+            background: linear-gradient(135deg, #C9A961 0%, #B8944D 100%);
+            border-color: #C9A961;
+            color: white;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #B8944D 0%, #a6813f 100%);
+            border-color: #B8944D;
+        }
+
+        .form-input:focus {
+            border-color: var(--theme-accent);
+            box-shadow: 0 0 0 3px rgba(201, 169, 97, 0.15);
+        }
+
+        .text-primary {
+            color: var(--theme-accent);
+        }
+
+        .auth-footer-text {
+            color: var(--gray-500);
+        }
+
+        /* Minimalist premium accents */
+        .auth-logo {
+            border: 1px solid rgba(201, 169, 97, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="auth-layout">
+        <!-- Back Link -->
+        <div style="position: absolute; top: var(--space-6); left: var(--space-6); z-index: 10;">
+            <a href="../pages/escuela.html" class="auth-back-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Volver al Portal
+            </a>
+        </div>
+
+        <div class="auth-container">
+            <div class="auth-card">
+                <!-- Header -->
+                <div class="auth-header">
+                    <img src="../assets/Escuela/FotoPerfil.png" alt="IAFE Logo" class="auth-logo">
+
+                    <!-- User Type Indicator -->
+                    <span class="user-type-indicator">Acceso Docentes</span>
+
+                    <h1 class="auth-title">Iniciar Sesión</h1>
+                    <p class="auth-subtitle">Ingresa tus credenciales institucionales</p>
+                </div>
+
+                <!-- Form -->
+                <div class="auth-body">
+                    <form id="loginForm">
+                        <!-- Email -->
+                        <div class="form-group">
+                            <label for="email" class="form-label required">Correo Institucional</label>
+                            <div class="input-group">
+                                <span class="input-group-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path
+                                            d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z">
+                                        </path>
+                                        <polyline points="22,6 12,13 2,6"></polyline>
+                                    </svg>
+                                </span>
+                                <input type="email" id="email" name="email" class="form-input"
+                                    placeholder="profesor@iafe.edu.mx" required>
+                            </div>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="form-group">
+                            <label for="password" class="form-label required">Contraseña</label>
+                            <div class="input-group">
+                                <span class="input-group-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                    </svg>
+                                </span>
+                                <input type="password" id="password" name="password" class="form-input"
+                                    placeholder="Ingresa tu contraseña" required>
+                            </div>
+                        </div>
+
+                        <!-- Remember Me & Forgot Password -->
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                            <label class="form-check">
+                                <input type="checkbox" class="form-check-input" name="remember">
+                                <span class="form-check-label">Recordarme</span>
+                            </label>
+                            <a href="#" class="text-sm text-primary font-medium">¿Olvidaste tu contraseña?</a>
+                        </div>
+
+                        <!-- Error Alert (Hidden by default) -->
+                        <div id="loginError" class="alert alert-error mb-4" style="display: none;">
+                            <svg class="alert-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                            </svg>
+                            <div class="alert-content">
+                                <span id="loginErrorMessage">Credenciales incorrectas.</span>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary w-full" id="loginBtn">
+                            <span id="loginBtnText">Ingresar al Panel</span>
+                            <span id="loginBtnLoader" class="loader loader-sm"
+                                style="display: none; border-top-color: #1a1a2e;"></span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Footer -->
+                <div class="auth-footer">
+                    <p class="auth-footer-text">
+                        Instituto Azteca de Formación Empresarial
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <!-- App Scripts -->
+    <script src="scripts/firebase-config.js"></script>
+    <script src="scripts/auth.js"></script>
+    <script>
+        // Initialize Firebase when page loads
+        document.addEventListener('DOMContentLoaded', async function () {
+            await initializeFirebaseApp();
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const loginBtnText = document.getElementById('loginBtnText');
+            const loginBtnLoader = document.getElementById('loginBtnLoader');
+            const loginError = document.getElementById('loginError');
+            const loginErrorMessage = document.getElementById('loginErrorMessage');
+
+            loginError.style.display = 'none';
+            loginBtn.disabled = true;
+            loginBtnText.style.display = 'none';
+            loginBtnLoader.style.display = 'inline-block';
+
+            try {
+                // Use real Firebase authentication
+                const user = await loginUser(email, password, 'docente');
+
+                // Redirect to teacher dashboard
+                window.location.href = 'dashboard/docente.html';
+            } catch (error) {
+                loginError.style.display = 'flex';
+                loginErrorMessage.textContent = error.message || 'Error al iniciar sesión.';
+                loginBtn.disabled = false;
+                loginBtnText.style.display = 'inline';
+                loginBtnLoader.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+
+</html>

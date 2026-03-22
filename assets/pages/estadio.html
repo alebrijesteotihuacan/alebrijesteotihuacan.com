@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estadio | Alebrijes Teotihuacán</title>
+    <link rel="icon" type="image/png" href="../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../styles/styles.css"> <!-- Base styles -->
+    <link rel="stylesheet" href="../styles/estadio.css"> <!-- Page specific styles -->
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="../index.html" class="logo">
+                <img src="../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png" alt="Alebrijes Fuerzas Básicas Logo">
+                <span class="logo-text">Alebrijes <br> Teotihuacán</span>
+            </a>
+
+            <button class="mobile-menu-btn" aria-label="Menú">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+
+            <ul class="nav-links">
+                <li class="nav-item">
+                    <a href="../index.html" class="nav-link">Inicio</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        Club
+                        <svg class="arrow-icon" viewBox="0 0 24 24">
+                            <path d="M7 10l5 5 5-5z" />
+                        </svg>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="nosotros.html">Nosotros</a></li>
+                        <li><a href="estadio.html" class="active">Estadio</a></li>
+                        <li><a href="casaclub.html">Casa Club</a></li>
+                        <li><a href="contacto.html">Contacto</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        Deportivo
+                        <svg class="arrow-icon" viewBox="0 0 24 24">
+                            <path d="M7 10l5 5 5-5z" />
+                        </svg>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="ligatdp.html">Liga TDP</a></li>
+                        <li><a href="fuerzasbasicas.html">Fuerzas Básicas</a></li>
+                        <li><a href="calendario.html">Calendario</a></li>
+                        <li class="dropdown-submenu-container">
+                            <a href="proyeccion.html" class="submenu-toggle">Proyección <span
+                                    class="arrow-right"></span></a>
+                            <ul class="submenu">
+                                <li><a href="equipos-tdp.html">Equipos TDP</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="articulos.html">Artículos</a></li>
+                        <li><a href="noticias.html">Noticias</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="escuela.html" class="nav-link">Escuela</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="brijitienda.html" class="nav-link">Brijitienda</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="../webvisorias/FormularioDeRegistroVisoria-main/index.html" class="nav-link nav-btn-cta"
+                        target="_blank" rel="noopener noreferrer">Visorias</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="login.html" id="nav-login-btn" class="nav-link nav-btn-login">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                            <polyline points="10 17 15 12 10 7"></polyline>
+                            <line x1="15" y1="12" x2="3" y2="12"></line>
+                        </svg>
+                        Iniciar Sesión
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="estadio-hero">
+        <img src="../assets/Nosotros/Gabino-Gobernador-Inauguración-Estadio-12.jpg" alt="Centro Deportivo Pascual Boing"
+            class="estadio-bg-img">
+        <div class="estadio-overlay"></div>
+        <div class="container estadio-hero-content">
+            <span class="estadio-badge">NUESTRA CASA</span>
+            <h1 class="estadio-hero-title">Centro Deportivo<br><span class="text-gradient">Pascual Boing</span></h1>
+            <p class="estadio-hero-subtitle">El recinto donde los Alebrijes Teotihuacán hacen historia. Un espacio
+                diseñado para vivir el fútbol con pasión, donde la tradición oaxaqueña se encuentra con el futuro del
+                deporte mexicano.</p>
+        </div>
+    </header>
+
+    <!-- Estadio Info Section -->
+    <section class="section estadio-main-section">
+        <div class="container">
+            <div class="estadio-description-wrapper">
+                <div class="estadio-description-card">
+                    <div class="description-content">
+                        <span class="description-badge">NUESTRO RECINTO</span>
+                        <h3>Un Espacio de Excelencia</h3>
+                        <p>El Centro Deportivo Pascual Boing es mucho más que un estadio: es el corazón donde late la
+                            pasión de los Alebrijes Teotihuacán. Este recinto moderno y funcional fue diseñado para
+                            ofrecer la mejor experiencia tanto para jugadores como para aficionados.</p>
+                        <p>Cuenta con vestidores profesionales de primer nivel, gradas techadas que protegen a los
+                            espectadores, y una cancha de pasto natural que cumple con los más altos estándares para la
+                            competencia en la Liga TDP.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Collage Section -->
+    <section class="section estadio-gallery-section">
+        <div class="container">
+            <div class="gallery-section-header">
+                <span class="section-label">GALERÍA</span>
+                <h2>Nuestras Instalaciones</h2>
+                <p>Conoce el Centro Deportivo Pascual Boing a través de nuestras imágenes</p>
+            </div>
+            <div class="gallery-collage" id="gallery-collage">
+                <!-- Las imágenes se cargarán dinámicamente desde JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox-modal" id="lightbox-modal">
+        <button class="lightbox-close" id="lightbox-close" aria-label="Cerrar">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+        <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Anterior">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+        </button>
+        <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Siguiente">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+        </button>
+        <div class="lightbox-content">
+            <img id="lightbox-image" src="" alt="Imagen del estadio">
+            <div class="lightbox-info">
+                <span id="lightbox-counter"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map Section -->
+    <section class="section estadio-map-section">
+        <div class="container">
+            <div class="map-section-header">
+                <span class="section-label">UBICACIÓN</span>
+                <h2>¿Cómo Llegar?</h2>
+                <p>Visita el Centro Deportivo Pascual Boing y vive la experiencia de los Alebrijes Teotihuacán</p>
+            </div>
+            <div class="estadio-map-container">
+                <div class="map-wrapper">
+                    <iframe
+                        src="https://www.google.com/maps?q=Centro+Recreativo+Pascual+Curva+la+Garita+Atlatongo+Teotihuacán+Estado+de+México&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                        width="100%" height="450" style="border:0; border-radius: 16px;" allowfullscreen=""
+                        loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                        title="Centro Recreativo Pascual - Curva la Garita s/n, Atlatongo">
+                    </iframe>
+                </div>
+                <div class="map-info-card">
+                    <h3>Dirección</h3>
+                    <p class="map-address">Centro Recreativo Pascual<br>Curva la Garita s/n, Atlatongo<br>55823
+                        Teotihuacán de Arista, Méx.</p>
+                    <a href="https://pascual.com.mx/centro-recreativo/" target="_blank" class="btn btn-primary"
+                        style="margin-top: 20px;">
+                        Ver más información →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contacto">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <img src="../assets/Alebrijes Teotihuacan.png" alt="Logo Footer" class="footer-logo-img">
+                <p>Pasión y formación deportiva con identidad oaxaqueña.</p>
+            </div>
+
+            <div class="footer-links">
+                <h4>Navegación</h4>
+                <ul>
+                    <li><a href="../index.html">Inicio</a></li>
+                    <li><a href="nosotros.html">Nosotros</a></li>
+                    <li><a href="../webvisorias/FormularioDeRegistroVisoria-main/index.html" target="_blank"
+                            rel="noopener noreferrer">Visorias</a></li>
+                    <li><a href="ligatdp.html">Liga TDP</a></li>
+                    <li><a href="noticias.html">Noticias</a></li>
+                    <li><a href="fuerzasbasicas.html">Fuerzas Básicas</a></li>
+                    <li><a href="casaclub.html">Casa Club</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-contact">
+                <h4>Contacto</h4>
+                <p>
+                    <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                    </svg>
+                    Centro Deportivo Pascual Boing
+                </p>
+                <p>
+                    <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                    </svg>
+                    alebrijesclub6@gmail.com
+                </p>
+            </div>
+
+            <div class="footer-social">
+                <h4>Alebrijes de Oaxaca</h4>
+                <div class="social-links-footer">
+                    <a href="https://www.facebook.com/AlebrijesOficial/" target="_blank" class="social-link-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                        </svg>
+                        <span>Facebook</span>
+                    </a>
+                    <a href="https://www.instagram.com/alebrijesoaxacaoficial/" target="_blank"
+                        class="social-link-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                        </svg>
+                        <span>Instagram</span>
+                    </a>
+                    <a href="https://www.tiktok.com/@alebrijesoaxacaoficial?lang=es" target="_blank"
+                        class="social-link-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path
+                                d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
+                        </svg>
+                        <span>TikTok</span>
+                    </a>
+                    <a href="https://x.com/AlebrijesOaxaca" target="_blank" class="social-link-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path
+                                d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                        </svg>
+                        <span>X (Twitter)</span>
+                    </a>
+                    <a href="https://www.youtube.com/user/AlebrijesTV" target="_blank" class="social-link-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path
+                                d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                        </svg>
+                        <span>YouTube</span>
+                    </a>
+                </div>
+                <h4 style="margin-top: 20px;">Alebrijes Teotihuacán</h4>
+                <div class="social-links-footer">
+                    <a href="https://www.facebook.com/profile.php?id=100083182488673&locale=es_LA" target="_blank"
+                        class="social-link-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                        </svg>
+                        <span>Facebook</span>
+                    </a>
+                    <a href="https://www.instagram.com/alebrijes_teoti" target="_blank" class="social-link-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                        </svg>
+                        <span>Instagram</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Alebrijes de Oaxaca Teotihuacán. | <a href="politica-privacidad.html">Política de
+                    Privacidad</a> | <a href="terminos-condiciones.html">Términos y Condiciones</a></p>
+        </div>
+    </footer>
+
+    <script src="../scripts/estadio.js"></script>
+    <script src="../scripts/script.js"></script>
+    <script type="module" src="../scripts/nav-auth.js"></script>
+</body>
+
+</html>

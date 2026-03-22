@@ -1,0 +1,9 @@
+/* Articulos CSS */
+.articulos-hero {
+    background: linear-gradient(rgba(243, 106, 33, 0.9), rgba(243, 106, 33, 0.7)), url('../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png');
+    padding: 80px 0;
+    color: white;
+}
+
+/* Inherits most from styles.css .pillars-grid etc. */
+/* Custom overrides if needed */

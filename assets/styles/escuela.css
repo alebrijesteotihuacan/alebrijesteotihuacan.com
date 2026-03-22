@@ -1,0 +1,571 @@
+/* 
+   Instituto Azteca de Formación Empresarial
+   Escuela Page Styles - Minimalist, Academic, Professional Design
+*/
+
+:root {
+    --azteca-primary: #003366; /* Azul marino profesional */
+    --azteca-secondary: #C9A961; /* Dorado institucional */
+    --azteca-white: #FFFFFF;
+    --azteca-gray-light: #F8F9FA;
+    --azteca-gray-border: #E5E7EB;
+    --azteca-text: #1F2937;
+    --azteca-text-light: #6B7280;
+}
+
+/* Navbar Theming */
+.escuela-navbar {
+    background: rgba(0, 51, 102, 0.95) !important;
+    backdrop-filter: blur(15px);
+}
+
+.escuela-navbar.scrolled {
+    background: rgba(0, 51, 102, 0.98) !important;
+    box-shadow: 0 4px 20px rgba(0, 51, 102, 0.2);
+}
+
+.escuela-navbar .nav-link.active {
+    color: var(--azteca-secondary) !important;
+}
+
+
+.escuela-navbar .nav-link:hover {
+    color: var(--azteca-secondary) !important;
+}
+
+/* Header Section - Enhanced Design */
+.escuela-header {
+    position: relative;
+    width: 100%;
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: var(--header-height);
+    overflow: hidden;
+    background: var(--azteca-primary);
+}
+
+.escuela-header-bg-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.escuela-header-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0.5;
+    z-index: 1;
+}
+
+.escuela-header-bg-secondary {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0.2;
+    z-index: 1;
+}
+
+.escuela-header-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        135deg,
+        rgba(0, 51, 102, 0.9) 0%,
+        rgba(0, 51, 102, 0.85) 50%,
+        rgba(0, 31, 63, 0.9) 100%
+    );
+    z-index: 2;
+}
+
+.escuela-header-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 10px,
+            rgba(201, 169, 97, 0.03) 10px,
+            rgba(201, 169, 97, 0.03) 20px
+        );
+    z-index: 3;
+}
+
+.escuela-header-content {
+    position: relative;
+    z-index: 4;
+    text-align: center;
+    padding: 100px 20px;
+    max-width: 900px;
+}
+
+.instituto-logo-wrapper {
+    margin-bottom: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo-container {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.instituto-logo {
+    max-width: 200px;
+    height: auto;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+}
+
+.instituto-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    color: var(--azteca-white);
+    margin-bottom: 20px;
+    line-height: 1.3;
+    letter-spacing: -0.5px;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.instituto-subtitle {
+    font-size: clamp(0.95rem, 2vw, 1.15rem);
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.95);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    line-height: 1.6;
+}
+
+/* Main Split Screen Section */
+.escuela-main-section {
+    padding: 100px 0;
+    background: var(--azteca-gray-light);
+}
+
+.escuela-split-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: var(--azteca-gray-border);
+}
+
+.escuela-split-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 60px;
+    min-height: 500px;
+    background: var(--azteca-white);
+    transition: background-color 0.2s ease;
+}
+
+.estudiante-card {
+    border-right: 1px solid var(--azteca-gray-border);
+}
+
+.docente-card {
+    border-left: 1px solid var(--azteca-gray-border);
+}
+
+.escuela-split-card:hover {
+    background: #FAFBFC;
+}
+
+.split-card-content {
+    text-align: center;
+    max-width: 400px;
+}
+
+.split-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 600;
+    color: var(--azteca-text);
+    margin-bottom: 24px;
+    line-height: 1.3;
+    letter-spacing: -0.3px;
+}
+
+.split-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--azteca-text-light);
+    margin-bottom: 48px;
+    font-weight: 400;
+}
+
+/* Buttons - Minimalist Design */
+.btn-acceder {
+    display: inline-block;
+    padding: 14px 40px;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    border: 1px solid var(--azteca-primary);
+    background: var(--azteca-primary);
+    color: var(--azteca-white);
+}
+
+.btn-acceder:hover {
+    background: #002244;
+    border-color: #002244;
+}
+
+.btn-acceder:active {
+    background: #001f3f;
+}
+
+/* About Section */
+.escuela-about-section {
+    padding: 100px 0;
+    background: var(--azteca-white);
+}
+
+.about-content-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.about-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    color: var(--azteca-text);
+    margin-bottom: 40px;
+    text-align: center;
+    line-height: 1.3;
+    letter-spacing: -0.5px;
+}
+
+.about-text-content {
+    text-align: left;
+}
+
+.about-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--azteca-text);
+    text-align: justify;
+}
+
+.about-text p {
+    margin-bottom: 24px;
+    text-align: justify;
+}
+
+.about-text p:last-child {
+    margin-bottom: 0;
+}
+
+/* Alliance Section */
+.escuela-alliance-section {
+    padding: 100px 0;
+    background: linear-gradient(180deg, var(--azteca-gray-light) 0%, var(--azteca-white) 100%);
+    border-top: 1px solid var(--azteca-gray-border);
+}
+
+.alliance-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.alliance-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    color: var(--azteca-text);
+    margin-bottom: 12px;
+    line-height: 1.3;
+    letter-spacing: -0.5px;
+}
+
+.alliance-subtitle {
+    font-size: 1.1rem;
+    color: var(--azteca-text-light);
+    margin-bottom: 60px;
+    font-weight: 400;
+}
+
+.alliance-logos {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 80px;
+    flex-wrap: wrap;
+}
+
+.alliance-logo-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex: 0 0 auto;
+    min-width: 200px;
+    text-align: center;
+}
+
+.alliance-logo {
+    width: 180px;
+    height: 180px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+    transition: transform 0.2s ease;
+}
+
+.alliance-logo-item:hover .alliance-logo {
+    transform: scale(1.05);
+}
+
+.alliance-logo-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--azteca-text);
+    display: block;
+    text-align: center;
+    line-height: 1.4;
+}
+
+.alliance-logo-subtitle {
+    font-size: 0.95rem;
+    color: var(--azteca-text-light);
+    font-weight: 400;
+    display: block;
+    text-align: center;
+    line-height: 1.4;
+}
+
+.alliance-divider {
+    color: var(--azteca-secondary);
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin: 0 20px;
+}
+
+.alliance-divider svg {
+    width: 32px;
+    height: 32px;
+}
+
+/* Responsive Design */
+@media (max-width: 968px) {
+    .escuela-header {
+        min-height: 500px;
+    }
+
+    .escuela-header-content {
+        padding: 80px 20px;
+    }
+
+    .logo-container {
+        padding: 25px;
+    }
+
+    .instituto-logo {
+        max-width: 160px;
+    }
+
+    .escuela-split-container {
+        grid-template-columns: 1fr;
+    }
+
+    .escuela-split-card {
+        min-height: 400px;
+        padding: 60px 40px;
+    }
+
+    .estudiante-card {
+        border-right: none;
+        border-bottom: 1px solid var(--azteca-gray-border);
+    }
+
+    .docente-card {
+        border-left: none;
+        border-top: 1px solid var(--azteca-gray-border);
+    }
+
+    .alliance-logos {
+        gap: 50px;
+    }
+
+    .alliance-logo-item {
+        min-width: 180px;
+    }
+
+    .alliance-logo {
+        width: 160px;
+        height: 160px;
+    }
+
+    .alliance-divider {
+        width: 45px;
+        height: 45px;
+        margin: 0 15px;
+    }
+
+    .alliance-divider svg {
+        width: 28px;
+        height: 28px;
+    }
+}
+
+@media (max-width: 768px) {
+    .escuela-header {
+        min-height: 450px;
+    }
+
+    .escuela-main-section,
+    .escuela-about-section,
+    .escuela-alliance-section {
+        padding: 60px 0;
+    }
+
+    .escuela-split-card {
+        min-height: 350px;
+        padding: 50px 30px;
+    }
+
+    .split-title {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+
+    .split-description {
+        font-size: 0.95rem;
+        margin-bottom: 40px;
+    }
+
+    .btn-acceder {
+        padding: 12px 36px;
+        font-size: 0.9rem;
+    }
+
+    .instituto-title {
+        font-size: 1.75rem;
+    }
+
+    .about-text {
+        font-size: 1rem;
+    }
+
+    .alliance-logos {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .alliance-logo-item {
+        min-width: 160px;
+    }
+
+    .alliance-logo {
+        width: 150px;
+        height: 150px;
+    }
+
+    .alliance-divider {
+        width: 40px;
+        height: 40px;
+        margin: 10px 0;
+    }
+
+    .alliance-divider svg {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .escuela-header-content {
+        padding: 60px 20px;
+    }
+
+    .escuela-header {
+        min-height: 400px;
+    }
+
+    .logo-container {
+        padding: 20px;
+    }
+
+    .instituto-logo {
+        max-width: 140px;
+    }
+
+    .escuela-split-card {
+        padding: 40px 25px;
+        min-height: 320px;
+    }
+
+    .btn-acceder {
+        padding: 12px 32px;
+        font-size: 0.875rem;
+    }
+
+    .alliance-logo {
+        width: 120px;
+    }
+
+    .alliance-logo-label {
+        font-size: 1.1rem;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .escuela-header,
+    .escuela-main-section,
+    .escuela-about-section,
+    .escuela-alliance-section {
+        background: white;
+        color: black;
+    }
+
+    .escuela-split-card {
+        background: white !important;
+        border: 1px solid #ccc;
+    }
+
+    .split-title,
+    .split-description,
+    .about-text {
+        color: black;
+    }
+}

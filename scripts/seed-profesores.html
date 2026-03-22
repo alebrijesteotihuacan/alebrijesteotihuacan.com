@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seed - Crear Profesores | Alebrijes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0f0f0f;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            width: 100%;
+            background: #1a1a1a;
+            border-radius: 16px;
+            border: 1px solid #333;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #f36a21 0%, #e85d10 100%);
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+
+        .header p {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+            font-size: 0.85rem;
+        }
+
+        .users-table th {
+            text-align: left;
+            padding: 10px 12px;
+            background: #222;
+            color: #aaa;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.72rem;
+        }
+
+        .users-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .role-admin {
+            background: #f36a21;
+            color: #fff;
+        }
+
+        .role-profesor {
+            background: #333;
+            color: #aaa;
+        }
+
+        .btn-seed {
+            width: 100%;
+            padding: 14px;
+            background: #f36a21;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-seed:hover {
+            background: #e85d10;
+            transform: translateY(-1px);
+        }
+
+        .btn-seed:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .log {
+            margin-top: 20px;
+            background: #111;
+            border-radius: 8px;
+            padding: 16px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Cascadia Code', 'Fira Code', monospace;
+            font-size: 0.78rem;
+            line-height: 1.6;
+            display: none;
+        }
+
+        .log.active {
+            display: block;
+        }
+
+        .log-entry {
+            padding: 2px 0;
+        }
+
+        .log-success {
+            color: #68d391;
+        }
+
+        .log-error {
+            color: #fc8181;
+        }
+
+        .log-info {
+            color: #63b3ed;
+        }
+
+        .log-warn {
+            color: #f6e05e;
+        }
+
+        .warning-box {
+            background: #2d1f0e;
+            border: 1px solid #f36a21;
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 20px;
+            font-size: 0.82rem;
+            color: #f6c07a;
+        }
+
+        .warning-box strong {
+            color: #f36a21;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌱 Seed de Profesores</h1>
+            <p>Crear usuarios en Firebase Auth + Firestore</p>
+        </div>
+        <div class="content">
+            <div class="warning-box">
+                <strong>⚠️ IMPORTANTE:</strong> Ejecuta este script solo UNA VEZ. Si los usuarios ya existen, se
+                mostrarán errores que puedes ignorar.
+            </div>
+
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Correo</th>
+                        <th>Contraseña</th>
+                        <th>Rol</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Juan</td>
+                        <td>juan@alebrijes.com</td>
+                        <td>Juan123</td>
+                        <td><span class="role-badge role-admin">Admin</span></td>
+                    </tr>
+                    <tr>
+                        <td>Abimael</td>
+                        <td>abimael@alebrijes.com</td>
+                        <td>Abimael123</td>
+                        <td><span class="role-badge role-profesor">Profesor</span></td>
+                    </tr>
+                    <tr>
+                        <td>Lalo</td>
+                        <td>lalo@alebrijes.com</td>
+                        <td>Lalo123</td>
+                        <td><span class="role-badge role-profesor">Profesor</span></td>
+                    </tr>
+                    <tr>
+                        <td>Ricardo</td>
+                        <td>ricardo@alebrijes.com</td>
+                        <td>Ricardo123</td>
+                        <td><span class="role-badge role-profesor">Profesor</span></td>
+                    </tr>
+                    <tr>
+                        <td>Hector</td>
+                        <td>hector@alebrijes.com</td>
+                        <td>Hector123</td>
+                        <td><span class="role-badge role-profesor">Profesor</span></td>
+                    </tr>
+                    <tr>
+                        <td>Oswaldo</td>
+                        <td>oswaldo@alebrijes.com</td>
+                        <td>Oswaldo123</td>
+                        <td><span class="role-badge role-profesor">Profesor</span></td>
+                    </tr>
+                    <tr>
+                        <td>Emilio</td>
+                        <td>emilio@alebrijes.com</td>
+                        <td>Emilio123</td>
+                        <td><span class="role-badge role-admin">Admin (Soles)</span></td>
+                    </tr>
+                    <tr>
+                        <td>Ramiro</td>
+                        <td>ramiro@alebrijes.com</td>
+                        <td>Ramiro123</td>
+                        <td><span class="role-badge role-profesor">Profesor (Global)</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <button class="btn-seed" id="btnSeed" onclick="ejecutarSeed()">
+                🚀 Crear Usuarios en Firebase
+            </button>
+
+            <div class="log" id="logContainer"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD5aakkUMk77EMKPwHvjXTqzPKBvejhjEo",
+            authDomain: "metricasalebrijes.firebaseapp.com",
+            projectId: "metricasalebrijes",
+            storageBucket: "metricasalebrijes.firebasestorage.app",
+            messagingSenderId: "822819596837",
+            appId: "1:822819596837:web:62f3f4139332830ee96dcc"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const PROFESORES = [
+            { nombre: 'Juan', email: 'juan@alebrijes.com', password: 'Juan123', rol: 'admin' },
+            { nombre: 'Abimael', email: 'abimael@alebrijes.com', password: 'Abimael123', rol: 'profesor' },
+            { nombre: 'Lalo', email: 'lalo@alebrijes.com', password: 'Lalo123', rol: 'profesor' },
+            { nombre: 'Ricardo', email: 'ricardo@alebrijes.com', password: 'Ricardo123', rol: 'profesor' },
+            { nombre: 'Hector', email: 'hector@alebrijes.com', password: 'Hector123', rol: 'profesor' },
+            { nombre: 'Oswaldo', email: 'oswaldo@alebrijes.com', password: 'Oswaldo123', rol: 'profesor' },
+            { nombre: 'Emilio', email: 'emilio@alebrijes.com', password: 'Emilio123', rol: 'admin', equipoRestringido: 'Soles' },
+            { nombre: 'Ramiro', email: 'ramiro@alebrijes.com', password: 'Ramiro123', rol: 'profesor', evaluadorGlobal: true }
+        ];
+
+        const logContainer = document.getElementById('logContainer');
+        const btnSeed = document.getElementById('btnSeed');
+
+        function log(message, type = 'info') {
+            logContainer.classList.add('active');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            const prefix = { success: '✅', error: '❌', info: 'ℹ️', warn: '⚠️' }[type] || 'ℹ️';
+            entry.textContent = `${prefix} ${message}`;
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        window.ejecutarSeed = async function () {
+            btnSeed.disabled = true;
+            btnSeed.textContent = 'Ejecutando...';
+            log('Iniciando creación de usuarios...', 'info');
+
+            let exitosos = 0;
+            let errores = 0;
+
+            for (const prof of PROFESORES) {
+                try {
+                    log(`Creando usuario: ${prof.nombre} (${prof.email})...`, 'info');
+
+                    // 1. Create Auth user
+                    const cred = await createUserWithEmailAndPassword(auth, prof.email, prof.password);
+                    const uid = cred.user.uid;
+
+                    // 2. Update display name
+                    await updateProfile(cred.user, { displayName: prof.nombre });
+
+                    // 3. Create Firestore document in 'profesores' collection
+                    const docData = {
+                        nombre: prof.nombre,
+                        email: prof.email,
+                        rol: prof.rol,
+                        creadoEn: serverTimestamp()
+                    };
+                    if (prof.equipoRestringido) {
+                        docData.equipoRestringido = prof.equipoRestringido;
+                    }
+                    if (prof.evaluadorGlobal) {
+                        docData.evaluadorGlobal = prof.evaluadorGlobal;
+                    }
+
+                    await setDoc(doc(db, 'profesores', uid), docData);
+
+                    log(`${prof.nombre} creado exitosamente (UID: ${uid})`, 'success');
+                    exitosos++;
+
+                } catch (error) {
+                    if (error.code === 'auth/email-already-in-use') {
+                        log(`${prof.nombre}: El correo ya está registrado (omitir)`, 'warn');
+                    } else {
+                        log(`Error creando ${prof.nombre}: ${error.message}`, 'error');
+                    }
+                    errores++;
+                }
+            }
+
+            log('', 'info');
+            log(`═══ RESULTADO: ${exitosos} creados, ${errores} omitidos/errores ═══`, exitosos > 0 ? 'success' : 'warn');
+            btnSeed.textContent = '✅ Completado';
+        };
+    </script>
+</body>
+
+</html>

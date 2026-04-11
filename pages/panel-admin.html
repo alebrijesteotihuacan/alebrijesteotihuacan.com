@@ -1,0 +1,2155 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administrativo | Alebrijes de Oaxaca Teotihuacán</title>
+    <meta name="description" content="Panel de administración de Alebrijes de Oaxaca Teotihuacán.">
+    <meta name="author" content="Alebrijes de Oaxaca Teotihuacán">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#E85D26">
+    <link rel="canonical" href="https://alebrijesteotihuacan.com/pages/panel-admin.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Panel Administrativo | Alebrijes de Oaxaca Teotihuacán">
+    <meta property="og:description" content="Panel de administración de Alebrijes de Oaxaca Teotihuacán.">
+    <meta property="og:image" content="https://alebrijesteotihuacan.com/assets/seo/og-image.png">
+    <meta property="og:url" content="https://alebrijesteotihuacan.com/pages/panel-admin.html">
+    <meta property="og:site_name" content="Alebrijes de Oaxaca Teotihuacán">
+    <meta property="og:locale" content="es_MX">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Panel Administrativo | Alebrijes de Oaxaca Teotihuacán">
+    <meta name="twitter:description" content="Panel de administración de Alebrijes de Oaxaca Teotihuacán.">
+    <meta name="twitter:image" content="https://alebrijesteotihuacan.com/assets/seo/og-image.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <!-- jsPDF -->
+    <script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+        :root {
+            --admin-dark: #0c1117;
+            --admin-card: #151c25;
+            --admin-card-hover: #1a2332;
+            --admin-border: #1e2a3a;
+            --admin-accent: #f36a21;
+            --admin-accent-glow: rgba(243, 106, 33, 0.15);
+            --admin-text: #e2e8f0;
+            --admin-text-muted: #6b7a8d;
+            --admin-green: #10b981;
+            --admin-blue: #3b82f6;
+            --admin-purple: #8b5cf6;
+            --admin-yellow: #f59e0b;
+            --admin-red: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', system-ui, sans-serif;
+            background: var(--admin-dark);
+            color: var(--admin-text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ===== TOP BAR ===== */
+        .admin-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            height: 64px;
+            background: linear-gradient(90deg, #0c1117 0%, #111924 50%, #0c1117 100%);
+            border-bottom: 1px solid var(--admin-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .admin-topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .admin-topbar-logo {
+            width: 42px;
+            height: 42px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 8px rgba(243, 106, 33, 0.3));
+        }
+
+        .admin-topbar-title {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-topbar-title span:first-child {
+            font-size: 0.92rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .admin-topbar-title span:last-child {
+            font-size: 0.62rem;
+            color: var(--admin-accent);
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .admin-topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .admin-topbar-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 14px 6px 8px;
+            background: rgba(243, 106, 33, 0.08);
+            border: 1px solid rgba(243, 106, 33, 0.15);
+            border-radius: 10px;
+        }
+
+        .admin-topbar-user-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--admin-accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.8rem;
+            color: #fff;
+        }
+
+        .admin-topbar-user-name {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .admin-topbar-user-role {
+            font-size: 0.6rem;
+            color: var(--admin-accent);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .admin-logout-btn {
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.15);
+            color: var(--admin-red);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .admin-logout-btn:hover {
+            background: rgba(239, 68, 68, 0.15);
+        }
+
+        .admin-logout-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* ===== MAIN LAYOUT ===== */
+        .admin-main {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 28px 30px 60px;
+        }
+
+        /* ===== WELCOME BANNER ===== */
+        .admin-banner {
+            position: relative;
+            background: linear-gradient(135deg, #111924 0%, #0f1620 40%, #1a1208 100%);
+            border-radius: 18px;
+            border: 1px solid var(--admin-border);
+            padding: 32px 36px;
+            margin-bottom: 28px;
+            overflow: hidden;
+        }
+
+        .admin-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(243, 106, 33, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .admin-banner h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+
+        .admin-banner h1 span {
+            color: var(--admin-accent);
+        }
+
+        .admin-banner p {
+            font-size: 0.82rem;
+            color: var(--admin-text-muted);
+            max-width: 500px;
+        }
+
+        .admin-banner-date {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 14px;
+            padding: 6px 14px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            font-size: 0.72rem;
+            color: var(--admin-text-muted);
+            text-transform: capitalize;
+        }
+
+        .admin-banner-date svg {
+            width: 13px;
+            height: 13px;
+            color: var(--admin-accent);
+        }
+
+        /* ===== STATS GRID ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--admin-card);
+            border: 1px solid var(--admin-border);
+            border-radius: 14px;
+            padding: 22px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            border-color: rgba(243, 106, 33, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 80px;
+            height: 80px;
+            border-radius: 0 14px 0 80px;
+            opacity: 0.06;
+        }
+
+        .stat-card.sc-professors::after {
+            background: var(--admin-purple);
+        }
+
+        .stat-card.sc-players::after {
+            background: var(--admin-accent);
+        }
+
+        .stat-card.sc-evals::after {
+            background: var(--admin-green);
+        }
+
+        .stat-card.sc-categories::after {
+            background: var(--admin-yellow);
+        }
+
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+        }
+
+        .stat-icon svg {
+            width: 22px;
+            height: 22px;
+            color: #fff;
+        }
+
+        .sc-professors .stat-icon {
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .sc-players .stat-icon {
+            background: linear-gradient(135deg, #f36a21, #ea580c);
+            box-shadow: 0 4px 12px rgba(243, 106, 33, 0.3);
+        }
+
+        .sc-evals .stat-icon {
+            background: linear-gradient(135deg, #10b981, #059669);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .sc-categories .stat-icon {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #fff;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.72rem;
+            color: var(--admin-text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        /* ===== SECTIONS ===== */
+        .admin-section {
+            background: var(--admin-card);
+            border: 1px solid var(--admin-border);
+            border-radius: 16px;
+            padding: 26px;
+            margin-bottom: 24px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .section-title svg {
+            width: 20px;
+            height: 20px;
+            color: var(--admin-accent);
+        }
+
+        .section-title .section-count {
+            font-size: 0.65rem;
+            padding: 3px 8px;
+            background: rgba(243, 106, 33, 0.12);
+            color: var(--admin-accent);
+            border-radius: 6px;
+            font-weight: 700;
+        }
+
+        /* ===== PROFESSORS GRID ===== */
+        .professors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 14px;
+        }
+
+        .prof-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--admin-border);
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+
+        .prof-card:hover {
+            border-color: rgba(139, 92, 246, 0.3);
+            background: rgba(139, 92, 246, 0.04);
+        }
+
+        .prof-avatar {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .prof-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .prof-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .prof-email {
+            font-size: 0.68rem;
+            color: var(--admin-text-muted);
+            margin-top: 2px;
+            word-break: break-all;
+        }
+
+        .prof-meta {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .prof-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.62rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .chip-players {
+            background: rgba(243, 106, 33, 0.1);
+            color: var(--admin-accent);
+        }
+
+        .chip-evals {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--admin-green);
+        }
+
+        .prof-creds {
+            margin-top: 8px;
+            padding: 6px 8px;
+            background: rgba(59, 130, 246, 0.04);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            border-radius: 6px;
+            font-size: 0.64rem;
+            color: var(--admin-text-muted);
+        }
+
+        .prof-creds strong {
+            color: var(--admin-text);
+        }
+
+        .prof-creds .pass-val {
+            font-family: 'Courier New', monospace;
+            color: var(--admin-blue);
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        /* ===== PLAYERS GRID ===== */
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+            gap: 14px;
+        }
+
+        .player-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--admin-border);
+            border-radius: 14px;
+            padding: 16px 12px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: default;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .player-card:hover {
+            border-color: rgba(243, 106, 33, 0.25);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .player-card-photo {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            overflow: hidden;
+            border: 2px solid var(--admin-border);
+            transition: border-color 0.3s;
+            position: relative;
+            background: var(--admin-card);
+        }
+
+        .player-card:hover .player-card-photo {
+            border-color: var(--admin-accent);
+        }
+
+        .player-card-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .player-card-photo .default-avatar {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1e293b, #334155);
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--admin-text-muted);
+        }
+
+        .player-card-name {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .player-card-pos {
+            font-size: 0.62rem;
+            font-weight: 600;
+            color: var(--admin-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .player-card-avg {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 800;
+        }
+
+        .avg-good {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--admin-green);
+        }
+
+        .avg-mid {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--admin-yellow);
+        }
+
+        .avg-low {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--admin-red);
+        }
+
+        .avg-none {
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--admin-text-muted);
+        }
+
+        .player-card-prof {
+            font-size: 0.6rem;
+            color: var(--admin-text-muted);
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .player-card-prof svg {
+            width: 10px;
+            height: 10px;
+        }
+
+        /* ===== SEARCH ===== */
+        .admin-search-wrap {
+            position: relative;
+            max-width: 280px;
+        }
+
+        .admin-search-wrap svg {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 14px;
+            height: 14px;
+            color: var(--admin-text-muted);
+            pointer-events: none;
+        }
+
+        .admin-search-wrap input {
+            width: 100%;
+            padding: 9px 14px 9px 36px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--admin-border);
+            border-radius: 8px;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.78rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .admin-search-wrap input::placeholder {
+            color: var(--admin-text-muted);
+        }
+
+        .admin-search-wrap input:focus {
+            border-color: var(--admin-accent);
+            box-shadow: 0 0 0 3px var(--admin-accent-glow);
+        }
+
+        /* ===== LOADING ===== */
+        .admin-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 70vh;
+            gap: 16px;
+        }
+
+        .admin-loading .spinner {
+            width: 44px;
+            height: 44px;
+            border: 3px solid var(--admin-border);
+            border-top-color: var(--admin-accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .admin-loading p {
+            font-size: 0.82rem;
+            color: var(--admin-text-muted);
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ===== PDF SECTION ===== */
+        .pdf-section {
+            background: linear-gradient(135deg, #111924 0%, #0f1620 40%, #1a1208 100%);
+            border: 1px solid var(--admin-border);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pdf-section::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -5%;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(243, 106, 33, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .pdf-section-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .pdf-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 6px 18px rgba(239, 68, 68, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .pdf-icon svg {
+            width: 24px;
+            height: 24px;
+            color: #fff;
+        }
+
+        .pdf-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .pdf-subtitle {
+            font-size: 0.75rem;
+            color: var(--admin-text-muted);
+            margin-top: 2px;
+        }
+
+        .pdf-controls {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 0.3px;
+        }
+
+        .pdf-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+        }
+
+        .pdf-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .pdf-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .pdf-status {
+            font-size: 0.75rem;
+            color: var(--admin-text-muted);
+            margin-top: 12px;
+            display: none;
+        }
+
+        .pdf-status.active {
+            display: block;
+        }
+
+        .pdf-status.success {
+            color: var(--admin-green);
+        }
+
+        .pdf-status.error {
+            color: var(--admin-red);
+        }
+
+        /* ===== FILTER SELECT ===== */
+        .admin-filter-select {
+            padding: 9px 32px 9px 14px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--admin-border);
+            border-radius: 8px;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.78rem;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7a8d' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+        }
+
+        .admin-filter-select:focus {
+            border-color: var(--admin-accent);
+            box-shadow: 0 0 0 3px var(--admin-accent-glow);
+        }
+
+        .admin-filter-select option {
+            background: var(--admin-card);
+            color: var(--admin-text);
+        }
+
+        .admin-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* ===== EVAL CARDS ===== */
+        .eval-detail-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--admin-border);
+            border-radius: 14px;
+            padding: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .eval-detail-card:hover {
+            border-color: rgba(16, 185, 129, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .eval-detail-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .eval-player-photo {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid var(--admin-border);
+            flex-shrink: 0;
+            background: var(--admin-card);
+        }
+
+        .eval-player-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .eval-player-photo .default-avatar {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1e293b, #334155);
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: var(--admin-text-muted);
+        }
+
+        .eval-detail-info h4 {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .eval-detail-info p {
+            font-size: 0.68rem;
+            color: var(--admin-text-muted);
+            margin-top: 2px;
+        }
+
+        .eval-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 8px;
+        }
+
+        .eval-metric {
+            padding: 8px 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .eval-metric-value {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1;
+        }
+
+        .eval-metric-label {
+            font-size: 0.58rem;
+            color: var(--admin-text-muted);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .eval-detail-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--admin-border);
+        }
+
+        .eval-prof-tag {
+            font-size: 0.65rem;
+            color: var(--admin-text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .eval-prof-tag svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        .eval-week-tag {
+            display: inline-flex;
+            padding: 3px 8px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 5px;
+            font-size: 0.62rem;
+            font-weight: 700;
+            color: var(--admin-blue);
+        }
+
+        .eval-avg-big {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 44px;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 900;
+        }
+
+        .evals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 14px;
+        }
+
+        .eval-obs {
+            margin-top: 10px;
+            padding: 8px 10px;
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 3px solid var(--admin-accent);
+            border-radius: 0 6px 6px 0;
+            font-size: 0.72rem;
+            color: var(--admin-text-muted);
+            font-style: italic;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .admin-main {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .admin-topbar {
+                padding: 0 16px;
+            }
+
+            .admin-main {
+                padding: 16px;
+            }
+
+            .admin-banner {
+                padding: 24px;
+            }
+
+            .admin-banner h1 {
+                font-size: 1.2rem;
+            }
+
+            .players-grid {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            }
+
+            .professors-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Top Bar -->
+    <div class="admin-topbar">
+        <div class="admin-topbar-left">
+            <img src="../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png" alt="Logo" class="admin-topbar-logo">
+            <div class="admin-topbar-title">
+                <span>Alebrijes Teotihuacán</span>
+                <span>Panel Administrativo</span>
+            </div>
+        </div>
+        <div class="admin-topbar-right">
+            <div class="admin-topbar-user">
+                <div class="admin-topbar-user-avatar" id="adminAvatar">J</div>
+                <div>
+                    <div class="admin-topbar-user-name" id="adminName">Admin</div>
+                    <div class="admin-topbar-user-role">Administrador</div>
+                </div>
+            </div>
+            <button class="admin-logout-btn" id="adminLogoutBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Salir
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="admin-loading" id="adminLoading">
+        <div class="spinner"></div>
+        <p>Cargando panel administrativo...</p>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="admin-main" id="adminContent" style="display:none;">
+        <!-- Banner -->
+        <div class="admin-banner">
+            <h1>Bienvenido, <span id="adminGreeting">Admin</span></h1>
+            <p>Panel de control del Club Alebrijes de Oaxaca Teotihuacán. Gestiona profesores, jugadores y evaluaciones
+                desde aquí.</p>
+            <div class="admin-banner-date">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span id="currentDate"></span>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card sc-professors">
+                <div class="stat-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                </div>
+                <div class="stat-value" id="statProfessors">0</div>
+                <div class="stat-label">Profesores</div>
+            </div>
+            <div class="stat-card sc-players">
+                <div class="stat-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <div class="stat-value" id="statPlayers">0</div>
+                <div class="stat-label">Jugadores</div>
+            </div>
+            <div class="stat-card sc-evals">
+                <div class="stat-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                    </svg>
+                </div>
+                <div class="stat-value" id="statEvals">0</div>
+                <div class="stat-label">Evaluaciones</div>
+            </div>
+            <div class="stat-card sc-categories">
+                <div class="stat-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                </div>
+                <div class="stat-value" id="statCategories">0</div>
+                <div class="stat-label">Categorías</div>
+            </div>
+        </div>
+
+        <!-- Professors -->
+        <div class="admin-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    Cuerpo Técnico
+                    <span class="section-count" id="profCount">0</span>
+                </div>
+            </div>
+            <div class="professors-grid" id="professorsGrid"></div>
+        </div>
+
+        <!-- Players -->
+        <div class="admin-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Plantilla de Jugadores
+                    <span class="section-count" id="playerCount">0</span>
+                </div>
+                <div class="admin-controls">
+                    <select class="admin-filter-select" id="filterCategory">
+                        <option value="">Todas las categorías</option>
+                    </select>
+                    <select class="admin-filter-select" id="filterProf">
+                        <option value="">Todos los profesores</option>
+                    </select>
+                    <div class="admin-search-wrap">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" id="adminSearch" placeholder="Buscar jugador...">
+                    </div>
+                </div>
+            </div>
+            <div class="players-grid" id="playersGrid"></div>
+        </div>
+
+        <!-- Evaluations -->
+        <div class="admin-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                    </svg>
+                    Evaluaciones Detalladas
+                    <span class="section-count" id="evalCount">0</span>
+                </div>
+                <div class="admin-controls">
+                    <select class="admin-filter-select" id="filterEvalProf">
+                        <option value="">Todos los evaluadores</option>
+                    </select>
+                    <div class="admin-search-wrap">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" id="evalSearch" placeholder="Buscar evaluación...">
+                    </div>
+                </div>
+            </div>
+            <div class="evals-grid" id="evalsGrid"></div>
+        </div>
+
+        <!-- PDF Report -->
+        <div class="pdf-section">
+            <div class="pdf-section-header">
+                <div class="pdf-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                    </svg>
+                </div>
+                <div>
+                    <div class="pdf-title">Generar Reporte PDF</div>
+                    <div class="pdf-subtitle">Descarga un reporte institucional con evaluaciones de jugadores</div>
+                </div>
+            </div>
+            <div class="pdf-controls">
+                <select class="admin-filter-select" id="pdfCategoryFilter">
+                    <option value="">Todas las categorías</option>
+                </select>
+                <select class="admin-filter-select" id="pdfWeekFilter">
+                    <option value="">Todas las semanas</option>
+                </select>
+                <button class="pdf-btn" id="btnGeneratePDF">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Descargar PDF
+                </button>
+            </div>
+            <div class="pdf-status" id="pdfStatus"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD5aakkUMk77EMKPwHvjXTqzPKBvejhjEo",
+            authDomain: "metricasalebrijes.firebaseapp.com",
+            projectId: "metricasalebrijes",
+            storageBucket: "metricasalebrijes.firebasestorage.app",
+            messagingSenderId: "822819596837",
+            appId: "1:822819596837:web:62f3f4139332830ee96dcc"
+        };
+
+        let app;
+        try { app = getApps().length ? getApp() : initializeApp(firebaseConfig); }
+        catch (e) { app = initializeApp(firebaseConfig, 'admin-' + Date.now()); }
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const PROF_PASSWORDS = {
+            'juan': 'Juan123', 'abimael': 'Abimael123', 'lalo': 'Lalo123',
+            'ricardo': 'Ricardo123', 'hector': 'Hector123', 'oswaldo': 'Oswaldo123',
+            'emilio': 'Emilio123', 'ramiro': 'Ramiro123'
+        };
+
+        // Available player images (PlantillaLigaTDP_2026)
+        const PLAYER_IMAGES = [
+            'Abimael_Torres_Nava_DirectorTecnico.jpg',
+            'Alan_Mauricio_Chimal_Barajas_Portero.jpg',
+            'Alexander_Peralta_Selvan_Medio.jpg',
+            'Alexis_Armando_Espinosa_Domínguez_Delantero.jpg',
+            'Alexis_Eduardo_Cagal_Cruz_Delantero.jpg',
+            'Baruk_Martín_Curiel_Cornejo_Medio.jpg',
+            'Carlos_Alberto_Espinosa_Valentín_Defensa.jpg',
+            'Cristian_Alexander_García_Morales_Medio.jpg',
+            'Cristian_Miguel_Padierna_Mojica_Defensa.jpg',
+            'Darío_Magariño_Castillejos_Defensa.jpg',
+            'David_Eduardo_Delgadillo_Hernández_Medio.jpg',
+            'Diego_Alberto_Váldez_Sánchez_Defensa.jpg',
+            'Diego_Efraín_Martínez_Ríos_Portero.jpg',
+            'Emiliano_Gutiérrez_Castro_Defensa.jpg',
+            'Gabriel_Villagran_Toledo_Defensa.jpg',
+            'Horus_Axel_Minor_Ortíz_Medio.jpg',
+            'Ignacio_Jesús_López_Joachín_Defensa.jpg',
+            'Iker_Baizabal_Hernández_Defensa.jpg',
+            'Jireh_Ismael_Alvarado_Sánchez_Medio.jpg',
+            'Jocsan_Adrián_Sánchez_Ballona_Medio.jpg',
+            'Jorge_Salazar_Jiménez_Medio.jpg',
+            'Jose_Luis_Tavares_Torres_Defensa.jpg',
+            'Joshua_Alejo_Hernández_Portero.jpg',
+            'Juan_Carlos_Guerrero_Peña_Medio.jpg',
+            'Juan_José_Salazar_Sánchez_Medio.jpg',
+            'Julio_Cezar_Gutierrez_Diaz_Medio.jpg',
+            'Luis_Alberto_Olvera_Perez_Medio.jpg',
+            'Luis_Alfonso_Martínez_Lupercio_Medio.jpg',
+            'Luis_Gustavo_Emeterio_Hernandez_Defensa.jpg',
+            'Martín_Magaña_Vázquez_Defensa.jpg',
+            'Mauro_Exsael_Paredes_Sánchez_Medio.jpg',
+            'Melvin_Rafael_Maximo_Delantero.jpg',
+            'Noé_Miguel_Estefes_Medio.jpg',
+            'Oliver_De_La_Torre_Pérez_Medio.jpg',
+            'Orbi_Ríos_Rodríguez_Delantero.jpg',
+            'Oscar_Gabriel_Ortega_Ramos_Medio.jpg',
+            'Rizieri_Pérez_Valenzo_Defensa.jpg',
+            'Rodrigo_Samuel_Camacho_Rodriguez_Defensa.jpg',
+            'Santiago_Mael_Ortíz_Olivera_Medio.jpg'
+        ];
+
+        const PLAYER_IMAGES_SOLES = [
+            'Adbeel_Jehiel_Ramirez_Juarez.jpg', 'Alexander_Villanueva_Huerta.jpg', 'Alfonso_Isaac_Jimenez_Calero.jpg', 'Angel_Gabriel_Barboza_Muñiz.jpg',
+            'Angel_Uriel_Castillo_Ramirez.jpg', 'Armando_Perez_Campos.jpg', 'Byron_Mishell_Mateos_Martinez.jpg', 'Carlos_Enrique_Landa_Landa.jpg',
+            'Cesar_Yovanni_Gomez_Anzastiga.jpg', 'Christopher_Armani_Camacho_Ibarguen.jpg', 'Cristian_Aldair_Marin_Ramirez.jpg', 'Diego_Ivan_Ramirez_Gonzalez.jpg',
+            'Edgar_Emanuel_Flores_Veliz.jpg', 'Elian_Fabian_Naranjo.jpg', 'Emilio_Andres_Cornelio_Lopez.jpg', 'Erick_Klebeer_Alanis_Guerrero.jpg',
+            'Felix_Eduardo_Martinez_Contreras.jpg', 'Franklin_Misael_Hernandez_Pablo.jpg', 'Hector_Gabriel_Castillo_Elizondo.jpg', 'Ibrahim_Rafael_Lopez_Zaragoza.jpg',
+            'Ignacio_Hazzam_Dominguez_Cruz.jpg', 'Irving_Daniel_Lopez_Luna.jpg', 'Jesus_Manuel_Nuñez_Gutierrez.jpg', 'Jesus_Manuel_Tarango_Maldonado.jpg',
+            'Jesus_Miguel_Xolio_Ortiz.jpg', 'Jesus_Rodrigo_Vela_Ramos.jpg', 'Jorge_Eduardo_Santiago_Reyes.jpg', 'Josaphat_Tapia_Vazquez.jpg',
+            'Jose_Enmanuel_Sanchez_Gonzalez.jpg', 'Juan_Carlos_Gonzalez_Ceniceros.jpg', 'Juan_Enrique_Rojas_Vargas.jpg', 'Juan_Uziel_Zarate_Navarrete.jpg',
+            'Kevin_Abel_Leon_Sanchez.jpg', 'Luciano_Ortiz_Melendez.jpg', 'Luis_Jareth_Dominguez_Meza.jpg', 'Miguel_David_Duran_Leon.jpg',
+            'Ricardo_Gael_Cruz_Santos.jpg', 'Richard_Aguilar_Perez.jpg', 'Roberto_Alcantar_Piña.jpg', 'Sebastian_Segundo_Becerril.jpg'
+        ];
+
+        const PLAYER_IMAGES_FUERZAS = [
+            'Abdiel_Monroy_García.jpeg', 'Alexander_Martínez_Domínguez.jpeg', 'Asiel_Zaid_Montoya_Rojas.jpeg', 'Axel_Antonio_Vázquez_Estrada.jpeg',
+            'Bruno_Arroyo_Sánchez.jpeg', 'Dejan_Kaled_Ramírez_Guijano.jpeg', 'Demian_Marcus_Arregui_Nava.jpeg', 'Derek_Jesús_Hernández_Licea.jpeg',
+            'Diego_Aaron_Alonso_Garcia.jpeg', 'Dylan_Quijano_Xolo.jpeg', 'Emiliano_Rodríguez_Hernández.jpeg', 'Iker_Damián_Ortega_Villegas.jpeg',
+            'Iram_Habid_Barrientos_García.jpeg', 'Irving_Nuñez_Fuentes.jpeg', 'Isaí_Daniel_Gómez_García.jpeg', 'Isaías_Adrian_Alvarado_Hernández.jpeg',
+            'Israel_Rivera_Hernández.jpeg', 'Jimenez_Carbajal_Johan_Eduardo.jpeg', 'Joel_Martinez_Cruz.jpeg', 'Jose_Emiliano_Sánchez_Gaspar.jpeg',
+            'Joshua_Dominguez_Acosta.jpeg', 'Josue_Alfredo_Vázquez_Valadez.jpeg', 'José_Asael_Rascon_Gurrola.jpeg', 'José_Carlos_Rivaldo_Silva_Baez.jpeg',
+            'José_Eduardo_Islas_Hernandez.jpeg', 'José_Francisco_González_Ceniceros.jpeg', 'Juan_Carlos_Maravilla_Maldonado.jpeg', 'Kevin_Damian_Alvarado_Montiel.jpeg',
+            'Kevin_Isael_Visoso_Lázaro.jpeg', 'Leonardo_Briones_Duran.jpeg', 'Leonardo_Madrigal_Velázquez.jpeg', 'Luis_Daniel_Martinez_Avedaño.jpeg',
+            'Luis_David_Olvera_Huerta.jpeg', 'Matteo_Cardona_Miranda.jpeg', 'Matteo_González_Rodríguez.jpeg', 'Mauricio_Fuentes_Ramos.jpeg',
+            'Mauricio_Mendoza_Montoya.jpeg', 'Miguel_Gutierrez_Cervantes.jpeg', 'Nicolas_Oliva_Pérez.jpeg', 'Uriel_Urieta_Robles.jpeg',
+            'William_Alfredo_Turrubiates_Camacho.jpeg'
+        ];
+
+        function normalizeStr(s) {
+            return (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+        }
+
+        function findPlayerImageInfo(nombre, apellido) {
+            const fullName = normalizeStr(`${nombre || ''} ${apellido || ''}`);
+            const firstName = normalizeStr(nombre || '');
+
+            for (const img of PLAYER_IMAGES) {
+                const parts = img.split('.')[0].split('_');
+                parts.pop(); // Remove position (Defensa, Medio, etc.)
+                const imgName = normalizeStr(parts.join(' '));
+
+                // Try full name match
+                if (imgName === fullName) return { file: img, folder: 'PlantillaLigaTDP_2026' };
+
+                // Try first name + last name (loose match)
+                if (fullName && imgName.includes(firstName) && firstName.length > 2) {
+                    // Check if any part of apellido matches
+                    const apellidoNorm = normalizeStr(apellido || '');
+                    if (apellidoNorm && imgName.includes(apellidoNorm.split(' ')[0])) {
+                        return { file: img, folder: 'PlantillaLigaTDP_2026' };
+                    }
+                }
+            }
+            
+            for (const img of PLAYER_IMAGES_SOLES) {
+                const parts = img.split('.')[0].split('_');
+                const imgName = normalizeStr(parts.join(' '));
+                
+                if (imgName === fullName) return { file: img, folder: 'JugadoresSoles' };
+                
+                if (fullName && imgName.includes(firstName) && firstName.length > 2) {
+                    const apellidoNorm = normalizeStr(apellido || '');
+                    if (apellidoNorm && imgName.includes(apellidoNorm.split(' ')[0])) {
+                        return { file: img, folder: 'JugadoresSoles' };
+                    }
+                }
+            }
+
+            for (const img of PLAYER_IMAGES_FUERZAS) {
+                const parts = img.split('.')[0].split('_');
+                const imgName = normalizeStr(parts.join(' '));
+                
+                if (imgName === fullName) return { file: img, folder: 'JugadoresFuerzasBasicas' };
+                
+                if (fullName && imgName.includes(firstName) && firstName.length > 2) {
+                    const apellidoNorm = normalizeStr(apellido || '');
+                    if (apellidoNorm && imgName.includes(apellidoNorm.split(' ')[0])) {
+                        return { file: img, folder: 'JugadoresFuerzasBasicas' };
+                    }
+                }
+            }
+            return null;
+        }
+
+        // Auth
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) { window.location.href = 'login.html'; return; }
+            const profRef = doc(db, 'profesores', user.uid);
+            const profSnap = await getDoc(profRef);
+            if (!profSnap.exists() || profSnap.data().rol !== 'admin') {
+                window.location.href = 'panel-profesor.html'; return;
+            }
+            const adminData = profSnap.data();
+            window.adminData = adminData; // Store globally for filtering
+            document.getElementById('adminName').textContent = adminData.nombre || 'Admin';
+            document.getElementById('adminGreeting').textContent = adminData.nombre || 'Admin';
+            document.getElementById('adminAvatar').textContent = (adminData.nombre || 'A').charAt(0).toUpperCase();
+            await loadDashboard(user.uid);
+        });
+
+        document.getElementById('adminLogoutBtn').addEventListener('click', async () => {
+            await signOut(auth); window.location.href = 'login.html';
+        });
+
+        // Date
+        const now = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('currentDate').textContent = now.toLocaleDateString('es-MX', options);
+
+        async function loadDashboard(adminUid) {
+            try {
+                // Load professors
+                const profsSnap = await getDocs(collection(db, 'profesores'));
+                const professors = [];
+                profsSnap.forEach(d => {
+                    const data = d.data();
+                    if (data.rol !== 'admin') professors.push({ id: d.id, ...data });
+                });
+
+                // Load players
+                const playersSnap = await getDocs(collection(db, 'jugadores'));
+                let allPlayers = [];
+                const CATEGORY_ALIAS_ADMIN = {'Sub-13':'Sub-14','Sub-15':'Sub-16','Sub-17':'Sub-18','Sub-20':'Sub-21'};
+                playersSnap.forEach(d => {
+                    const data = d.data();
+                    const normCat = CATEGORY_ALIAS_ADMIN[data.categoria] || data.categoria;
+                    const dataWithNorm = { ...data, categoria: normCat };
+                    if (window.adminData && window.adminData.equipoRestringido) {
+                        const restrictStr = window.adminData.equipoRestringido.toLowerCase();
+                        const cat = normCat.toLowerCase();
+                        const eq = (data.equipo || '').toLowerCase();
+                        if (cat.includes(restrictStr) || eq.includes(restrictStr)) {
+                            allPlayers.push({ id: d.id, ...dataWithNorm });
+                        }
+                    } else {
+                        allPlayers.push({ id: d.id, ...dataWithNorm });
+                    }
+                });
+
+                // Load evaluations
+                const evalsSnap = await getDocs(collection(db, 'evaluaciones'));
+
+                // Count per professor
+                const playersByProf = {};
+                const evalsByProf = {};
+                professors.forEach(p => { playersByProf[p.id] = 0; evalsByProf[p.id] = 0; });
+                
+                // Set of valid player IDs for restricted admins
+                const validPlayerIds = new Set(allPlayers.map(p => p.id));
+                
+                allPlayers.forEach(p => {
+                    if (p.registradoPor && playersByProf[p.registradoPor] !== undefined)
+                        playersByProf[p.registradoPor]++;
+                });
+                evalsSnap.forEach(d => {
+                    const evData = d.data();
+                    if (window.adminData && window.adminData.equipoRestringido && !validPlayerIds.has(evData.jugadorId)) {
+                        return; // Skip evaluations of players outside the restricted team
+                    }
+                    const eid = evData.evaluadorId;
+                    if (eid && evalsByProf[eid] !== undefined) evalsByProf[eid]++;
+                });
+
+                const categories = new Set();
+                allPlayers.forEach(p => { if (p.categoria) categories.add(p.categoria); });
+
+                // Fetch latest avg
+                await Promise.all(allPlayers.map(async (player) => {
+                    try {
+                        const evRef = collection(db, 'jugadores', player.id, 'evaluaciones');
+                        const evQ = query(evRef, orderBy('fechaEvaluacion', 'desc'));
+                        const evSnap = await getDocs(evQ);
+                        if (!evSnap.empty) player.latestPromedio = evSnap.docs[0].data().promedioGeneral || null;
+                    } catch (e) { /* ignore */ }
+                }));
+
+                // Prof name map
+                const profNameMap = {};
+                professors.forEach(p => { profNameMap[p.id] = p.nombre || p.email; });
+
+                // Stats
+                document.getElementById('statProfessors').textContent = professors.length;
+                document.getElementById('statPlayers').textContent = allPlayers.length;
+                document.getElementById('statEvals').textContent = evalsSnap.size;
+                document.getElementById('statCategories').textContent = categories.size;
+                document.getElementById('profCount').textContent = professors.length;
+                document.getElementById('playerCount').textContent = allPlayers.length;
+
+                // Render professors
+                const profGrads = [
+                    'linear-gradient(135deg,#8b5cf6,#6d28d9)',
+                    'linear-gradient(135deg,#3b82f6,#1d4ed8)',
+                    'linear-gradient(135deg,#10b981,#059669)',
+                    'linear-gradient(135deg,#f59e0b,#d97706)',
+                    'linear-gradient(135deg,#ef4444,#dc2626)'
+                ];
+                document.getElementById('professorsGrid').innerHTML = professors.map((prof, i) => {
+                    const initial = (prof.nombre || '?').charAt(0).toUpperCase();
+                    const nameKey = (prof.nombre || '').toLowerCase();
+                    const pass = PROF_PASSWORDS[nameKey] || '---';
+                    return `
+                        <div class="prof-card">
+                            <div class="prof-avatar" style="background:${profGrads[i % profGrads.length]}">${initial}</div>
+                            <div class="prof-info">
+                                <div class="prof-name">${prof.nombre || 'Sin nombre'}</div>
+                                <div class="prof-email">${prof.email || ''}</div>
+                                <div class="prof-meta">
+                                    <span class="prof-chip chip-players">${playersByProf[prof.id] || 0} jugadores</span>
+                                    <span class="prof-chip chip-evals">${evalsByProf[prof.id] || 0} evals</span>
+                                </div>
+                                <div class="prof-creds">
+                                    Usuario: <strong>${nameKey}</strong> · Contraseña: <span class="pass-val">${pass}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                // Render players
+                allPlayers.sort((a, b) => ((a.nombre || '') + (a.apellido || '')).localeCompare((b.nombre || '') + (b.apellido || '')));
+
+                // Populate filters
+                const filterCategory = document.getElementById('filterCategory');
+                const filterProf = document.getElementById('filterProf');
+                categories.forEach(cat => {
+                    const opt = document.createElement('option');
+                    opt.value = cat; opt.textContent = cat;
+                    filterCategory.appendChild(opt);
+                });
+                professors.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p.id; opt.textContent = p.nombre || p.email;
+                    filterProf.appendChild(opt);
+                });
+
+                function renderPlayers(players) {
+                    const tc = s => (s || '').trim().toLowerCase().split(' ').filter(w => w.length > 0).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                    document.getElementById('playersGrid').innerHTML = players.map(p => {
+                        const firstName = tc((p.nombre || 'Sin nombre').split(' ')[0]);
+                        const fullDisplayName = `${tc(p.nombre || '')} ${tc(p.apellido || '')}`.trim();
+                        const imgInfo = findPlayerImageInfo(p.nombre, p.apellido);
+                        const imgSrc = imgInfo ? `../assets/${imgInfo.folder}/${encodeURIComponent(imgInfo.file)}` : null;
+                        const initials = ((p.nombre || '').charAt(0) + (p.apellido || '').charAt(0)).toUpperCase() || '?';
+                        const avg = p.latestPromedio;
+                        let avgHTML = '<span class="player-card-avg avg-none">--</span>';
+                        if (avg !== undefined && avg !== null) {
+                            const n = parseFloat(avg);
+                            let cls = 'avg-low';
+                            if (n >= 7) cls = 'avg-good';
+                            else if (n >= 5) cls = 'avg-mid';
+                            avgHTML = `<span class="player-card-avg ${cls}">${n.toFixed(1)}</span>`;
+                        }
+                        const profName = profNameMap[p.registradoPor] || '';
+                        const photoHTML = imgSrc
+                            ? `<img src="${imgSrc}" alt="${firstName}" onerror="this.parentElement.innerHTML='<div class=\\'default-avatar\\'>${initials}</div>'">`
+                            : `<div class="default-avatar">${initials}</div>`;
+
+                        return `
+                            <div class="player-card">
+                                <div class="player-card-photo">${photoHTML}</div>
+                                <div class="player-card-name" title="${fullDisplayName}">${firstName}</div>
+                                <div class="player-card-pos">${p.posicion || 'Sin posición'}</div>
+                                ${avgHTML}
+                                ${profName ? `<div class="player-card-prof">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                                    ${profName}
+                                </div>` : ''}
+                            </div>
+                        `;
+                    }).join('');
+                }
+
+                renderPlayers(allPlayers);
+
+                // Player filters
+                function filterPlayersAll() {
+                    const q = document.getElementById('adminSearch').value.toLowerCase();
+                    const cat = filterCategory.value;
+                    const prof = filterProf.value;
+                    const filtered = allPlayers.filter(p => {
+                        const name = `${p.nombre || ''} ${p.apellido || ''}`.toLowerCase();
+                        if (q && !name.includes(q)) return false;
+                        if (cat && p.categoria !== cat) return false;
+                        if (prof && p.registradoPor !== prof) return false;
+                        return true;
+                    });
+                    renderPlayers(filtered);
+                }
+                document.getElementById('adminSearch').addEventListener('input', filterPlayersAll);
+                filterCategory.addEventListener('change', filterPlayersAll);
+                filterProf.addEventListener('change', filterPlayersAll);
+
+                // ========================================
+                // EVALUATIONS DETAIL
+                // ========================================
+                const allEvals = [];
+                evalsSnap.forEach(d => {
+                    const evData = { id: d.id, ...d.data() };
+                    if (window.adminData && window.adminData.equipoRestringido && !validPlayerIds.has(evData.jugadorId)) {
+                        return; // Skip evaluations of players outside the restricted team
+                    }
+                    allEvals.push(evData);
+                });
+                // Sort by date (most recent first)
+                allEvals.sort((a, b) => {
+                    const da = a.fecha?.toDate ? a.fecha.toDate() : new Date(0);
+                    const db2 = b.fecha?.toDate ? b.fecha.toDate() : new Date(0);
+                    return db2 - da;
+                });
+
+                document.getElementById('evalCount').textContent = allEvals.length;
+
+                // Player map for lookup
+                const playerMap = {};
+                allPlayers.forEach(p => { playerMap[p.id] = p; });
+
+                // Populate eval professor filter
+                const filterEvalProf = document.getElementById('filterEvalProf');
+                professors.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p.id; opt.textContent = p.nombre || p.email;
+                    filterEvalProf.appendChild(opt);
+                });
+
+                function renderEvals(evals) {
+                    document.getElementById('evalsGrid').innerHTML = evals.map(ev => {
+                        const player = playerMap[ev.jugadorId] || {};
+                        const firstName = (player.nombre || 'Jugador').split(' ')[0];
+                        const fullName = `${player.nombre || ''} ${player.apellido || ''}`.trim() || 'Desconocido';
+                        const imgInfo = findPlayerImageInfo(player.nombre, player.apellido);
+                        const imgSrc = imgInfo ? `../assets/${imgInfo.folder}/${encodeURIComponent(imgInfo.file)}` : null;
+                        const initials = ((player.nombre || '').charAt(0) + (player.apellido || '').charAt(0)).toUpperCase() || '?';
+                        const photoHTML = imgSrc
+                            ? `<img src="${imgSrc}" alt="${firstName}" onerror="this.parentElement.innerHTML='<div class=\\'default-avatar\\'>${initials}</div>'">`
+                            : `<div class="default-avatar">${initials}</div>`;
+                        const profName = ev.evaluadorNombre || profNameMap[ev.evaluadorId] || 'Desconocido';
+
+                        // Average
+                        const avg = ev.promedioGeneral;
+                        let avgCls = 'avg-none';
+                        let avgVal = '--';
+                        if (avg !== undefined && avg !== null) {
+                            const n = parseFloat(avg);
+                            avgVal = n.toFixed(1);
+                            if (n >= 7) avgCls = 'avg-good';
+                            else if (n >= 5) avgCls = 'avg-mid';
+                            else avgCls = 'avg-low';
+                        }
+
+                        // Metrics
+                        const metrics = [
+                            { label: 'Técnico', value: ev.tecnico },
+                            { label: 'Táctico', value: ev.tactico },
+                            { label: 'Físico', value: ev.fisico },
+                            { label: 'Mental', value: ev.mental },
+                            { label: 'Disc. Cancha', value: ev.disciplinaCancha },
+                            { label: 'Disc. Casa Club', value: ev.disciplinaCasaClub },
+                            { label: 'Inasistencias', value: ev.inasistencias ?? '0' }
+                        ];
+                        if (ev.rendimientoCancha !== undefined && ev.rendimientoCancha !== null) {
+                            metrics.push({ label: 'Rend. Cancha', value: ev.rendimientoCancha });
+                        }
+                        if (ev.minutosJugados) {
+                            metrics.push({ label: 'Min. Jugados', value: ev.minutosJugados });
+                        }
+
+                        const metricsHTML = metrics.map(m => `
+                            <div class="eval-metric">
+                                <div class="eval-metric-value">${m.value !== undefined && m.value !== null ? m.value : '--'}</div>
+                                <div class="eval-metric-label">${m.label}</div>
+                            </div>
+                        `).join('');
+
+                        const obsHTML = ev.observaciones ? `<div class="eval-obs">${ev.observaciones}</div>` : '';
+
+                        return `
+                            <div class="eval-detail-card">
+                                <div class="eval-detail-header">
+                                    <div class="eval-player-photo">${photoHTML}</div>
+                                    <div class="eval-detail-info">
+                                        <h4>${firstName} ${(player.apellido || '').split(' ')[0]}</h4>
+                                        <p>${player.posicion || ''} · ${player.categoria || ''}</p>
+                                    </div>
+                                    <span class="eval-avg-big ${avgCls}">${avgVal}</span>
+                                </div>
+                                <div class="eval-metrics">${metricsHTML}</div>
+                                ${obsHTML}
+                                <div class="eval-detail-footer">
+                                    <div class="eval-prof-tag">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="12" cy="7" r="4"></circle>
+                                        </svg>
+                                        ${profName}
+                                    </div>
+                                    ${ev.semana ? `<span class="eval-week-tag">${ev.semana}</span>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    if (evals.length === 0) {
+                        document.getElementById('evalsGrid').innerHTML = '<p style="color:var(--admin-text-muted);text-align:center;padding:40px;grid-column:1/-1;">No se encontraron evaluaciones</p>';
+                    }
+                }
+
+                renderEvals(allEvals);
+
+                // Eval filters
+                function filterEvalsAll() {
+                    const q = document.getElementById('evalSearch').value.toLowerCase();
+                    const prof = filterEvalProf.value;
+                    const filtered = allEvals.filter(ev => {
+                        const player = playerMap[ev.jugadorId] || {};
+                        const name = `${player.nombre || ''} ${player.apellido || ''}`.toLowerCase();
+                        if (q && !name.includes(q)) return false;
+                        if (prof && ev.evaluadorId !== prof) return false;
+                        return true;
+                    });
+                    renderEvals(filtered);
+                }
+                document.getElementById('evalSearch').addEventListener('input', filterEvalsAll);
+                filterEvalProf.addEventListener('change', filterEvalsAll);
+
+                // ========================================
+                // PDF REPORT GENERATION
+                // ========================================
+
+                // Populate PDF filters
+                const pdfCatFilter = document.getElementById('pdfCategoryFilter');
+                const pdfWeekFilter = document.getElementById('pdfWeekFilter');
+                categories.forEach(cat => {
+                    const opt = document.createElement('option');
+                    opt.value = cat; opt.textContent = cat;
+                    pdfCatFilter.appendChild(opt);
+                });
+
+                // Collect weeks from evals
+                const weeks = new Set();
+                allEvals.forEach(ev => { if (ev.semana) weeks.add(ev.semana); });
+                Array.from(weeks).sort().forEach(w => {
+                    const opt = document.createElement('option');
+                    opt.value = w; opt.textContent = w;
+                    pdfWeekFilter.appendChild(opt);
+                });
+
+                // Load logo as base64
+                function loadImageBase64(url) {
+                    return new Promise((resolve) => {
+                        const img = new Image();
+                        img.crossOrigin = 'anonymous';
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                            canvas.getContext('2d').drawImage(img, 0, 0);
+                            resolve(canvas.toDataURL('image/png'));
+                        };
+                        img.onerror = () => resolve(null);
+                        img.src = url;
+                    });
+                }
+
+                const pdfStatus = document.getElementById('pdfStatus');
+                function setPdfStatus(msg, type = '') {
+                    pdfStatus.textContent = msg;
+                    pdfStatus.className = 'pdf-status active' + (type ? ' ' + type : '');
+                }
+
+                document.getElementById('btnGeneratePDF').addEventListener('click', async () => {
+                    const btn = document.getElementById('btnGeneratePDF');
+                    btn.disabled = true;
+                    btn.textContent = 'Generando...';
+                    setPdfStatus('Cargando recursos...');
+
+                    try {
+                        const { jsPDF } = window.jspdf;
+                        const doc = new jsPDF('landscape', 'mm', 'letter');
+
+                        // Load club logo only
+                        const logoClub = await loadImageBase64('../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png');
+
+                        const selectedCat = pdfCatFilter.value;
+                        const selectedWeek = pdfWeekFilter.value;
+
+                        // Filter
+                        let filteredEvals = [...allEvals];
+                        if (selectedWeek) filteredEvals = filteredEvals.filter(ev => ev.semana === selectedWeek);
+                        let filteredPlayers = [...allPlayers];
+                        if (selectedCat) filteredPlayers = filteredPlayers.filter(p => p.categoria === selectedCat);
+                        const filteredPlayerIds = new Set(filteredPlayers.map(p => p.id));
+                        filteredEvals = filteredEvals.filter(ev => filteredPlayerIds.has(ev.jugadorId));
+
+                        if (filteredEvals.length === 0 && filteredPlayers.length === 0) {
+                            setPdfStatus('No hay datos para generar el reporte.', 'error');
+                            btn.disabled = false;
+                            btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> Descargar PDF';
+                            return;
+                        }
+
+                        setPdfStatus('Generando reporte...');
+
+                        const pageW = doc.internal.pageSize.getWidth();
+                        const pageH = doc.internal.pageSize.getHeight();
+                        const m = 16;
+
+                        // Palette: white bg, orange accent, black text
+                        const ORANGE = [243, 106, 33];
+                        const BLACK = [20, 20, 20];
+                        const WHITE = [255, 255, 255];
+                        const GRAY_LIGHT = [245, 245, 245];
+                        const GRAY_MID = [180, 180, 180];
+                        const GRAY_TEXT = [100, 100, 100];
+                        const GREEN = [16, 160, 100];
+                        const YELLOW_DARK = [200, 130, 0];
+                        const RED = [200, 50, 50];
+
+                        const catLabel = selectedCat || 'Todas las categorías';
+                        const weekLabel = selectedWeek || 'Todas las semanas';
+                        const nowStr = new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' });
+
+                        // ─── HEADER ───
+                        function addHeader(d, subtitle) {
+                            // Top orange bar
+                            d.setFillColor(...ORANGE);
+                            d.rect(0, 0, pageW, 4, 'F');
+
+                            // White header area
+                            d.setFillColor(...WHITE);
+                            d.rect(0, 4, pageW, 28, 'F');
+
+                            // Club logo left
+                            if (logoClub) {
+                                try { d.addImage(logoClub, 'PNG', m, 6, 24, 24); } catch (e) { }
+                            }
+
+                            // Title block centered
+                            d.setFont('helvetica', 'bold');
+                            d.setFontSize(15);
+                            d.setTextColor(...BLACK);
+                            d.text('CLUB ALEBRIJES DE OAXACA', pageW / 2, 15, { align: 'center' });
+
+                            d.setFontSize(8);
+                            d.setTextColor(...ORANGE);
+                            d.setFont('helvetica', 'bold');
+                            d.text('TEOTIHUACÁN  ·  FUERZAS BÁSICAS', pageW / 2, 21, { align: 'center' });
+
+                            d.setFontSize(7.5);
+                            d.setTextColor(...GRAY_TEXT);
+                            d.setFont('helvetica', 'normal');
+                            d.text(subtitle, pageW / 2, 27, { align: 'center' });
+
+                            // Bottom line
+                            d.setDrawColor(...ORANGE);
+                            d.setLineWidth(0.6);
+                            d.line(m, 32, pageW - m, 32);
+                        }
+
+                        // ─── FOOTER ───
+                        function addFooter(d, pageNum, totalPages) {
+                            const y = pageH - 7;
+                            // Top line
+                            d.setDrawColor(...GRAY_MID);
+                            d.setLineWidth(0.3);
+                            d.line(m, pageH - 12, pageW - m, pageH - 12);
+
+                            d.setFontSize(6);
+                            d.setFont('helvetica', 'normal');
+                            d.setTextColor(...GRAY_TEXT);
+                            d.text('Club Alebrijes de Oaxaca Teotihuacán  ·  Documento Oficial  ·  Confidencial', m, y);
+
+                            d.setTextColor(...ORANGE);
+                            d.setFont('helvetica', 'bold');
+                            d.text(`${pageNum} / ${totalPages}`, pageW - m, y, { align: 'right' });
+
+                            d.setTextColor(...GRAY_MID);
+                            d.setFont('helvetica', 'normal');
+                            d.text(nowStr, pageW / 2, y, { align: 'center' });
+                        }
+
+                        // ─── SECTION TITLE ───
+                        function sectionTitle(d, text, yPos) {
+                            d.setFillColor(...ORANGE);
+                            d.rect(m, yPos, 3, 7, 'F');
+                            d.setFont('helvetica', 'bold');
+                            d.setFontSize(10);
+                            d.setTextColor(...BLACK);
+                            d.text(text, m + 6, yPos + 5.5);
+                            return yPos + 12;
+                        }
+
+                        // =====================
+                        // PAGE 1 — SUMMARY
+                        // =====================
+                        addHeader(doc, `Reporte de Evaluaciones  ·  ${catLabel}  ·  ${weekLabel}`);
+
+                        let y = 38;
+
+                        // Stats bar
+                        doc.setFillColor(...GRAY_LIGHT);
+                        doc.roundedRect(m, y, pageW - m * 2, 12, 2, 2, 'F');
+                        doc.setFontSize(7.5);
+                        doc.setFont('helvetica', 'normal');
+                        doc.setTextColor(...GRAY_TEXT);
+                        doc.text(`Jugadores: ${filteredPlayers.length}    ·    Evaluaciones: ${filteredEvals.length}    ·    Categoría: ${catLabel}    ·    Semana: ${weekLabel}`, pageW / 2, y + 7.5, { align: 'center' });
+                        y += 18;
+
+                        y = sectionTitle(doc, 'RESUMEN DE JUGADORES', y);
+
+                        const playerRows = filteredPlayers.map(p => {
+                            const name = `${(p.nombre || '').split(' ')[0]} ${(p.apellido || '').split(' ')[0]}`.trim();
+                            const pEvals = filteredEvals.filter(ev => ev.jugadorId === p.id);
+                            let avgP = '--';
+                            if (pEvals.length > 0) {
+                                const s = pEvals.reduce((a, ev) => a + (parseFloat(ev.promedioGeneral) || 0), 0);
+                                avgP = (s / pEvals.length).toFixed(1);
+                            }
+                            return [name, p.posicion || '--', p.categoria || '--', pEvals.length.toString(), avgP];
+                        });
+
+                        doc.autoTable({
+                            startY: y,
+                            head: [['JUGADOR', 'POSICIÓN', 'CATEGORÍA', 'EVALS', 'PROMEDIO']],
+                            body: playerRows,
+                            margin: { left: m, right: m },
+                            styles: {
+                                font: 'helvetica', fontSize: 7.5, cellPadding: 3.5,
+                                textColor: BLACK, lineColor: [230, 230, 230], lineWidth: 0.2
+                            },
+                            headStyles: {
+                                fillColor: ORANGE, textColor: WHITE, fontStyle: 'bold', fontSize: 7
+                            },
+                            alternateRowStyles: { fillColor: GRAY_LIGHT },
+                            bodyStyles: { fillColor: WHITE },
+                            columnStyles: {
+                                0: { cellWidth: 60, fontStyle: 'bold' },
+                                3: { halign: 'center', cellWidth: 22 },
+                                4: { halign: 'center', cellWidth: 26, fontStyle: 'bold' }
+                            },
+                            didParseCell: function (data) {
+                                if (data.column.index === 4 && data.section === 'body') {
+                                    const v = parseFloat(data.cell.raw);
+                                    if (!isNaN(v)) {
+                                        if (v >= 7) data.cell.styles.textColor = GREEN;
+                                        else if (v >= 5) data.cell.styles.textColor = YELLOW_DARK;
+                                        else data.cell.styles.textColor = RED;
+                                    }
+                                }
+                            }
+                        });
+
+                        // =====================
+                        // DETAIL PAGES
+                        // =====================
+                        const evalsByPlayer = {};
+                        filteredEvals.forEach(ev => {
+                            if (!evalsByPlayer[ev.jugadorId]) evalsByPlayer[ev.jugadorId] = [];
+                            evalsByPlayer[ev.jugadorId].push(ev);
+                        });
+
+                        for (const playerId of Object.keys(evalsByPlayer)) {
+                            const player = playerMap[playerId] || {};
+                            const pName = `${(player.nombre || '').split(' ')[0]} ${(player.apellido || '').split(' ')[0]}`.trim();
+                            const evals = evalsByPlayer[playerId];
+
+                            doc.addPage();
+                            addHeader(doc, `Evaluación Detallada  ·  ${pName}`);
+
+                            let yP = 38;
+
+                            // Player info strip
+                            doc.setFillColor(...GRAY_LIGHT);
+                            doc.roundedRect(m, yP, pageW - m * 2, 12, 2, 2, 'F');
+                            doc.setFont('helvetica', 'bold');
+                            doc.setFontSize(9);
+                            doc.setTextColor(...ORANGE);
+                            doc.text(pName.toUpperCase(), m + 5, yP + 7.5);
+                            doc.setFont('helvetica', 'normal');
+                            doc.setFontSize(7);
+                            doc.setTextColor(...GRAY_TEXT);
+                            doc.text(`${player.posicion || ''}  ·  ${player.categoria || ''}  ·  ${evals.length} evaluación(es)`, m + 65, yP + 7.5);
+                            yP += 18;
+
+                            yP = sectionTitle(doc, 'MÉTRICAS POR SEMANA', yP);
+
+                            const evalRows = evals.map(ev => {
+                                const prof = ev.evaluadorNombre || profNameMap[ev.evaluadorId] || 'N/A';
+                                return [
+                                    ev.semana || '--',
+                                    ev.tecnico ?? '--', ev.tactico ?? '--', ev.fisico ?? '--',
+                                    ev.mental ?? '--', ev.disciplinaCancha ?? '--',
+                                    ev.disciplinaCasaClub ?? '--',
+                                    ev.inasistencias ?? '0',
+                                    ev.promedioGeneral != null ? parseFloat(ev.promedioGeneral).toFixed(1) : '--',
+                                    prof
+                                ];
+                            });
+
+                            doc.autoTable({
+                                startY: yP,
+                                head: [['SEMANA', 'TÉC', 'TÁC', 'FÍS', 'MEN', 'D.CAN', 'D.CLUB', 'FALTAS', 'PROM', 'EVALUADOR']],
+                                body: evalRows,
+                                margin: { left: m, right: m },
+                                styles: {
+                                    font: 'helvetica', fontSize: 7, cellPadding: 3.5,
+                                    textColor: BLACK, halign: 'center',
+                                    lineColor: [230, 230, 230], lineWidth: 0.2
+                                },
+                                headStyles: {
+                                    fillColor: ORANGE, textColor: WHITE, fontStyle: 'bold', fontSize: 6.5
+                                },
+                                alternateRowStyles: { fillColor: GRAY_LIGHT },
+                                bodyStyles: { fillColor: WHITE },
+                                columnStyles: {
+                                    0: { cellWidth: 28, halign: 'left', fontStyle: 'bold' },
+                                    8: { fontStyle: 'bold', cellWidth: 18 },
+                                    9: { cellWidth: 32, halign: 'left', fontSize: 6.5 }
+                                },
+                                didParseCell: function (data) {
+                                    if (data.column.index === 8 && data.section === 'body') {
+                                        const v = parseFloat(data.cell.raw);
+                                        if (!isNaN(v)) {
+                                            if (v >= 7) data.cell.styles.textColor = GREEN;
+                                            else if (v >= 5) data.cell.styles.textColor = YELLOW_DARK;
+                                            else data.cell.styles.textColor = RED;
+                                        }
+                                    }
+                                }
+                            });
+
+                            // Observations
+                            const obsEvals = evals.filter(ev => ev.observaciones);
+                            if (obsEvals.length > 0) {
+                                let obsY = doc.lastAutoTable.finalY + 10;
+                                obsY = sectionTitle(doc, 'OBSERVACIONES', obsY);
+
+                                obsEvals.forEach(ev => {
+                                    if (obsY > pageH - 25) {
+                                        doc.addPage();
+                                        addHeader(doc, `Observaciones  ·  ${pName}`);
+                                        obsY = 38;
+                                    }
+                                    const lines = doc.splitTextToSize(ev.observaciones, pageW - m * 2 - 14);
+                                    const bH = lines.length * 4 + 10;
+
+                                    // White card with slight border
+                                    doc.setFillColor(...WHITE);
+                                    doc.setDrawColor(230, 230, 230);
+                                    doc.setLineWidth(0.3);
+                                    doc.roundedRect(m, obsY, pageW - m * 2, bH, 2, 2, 'FD');
+
+                                    // Orange left accent
+                                    doc.setFillColor(...ORANGE);
+                                    doc.rect(m, obsY, 3, bH, 'F');
+
+                                    // Week label
+                                    doc.setFontSize(6.5);
+                                    doc.setFont('helvetica', 'bold');
+                                    doc.setTextColor(...ORANGE);
+                                    doc.text(ev.semana || '', m + 7, obsY + 5);
+
+                                    // Observation text
+                                    doc.setFont('helvetica', 'normal');
+                                    doc.setFontSize(7);
+                                    doc.setTextColor(...BLACK);
+                                    doc.text(lines, m + 7, obsY + 10);
+                                    obsY += bH + 5;
+                                });
+                            }
+                        }
+
+                        // Add footers
+                        const total = doc.internal.getNumberOfPages();
+                        for (let i = 1; i <= total; i++) {
+                            doc.setPage(i);
+                            addFooter(doc, i, total);
+                        }
+
+                        const fileName = `Reporte_Evaluaciones_${catLabel.replace(/\s/g, '_')}_${new Date().toISOString().slice(0, 10)}.pdf`;
+                        doc.save(fileName);
+                        setPdfStatus(`✅ Reporte generado: ${fileName}`, 'success');
+
+                    } catch (error) {
+                        console.error('PDF Error:', error);
+                        setPdfStatus(`❌ Error: ${error.message}`, 'error');
+                    }
+
+                    btn.disabled = false;
+                    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> Descargar PDF';
+                });
+
+                // Show
+                document.getElementById('adminLoading').style.display = 'none';
+                document.getElementById('adminContent').style.display = 'block';
+
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('adminLoading').innerHTML = `
+                    <p style="color:var(--admin-red);font-weight:600;">Error: ${error.message}</p>
+                    <button onclick="location.reload()" style="margin-top:12px;padding:10px 20px;background:var(--admin-accent);color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer;">Reintentar</button>
+                `;
+            }
+        }
+    </script>
+</body>
+
+</html>

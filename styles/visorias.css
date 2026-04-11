@@ -1,0 +1,265 @@
+/* 
+   Alebrijes de Oaxaca Teotihuacán
+   Visorias Page Styles
+*/
+
+/* Header Variants */
+.header-visorias .header-overlay {
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8));
+}
+
+/* Requirements Section */
+.requirements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.req-card {
+    background: var(--white);
+    padding: 30px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    text-align: left;
+    border-left: 5px solid var(--primary);
+    transition: transform 0.3s ease;
+}
+
+.req-card:hover {
+    transform: translateY(-5px);
+}
+
+.req-icon {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.req-card h3 {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    color: var(--dark);
+}
+
+.req-card ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.req-card ul li {
+    position: relative;
+    padding-left: 25px;
+    margin-bottom: 12px;
+    color: var(--text-light);
+    font-size: 0.95rem;
+}
+
+.req-card ul li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--primary);
+    font-weight: bold;
+}
+
+/* Dates Section */
+.bg-dark {
+    background-color: var(--dark);
+}
+
+.text-white {
+    color: var(--white);
+}
+
+.dates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.date-card {
+    background: rgba(255, 255, 255, 0.05);
+    /* Glass effect */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius);
+    display: flex;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.date-card:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-5px);
+}
+
+.date-card.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.date-header {
+    background: var(--primary);
+    color: var(--white);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 100px;
+}
+
+.date-header .day {
+    font-size: 2rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.date-header .month {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 5px;
+}
+
+.date-body {
+    padding: 20px;
+    flex-grow: 1;
+}
+
+.date-body h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: var(--white);
+}
+
+.date-body p {
+    color: #aaa;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-top: 10px;
+}
+
+.status.open {
+    background: rgba(46, 204, 113, 0.2);
+    color: #2ecc71;
+}
+
+.status.closed {
+    background: rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+}
+
+/* Registration Form Section */
+.form-wrapper {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 50px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.form-header h2 {
+    font-size: 2rem;
+    margin-bottom: 15px;
+    color: var(--dark);
+}
+
+.form-header p {
+    color: var(--text-light);
+}
+
+.visorias-form .form-group {
+    margin-bottom: 25px;
+}
+
+.visorias-form .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.visorias-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 0.95rem;
+}
+
+.visorias-form input,
+.visorias-form select,
+.visorias-form textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #eee;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+    background: #f9f9f9;
+}
+
+.visorias-form input:focus,
+.visorias-form select:focus,
+.visorias-form textarea:focus {
+    border-color: var(--primary);
+    outline: none;
+    background: var(--white);
+}
+
+.btn-block {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.form-note {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-top: 20px;
+    font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .visorias-form .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .form-wrapper {
+        padding: 30px;
+    }
+
+    .date-card {
+        flex-direction: column;
+    }
+
+    .date-header {
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 15px 20px;
+    }
+
+    .date-header .month {
+        margin-top: 0;
+        margin-left: 10px;
+        align-self: center;
+    }
+}

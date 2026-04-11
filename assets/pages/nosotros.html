@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nosotros | Alebrijes de Oaxaca Teotihuacán</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap"
+        rel="stylesheet">
+
+    <!-- Main Styles -->
+    <link rel="stylesheet" href="../styles/styles.css">
+    <!-- Nosotros Specific Styles -->
+    <link rel="stylesheet" href="../styles/nosotros.css">
+</head>
+
+<body>
+    <div id="fb-root"></div>
+    <script async defer crossorigin="anonymous"
+        src="https://connect.facebook.net/es_ES/sdk.js#xfbml=1&version=v24.0"></script>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="../index.html" class="logo">
+                <img src="../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png" alt="Alebrijes Fuerzas Básicas Logo">
+                <span class="logo-text">Alebrijes <br> Teotihuacán</span>
+            </a>
+
+            <button class="mobile-menu-btn" aria-label="Menú">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+
+            <ul class="nav-links">
+                <li class="nav-item">
+                    <a href="../index.html" class="nav-link">Inicio</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        Club
+                        <svg class="arrow-icon" viewBox="0 0 24 24">
+                            <path d="M7 10l5 5 5-5z" />
+                        </svg>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="nosotros.html" class="active">Nosotros</a></li>
+                        <li><a href="estadio.html">Estadio</a></li>
+                        <li><a href="casaclub.html">Casa Club</a></li>
+                        <li><a href="contacto.html">Contacto</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        Deportivo
+                        <svg class="arrow-icon" viewBox="0 0 24 24">
+                            <path d="M7 10l5 5 5-5z" />
+                        </svg>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="ligatdp.html">Liga TDP</a></li>
+                        <li><a href="fuerzasbasicas.html">Fuerzas Básicas</a></li>
+                        <li><a href="calendario.html">Calendario</a></li>
+                        <li class="dropdown-submenu-container">
+                            <a href="proyeccion.html" class="submenu-toggle">Proyección <span
+                                    class="arrow-right"></span></a>
+                            <ul class="submenu">
+                                <li><a href="equipos-tdp.html">Equipos TDP</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="articulos.html">Artículos</a></li>
+                        <li><a href="noticias.html">Noticias</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="escuela.html" class="nav-link">Escuela</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="brijitienda.html" class="nav-link">Brijitienda</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="../webvisorias/FormularioDeRegistroVisoria-main/index.html" class="nav-link nav-btn-cta"
+                        target="_blank" rel="noopener noreferrer">Visorias</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="login.html" id="nav-login-btn" class="nav-link nav-btn-login">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                            <polyline points="10 17 15 12 10 7"></polyline>
+                            <line x1="15" y1="12" x2="3" y2="12"></line>
+                        </svg>
+                        Iniciar Sesión
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Header / Hero Nosotros -->
+    <header class="page-header">
+        <div class="header-overlay"></div>
+        <img src="../assets/Nosotros/EstadioITO_AlebrijesOaxaca_Negro.jpg" alt="Estadio Alebrijes"
+            class="header-bg-img">
+        <div class="container header-content">
+            <h1>NOSOTROS</h1>
+        </div>
+    </header>
+
+    <!-- Main NOSOTROS Section -->
+    <section class="section nosotros-main-section">
+        <div class="container">
+            <div class="nosotros-main-grid">
+                <div class="nosotros-main-image-wrapper">
+                    <div class="image-overlay-gradient"></div>
+                    <img src="../assets/Nosotros/img-fuerzas-basicas-equipo.jpg" alt="Equipo Fuerzas Básicas"
+                        class="nosotros-main-image">
+                    <div class="image-badge">
+                        <span>Filial Oficial</span>
+                    </div>
+                </div>
+                <div class="nosotros-main-text">
+                    <div class="text-header">
+                        <span class="section-label">NUESTRA IDENTIDAD</span>
+                        <h2>La Filial que Conecta Talentos</h2>
+                    </div>
+                    <div class="text-content">
+                        <p class="lead-text">
+                            Alebrijes de Teotihuacán es la <strong>filial oficial de Alebrijes de Oaxaca</strong>,
+                            encargada de encontrar talento mediante visorías en todo el país para llevarlos al equipo
+                            piloto de la <strong>Liga de Expansión MX</strong>.
+                        </p>
+                        <p>
+                            Desarrollamos a nuestros jugadores mediante la <strong>Liga TDP y Fuerzas Básicas</strong>,
+                            brindándoles un camino integral de formación que los prepara para las exigencias del fútbol
+                            profesional. Nuestra metodología combina la excelencia técnica, la disciplina deportiva y la
+                            formación en valores humanos.
+                        </p>
+                        <p>
+                            Varios jugadores han llegado a <strong>Liga de Expansión MX</strong> mediante la filial en
+                            Teotihuacán, demostrando que nuestro modelo formativo es efectivo y que estamos cumpliendo
+                            nuestro objetivo de ser el principal semillero de talento para las categorías superiores del
+                            club.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission & Vision Section -->
+    <section class="section mvv-section">
+        <div class="container">
+            <div class="mvv-grid">
+                <div class="mvv-card-orange">
+                    <h3>MISIÓN</h3>
+                    <p>
+                        Ser la filial encargada de detectar, desarrollar y proyectar el talento futbolístico en todo el
+                        territorio nacional mediante un sistema integral de visorías y formación. Nos comprometemos a
+                        llevar a nuestros jugadores al equipo piloto de Liga de Expansión, brindándoles las herramientas
+                        técnicas, tácticas, físicas y humanas necesarias para destacar en el fútbol profesional.
+                    </p>
+                    <p>
+                        Formamos futbolistas de élite mediante nuestras categorías de desarrollo: Liga TDP, Fuerzas
+                        Básicas (Sub-21, Sub-18, Sub-16, Sub-14), asegurando que cada jugador reciba una formación
+                        integral que trascienda el campo de juego y los prepare para la vida.
+                    </p>
+                </div>
+                <div class="mvv-card-orange">
+                    <h3>VISIÓN</h3>
+                    <p>
+                        Consolidarnos como el principal semillero de talento para Liga de Expansión y el primer equipo
+                        de Alebrijes de Oaxaca, siendo reconocidos como la filial modelo en desarrollo y proyección de
+                        jugadores. Visualizamos un futuro donde múltiples jugadores formados en Teotihuacán sean
+                        protagonistas en las categorías superiores, demostrando la efectividad de nuestro sistema
+                        formativo.
+                    </p>
+                    <p>
+                        Aspiramos a ser el referente número uno de fútbol formativo en la región de Teotihuacán y a
+                        nivel nacional, donde nuestro nombre sea sinónimo de excelencia, profesionalismo y éxito en la
+                        formación de futbolistas de alto rendimiento.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Los Alebrijes Section -->
+    <section class="section alebrijes-section">
+        <div class="container">
+            <div class="alebrijes-header text-center">
+                <h2 class="alebrijes-section-title">LOS ALEBRIJES</h2>
+                <div class="section-line center"></div>
+            </div>
+            <div class="alebrijes-images-grid">
+                <div class="alebrijes-image-card">
+                    <div class="alebrijes-image-wrapper">
+                        <img src="../assets/Nosotros/Alebrijee.jpg" alt="Alebrije" class="alebrijes-grid-img">
+                        <div class="alebrijes-image-overlay-card"></div>
+                    </div>
+                    <div class="alebrijes-image-label">
+                        <h3>Los Alebrijes</h3>
+                        <p>Arte popular mexicano</p>
+                    </div>
+                </div>
+                <div class="alebrijes-image-card">
+                    <div class="alebrijes-image-wrapper">
+                        <img src="../assets/Nosotros/Teotihuacan.jpg" alt="Pirámides de Teotihuacán"
+                            class="alebrijes-grid-img">
+                        <div class="alebrijes-image-overlay-card"></div>
+                    </div>
+                    <div class="alebrijes-image-label">
+                        <h3>Teotihuacán</h3>
+                        <p>Pirámides ancestrales</p>
+                    </div>
+                </div>
+                <div class="alebrijes-image-card">
+                    <div class="alebrijes-image-wrapper">
+                        <img src="../assets/Globo_Aerostatico_Teotihuacan.jpg" alt="Globos Aerostáticos de Teotihuacán"
+                            class="alebrijes-grid-img">
+                        <div class="alebrijes-image-overlay-card"></div>
+                    </div>
+                    <div class="alebrijes-image-label">
+                        <h3>Globos Aerostáticos</h3>
+                        <p>De Teotihuacán</p>
+                    </div>
+                </div>
+            </div>
+            <div class="alebrijes-text-content">
+                <div class="alebrijes-content">
+                    <p>
+                        Los Alebrijes son una manifestación artística única del arte popular mexicano, creados mediante
+                        técnicas de cartonería y pintados con colores alegres y vibrantes. Son seres imaginarios
+                        formados por la combinación de características físicas de diferentes animales, tanto fantásticos
+                        como reales, para crear un ser alucinatorio que representa la creatividad y la identidad
+                        cultural mexicana.
+                    </p>
+                    <p>
+                        En el contexto futbolístico, <strong>Alebrijes de Oaxaca Teotihuacán</strong> representa esta
+                        misma filosofía de combinación y fusión: unimos la tradición y profesionalismo de Oaxaca con el
+                        talento y la pasión de Teotihuacán, creando algo único y poderoso. Así como los alebrijes
+                        artesanales combinan diferentes elementos para formar una creación extraordinaria, nuestra
+                        filial combina metodologías, valores y talentos para formar futbolistas excepcionales listos
+                        para brillar en el fútbol profesional.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Visorías Section -->
+    <section class="section visorias-section">
+        <div class="visorias-hero-image">
+            <img src="../assets/Nosotros/img-entrenamiento-velocidad.jpg" alt="Entrenamiento" class="visorias-bg-img">
+            <div class="visorias-overlay"></div>
+        </div>
+        <div class="container visorias-container">
+            <div class="visorias-header">
+                <span class="section-label">CAPTACIÓN DE TALENTO</span>
+                <h2 class="section-title-left">Visorías Nacionales</h2>
+            </div>
+            <div class="visorias-grid">
+                <div class="visorias-content">
+                    <p class="lead">
+                        Somos el <strong>encargado oficial de encontrar talento mediante visorías en todo el
+                            país</strong> para llevarlos al equipo piloto de Liga de Expansión.
+                    </p>
+                    <p>
+                        Nuestro programa de visorías nacionales es un proceso riguroso y profesional diseñado para
+                        identificar a los mejores futbolistas del país. Recorremos diferentes estados y regiones,
+                        realizando evaluaciones técnicas, tácticas, físicas y psicológicas para detectar jugadores con
+                        potencial para el fútbol profesional.
+                    </p>
+                    <p>
+                        Los talentos identificados a través de nuestras visorías ingresan a nuestro sistema formativo
+                        integral, donde reciben desarrollo personalizado en nuestras diferentes categorías. Este proceso
+                        asegura que cada jugador tenga la oportunidad de demostrar su potencial y alcanzar sus metas
+                        deportivas dentro de la estructura profesional de Alebrijes de Oaxaca.
+                    </p>
+                    <p>
+                        Nuestro compromiso es claro: <strong>encontrar el talento, desarrollarlo en Teotihuacán y
+                            proyectarlo hacia Liga de Expansión</strong>, creando así un camino directo desde la
+                        detección hasta el fútbol profesional de segunda división.
+                    </p>
+                    <a href="../webvisorias/FormularioDeRegistroVisoria-main/index.html" class="btn btn-primary"
+                        target="_blank" rel="noopener noreferrer">Conoce más sobre Visorías</a>
+                </div>
+                <div class="visorias-stats">
+                    <div class="stat-box">
+                        <div class="stat-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="10" r="3"></circle>
+                                <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"></path>
+                            </svg>
+                        </div>
+                        <span class="stat-number">Todo</span>
+                        <span class="stat-label">el País</span>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="20" x2="18" y2="10"></line>
+                                <line x1="12" y1="20" x2="12" y2="4"></line>
+                                <line x1="6" y1="20" x2="6" y2="14"></line>
+                            </svg>
+                        </div>
+                        <span class="stat-number">Evaluación</span>
+                        <span class="stat-label">Integral</span>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                            </svg>
+                        </div>
+                        <span class="stat-number">Camino</span>
+                        <span class="stat-label">a Expansión</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Nuestro Compromiso Section -->
+    <section class="section compromiso-section bg-grey">
+        <div class="container">
+            <div class="compromiso-header text-center">
+                <span class="section-label">NUESTRO COMPROMISO</span>
+                <h2 class="section-title">Compromiso con la Excelencia</h2>
+            </div>
+            <div class="compromiso-grid">
+                <div class="compromiso-item">
+                    <div class="compromiso-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                    </div>
+                    <h3>Formación Integral</h3>
+                    <p>Desarrollamos no solo habilidades futbolísticas, sino también valores humanos, disciplina y
+                        carácter que preparan a nuestros jugadores para la vida dentro y fuera del campo.</p>
+                </div>
+                <div class="compromiso-item">
+                    <div class="compromiso-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
+                    <h3>Proyección Profesional</h3>
+                    <p>Brindamos un camino claro y estructurado hacia Liga de Expansión, donde nuestros jugadores tienen
+                        la oportunidad real de alcanzar el fútbol profesional de segunda división.</p>
+                </div>
+                <div class="compromiso-item">
+                    <div class="compromiso-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3>Excelencia Metodológica</h3>
+                    <p>Aplicamos las mismas metodologías y estándares de calidad del club matriz, asegurando que
+                        nuestros jugadores reciban formación de primer nivel.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Jugadores Exitosos Section -->
+    <section class="section jugadores-section bg-dark">
+        <div class="container">
+            <div class="jugadores-header">
+                <span class="section-label">ÉXITO COMPROBADO</span>
+                <h2 class="section-title">Jugadores en Liga de Expansión</h2>
+                <p class="jugadores-subtitle">Varios jugadores han llegado a Liga de Expansión mediante la filial en
+                    Teotihuacán, demostrando la efectividad de nuestro modelo formativo.</p>
+            </div>
+            <div class="jugadores-grid">
+                <div class="jugador-card">
+                    <div class="jugador-image">
+                        <img src="../assets/Nosotros/Zamorano_Expansion.jpg" alt="Kevin Zamorano"
+                            onerror="this.src='../assets/Alebrijes Teotihuacan.png';">
+                    </div>
+                    <div class="jugador-info">
+                        <h3>Kevin Zamorano</h3>
+                        <p>Jugador formado en nuestra filial que alcanzó Liga de Expansión, demostrando la efectividad
+                            de nuestro sistema de desarrollo y formación integral.</p>
+                    </div>
+                </div>
+                <div class="jugador-card">
+                    <div class="jugador-image">
+                        <img src="../assets/Nosotros/Edwin_Gallinar_Expansion.jpg" alt="Sergio Gallinar"
+                            onerror="this.src='../assets/Alebrijes Teotihuacan.png';">
+                    </div>
+                    <div class="jugador-info">
+                        <h3>Sergio Gallinar</h3>
+                        <p>Talento desarrollado en Teotihuacán que llegó a Liga de Expansión, siendo un ejemplo del
+                            camino claro que ofrece nuestra filial hacia el fútbol profesional.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categorías Section -->
+    <section class="section categorias-section">
+        <div class="categorias-hero-bg">
+            <img src="../assets/Nosotros/LigaBBVA_Expansion.jpg" alt="Liga de Expansión" class="categorias-bg-image">
+            <div class="categorias-overlay"></div>
+        </div>
+        <div class="container categorias-container">
+            <div class="categorias-header text-center">
+                <span class="section-label">FORMACIÓN INTEGRAL</span>
+                <h2 class="section-title">Categorías de Desarrollo</h2>
+                <p class="categorias-subtitle">Nuestro sistema formativo abarca desde las categorías base hasta la
+                    competencia profesional, ofreciendo un camino completo de desarrollo.</p>
+            </div>
+            <div class="categorias-grid">
+                <div class="categoria-card">
+                    <div class="categoria-visual">
+                        <div class="categoria-image-wrapper">
+                            <img src="../assets/Nosotros/Balon_LigaTDP.jpg" alt="Liga TDP" class="categoria-image">
+                            <div class="categoria-overlay"></div>
+                        </div>
+                        <div class="categoria-number-badge">01</div>
+                    </div>
+                    <div class="categoria-content">
+                        <span class="categoria-label">PROFESIONAL</span>
+                        <h3>Liga TDP</h3>
+                        <p>Competencia profesional en la tercera división del fútbol mexicano. Nuestro equipo principal
+                            compite a nivel nacional, ofreciendo a los jugadores experiencia en alta competencia y
+                            exposición para ser considerados en categorías superiores.</p>
+                    </div>
+                </div>
+                <div class="categoria-card">
+                    <div class="categoria-visual">
+                        <div class="categoria-image-wrapper">
+                            <img src="../assets/Nosotros/img-entrenamiento-velocidad.jpg" alt="Sub-18"
+                                class="categoria-image">
+                            <div class="categoria-overlay"></div>
+                        </div>
+                        <div class="categoria-number-badge">02</div>
+                    </div>
+                    <div class="categoria-content">
+                        <span class="categoria-label">JUVENIL</span>
+                        <h3>Sub-18</h3>
+                        <p>Categoría juvenil de máxima competencia donde los jugadores perfeccionan sus habilidades
+                            antes de dar el salto al fútbol profesional. Formación técnica, táctica y física
+                            especializada para jugadores en la etapa previa a la profesionalización.</p>
+                    </div>
+                </div>
+                <div class="categoria-card">
+                    <div class="categoria-visual">
+                        <div class="categoria-image-wrapper">
+                            <img src="../assets/Sub-16.jpg" alt="Sub-16" class="categoria-image">
+                            <div class="categoria-overlay"></div>
+                        </div>
+                        <div class="categoria-number-badge">03</div>
+                    </div>
+                    <div class="categoria-content">
+                        <span class="categoria-label">DESARROLLO</span>
+                        <h3>Sub-16</h3>
+                        <p>Etapa crucial de desarrollo donde los fundamentos técnicos y tácticos se consolidan. Los
+                            jugadores adquieren mayor complejidad en su juego y se preparan para las exigencias de las
+                            categorías superiores.</p>
+                    </div>
+                </div>
+                <div class="categoria-card">
+                    <div class="categoria-visual">
+                        <div class="categoria-image-wrapper">
+                            <img src="../assets/Sub-14.jpg" alt="Sub-14" class="categoria-image">
+                            <div class="categoria-overlay"></div>
+                        </div>
+                        <div class="categoria-number-badge">04</div>
+                    </div>
+                    <div class="categoria-content">
+                        <span class="categoria-label">BASE</span>
+                        <h3>Sub-14</h3>
+                        <p>Base fundamental de nuestra estructura formativa. En esta categoría, los jugadores inician su
+                            proceso de desarrollo técnico, aprenden los valores del club y comienzan a construir su
+                            identidad como futbolistas de Alebrijes.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer (Same as index) -->
+    <footer id="contacto">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <img src="../assets/Alebrijes Teotihuacan.png" alt="Logo Footer" class="footer-logo-img">
+                <p>Pasión y formación deportiva con identidad oaxaqueña.</p>
+            </div>
+
+            <div class="footer-links">
+                <h4>Navegación</h4>
+                <ul>
+                    <li><a href="../index.html">Inicio</a></li>
+                    <li><a href="nosotros.html">Nosotros</a></li>
+                    <li><a href="../webvisorias/FormularioDeRegistroVisoria-main/index.html" target="_blank"
+                            rel="noopener noreferrer">Visorias</a></li>
+                    <li><a href="ligatdp.html">Liga TDP</a></li>
+                    <li><a href="noticias.html">Noticias</a></li>
+                    <li><a href="fuerzasbasicas.html">Fuerzas Básicas</a></li>
+                    <li><a href="casaclub.html">Casa Club</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-contact">
+                <h4>Contacto</h4>
+                <p>
+                    <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                    </svg>
+                    Centro Deportivo Pascual Boing
+                </p>
+                <p>
+                    <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                    </svg>
+                    alebrijesclub6@gmail.com
+                </p>
+            </div>
+
+            <div class="footer-social">
+                <h4>Alebrijes de Oaxaca</h4>
+                <div class="social-links-footer">
+                    <a href="https://www.facebook.com/AlebrijesOficial/" target="_blank" class="social-link-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                        </svg>
+                        <span>Facebook</span>
+                    </a>
+                    <a href="https://www.instagram.com/alebrijesoaxacaoficial/" target="_blank"
+                        class="social-link-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                        </svg>
+                        <span>Instagram</span>
+                    </a>
+                    <a href="https://www.tiktok.com/@alebrijesoaxacaoficial?lang=es" target="_blank"
+                        class="social-link-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path
+                                d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
+                        </svg>
+                        <span>TikTok</span>
+                    </a>
+                    <a href="https://x.com/AlebrijesOaxaca" target="_blank" class="social-link-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path
+                                d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                        </svg>
+                        <span>X (Twitter)</span>
+                    </a>
+                    <a href="https://www.youtube.com/user/AlebrijesTV" target="_blank" class="social-link-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path
+                                d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                        </svg>
+                        <span>YouTube</span>
+                    </a>
+                </div>
+                <h4 style="margin-top: 20px;">Alebrijes Teotihuacán</h4>
+                <div class="social-links-footer">
+                    <a href="https://www.facebook.com/profile.php?id=100083182488673&locale=es_LA" target="_blank"
+                        class="social-link-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                        </svg>
+                        <span>Facebook</span>
+                    </a>
+                    <a href="https://www.instagram.com/alebrijes_teoti" target="_blank" class="social-link-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                        </svg>
+                        <span>Instagram</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Alebrijes de Oaxaca Teotihuacán. | <a href="politica-privacidad.html">Política de
+                    Privacidad</a> | <a href="terminos-condiciones.html">Términos y Condiciones</a></p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../scripts/script.js"></script>
+    <script type="module" src="../scripts/nav-auth.js"></script>
+    <script src="../scripts/nosotros.js"></script>
+</body>
+
+</html>

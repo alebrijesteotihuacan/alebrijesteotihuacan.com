@@ -1,0 +1,183 @@
+/*
+    Alebrijes de Oaxaca Teotihuacán
+    Firebase Firestore Security Rules
+    
+    Para aplicar estas reglas:
+    1. Ve a Firebase Console: https://console.firebase.google.com
+    2. Selecciona el proyecto "metricasalebrijes"
+    3. Ve a Firestore Database > Rules
+    4. Copia y pega estas reglas
+    5. Haz clic en "Publish"
+*/
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Función auxiliar para verificar si el usuario está autenticado
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Función para verificar si el usuario es el propietario del documento
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Función para verificar si el usuario es un profesor
+    function isProfesor() {
+      return isAuthenticated() && 
+             exists(/databases/$(database)/documents/profesores/$(request.auth.uid));
+    }
+    
+    // ================================================
+    // REGLAS PARA LA COLECCIÓN DE PROFESORES
+    // ================================================
+    match /profesores/{profId} {
+      // Los profesores solo pueden leer su propio perfil
+      allow read: if isOwner(profId);
+      
+      // Solo administradores pueden crear/modificar profesores
+      allow write: if false;
+    }
+    
+    // ================================================
+    // REGLAS PARA LA COLECCIÓN DE JUGADORES
+    // ================================================
+    match /jugadores/{userId} {
+      // Los jugadores pueden leer su propio perfil
+      // Los profesores pueden leer TODOS los perfiles de jugadores
+      allow read: if isOwner(userId) || isProfesor();
+      
+      // Solo administradores pueden escribir perfiles
+      allow write: if false;
+      
+      // ------------------------------------------------
+      // SUBCOLECCIÓN DE EVALUACIONES
+      // ------------------------------------------------
+      match /evaluaciones/{evaluacionId} {
+        // Los jugadores pueden leer sus propias evaluaciones
+        // Los profesores pueden leer todas las evaluaciones
+        allow read: if isOwner(userId) || isProfesor();
+        
+        // Los profesores pueden crear nuevas evaluaciones
+        allow create: if isProfesor();
+        
+        // Solo administradores pueden actualizar/eliminar
+        allow update, delete: if false;
+      }
+    }
+    
+    // ================================================
+    // REGLAS PARA LA COLECCIÓN DE EVALUACIONES (global)
+    // ================================================
+    match /evaluaciones/{evalId} {
+      // Los profesores pueden leer y crear evaluaciones
+      allow read, create: if isProfesor();
+      
+      // Los jugadores pueden leer solo sus propias evaluaciones
+      allow read: if isAuthenticated() && 
+                     resource.data.jugadorId == request.auth.uid;
+      
+      // Solo administradores pueden actualizar/eliminar
+      allow update, delete: if false;
+    }
+    
+    // ================================================
+    // BLOQUEAR ACCESO A CUALQUIER OTRO DOCUMENTO
+    // ================================================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+/*
+    ESTRUCTURA DE DATOS ESPERADA EN FIRESTORE:
+    
+    profesores (colección)
+    └── {profesorId} (documento - debe coincidir con el UID de Firebase Auth)
+        ├── nombre: string           // "Abimael", "Eduardo", "Ricardo", "Oswaldo"
+        ├── email: string            // "abimael@alebrijes.com"
+        └── rol: "profesor"
+    
+    jugadores (colección)
+    └── {userId} (documento - debe coincidir con el UID de Firebase Auth)
+        ├── nombre: string           // "Juan"
+        ├── apellido: string         // "Pérez"
+        ├── posicion: string         // "Delantero"
+        ├── categoria: string        // "Sub-15", "Sub-17", "Liga TDP"
+        ├── numero: number           // 10
+        ├── fechaNacimiento: timestamp
+        ├── fotoUrl: string          // URL de la foto (opcional)
+        │
+        └── evaluaciones (subcolección)
+            └── {evaluacionId}
+                ├── fecha: timestamp
+                ├── evaluadorId: string      // UID del profesor
+                ├── evaluadorNombre: string  // "Abimael"
+                ├── tipo: string             // "Evaluación Semanal"
+                │
+                ├── tecnico: number (1-10)
+                ├── tactico: number (1-10)
+                ├── fisico: number (1-10)
+                ├── mental: number (1-10)
+                ├── disciplinaCancha: number (1-10)
+                ├── disciplinaCasaClub: number (1-10)
+                ├── asistencia: number (1-10)
+                │
+                ├── promedioGeneral: number  // Calculado automáticamente
+                └── observaciones: string    // Comentarios del evaluador
+    
+    evaluaciones (colección global - opcional, para búsquedas rápidas)
+    └── {evaluacionId}
+        ├── jugadorId: string        // UID del jugador
+        ├── evaluadorId: string      // UID del profesor
+        ├── evaluadorNombre: string
+        ├── fecha: timestamp
+        ├── tecnico: number
+        ├── tactico: number
+        ├── fisico: number
+        ├── mental: number
+        ├── disciplinaCancha: number
+        ├── disciplinaCasaClub: number
+        ├── asistencia: number
+        ├── promedioGeneral: number
+        └── observaciones: string
+    
+    
+    PASOS PARA CONFIGURAR:
+    
+    1. FIREBASE AUTHENTICATION:
+       - Ve a Authentication > Sign-in method
+       - Habilita "Email/Password"
+       
+       CREAR PROFESORES:
+       - Crea 4 usuarios para los profesores:
+         * abimael@alebrijes.com
+         * eduardo@alebrijes.com
+         * ricardo@alebrijes.com
+         * oswaldo@alebrijes.com
+       - Guarda el UID de cada profesor
+       
+       CREAR JUGADORES:
+       - Crea usuarios para cada jugador
+       - Guarda el UID de cada jugador
+    
+    2. FIRESTORE DATABASE:
+       
+       CREAR PROFESORES:
+       - Crea la colección "profesores"
+       - Para cada profesor, crea un documento con ID = UID del usuario
+       - Campos: nombre, email, rol: "profesor"
+       
+       CREAR JUGADORES:
+       - Crea la colección "jugadores"
+       - Para cada jugador, crea un documento con ID = UID del usuario
+       - Campos: nombre, apellido, posicion, categoria, numero
+    
+    3. APLICAR REGLAS:
+       - Ve a Firestore > Rules
+       - Copia las reglas de arriba (sin los comentarios /* */)
+       - Publica las reglas
+*/

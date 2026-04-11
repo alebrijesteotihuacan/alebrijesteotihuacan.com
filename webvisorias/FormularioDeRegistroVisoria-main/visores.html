@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visores - Alebrijes de Oaxaca</title>
+  <!-- Favicon -->
+  <link rel="icon" type="image/png"
+    href="https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Alebrijes_Oaxaca_Logo_Escudo.png/960px-Alebrijes_Oaxaca_Logo_Escudo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="visores.css">
+</head>
+
+<body>
+
+  <!-- Menú Lateral -->
+  <div id="menuLateral" class="menu-lateral">
+    <div class="menu-header">
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Alebrijes_Oaxaca_Logo_Escudo.png/960px-Alebrijes_Oaxaca_Logo_Escudo.png"
+        alt="Alebrijes" class="menu-logo">
+      <h3>Menú</h3>
+      <button class="btn-cerrar-menu" id="btnCerrarMenu">✕</button>
+    </div>
+    <nav class="menu-nav">
+      <a href="index.html" class="menu-item">
+        <span class="menu-text">Registro</span>
+      </a>
+      <a href="que-es-visoria.html" class="menu-item">
+        <span class="menu-text">¿Qué es una Visoria?</span>
+      </a>
+      <a href="casos-exito.html" class="menu-item">
+        <span class="menu-text">Casos de Éxito</span>
+      </a>
+      <a href="sedes.html" class="menu-item">
+        <span class="menu-text">Sedes en la República</span>
+      </a>
+      <a href="visores.html" class="menu-item active">
+        <span class="menu-text">Visores</span>
+      </a>
+      <a href="../../index.html" class="menu-item">
+        <span class="menu-text">Página Principal</span>
+      </a>
+    </nav>
+  </div>
+
+  <!-- Overlay del menú -->
+  <div id="menuOverlay" class="menu-overlay"></div>
+
+  <header class="main-header">
+    <div class="header-wrapper">
+      <div class="logo-section">
+        <button class="btn-icon btn-menu" id="btnAbrirMenu" title="Abrir menú">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+        <a href="index.html" style="display: flex; align-items: center; text-decoration: none;">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Alebrijes_Oaxaca_Logo_Escudo.png/960px-Alebrijes_Oaxaca_Logo_Escudo.png"
+            alt="Alebrijes" class="club-logo">
+        </a>
+        <div class="header-text">
+          <h1>Alebrijes de Oaxaca</h1>
+          <p>Sistema de Registro de Visorías</p>
+        </div>
+      </div>
+      <!-- Menú Desktop -->
+      <nav class="desktop-nav">
+        <a href="index.html" class="desktop-nav-link">Registro</a>
+        <a href="que-es-visoria.html" class="desktop-nav-link">¿Qué es una Visoria?</a>
+        <a href="casos-exito.html" class="desktop-nav-link">Casos de Éxito</a>
+        <a href="sedes.html" class="desktop-nav-link">Sedes</a>
+        <a href="visores.html" class="desktop-nav-link active">Visores</a>
+        <a href="../../index.html" class="desktop-nav-link btn-volver-nav">Volver a la Página Principal</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="exito-page">
+    <div class="exito-hero">
+      <h1>Nuestros Visores</h1>
+      <p>Conoce al equipo de profesionales que descubren y forman el talento que llevará a Alebrijes a lo más alto del
+        fútbol mexicano</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="numero">15+</div>
+        <div class="label">Años de experiencia</div>
+      </div>
+      <div class="stat-box">
+        <div class="numero">200+</div>
+        <div class="label">Talentos descubiertos</div>
+      </div>
+      <div class="stat-box">
+        <div class="numero">28/32</div>
+        <div class="label">Estados cubiertos</div>
+      </div>
+      <div class="stat-box">
+        <div class="numero">+10</div>
+        <div class="label"
+          style="display: flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap;">
+          Jugadores en
+          <img src="../../assets/LigaExpansiónMX.png" alt="Liga de Expansión MX"
+            style="height: 40px; display: inline-block;">
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Visores de Fuerzas Básicas</h2>
+
+    <div class="casos-grid">
+      <!-- Visor 1: Hector Trejo -->
+      <div class="caso-card">
+        <div class="card-image-container">
+          <img src="../../assets/Visores/Hector_Trejo_Barajas.png" alt="Prof. Hector Tréjo" class="visor-img">
+        </div>
+        <div class="caso-body">
+          <h3>Prof. Héctor Trejo</h3>
+          <div class="testimonio">
+            <p>Mi pasión es encontrar diamantes en bruto. Cada visoría es una oportunidad de cambiar la vida de un joven
+              talento.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visor 2: Joel Medina -->
+      <div class="caso-card">
+        <div class="card-image-container">
+          <img src="../../assets/Visores/Joel_Medina_Olivas.png" alt="Prof. Joel Medina" class="visor-img">
+        </div>
+        <div class="caso-body">
+          <h3>Prof. Joel Medina</h3>
+          <div class="testimonio">
+            <p>El norte de México tiene talento de clase mundial. Mi trabajo es identificarlo temprano y darles la
+              plataforma que merecen.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visor 3: Juan Carlos Adona -->
+      <div class="caso-card">
+        <div class="card-image-container">
+          <img src="../../assets/Visores/Juan_Carlos_Adona_Neri.png" alt="Prof. Juan Carlos Adona" class="visor-img">
+        </div>
+        <div class="caso-body">
+          <h3>Prof. Juan Carlos</h3>
+          <div class="testimonio">
+            <p>Combinamos el ojo experto con el análisis técnico para asegurar que cada jugador tenga la mejor
+              oportunidad.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visor 4: Evaristo Nicolas Vazquez -->
+      <div class="caso-card">
+        <div class="card-image-container">
+          <img src="../../assets/Visores/Evarissto_Nicolas_Vazquez_Cabrera.png" alt="Prof. Evaristo Nicolás Vázquez"
+            class="visor-img">
+        </div>
+        <div class="caso-body">
+          <h3>Prof. Evaristo Nicolás</h3>
+          <div class="testimonio">
+            <p>Buscamos jugadores con carácter y determinación, cualidades fundamentales para triunfar en el fútbol
+              profesional.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visor 5: Julio Cesar Rodrigues -->
+      <div class="caso-card">
+        <div class="card-image-container">
+          <img src="../../assets/Visores/Julio_Cesar_Rodrigues_Yepez.png" alt="Prof. Julio César Rodríguez"
+            class="visor-img">
+        </div>
+        <div class="caso-body">
+          <h3>Prof. Julio César</h3>
+          <div class="testimonio">
+            <p>La técnica se puede pulir, pero la pasión se trae dentro. Buscamos esa chispa en cada cancha que
+              visitamos.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visor 6: Alfredo Gutierrez -->
+      <div class="caso-card">
+        <div class="card-image-container">
+          <img src="../../assets/Visores/Alfredo_Gutierrez_Toledo.png" alt="Prof. Alfredo Gutiérrez" class="visor-img">
+        </div>
+        <div class="caso-body">
+          <h3>Prof. Alfredo Gutiérrez</h3>
+          <div class="testimonio">
+            <p>Nuestro compromiso es total con el desarrollo de jóvenes promesas. Cada visoría es un paso hacia el sueño
+              de primera división.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visor 7: Gerardo Alfonso Perrusquia -->
+      <div class="caso-card">
+        <div class="card-image-container">
+          <img src="../../assets/Visores/Gerardo_Alfonso_Perrusquia_Espinosa.png" alt="Prof. Gerardo Alfonso Perrusquía"
+            class="visor-img">
+        </div>
+        <div class="caso-body">
+          <h3>Prof. Gerardo Alfonso</h3>
+          <div class="testimonio">
+            <p>La disciplina y el talento van de la mano. Identificamos jugadores integrales listos para el alto
+              rendimiento.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visor 8: Juan Emilio Macias -->
+      <div class="caso-card">
+        <div class="card-image-container">
+          <img src="../../assets/Visores/Juan_Emilio_Macias_Chaparro.png" alt="Prof. Juan Emilio Macías"
+            class="visor-img">
+        </div>
+        <div class="caso-body">
+          <h3>Prof. Juan Emilio</h3>
+          <div class="testimonio">
+            <p>Recorremos cada rincón buscando el talento oculto. La próxima estrella puede estar en cualquier lugar.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visor 9: Moises Molina -->
+      <div class="caso-card">
+        <div class="card-image-container">
+          <img src="../../assets/Visores/Moises_Molina_Soriano.png" alt="Prof. Moisés Molina" class="visor-img">
+        </div>
+        <div class="caso-body">
+          <h3>Prof. Moisés Molina</h3>
+          <div class="testimonio">
+            <p>El fútbol evoluciona y nosotros también. Buscamos jugadores inteligentes capaces de adaptarse al juego
+              moderno.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="cta-section">
+      <h2>¿Listo para ser Evaluado por Profesionales?</h2>
+      <p>Nuestro equipo de visores expertos está buscando el próximo talento. No pierdas la oportunidad de demostrar tu
+        potencial.</p>
+      <div class="cta-buttons">
+        <a href="index.html" class="btn-cta btn-cta-primary">
+          Registrarme Ahora
+        </a>
+        <a href="que-es-visoria.html" class="btn-cta btn-cta-secondary">
+          Conocer Más
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer id="contacto">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <img src="../../assets/Alebrijes Teotihuacan.png" alt="Logo Footer" class="footer-logo-img">
+        <p>Pasión y formación deportiva con identidad oaxaqueña.</p>
+      </div>
+
+      <div class="footer-links">
+        <h4>Navegación</h4>
+        <ul>
+          <li><a href="../../index.html">Inicio</a></li>
+          <li><a href="../../pages/nosotros.html">Nosotros</a></li>
+          <li><a href="index.html">Visorias</a></li>
+          <li><a href="../../pages/ligatdp.html">Liga TDP</a></li>
+          <li><a href="../../pages/noticias.html">Noticias</a></li>
+          <li><a href="../../pages/fuerzasbasicas.html">Fuerzas Básicas</a></li>
+          <li><a href="../../pages/casaclub.html">Casa Club</a></li>
+          <li><a href="../../pages/escuela.html">Escuela</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-contact">
+        <h4>Contacto</h4>
+        <p>
+          <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+          </svg>
+          Centro Deportivo Pascual Boing
+        </p>
+        <p>
+          <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+          </svg>
+          alebrijesclub6@gmail.com
+        </p>
+      </div>
+
+      <div class="footer-social">
+        <h4>Alebrijes de Oaxaca</h4>
+        <div class="social-links-footer">
+          <a href="https://www.facebook.com/AlebrijesOficial/" target="_blank" class="social-link-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+            </svg>
+            <span>Facebook</span>
+          </a>
+          <a href="https://www.instagram.com/alebrijesoaxacaoficial/" target="_blank" class="social-link-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+            </svg>
+            <span>Instagram</span>
+          </a>
+          <a href="https://www.tiktok.com/@alebrijesoaxacaoficial?lang=es" target="_blank" class="social-link-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
+            </svg>
+            <span>TikTok</span>
+          </a>
+          <a href="https://x.com/AlebrijesOaxaca" target="_blank" class="social-link-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+            </svg>
+            <span>X (Twitter)</span>
+          </a>
+          <a href="https://www.youtube.com/user/AlebrijesTV" target="_blank" class="social-link-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+            </svg>
+            <span>YouTube</span>
+          </a>
+        </div>
+        <h4 style="margin-top: 20px;">Alebrijes Teotihuacán</h4>
+        <div class="social-links-footer">
+          <a href="https://www.facebook.com/profile.php?id=100083182488673&locale=es_LA" target="_blank" class="social-link-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+            </svg>
+            <span>Facebook</span>
+          </a>
+          <a href="https://www.instagram.com/alebrijes_teoti" target="_blank" class="social-link-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+            </svg>
+            <span>Instagram</span>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Alebrijes de Oaxaca Teotihuacán. | <a href="../../pages/politica-privacidad.html">Política de Privacidad</a> | <a href="../../pages/terminos-condiciones.html">Términos y Condiciones</a></p>
+    </div>
+  </footer>
+
+  <script src="visores.js"></script>
+</body>
+
+</html>

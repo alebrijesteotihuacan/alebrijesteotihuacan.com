@@ -397,6 +397,253 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p style="font-size: 1.1rem; margin-bottom: 0;">Todo el equipo está preparado y listo para dar lo mejor en este importante encuentro. ¡A por la victoria!</p>
                 </div>
             `
+        },
+        'jorge-salazar-la-pulga-goleador-2026': {
+            title: '"La Pulga" — El Diez de Teotihuacán',
+            category: 'Club',
+            categoryClass: 'club',
+            date: '2026-04-12T11:00:00',
+            image: '../assets/Noticias/Jorge Salazar - La Pulga/Jugador_Destacado_3.jpg',
+            imageStyle: 'object-fit: cover; object-position: center top;',
+            content: `
+                <p><strong>TEOTIHUACÁN, EDOMEX</strong> – En el fútbol, el número 10 conlleva una responsabilidad que no cualquiera puede cargar, pero para <strong>Jorge Salazar Jiménez</strong>, el dorsal parece pesarle menos que una pluma. Con apenas un año vistiendo los colores de <strong>Alebrijes de Oaxaca Teotihuacán</strong>, <em>"La Pulga"</em> se ha consolidado no solo como el cerebro del equipo, sino como su <strong>máximo artillero</strong> en esta Temporada 2026.</p>
+
+                <h3>De Tepetitlán para el Mundo, con Corazón de Timilpan</h3>
+
+                <p>Nacido en <strong>Tepetitlán, Hidalgo</strong>, pero con raíces profundas en <strong>Timilpan, Estado de México</strong>, Jorge ha demostrado que el talento no conoce fronteras. Como <strong>Mediocampista Ofensivo</strong>, su capacidad para leer el juego y aparecer en el área rival lo ha llevado a lo más alto de la tabla de goleo interna, superando las expectativas en su primer año con la institución.</p>
+
+                <img src="../assets/Noticias/Jorge Salazar - La Pulga/SanAndresTimilpan.jpg" alt="San Andrés Timilpan - Tierra natal de Jorge Salazar" style="width: 100%; height: auto; border-radius: 8px; margin: 30px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+
+                <h3>Números que Hablan: Letalidad y Juego Limpio</h3>
+
+                <p>Las estadísticas de <em>"La Pulga"</em> en la actual campaña de la <strong>Tercera División</strong> son una prueba de su constancia y sacrificio en el terreno de juego. En <strong>28 partidos disputados</strong>, Jorge ha acumulado un total de <strong>2,403 minutos</strong>, siendo titular en 25 de ellos.</p>
+
+                <p>Lo que más destaca, más allá de sus <strong>16 anotaciones</strong>, es su impecable disciplina: a pesar de la intensidad con la que vive cada jugada, el mediocampista presume un registro de <strong>cero tarjetas amarillas y rojas</strong>, un ejemplo de <em>"Fair Play"</em> para todos los jóvenes de la cantera.</p>
+
+                <div style="overflow-x: auto; margin: 30px 0;">
+                    <table style="width: 100%; border-collapse: collapse; font-family: 'Montserrat', sans-serif; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.12);">
+                        <thead>
+                            <tr style="background: linear-gradient(135deg, #E85D26 0%, #c44d1e 100%); color: #fff;">
+                                <th style="padding: 16px 20px; text-align: left; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">Categoría</th>
+                                <th style="padding: 16px 20px; text-align: center; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">Estadística</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="background: #fff;">
+                                <td style="padding: 14px 20px; border-bottom: 1px solid #f0f0f0; font-weight: 700; color: #1a1a1a;">Goles</td>
+                                <td style="padding: 14px 20px; border-bottom: 1px solid #f0f0f0; text-align: center; font-size: 1.3rem; font-weight: 900; color: #E85D26;">16</td>
+                            </tr>
+                            <tr style="background: #fafafa;">
+                                <td style="padding: 14px 20px; border-bottom: 1px solid #f0f0f0; font-weight: 700; color: #1a1a1a;">Juegos Jugados</td>
+                                <td style="padding: 14px 20px; border-bottom: 1px solid #f0f0f0; text-align: center; font-size: 1.3rem; font-weight: 900; color: #E85D26;">28</td>
+                            </tr>
+                            <tr style="background: #fff;">
+                                <td style="padding: 14px 20px; border-bottom: 1px solid #f0f0f0; font-weight: 700; color: #1a1a1a;">Minutos Jugados</td>
+                                <td style="padding: 14px 20px; border-bottom: 1px solid #f0f0f0; text-align: center; font-size: 1.3rem; font-weight: 900; color: #E85D26;">2,403</td>
+                            </tr>
+                            <tr style="background: #fafafa;">
+                                <td style="padding: 14px 20px; font-weight: 700; color: #1a1a1a;">Tarjetas (TA / TR)</td>
+                                <td style="padding: 14px 20px; text-align: center; font-size: 1.3rem; font-weight: 900; color: #27ae60;">0 / 0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>El Motor del Alebrije</h3>
+
+                <p>Con el <strong>NUI 174920</strong>, Jorge Salazar se perfila como una de las piezas clave para las aspiraciones del club en la recta final del torneo. Su visión de campo y su olfato goleador han convertido a la escuadra de Teotihuacán en un rival de cuidado para cualquiera en la <strong>Liga TDP</strong>.</p>
+
+                <p>Para la afición que desea seguir de cerca la evolución de nuestro goleador, pueden consultar su perfil oficial en la plataforma de la Liga TDP. ¡Sigue saltando, <em>"Pulga"</em>! El camino al éxito apenas comienza.</p>
+
+                <div style="width: 100%; max-width: 800px; margin: 30px auto; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);">
+                    <video controls style="width: 100%; height: auto; display: block;" poster="../assets/Noticias/Jorge Salazar - La Pulga/Jugador_Destacado_3.jpg">
+                        <source src="../assets/Noticias/Jorge Salazar - La Pulga/LaPulga - IDMX.mp4" type="video/mp4">
+                        Tu navegador no soporta la reproducción de videos.
+                    </video>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 16px; margin: 48px 0 24px 0;">
+                    <div style="flex: 1; height: 1px; background: linear-gradient(to right, transparent, #e0e0e0);"></div>
+                    <span style="font-size: 0.72rem; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: #E85D26; white-space: nowrap;">Fotos de Juego</span>
+                    <div style="flex: 1; height: 1px; background: linear-gradient(to left, transparent, #e0e0e0);"></div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 260px 180px; gap: 10px; margin: 0 0 48px 0; border-radius: 12px; overflow: hidden;">
+                    <div style="grid-row: 1 / 3; position: relative; overflow: hidden; cursor: zoom-in;"
+                         onmouseenter="this.querySelector('img').style.transform='scale(1.06)'; this.querySelector('.ov').style.opacity='1';"
+                         onmouseleave="this.querySelector('img').style.transform='scale(1)'; this.querySelector('.ov').style.opacity='0';">
+                        <img src="../assets/Noticias/Jorge Salazar - La Pulga/JorgePartido_1.jpg"
+                             alt="La Pulga en acción — Foto 1"
+                             style="width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.45s cubic-bezier(.25,.46,.45,.94);">
+                        <div class="ov" style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.55) 0%,transparent 60%);opacity:0;transition:opacity 0.35s ease;display:flex;align-items:flex-end;padding:18px;">
+                            <span style="color:#fff;font-size:0.8rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;">En Acción</span>
+                        </div>
+                    </div>
+                    <div style="position: relative; overflow: hidden; cursor: zoom-in;"
+                         onmouseenter="this.querySelector('img').style.transform='scale(1.06)'; this.querySelector('.ov').style.opacity='1';"
+                         onmouseleave="this.querySelector('img').style.transform='scale(1)'; this.querySelector('.ov').style.opacity='0';">
+                        <img src="../assets/Noticias/Jorge Salazar - La Pulga/JorgePartido_2.jpg"
+                             alt="La Pulga en acción — Foto 2"
+                             style="width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.45s cubic-bezier(.25,.46,.45,.94);">
+                        <div class="ov" style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.55) 0%,transparent 60%);opacity:0;transition:opacity 0.35s ease;"></div>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                        <div style="position: relative; overflow: hidden; cursor: zoom-in;"
+                             onmouseenter="this.querySelector('img').style.transform='scale(1.08)'; this.querySelector('.ov').style.opacity='1';"
+                             onmouseleave="this.querySelector('img').style.transform='scale(1)'; this.querySelector('.ov').style.opacity='0';">
+                            <img src="../assets/Noticias/Jorge Salazar - La Pulga/JorgePartido_3.jpg"
+                                 alt="La Pulga en acción — Foto 3"
+                                 style="width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.45s cubic-bezier(.25,.46,.45,.94);">
+                            <div class="ov" style="position:absolute;inset:0;background:rgba(232,93,38,0.18);opacity:0;transition:opacity 0.35s ease;"></div>
+                        </div>
+                        <div style="position: relative; overflow: hidden; cursor: zoom-in;"
+                             onmouseenter="this.querySelector('img').style.transform='scale(1.08)'; this.querySelector('.ov').style.opacity='1';"
+                             onmouseleave="this.querySelector('img').style.transform='scale(1)'; this.querySelector('.ov').style.opacity='0';">
+                            <img src="../assets/Noticias/Jorge Salazar - La Pulga/JorgePartido_4.jpg"
+                                 alt="La Pulga en acción — Foto 4"
+                                 style="width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.45s cubic-bezier(.25,.46,.45,.94);">
+                            <div class="ov" style="position:absolute;inset:0;background:rgba(232,93,38,0.18);opacity:0;transition:opacity 0.35s ease;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display:flex; align-items:center; gap:20px; padding:24px 28px; border-left:3px solid #E85D26; margin-top:40px; background:#fafafa; border-radius:0 8px 8px 0;">
+                    <span style="font-size:1.6rem; line-height:1;">🐾</span>
+                    <div>
+                        <p style="margin:0 0 2px 0; font-weight:800; font-size:0.95rem; color:#111; letter-spacing:0.3px;">¡Sigue saltando, Pulga!</p>
+                        <p style="margin:0; font-size:0.85rem; color:#666; font-weight:400;">El camino al éxito apenas comienza.</p>
+                    </div>
+                </div>
+            `
+        },
+        'victoria-penales-matamoros-jornada-28': {
+            title: 'Victoria en Penales ante Matamoros — Jornada 28',
+            category: 'Liga TDP',
+            categoryClass: 'liga-tdp',
+            date: '2026-04-05T17:00:00',
+            image: '../assets/Alebrijes Teotihuacan.png',
+            imageStyle: 'object-fit: contain; background: #111; padding: 40px;',
+            content: `
+                <p><strong>TEOTIHUACÁN, EDOMEX</strong> — En uno de los partidos más emocionantes de la temporada, <strong>Alebrijes de Oaxaca Teotihuacán</strong> avanzó en la <strong>Jornada 28</strong> tras vencer en tanda de penales a <strong>Club Deportivo Matamoros</strong> en un encuentro que terminó 1-1 en el tiempo reglamentario.</p>
+
+                <p>El marcador general tras penales quedó <strong>4-3 en favor de los Alebrijes</strong>, quienes mostraron una frialdad y determinación ejemplares desde el punto de penal. El equipo demostrado una vez más su carácter y mentalidad ganadora cuando el partido se pone difícil.</p>
+
+                <h3>Un empate que se resolvió con carácter</h3>
+
+                <p>El duelo fue intenso desde el primer silbato. Alebrijes abrió el marcador en la primera mitad con una jugada colectiva que terminó dentro de la red. Sin embargo, Matamoros logró empatar antes del descanso, enviando el encuentro al descóngojo y posteriormente a los penales.</p>
+
+                <p>En la tanda definitiva, el portero de los Alebrijes fue figura al detener un disparo crucial, mientras que los tiradores del equipo no fallaron ninguno de sus cuatro intentos. La afición present en el estadio estalló en celebración al caer el último balón al fondo de la red.</p>
+
+                <h3>Un punto de inflexión en la temporada</h3>
+
+                <p>Con este resultado, los <strong>Alebrijes Teotihuacán</strong> consolidan su posición dentro del grupo y mantienen vivas sus aspiraciones de cara a la recta final del torneo. El cuerpo técnico destacó la unión del equipo y la preparación mental que han trabajado durante semanas.</p>
+
+                <div style="display:flex; align-items:center; gap:20px; padding:24px 28px; border-left:3px solid #E85D26; margin-top:40px; background:#fafafa; border-radius:0 8px 8px 0;">
+                    <span style="font-size:1.6rem; line-height:1;">🏆</span>
+                    <div>
+                        <p style="margin:0 0 2px 0; font-weight:800; font-size:0.95rem; color:#111;">¡Vamos Alebrijes!</p>
+                        <p style="margin:0; font-size:0.85rem; color:#666;">La lucha por los tres puntos continúa jornada a jornada.</p>
+                    </div>
+                </div>
+            `
+        },
+        'clausura-2026-temporada-en-marcha': {
+            title: 'Clausura 2026: La temporada ya está en marcha',
+            category: 'Liga TDP',
+            categoryClass: 'liga-tdp',
+            date: '2026-01-15T10:00:00',
+            image: '../assets/Noticias/Preparación_Para_El_Debut_En_El_Clausura_2026/613363240_26248274058107830_8001289920438829232_n.jpg',
+            content: `
+                <p>Con la mirada puesta en el futuro y la mentalidad de campeón, <strong>Alebrijes de Oaxaca Teotihuacán</strong> arranca oficialmente la <strong>Temporada Clausura 2026</strong> de la Liga TDP con un plantel renovado, objetivos claros y la hambre de demóstrar el nivel que tiene este grupo.</p>
+
+                <p>La pretemporada ha sido una de las más intensas que se recuerdan. El cuerpo técnico diseñó un plan de trabajo enfocado en mejorar la condición física, la cohesión táctica y el trabajo mental del equipo. Los resultados en los partidos de preparación han sido prometedores.</p>
+
+                <img src="../assets/Noticias/Preparación_Para_El_Debut_En_El_Clausura_2026/611672315_26248273021441267_7472245763015193747_n.jpg" alt="Entrenamiento previo al Clausura 2026" style="width: 100%; height: auto; border-radius: 8px; margin: 30px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+
+                <h3>Objetivos de la temporada</h3>
+
+                <p>El director técnico fue claro en sus declaraciones: <em>"Vinimos a competir. Cada partido de esta temporada es una oportunidad para demóstrar que Alebrijes Teotihuacán tiene un lugar entre los mejores de la Liga TDP. Tenemos jugadores con calidad, hambre y compromiso."</em></p>
+
+                <p>Entre los objetivos del torneo se encuentran: posicionarse en la parte alta de la tabla desde las primeras jornadas, desarrollar a los jóvenes talentos de la cantera y representar con orgullo los colores de Teotihuacán en cada encuentro.</p>
+
+                <h3>Un plantel con identidad</h3>
+
+                <p>La incorporación de nuevos jugadores, sumada a la experiencia de los veteranos, ha generado un grupo con carácter e identidad propias. La mezcla de juventud y experiencia es el sello que el cuerpo técnico quiere imprimir en el juego del equipo a lo largo del torneo.</p>
+
+                <div style="display:flex; align-items:center; gap:20px; padding:24px 28px; border-left:3px solid #E85D26; margin-top:40px; background:#fafafa; border-radius:0 8px 8px 0;">
+                    <span style="font-size:1.6rem; line-height:1;">⚽</span>
+                    <div>
+                        <p style="margin:0 0 2px 0; font-weight:800; font-size:0.95rem; color:#111;">Temporada Clausura 2026</p>
+                        <p style="margin:0; font-size:0.85rem; color:#666;">El camino empieza aquí. ¡A por todas!</p>
+                    </div>
+                </div>
+            `
+        },
+        'fuerzas-basicas-sub16-destaca': {
+            title: 'Fuerzas Básicas Sub-16: El Futuro de los Alebrijes',
+            category: 'Fuerzas Básicas',
+            categoryClass: 'fuerzas-basicas',
+            date: '2026-02-20T10:00:00',
+            image: '../assets/Sub-16.jpg',
+            imageStyle: 'object-fit: cover; object-position: center top;',
+            content: `
+                <p>El semillero de <strong>Alebrijes de Oaxaca Teotihuacán</strong> sigue dando frutos. La <strong>categoría Sub-16</strong> de las Fuerzas Básicas muestra un nivel que ilusiona al club y a la afición, consolidando a la institución como un referente en la formación de talento joven en el Estado de México e Hidalgo.</p>
+
+                <p>Bajo la dirección de su cuerpo técnico especializado, los jóvenes de la Sub-16 trabajan con una metodología que combina el desarrollo técnico-táctico con valores humanos: disciplina, respeto, esfuerzo y trabajo en equipo son los pilares que se inculcan desde temprana edad.</p>
+
+                <img src="../assets/Sub-16.jpg" alt="Sub-16 Alebrijes Teotihuacán" style="width: 100%; height: auto; border-radius: 8px; margin: 30px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+
+                <h3>Formación integral: más que fútbol</h3>
+
+                <p>El programa de Fuerzas Básicas de Alebrijes Teotihuacán no se limita al terreno de juego. Los jóvenes jugadores reciben orientación académica, psicológica y nutricional para asegurar un desarrollo completo como personas y como deportistas. Esta visión integral es lo que diferencia al club.</p>
+
+                <p>Varios jugadores de la Sub-16 ya han tenido la oportunidad de entrenar junto al equipo de Liga TDP, una experiencia que los motiva y les muestra el camino a seguir. El escalafón dentro del club es claro: quienes demuestren nivel y actitud tendrán su oportunidad.</p>
+
+                <h3>Un semillero con proyección</h3>
+
+                <p>La filosofía del club es clara: formar primero a la persona, después al futbolista. Con esa base, los Alebrijes Teotihuacán apuestan por el largo plazo, construyendo una identidad propia que se exprese tanto dentro como fuera de la cancha.</p>
+
+                <div style="display:flex; align-items:center; gap:20px; padding:24px 28px; border-left:3px solid #9b59b6; margin-top:40px; background:#fafafa; border-radius:0 8px 8px 0;">
+                    <span style="font-size:1.6rem; line-height:1;">🌱</span>
+                    <div>
+                        <p style="margin:0 0 2px 0; font-weight:800; font-size:0.95rem; color:#111;">Fuerzas Básicas Sub-16</p>
+                        <p style="margin:0; font-size:0.85rem; color:#666;">El futuro del club empieza desde abajo.</p>
+                    </div>
+                </div>
+            `
+        },
+        'fuerzas-basicas-sub14-torneo': {
+            title: 'Sub-14: Participación Destacada en Torneo Regional',
+            category: 'Fuerzas Básicas',
+            categoryClass: 'fuerzas-basicas',
+            date: '2026-03-10T10:00:00',
+            image: '../assets/Sub-14.jpg',
+            imageStyle: 'object-fit: cover; object-position: center top;',
+            content: `
+                <p>La <strong>categoría Sub-14</strong> de <strong>Alebrijes de Oaxaca Teotihuacán</strong> tuvo una participación destacada en el reciente torneo regional, dejando una buena impresión con su nivel técnico, organización táctica y, sobre todo, su actitud dentro y fuera del campo.</p>
+
+                <p>Los chicos, bajo la conducción de su entrenador, mostraron madurez futbolística y una cohesión grupal que es fruto de meses de trabajo constante. Su participación en el torneo les permitió medirse ante equipos de diferentes estados y ganar experiencia invaluable de cara a futuros compromisos.</p>
+
+                <img src="../assets/Sub-14.jpg" alt="Sub-14 Alebrijes Teotihuacán en torneo" style="width: 100%; height: auto; border-radius: 8px; margin: 30px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+
+                <h3>Colorón desde temprana edad</h3>
+
+                <p>Lo que más llamó la atención de los observadores fue la intensidad con la que el equipo compite. Cada duelo fue disputado al máximo, con una actitud de respeto hacia el rival pero con hambre de victoria. Esos valores, inculcados desde el primer día en el club, son lo que define la identidad de los Alebrijes.</p>
+
+                <p>El torneo también sirvió como plataforma de evaluación para el cuerpo técnico, que pudo identificar las áreas de mejora y los jugadores con mayor proyección. Algunos de ellos ya están en la mira para dar el salto a la Sub-16 en el próximo ciclo.</p>
+
+                <h3>El orgullo de representar a Teotihuacán</h3>
+
+                <p>Para muchos de estos chicos, portar la playera de Alebrijes Teotihuacán es un sueño hecho realidad. El club trabaja para que esa pasión se mantenga viva y se convierta en el motor que impulse su desarrollo día a día.</p>
+
+                <div style="display:flex; align-items:center; gap:20px; padding:24px 28px; border-left:3px solid #9b59b6; margin-top:40px; background:#fafafa; border-radius:0 8px 8px 0;">
+                    <span style="font-size:1.6rem; line-height:1;">⭐</span>
+                    <div>
+                        <p style="margin:0 0 2px 0; font-weight:800; font-size:0.95rem; color:#111;">Sub-14 Alebrijes Teotihuacán</p>
+                        <p style="margin:0; font-size:0.85rem; color:#666;">Grandes promesas con mentalidad de campeón.</p>
+                    </div>
+                </div>
+            `
         }
         // Add more news here as needed
     };
@@ -491,7 +738,7 @@ function initRelatedNewsCarousel(currentSlug) {
                 image: item.image,
                 time: formattedDate
             };
-        }).slice(0, 6);
+        }).slice(0, 12);
 
     if (relatedNewsData.length === 0) {
         carousel.innerHTML = '<p style="text-align: center; padding: 40px; color: var(--text-light);">No hay más noticias disponibles.</p>';

@@ -1,0 +1,189 @@
+/* 
+   Alebrijes de Oaxaca Teotihuacán
+   Contacto Page Styles
+*/
+
+/* Contact Form & Map Section */
+.contact-form-section {
+    padding: 80px 0;
+    background: linear-gradient(to bottom, #fafafa 0%, #ffffff 100%);
+}
+
+.contact-layout-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: start;
+}
+
+/* Form Wrapper */
+.form-wrapper {
+    background: var(--white);
+    padding: 50px;
+    border-radius: 24px;
+    box-shadow: 
+        0 15px 50px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(243, 106, 33, 0.1);
+    border-top: 5px solid var(--primary);
+}
+
+.form-wrapper h2 {
+    font-size: 2.2rem;
+    color: var(--dark);
+    margin-bottom: 35px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: var(--white);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(243, 106, 33, 0.1);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.btn-block {
+    width: 100%;
+    justify-content: center;
+    padding: 16px 32px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-top: 10px;
+}
+
+.form-status {
+    margin-top: 20px;
+    font-weight: 600;
+    text-align: center;
+    min-height: 24px;
+    font-size: 0.95rem;
+}
+
+.form-status.success {
+    color: #2ecc71;
+}
+
+.form-status.error {
+    color: #e74c3c;
+}
+
+/* Map Container */
+.map-container {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.map-wrapper {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+    position: relative;
+}
+
+.map-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 16px;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.map-wrapper iframe {
+    display: block;
+    width: 100%;
+    height: 450px;
+    border: none;
+}
+
+.map-info {
+    background: linear-gradient(135deg, #fafafa 0%, var(--white) 100%);
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid var(--primary);
+}
+
+.map-info h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 15px;
+}
+
+.map-address {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-light);
+    margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .contact-layout-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+    
+    .map-container {
+        order: -1;
+    }
+}
+
+@media (max-width: 768px) {
+    .contact-form-section {
+        padding: 60px 0;
+    }
+    
+    .form-wrapper {
+        padding: 35px 25px;
+    }
+    
+    .form-wrapper h2 {
+        font-size: 1.8rem;
+    }
+    
+    .map-wrapper iframe {
+        height: 350px;
+    }
+    
+    .map-info {
+        padding: 25px 20px;
+    }
+}

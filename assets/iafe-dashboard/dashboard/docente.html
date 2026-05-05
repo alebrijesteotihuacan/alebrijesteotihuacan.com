@@ -1,0 +1,1755 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Panel Docente - Instituto Azteca de Formación Empresarial.">
+    <title>Dashboard Docente | IAFE Portal Académico</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../../assets/Escuela/FotoPerfil.png">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../styles/variables.css">
+    <link rel="stylesheet" href="../styles/base.css">
+    <link rel="stylesheet" href="../styles/components.css">
+    <link rel="stylesheet" href="../styles/dashboard.css">
+
+    <!-- Teacher Theme - Gold/Amber Professional -->
+    <style>
+        :root {
+            --theme-primary: #1a1a2e;
+            --theme-primary-dark: #0f0f1a;
+            --theme-accent: #C9A961;
+            --theme-accent-dark: #B8944D;
+            --theme-accent-light: #FEF3C7;
+        }
+
+        .sidebar {
+            background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1a 100%);
+        }
+
+        .sidebar-header {
+            border-bottom: 1px solid rgba(201, 169, 97, 0.2);
+        }
+
+        .sidebar-nav-link.active {
+            background-color: var(--theme-accent);
+            color: #1a1a2e;
+        }
+
+        .sidebar-profile {
+            background: linear-gradient(135deg, rgba(201, 169, 97, 0.15) 0%, rgba(201, 169, 97, 0.05) 100%);
+            border: 1px solid rgba(201, 169, 97, 0.2);
+        }
+
+        .sidebar-profile-avatar {
+            background: linear-gradient(135deg, var(--theme-accent) 0%, #B8944D 100%);
+            color: #1a1a2e;
+            font-weight: 700;
+        }
+
+        .sidebar-profile-role {
+            color: var(--theme-accent);
+        }
+
+        .sidebar-nav-badge {
+            background-color: var(--theme-accent);
+            color: #1a1a2e;
+        }
+
+        .user-type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: linear-gradient(135deg, #C9A961 0%, #B8944D 100%);
+            color: #1a1a2e;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .user-type-badge svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .page-content {
+            background: linear-gradient(180deg, #fffbeb 0%, #f8f9fa 100%);
+        }
+
+        .stat-card {
+            border-left: 4px solid var(--theme-accent);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--theme-accent) 0%, #B8944D 100%);
+            border-color: var(--theme-accent);
+            color: #1a1a2e;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #B8944D 0%, #a6813f 100%);
+            border-color: #B8944D;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--theme-accent) 0%, #B8944D 100%);
+            border-color: var(--theme-accent);
+            color: #1a1a2e;
+        }
+
+        .top-header {
+            border-bottom: 3px solid var(--theme-accent);
+            background: linear-gradient(90deg, #ffffff 0%, #fffbeb 100%);
+        }
+
+        .avatar {
+            background: linear-gradient(135deg, var(--theme-accent) 0%, #B8944D 100%);
+            color: #1a1a2e;
+        }
+
+        .card-header {
+            background: linear-gradient(90deg, #fffbeb 0%, #ffffff 100%);
+        }
+
+        .notification-badge {
+            background-color: var(--theme-accent);
+            color: #1a1a2e;
+        }
+
+        /* Special docente header banner */
+        .docente-banner {
+            background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%);
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 3px solid var(--theme-accent);
+        }
+
+        .docente-banner-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .docente-banner-badge {
+            background-color: var(--theme-accent);
+            color: #1a1a2e;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        /* Chat Styles */
+        .chat-message {
+            display: flex;
+            gap: var(--space-3);
+            margin-bottom: var(--space-4);
+            max-width: 80%;
+        }
+
+        .chat-message.sent {
+            margin-left: auto;
+            flex-direction: row-reverse;
+        }
+
+        .chat-message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary-500);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .chat-message.docente .chat-message-avatar {
+            background: linear-gradient(135deg, #C9A961 0%, #B8944D 100%);
+            color: #1a1a2e;
+        }
+
+        .chat-message-content {
+            background: white;
+            padding: var(--space-3) var(--space-4);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .chat-message.sent .chat-message-content {
+            background: linear-gradient(135deg, #C9A961 0%, #B8944D 100%);
+            color: #1a1a2e;
+        }
+
+        .chat-message-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            margin-bottom: var(--space-1);
+        }
+
+        .chat-message-name {
+            font-weight: 600;
+            font-size: var(--text-sm);
+        }
+
+        .chat-message-badge {
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            background: linear-gradient(135deg, #C9A961 0%, #B8944D 100%);
+            color: #1a1a2e;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .chat-message.sent .chat-message-badge {
+            background: rgba(26, 26, 46, 0.2);
+            color: #1a1a2e;
+        }
+
+        .chat-message-time {
+            font-size: var(--text-xs);
+            color: var(--gray-400);
+        }
+
+        .chat-message.sent .chat-message-time {
+            color: rgba(26, 26, 46, 0.6);
+        }
+
+        .chat-message-text {
+            font-size: var(--text-sm);
+            line-height: 1.5;
+        }
+
+        .chat-private-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.6rem;
+            padding: 2px 6px;
+            background: rgba(26, 26, 46, 0.15);
+            color: #1a1a2e;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .chat-private-badge svg {
+            width: 10px;
+            height: 10px;
+        }
+
+        .mb-4 {
+            margin-bottom: var(--space-4);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar Overlay (Mobile) -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <!-- Sidebar Header -->
+            <div class="sidebar-header">
+                <img src="../../assets/Escuela/FotoPerfil.png" alt="IAFE" class="sidebar-logo">
+                <div class="sidebar-brand">
+                    <span class="sidebar-brand-name">Instituto Azteca</span>
+                    <span class="sidebar-brand-tagline">Portal Académico</span>
+                </div>
+            </div>
+
+            <!-- User Profile -->
+            <div class="sidebar-profile">
+                <div class="sidebar-profile-avatar" id="userAvatar" style="background-color: var(--iafe-primary);">ML
+                </div>
+                <div class="sidebar-profile-info">
+                    <span class="sidebar-profile-name" id="userName">María López</span>
+                    <span class="sidebar-profile-role" style="display: flex; align-items: center; gap: 4px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path
+                                d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                        </svg>
+                        Docente
+                    </span>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+                <div class="sidebar-nav-section">
+                    <span class="sidebar-nav-title">Principal</span>
+                    <ul class="sidebar-nav-list">
+                        <li class="sidebar-nav-item">
+                            <a href="#" class="sidebar-nav-link active" data-section="inicio">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
+                                Inicio
+                            </a>
+                        </li>
+                        <li class="sidebar-nav-item">
+                            <a href="#" class="sidebar-nav-link" data-section="alumnos">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                                Alumnos
+                            </a>
+                        </li>
+                        <li class="sidebar-nav-item">
+                            <a href="#" class="sidebar-nav-link" data-section="grupos">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <rect x="3" y="3" width="7" height="7"></rect>
+                                    <rect x="14" y="3" width="7" height="7"></rect>
+                                    <rect x="14" y="14" width="7" height="7"></rect>
+                                    <rect x="3" y="14" width="7" height="7"></rect>
+                                </svg>
+                                Grupos
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-nav-section">
+                    <span class="sidebar-nav-title">Gestión Académica</span>
+                    <ul class="sidebar-nav-list">
+                        <li class="sidebar-nav-item">
+                            <a href="#" class="sidebar-nav-link" data-section="tareas">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M9 11l3 3L22 4"></path>
+                                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                                </svg>
+                                Tareas Asignadas
+                                <span class="sidebar-nav-badge">15</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-nav-item">
+                            <a href="#" class="sidebar-nav-link" data-section="temarios">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                </svg>
+                                Temarios
+                            </a>
+                        </li>
+                        <li class="sidebar-nav-item">
+                            <a href="#" class="sidebar-nav-link" data-section="calificaciones">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                                </svg>
+                                Calificaciones
+                            </a>
+                        </li>
+                        <li class="sidebar-nav-item">
+                            <a href="#" class="sidebar-nav-link" data-section="constancias">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                Constancias
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-nav-section">
+                    <span class="sidebar-nav-title">Comunicación</span>
+                    <ul class="sidebar-nav-list">
+                        <li class="sidebar-nav-item">
+                            <a href="#" class="sidebar-nav-link" data-section="chat">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                                Chat Grupal
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Sidebar Footer -->
+            <div class="sidebar-footer">
+                <a href="#" class="sidebar-footer-link" id="logoutBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    Cerrar Sesión
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="top-header-left">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                    <div class="breadcrumb">
+                        <a href="#">Panel Docente</a>
+                        <span class="breadcrumb-separator">/</span>
+                        <span class="breadcrumb-current" id="breadcrumbCurrent">Inicio</span>
+                    </div>
+                </div>
+                <div class="top-header-right">
+                    <div class="search-bar">
+                        <span class="search-bar-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </span>
+                        <input type="text" placeholder="Buscar alumno...">
+                    </div>
+                    <button class="notification-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span class="notification-badge">5</span>
+                    </button>
+                    <div class="user-menu-trigger">
+                        <div class="avatar avatar-md" style="background-color: var(--iafe-primary);">
+                            <span id="headerAvatar">ML</span>
+                        </div>
+                        <div style="text-align: left; margin-left: var(--space-2);">
+                            <span class="user-menu-name">Prof. María López</span>
+                            <span class="user-menu-role">Docente</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="page-content">
+                <!-- Section: Inicio -->
+                <section id="section-inicio" class="dashboard-section">
+                    <!-- Welcome Section -->
+                    <div class="page-header"
+                        style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
+                        <div>
+                            <h1 class="page-title" id="welcomeTitle">Panel Docente</h1>
+                            <p class="page-subtitle">Gestiona tus grupos, alumnos y actividades académicas</p>
+                        </div>
+                        <div class="page-actions">
+                            <button class="btn btn-primary" data-action="nueva-tarea">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                Nueva Tarea
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-card-icon primary">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                            </div>
+                            <span class="stat-card-value">78</span>
+                            <span class="stat-card-label">Alumnos Activos</span>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-icon secondary">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <rect x="3" y="3" width="7" height="7"></rect>
+                                    <rect x="14" y="3" width="7" height="7"></rect>
+                                    <rect x="14" y="14" width="7" height="7"></rect>
+                                    <rect x="3" y="14" width="7" height="7"></rect>
+                                </svg>
+                            </div>
+                            <span class="stat-card-value">3</span>
+                            <span class="stat-card-label">Grupos Asignados</span>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-icon warning">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M9 11l3 3L22 4"></path>
+                                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                                </svg>
+                            </div>
+                            <span class="stat-card-value">15</span>
+                            <span class="stat-card-label">Tareas por Calificar</span>
+                        </div>
+                    </div>
+
+                    <!-- Content Grid -->
+                    <div class="content-grid">
+                        <!-- Grupos -->
+                        <div class="card">
+                            <div class="card-header"
+                                style="display: flex; justify-content: space-between; align-items: center;">
+                                <h3 class="card-title" style="margin: 0;">Mis Grupos</h3>
+                                <a href="#" class="text-sm text-primary font-medium" data-section="grupos">Ver todos</a>
+                            </div>
+                            <div class="card-body" style="padding: 0;">
+                                <ul class="task-list" id="gruposList">
+                                    <!-- Groups will be injected here -->
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Entregas Recientes -->
+                        <div class="card">
+                            <div class="card-header"
+                                style="display: flex; justify-content: space-between; align-items: center;">
+                                <h3 class="card-title" style="margin: 0;">Entregas Recientes</h3>
+                                <a href="#" class="text-sm text-primary font-medium" data-section="tareas">Ver todas</a>
+                            </div>
+                            <div class="card-body" style="padding: 0;">
+                                <ul class="task-list" id="entregasList">
+                                    <!-- Deliveries will be injected here -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="card mt-6">
+                        <div class="card-header">
+                            <h3 class="card-title" style="margin: 0;">Acciones Rápidas</h3>
+                        </div>
+                        <div class="card-body">
+                            <div
+                                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-4);">
+                                <button class="btn btn-outline" data-section="alumnos"
+                                    style="height: 80px; flex-direction: column; gap: var(--space-2);">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="9" cy="7" r="4"></circle>
+                                        <line x1="19" y1="8" x2="19" y2="14"></line>
+                                        <line x1="22" y1="11" x2="16" y2="11"></line>
+                                    </svg>
+                                    Registrar Alumno
+                                </button>
+                                <button class="btn btn-outline" data-section="tareas"
+                                    style="height: 80px; flex-direction: column; gap: var(--space-2);">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                    </svg>
+                                    Crear Tarea
+                                </button>
+                                <button class="btn btn-outline" data-section="temarios"
+                                    style="height: 80px; flex-direction: column; gap: var(--space-2);">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="17 8 12 3 7 8"></polyline>
+                                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                                    </svg>
+                                    Subir Temario
+                                </button>
+                                <button class="btn btn-outline" data-section="calificaciones"
+                                    style="height: 80px; flex-direction: column; gap: var(--space-2);">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                                    </svg>
+                                    Calificaciones
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Alumnos -->
+                <section id="section-alumnos" class="dashboard-section" style="display: none;">
+                    <div class="page-header">
+                        <h1 class="page-title">Gestión de Alumnos</h1>
+                        <p class="page-subtitle">Administra y registra nuevos estudiantes</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"
+                            style="display: flex; justify-content: space-between; align-items: center;">
+                            <h3 class="card-title" style="margin: 0;">Lista de Alumnos</h3>
+                            <button class="btn btn-primary btn-sm">+ Nuevo Alumno</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-container" style="box-shadow: none;">
+                                <table class="table table-responsive-stack" id="alumnosTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Grupo</th>
+                                            <th>Email</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="alumnosTableBody">
+                                        <!-- Alumnos will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Grupos -->
+                <section id="section-grupos" class="dashboard-section" style="display: none;">
+                    <div class="page-header">
+                        <h1 class="page-title">Mis Grupos</h1>
+                        <p class="page-subtitle">Administra tus grupos asignados</p>
+                    </div>
+                    <div class="content-grid" id="gruposGrid">
+                        <!-- Grupos will be loaded here -->
+                    </div>
+                </section>
+
+                <!-- Section: Tareas -->
+                <section id="section-tareas" class="dashboard-section" style="display: none;">
+                    <div class="page-header"
+                        style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                        <div>
+                            <h1 class="page-title">Tareas Asignadas</h1>
+                            <p class="page-subtitle">Gestiona las tareas y entregas de tus alumnos</p>
+                        </div>
+                        <button class="btn btn-primary">+ Nueva Tarea</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-body" style="padding: 0;">
+                            <ul class="task-list" id="tareasFullList">
+                                <!-- Tasks will be loaded here -->
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Temarios -->
+                <section id="section-temarios" class="dashboard-section" style="display: none;">
+                    <div class="page-header"
+                        style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                        <div>
+                            <h1 class="page-title">Temarios</h1>
+                            <p class="page-subtitle">Sube y gestiona los temarios de tus materias</p>
+                        </div>
+                        <button class="btn btn-primary">+ Subir Temario</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="empty-state">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                                <h3>Gestión de Temarios</h3>
+                                <p>Sube los temarios para que tus alumnos puedan consultarlos.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Calificaciones -->
+                <section id="section-calificaciones" class="dashboard-section" style="display: none;">
+                    <div class="page-header">
+                        <h1 class="page-title">Calificaciones</h1>
+                        <p class="page-subtitle">Registra y gestiona las calificaciones de tus alumnos</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-container" style="box-shadow: none;">
+                                <table class="table table-responsive-stack">
+                                    <thead>
+                                        <tr>
+                                            <th>Alumno</th>
+                                            <th>Grupo</th>
+                                            <th>Parcial 1</th>
+                                            <th>Parcial 2</th>
+                                            <th>Parcial 3</th>
+                                            <th>Final</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="calificacionesTableBody">
+                                        <!-- Calificaciones will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Constancias -->
+                <section id="section-constancias" class="dashboard-section" style="display: none;">
+                    <div class="page-header">
+                        <h1 class="page-title">Constancias</h1>
+                        <p class="page-subtitle">Gestiona las constancias de tus estudiantes</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-container" style="box-shadow: none;">
+                                <table class="table table-responsive-stack">
+                                    <thead>
+                                        <tr>
+                                            <th>Alumno</th>
+                                            <th>Grupo</th>
+                                            <th>Estado de Pago</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="constanciasTableBody">
+                                        <!-- Constancias will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Chat -->
+                <section id="section-chat" class="dashboard-section" style="display: none;">
+                    <div class="page-header">
+                        <h1 class="page-title">Chat Grupal</h1>
+                        <p class="page-subtitle">Comunícate con tus grupos de estudiantes</p>
+                    </div>
+
+                    <!-- Group Selector -->
+                    <div class="card mb-4">
+                        <div class="card-body" style="padding: var(--space-3) var(--space-4);">
+                            <div style="display: flex; gap: var(--space-4); align-items: center; flex-wrap: wrap;">
+                                <div style="display: flex; align-items: center; gap: var(--space-2);">
+                                    <label style="font-weight: 500; font-size: var(--text-sm);">Grupo:</label>
+                                    <select id="chatGroupSelect" class="form-input"
+                                        style="width: auto; min-width: 200px;">
+                                        <option value="secundaria">Secundaria 2024-A</option>
+                                        <option value="bachillerato">Bachillerato 2024-A</option>
+                                        <option value="licenciatura">Licenciatura 2024-A</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="height: calc(100vh - 350px); min-height: 400px;">
+                        <div class="card-body" style="display: flex; flex-direction: column; height: 100%; padding: 0;">
+                            <!-- Chat Messages Container -->
+                            <div id="chatMessagesDocente"
+                                style="flex: 1; overflow-y: auto; padding: var(--space-4); background: var(--gray-50);">
+                                <!-- Messages will be loaded here -->
+                            </div>
+                            <!-- Chat Input with Private Message Option -->
+                            <div
+                                style="padding: var(--space-4); border-top: 1px solid var(--gray-200); background: white;">
+                                <!-- Private Message Toggle -->
+                                <div id="privateMessageControls"
+                                    style="display: none; margin-bottom: var(--space-3); padding: var(--space-3); background: rgba(201, 169, 97, 0.1); border-radius: var(--radius-md); border-left: 3px solid #C9A961;">
+                                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                                        <div style="display: flex; align-items: center; gap: var(--space-2);">
+                                            <span style="font-size: var(--text-sm); color: #8a7340;">Mensaje privado
+                                                para:</span>
+                                            <select id="privateRecipient" class="form-input"
+                                                style="width: auto; min-width: 180px; font-size: var(--text-sm);">
+                                                <option value="">Seleccionar alumno...</option>
+                                                <option value="Ana García">Ana García</option>
+                                                <option value="Carlos López">Carlos López</option>
+                                                <option value="Miguel Torres">Miguel Torres</option>
+                                                <option value="Valeria Sánchez">Valeria Sánchez</option>
+                                                <option value="Juan Pérez">Juan Pérez</option>
+                                            </select>
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-outline" id="cancelPrivate"
+                                            style="font-size: var(--text-xs);">Cancelar</button>
+                                    </div>
+                                </div>
+                                <form id="chatFormDocente" style="display: flex; gap: var(--space-3);">
+                                    <button type="button" id="togglePrivateBtn" class="btn btn-outline"
+                                        title="Enviar mensaje privado" style="padding: var(--space-2);">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                        </svg>
+                                    </button>
+                                    <input type="text" id="chatInputDocente" class="form-input"
+                                        placeholder="Escribe un mensaje al grupo..." style="flex: 1;">
+                                    <button type="submit" class="btn btn-primary">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                        </svg>
+                                        Enviar
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal: Registrar Nuevo Alumno -->
+    <div id="modalRegistrarAlumno" class="modal-overlay" style="display: none;">
+        <div class="modal-container" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Registrar Nuevo Alumno</h3>
+                <button type="button" class="modal-close" onclick="closeModal('modalRegistrarAlumno')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <form id="formRegistrarAlumno">
+                <div class="modal-body">
+                    <div class="form-row two-cols">
+                        <div class="form-group">
+                            <label for="alumnoNombre" class="form-label required">Nombre(s)</label>
+                            <input type="text" id="alumnoNombre" class="form-input" placeholder="Juan Carlos" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="alumnoApellidos" class="form-label required">Apellidos</label>
+                            <input type="text" id="alumnoApellidos" class="form-input" placeholder="Pérez García"
+                                required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="alumnoEmail" class="form-label required">Correo Electrónico</label>
+                        <input type="email" id="alumnoEmail" class="form-input" placeholder="alumno@ejemplo.com"
+                            required>
+                    </div>
+                    <div class="form-row two-cols">
+                        <div class="form-group">
+                            <label for="alumnoTelefono" class="form-label">Teléfono</label>
+                            <input type="tel" id="alumnoTelefono" class="form-input" placeholder="55 1234 5678">
+                        </div>
+                        <div class="form-group">
+                            <label for="alumnoCurp" class="form-label">CURP</label>
+                            <input type="text" id="alumnoCurp" class="form-input" placeholder="PEGJ900101HDFRRL09"
+                                maxlength="18" style="text-transform: uppercase;">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="alumnoNivel" class="form-label required">Nivel Académico</label>
+                        <select id="alumnoNivel" class="form-input" required>
+                            <option value="">Seleccionar nivel...</option>
+                            <option value="secundaria">Secundaria</option>
+                            <option value="bachillerato">Bachillerato</option>
+                            <option value="licenciatura">Licenciatura</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="alumnoGrupo" class="form-label">Grupo (Opcional)</label>
+                        <select id="alumnoGrupo" class="form-input">
+                            <option value="">Sin asignar</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="alumnoPassword" class="form-label required">Contraseña Inicial</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="alumnoPassword" class="form-input" placeholder="Min. 6 caracteres"
+                                required minlength="6">
+                            <button type="button" class="btn btn-outline" onclick="generarPasswordAlumno()"
+                                title="Generar contraseña">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="1 4 1 10 7 10"></polyline>
+                                    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <span class="form-hint">El alumno usará esta contraseña para su primer acceso</span>
+                    </div>
+                    <div id="registroAlumnoError" class="alert alert-error" style="display: none;">
+                        <span id="registroAlumnoErrorMsg"></span>
+                    </div>
+                    <div id="registroAlumnoSuccess" class="alert alert-success" style="display: none;">
+                        <span id="registroAlumnoSuccessMsg"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost"
+                        onclick="closeModal('modalRegistrarAlumno')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btnRegistrarAlumno">
+                        <span id="btnRegistrarAlumnoText">Registrar Alumno</span>
+                        <span id="btnRegistrarAlumnoLoader" class="loader loader-sm" style="display: none;"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Crear Nuevo Grupo -->
+    <div id="modalCrearGrupo" class="modal-overlay" style="display: none;">
+        <div class="modal-container" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Crear Nuevo Grupo</h3>
+                <button type="button" class="modal-close" onclick="closeModal('modalCrearGrupo')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <form id="formCrearGrupo">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="grupoNombre" class="form-label required">Nombre del Grupo</label>
+                        <input type="text" id="grupoNombre" class="form-input" placeholder="Ej: Bachillerato 2026-A"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="grupoNivel" class="form-label required">Nivel Académico</label>
+                        <select id="grupoNivel" class="form-input" required>
+                            <option value="">Seleccionar nivel...</option>
+                            <option value="secundaria">Secundaria</option>
+                            <option value="bachillerato">Bachillerato</option>
+                            <option value="licenciatura">Licenciatura</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost"
+                        onclick="closeModal('modalCrearGrupo')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Crear Grupo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Crear Nueva Tarea -->
+    <div id="modalCrearTarea" class="modal-overlay" style="display: none;">
+        <div class="modal-container" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Crear Nueva Tarea</h3>
+                <button type="button" class="modal-close" onclick="closeModal('modalCrearTarea')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <form id="formCrearTarea">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="tareaTitulo" class="form-label required">Título de la Tarea</label>
+                        <input type="text" id="tareaTitulo" class="form-input" placeholder="Ej: Ejercicios de Álgebra"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tareaDescripcion" class="form-label">Descripción</label>
+                        <textarea id="tareaDescripcion" class="form-input" rows="3"
+                            placeholder="Instrucciones para los alumnos..."></textarea>
+                    </div>
+                    <div class="form-row two-cols">
+                        <div class="form-group">
+                            <label for="tareaGrupo" class="form-label required">Grupo</label>
+                            <select id="tareaGrupo" class="form-input" required>
+                                <option value="">Seleccionar grupo...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="tareaFechaLimite" class="form-label required">Fecha Límite</label>
+                            <input type="date" id="tareaFechaLimite" class="form-input" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost"
+                        onclick="closeModal('modalCrearTarea')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Crear Tarea</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Styles -->
+    <style>
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-container {
+            background: white;
+            border-radius: var(--radius-xl);
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-4) var(--space-6);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            color: var(--gray-500);
+        }
+
+        .modal-close:hover {
+            color: var(--gray-700);
+        }
+
+        .modal-body {
+            padding: var(--space-6);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--space-3);
+            padding: var(--space-4) var(--space-6);
+            border-top: 1px solid var(--gray-200);
+            background: var(--gray-50);
+        }
+
+        .form-row {
+            display: grid;
+            gap: var(--space-4);
+        }
+
+        .form-row.two-cols {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        @media (max-width: 640px) {
+            .form-row.two-cols {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            border: 1px solid #10b981;
+            color: #065f46;
+            padding: 12px;
+            border-radius: var(--radius-md);
+            margin-top: 12px;
+        }
+    </style>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <!-- App Scripts -->
+    <script src="../scripts/firebase-config.js"></script>
+    <script src="../scripts/auth.js"></script>
+    <script>
+        // Global state
+        let gruposCache = [];
+        let alumnosCache = [];
+        let currentDocenteId = null;
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', async function () {
+            // Initialize Firebase
+            await initializeFirebaseApp();
+
+            // Check authentication
+            const user = getCurrentUser();
+            if (!user) {
+                window.location.href = '../login-docente.html';
+                return;
+            }
+
+            currentDocenteId = user.uid || user.id;
+
+            // Update UI with user info
+            updateUserInfo(user);
+
+            // Load data from Firebase
+            await loadAllData();
+
+            // Mobile menu toggle
+            document.getElementById('mobileMenuBtn').addEventListener('click', toggleMobileMenu);
+            document.getElementById('sidebarOverlay').addEventListener('click', closeMobileMenu);
+
+            // Navigation - sidebar links
+            document.querySelectorAll('.sidebar-nav-link').forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const section = this.dataset.section;
+                    showSection(section);
+                    setActiveNav(this);
+                    document.getElementById('breadcrumbCurrent').textContent = this.textContent.trim();
+                    closeMobileMenu();
+                });
+            });
+
+            // Navigation - inline links and buttons (like "Ver todas", quick actions)
+            document.querySelectorAll('[data-section]').forEach(el => {
+                el.addEventListener('click', function (e) {
+                    if (this.classList.contains('sidebar-nav-link')) return;
+                    e.preventDefault();
+                    const section = this.dataset.section;
+                    showSection(section);
+                    const sidebarLink = document.querySelector(`.sidebar-nav-link[data-section="${section}"]`);
+                    if (sidebarLink) {
+                        setActiveNav(sidebarLink);
+                        document.getElementById('breadcrumbCurrent').textContent = sidebarLink.textContent.trim();
+                    }
+                });
+            });
+
+            // Quick action buttons
+            document.querySelectorAll('[data-action]').forEach(el => {
+                el.addEventListener('click', function (e) {
+                    const action = this.dataset.action;
+                    if (action === 'nueva-tarea') {
+                        openModal('modalCrearTarea');
+                    }
+                });
+            });
+
+            // Register student button in Alumnos section
+            const nuevoAlumnoBtn = document.querySelector('#section-alumnos .btn-primary');
+            if (nuevoAlumnoBtn) {
+                nuevoAlumnoBtn.addEventListener('click', () => openModal('modalRegistrarAlumno'));
+            }
+
+            // Quick actions "Registrar Alumno"
+            const registrarAlumnoQuickBtn = document.querySelector('[data-section="alumnos"].btn-outline');
+            if (registrarAlumnoQuickBtn && registrarAlumnoQuickBtn.textContent.includes('Registrar')) {
+                registrarAlumnoQuickBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openModal('modalRegistrarAlumno');
+                });
+            }
+
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', async function (e) {
+                e.preventDefault();
+                if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+                    await logoutUser();
+                    window.location.href = '../login-docente.html';
+                }
+            });
+
+            // Form handlers
+            setupFormHandlers();
+        });
+
+        function updateUserInfo(user) {
+            const initials = getUserInitials(user);
+            const fullName = getUserFullName(user);
+
+            document.getElementById('userAvatar').textContent = initials;
+            document.getElementById('userName').textContent = fullName;
+            document.getElementById('headerAvatar').textContent = initials;
+            document.getElementById('welcomeTitle').textContent = `Bienvenido, ${user.nombre || 'Docente'}`;
+        }
+
+        async function loadAllData() {
+            try {
+                // Load groups first
+                gruposCache = await getAllGroups();
+
+                // Load students
+                alumnosCache = await getAllStudents();
+
+                // Update UI
+                loadGrupos();
+                loadAlumnos();
+                loadGruposGrid();
+                loadTareasDocente();
+                loadCalificacionesDocente();
+                loadConstancias();
+                updateStats();
+                populateGroupSelects();
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        function updateStats() {
+            // Update stat cards
+            const alumnosCount = alumnosCache.filter(a => a.activo !== false).length;
+            const gruposCount = gruposCache.length;
+
+            const statCards = document.querySelectorAll('.stat-card-value');
+            if (statCards[0]) statCards[0].textContent = alumnosCount;
+            if (statCards[1]) statCards[1].textContent = gruposCount;
+        }
+
+        function populateGroupSelects() {
+            const selects = ['alumnoGrupo', 'tareaGrupo', 'chatGroupSelect'];
+
+            selects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                if (!select) return;
+
+                // Keep first option (blank or default)
+                const firstOption = select.options[0] ? select.options[0].outerHTML : '';
+                select.innerHTML = firstOption;
+
+                gruposCache.forEach(grupo => {
+                    const option = document.createElement('option');
+                    option.value = grupo.id;
+                    option.textContent = grupo.nombre;
+                    select.appendChild(option);
+                });
+            });
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.dashboard-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            const targetSection = document.getElementById('section-' + sectionId);
+            if (targetSection) {
+                targetSection.style.display = 'block';
+            }
+
+            // Initialize chat when shown
+            if (sectionId === 'chat') {
+                initChatDocente();
+            }
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('active');
+        }
+
+        function closeMobileMenu() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+        }
+
+        function setActiveNav(activeLink) {
+            document.querySelectorAll('.sidebar-nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            activeLink.classList.add('active');
+        }
+
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.body.style.overflow = '';
+            // Reset forms
+            const form = document.querySelector(`#${modalId} form`);
+            if (form) form.reset();
+            // Hide error/success messages
+            const errorEl = document.getElementById('registroAlumnoError');
+            const successEl = document.getElementById('registroAlumnoSuccess');
+            if (errorEl) errorEl.style.display = 'none';
+            if (successEl) successEl.style.display = 'none';
+        }
+
+        function generarPasswordAlumno() {
+            const password = generatePassword(8);
+            document.getElementById('alumnoPassword').value = password;
+        }
+
+        // Form handlers
+        function setupFormHandlers() {
+            // Register student form
+            document.getElementById('formRegistrarAlumno').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const btn = document.getElementById('btnRegistrarAlumno');
+                const btnText = document.getElementById('btnRegistrarAlumnoText');
+                const btnLoader = document.getElementById('btnRegistrarAlumnoLoader');
+                const errorEl = document.getElementById('registroAlumnoError');
+                const errorMsg = document.getElementById('registroAlumnoErrorMsg');
+                const successEl = document.getElementById('registroAlumnoSuccess');
+                const successMsg = document.getElementById('registroAlumnoSuccessMsg');
+
+                errorEl.style.display = 'none';
+                successEl.style.display = 'none';
+                btn.disabled = true;
+                btnText.style.display = 'none';
+                btnLoader.style.display = 'inline-block';
+
+                try {
+                    const studentData = {
+                        nombre: document.getElementById('alumnoNombre').value,
+                        apellidos: document.getElementById('alumnoApellidos').value,
+                        email: document.getElementById('alumnoEmail').value,
+                        telefono: document.getElementById('alumnoTelefono').value,
+                        curp: document.getElementById('alumnoCurp').value.toUpperCase(),
+                        nivelAcademico: document.getElementById('alumnoNivel').value,
+                        grupoId: document.getElementById('alumnoGrupo').value || null,
+                        password: document.getElementById('alumnoPassword').value
+                    };
+
+                    await registerStudent(studentData);
+
+                    // Show success
+                    successMsg.textContent = `✅ Alumno ${studentData.nombre} ${studentData.apellidos} registrado exitosamente. Credenciales: ${studentData.email} / ${studentData.password}`;
+                    successEl.style.display = 'block';
+
+                    // Reload data
+                    await loadAllData();
+
+                    // Close modal after delay
+                    setTimeout(() => {
+                        closeModal('modalRegistrarAlumno');
+                    }, 3000);
+
+                } catch (error) {
+                    errorMsg.textContent = error.message;
+                    errorEl.style.display = 'block';
+                } finally {
+                    btn.disabled = false;
+                    btnText.style.display = 'inline';
+                    btnLoader.style.display = 'none';
+                }
+            });
+
+            // Create group form
+            document.getElementById('formCrearGrupo').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                try {
+                    await createGroup({
+                        nombre: document.getElementById('grupoNombre').value,
+                        nivelAcademico: document.getElementById('grupoNivel').value,
+                        docenteId: currentDocenteId
+                    });
+
+                    await loadAllData();
+                    closeModal('modalCrearGrupo');
+                    alert('Grupo creado exitosamente');
+                } catch (error) {
+                    alert('Error al crear grupo: ' + error.message);
+                }
+            });
+
+            // Create task form
+            document.getElementById('formCrearTarea').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                try {
+                    await createTask({
+                        titulo: document.getElementById('tareaTitulo').value,
+                        descripcion: document.getElementById('tareaDescripcion').value,
+                        grupoId: document.getElementById('tareaGrupo').value,
+                        fechaLimite: new Date(document.getElementById('tareaFechaLimite').value),
+                        docenteId: currentDocenteId
+                    });
+
+                    await loadAllData();
+                    closeModal('modalCrearTarea');
+                    alert('Tarea creada exitosamente');
+                } catch (error) {
+                    alert('Error al crear tarea: ' + error.message);
+                }
+            });
+        }
+
+        // Data loading functions
+        function loadGrupos() {
+            const gruposList = document.getElementById('gruposList');
+
+            if (gruposCache.length === 0) {
+                gruposList.innerHTML = `
+                    <li class="task-item" style="text-align: center; color: var(--gray-500);">
+                        <p>No hay grupos registrados.</p>
+                        <button class="btn btn-sm btn-primary" onclick="openModal('modalCrearGrupo')">+ Crear Grupo</button>
+                    </li>
+                `;
+                return;
+            }
+
+            gruposList.innerHTML = gruposCache.map(grupo => {
+                const alumnosEnGrupo = alumnosCache.filter(a => a.grupoId === grupo.id && a.activo !== false).length;
+                const levelClass = grupo.nivelAcademico === 'secundaria' ? 'primary' : grupo.nivelAcademico === 'bachillerato' ? 'secondary' : 'success';
+
+                return `
+                <li class="task-item">
+                    <div class="stat-card-icon ${levelClass}" style="width: 40px; height: 40px; margin: 0;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
+                    <div class="task-content">
+                        <span class="task-title">${grupo.nombre}</span>
+                        <div class="task-meta">
+                            <span>${alumnosEnGrupo} alumnos</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-sm btn-outline">Gestionar</button>
+                </li>
+            `}).join('');
+        }
+
+        function loadEntregas() {
+            // This would load from entregas collection - for now show empty state
+            const entregasList = document.getElementById('entregasList');
+            entregasList.innerHTML = `
+                <li class="task-item" style="text-align: center; color: var(--gray-500); padding: 20px;">
+                    <p>No hay entregas pendientes</p>
+                </li>
+            `;
+        }
+
+        function loadAlumnos() {
+            const tbody = document.getElementById('alumnosTableBody');
+            const activeAlumnos = alumnosCache.filter(a => a.activo !== false);
+
+            if (activeAlumnos.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: var(--gray-500);">
+                            No hay alumnos registrados. <a href="#" onclick="openModal('modalRegistrarAlumno')">Registrar primer alumno</a>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = activeAlumnos.map(alumno => {
+                const grupo = gruposCache.find(g => g.id === alumno.grupoId);
+                const grupoNombre = grupo ? grupo.nombre : 'Sin asignar';
+
+                return `
+                <tr>
+                    <td data-label="Nombre">${alumno.nombre} ${alumno.apellidos}</td>
+                    <td data-label="Grupo">${grupoNombre}</td>
+                    <td data-label="Email">${alumno.email}</td>
+                    <td data-label="Estado"><span class="badge ${alumno.pagoVerificado ? 'badge-success' : 'badge-warning'}">${alumno.pagoVerificado ? 'Verificado' : 'Pendiente'}</span></td>
+                    <td data-label="Acciones"><button class="btn btn-sm btn-outline">Ver</button></td>
+                </tr>
+            `}).join('');
+        }
+
+        function loadGruposGrid() {
+            const grid = document.getElementById('gruposGrid');
+
+            if (gruposCache.length === 0) {
+                grid.innerHTML = `
+                    <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                        <p>No hay grupos creados.</p>
+                        <button class="btn btn-primary" onclick="openModal('modalCrearGrupo')">+ Crear Primer Grupo</button>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = gruposCache.map(grupo => {
+                const alumnosEnGrupo = alumnosCache.filter(a => a.grupoId === grupo.id && a.activo !== false).length;
+                return `
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title" style="margin: 0;">${grupo.nombre}</h3>
+                    </div>
+                    <div class="card-body">
+                        <p style="margin: 0 0 8px;"><strong>Alumnos:</strong> ${alumnosEnGrupo}</p>
+                        <p style="margin: 0 0 16px; color: var(--gray-500); font-size: var(--text-sm);">Nivel: ${grupo.nivelAcademico}</p>
+                        <button class="btn btn-outline btn-sm w-full">Gestionar Grupo</button>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        async function loadTareasDocente() {
+            const list = document.getElementById('tareasFullList');
+
+            try {
+                const tareas = await getAllTasks();
+
+                if (tareas.length === 0) {
+                    list.innerHTML = `
+                        <li class="task-item" style="text-align: center; padding: 40px; color: var(--gray-500);">
+                            <p>No hay tareas creadas.</p>
+                            <button class="btn btn-primary" onclick="openModal('modalCrearTarea')">+ Crear Primera Tarea</button>
+                        </li>
+                    `;
+                    return;
+                }
+
+                list.innerHTML = tareas.map(tarea => {
+                    const grupo = gruposCache.find(g => g.id === tarea.grupoId);
+                    const grupoNombre = grupo ? grupo.nombre : 'Sin grupo';
+                    const fechaStr = formatRelativeDate(tarea.fechaLimite);
+
+                    return `
+                    <li class="task-item">
+                        <div class="task-content">
+                            <span class="task-title">${tarea.titulo}</span>
+                            <div class="task-meta">
+                                <span>${grupoNombre}</span>
+                                <span>Vence: ${fechaStr}</span>
+                            </div>
+                        </div>
+                        <span class="badge badge-primary">0 entregas</span>
+                        <button class="btn btn-sm btn-outline">Ver</button>
+                    </li>
+                `}).join('');
+            } catch (error) {
+                list.innerHTML = `<li class="task-item" style="color: red;">Error al cargar tareas</li>`;
+            }
+        }
+
+        function loadCalificacionesDocente() {
+            const tbody = document.getElementById('calificacionesTableBody');
+            const activeAlumnos = alumnosCache.filter(a => a.activo !== false);
+
+            if (activeAlumnos.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px; color: var(--gray-500);">
+                            No hay alumnos para calificar
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = activeAlumnos.map(alumno => {
+                const grupo = gruposCache.find(g => g.id === alumno.grupoId);
+                return `
+                <tr>
+                    <td data-label="Alumno">${alumno.nombre} ${alumno.apellidos}</td>
+                    <td data-label="Grupo">${grupo ? grupo.nombre : '-'}</td>
+                    <td data-label="Parcial 1">-</td>
+                    <td data-label="Parcial 2">-</td>
+                    <td data-label="Parcial 3">-</td>
+                    <td data-label="Final">-</td>
+                    <td data-label="Acciones"><button class="btn btn-sm btn-outline">Editar</button></td>
+                </tr>
+            `}).join('');
+        }
+
+        function loadConstancias() {
+            const tbody = document.getElementById('constanciasTableBody');
+            const activeAlumnos = alumnosCache.filter(a => a.activo !== false);
+
+            if (activeAlumnos.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding: 40px; color: var(--gray-500);">
+                            No hay alumnos registrados
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = activeAlumnos.map(alumno => {
+                const grupo = gruposCache.find(g => g.id === alumno.grupoId);
+                return `
+                <tr>
+                    <td data-label="Alumno">${alumno.nombre} ${alumno.apellidos}</td>
+                    <td data-label="Grupo">${grupo ? grupo.nombre : '-'}</td>
+                    <td data-label="Estado de Pago">
+                        <span class="badge ${alumno.pagoVerificado ? 'badge-success' : 'badge-warning'}">${alumno.pagoVerificado ? 'Pagado' : 'Pendiente'}</span>
+                    </td>
+                    <td data-label="Acciones">
+                        <button class="btn btn-sm btn-primary" ${!alumno.pagoVerificado ? 'disabled' : ''}>Generar</button>
+                    </td>
+                </tr>
+            `}).join('');
+        }
+
+        // Chat functionality
+        let chatUnsubscribe = null;
+
+        function initChatDocente() {
+            // Set up real-time listener if a group is selected
+            const groupSelect = document.getElementById('chatGroupSelect');
+            if (groupSelect && groupSelect.value) {
+                loadChatMessages(groupSelect.value);
+            }
+
+            // Listen for group changes
+            groupSelect?.addEventListener('change', function () {
+                if (this.value) {
+                    loadChatMessages(this.value);
+                }
+            });
+
+            const chatForm = document.getElementById('chatFormDocente');
+            if (chatForm) {
+                chatForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    sendChatMessage();
+                });
+            }
+        }
+
+        async function loadChatMessages(grupoId) {
+            // Unsubscribe from previous listener
+            if (chatUnsubscribe) {
+                chatUnsubscribe();
+            }
+
+            const container = document.getElementById('chatMessagesDocente');
+            container.innerHTML = '<p style="text-align: center; color: var(--gray-500);">Cargando mensajes...</p>';
+
+            // Subscribe to real-time updates
+            chatUnsubscribe = subscribeToMessages(grupoId, (messages) => {
+                if (messages.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: var(--gray-500);">No hay mensajes en este grupo. ¡Sé el primero en escribir!</p>';
+                    return;
+                }
+
+                const user = getCurrentUser();
+                container.innerHTML = messages.map(msg => {
+                    const isSent = msg.usuarioId === (user?.uid || user?.id);
+                    const time = msg.timestamp?.toDate ? msg.timestamp.toDate().toLocaleTimeString('es-MX', { hour: 'numeric', minute: '2-digit', hour12: true }) : '';
+
+                    return `
+                        <div class="chat-message ${isSent ? 'sent docente' : ''}">
+                            <div class="chat-message-avatar">${(msg.nombreUsuario || 'U').substring(0, 2).toUpperCase()}</div>
+                            <div class="chat-message-content">
+                                <div class="chat-message-header">
+                                    <span class="chat-message-name">${isSent ? 'Tú' : msg.nombreUsuario}</span>
+                                    <span class="chat-message-time">${time}</span>
+                                </div>
+                                <p class="chat-message-text">${msg.texto}</p>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                container.scrollTop = container.scrollHeight;
+            });
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chatInputDocente');
+            const text = input.value.trim();
+            const groupSelect = document.getElementById('chatGroupSelect');
+
+            if (!text || !groupSelect.value) return;
+
+            const user = getCurrentUser();
+
+            try {
+                await sendMessage({
+                    grupoId: groupSelect.value,
+                    usuarioId: user?.uid || user?.id,
+                    nombreUsuario: getUserFullName(user),
+                    texto: text,
+                    esPrivado: false
+                });
+
+                input.value = '';
+            } catch (error) {
+                console.error('Error sending message:', error);
+                alert('Error al enviar mensaje');
+            }
+        }
+    </script>
+</body>
+
+</html>

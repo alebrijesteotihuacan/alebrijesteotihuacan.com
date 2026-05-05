@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noticias | Alebrijes de Oaxaca Teotihuacán</title>
+    <meta name="description" content="Noticias del club Alebrijes de Oaxaca Teotihuacán. Liga TDP, visorías, fuerzas básicas y más.">
+    <meta name="author" content="Alebrijes de Oaxaca Teotihuacán">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#E85D26">
+    <link rel="canonical" href="https://alebrijesteotihuacan.com/pages/noticias.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Noticias | Alebrijes de Oaxaca Teotihuacán">
+    <meta property="og:description" content="Noticias del club Alebrijes de Oaxaca Teotihuacán. Liga TDP, visorías, fuerzas básicas y más.">
+    <meta property="og:image" content="https://alebrijesteotihuacan.com/assets/seo/og-image.png">
+    <meta property="og:url" content="https://alebrijesteotihuacan.com/pages/noticias.html">
+    <meta property="og:site_name" content="Alebrijes de Oaxaca Teotihuacán">
+    <meta property="og:locale" content="es_MX">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Noticias | Alebrijes de Oaxaca Teotihuacán">
+    <meta name="twitter:description" content="Noticias del club Alebrijes de Oaxaca Teotihuacán. Liga TDP, visorías, fuerzas básicas y más.">
+    <meta name="twitter:image" content="https://alebrijesteotihuacan.com/assets/seo/og-image.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap"
+        rel="stylesheet">
+
+    <!-- Main Styles -->
+    <link rel="stylesheet" href="../styles/styles.css">
+    <!-- Noticias Specific Styles -->
+    <link rel="stylesheet" href="../styles/noticias.css">
+</head>
+
+<body class="news-page">
+    <div id="fb-root"></div>
+    <script async defer crossorigin="anonymous"
+        src="https://connect.facebook.net/es_ES/sdk.js#xfbml=1&version=v24.0"></script>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="../index.html" class="logo">
+                <img src="../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png" alt="Alebrijes Fuerzas Básicas Logo">
+                <span class="logo-text">Alebrijes <br> Teotihuacán</span>
+            </a>
+
+            <button class="mobile-menu-btn" aria-label="Menú">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+
+            <ul class="nav-links">
+                <li class="nav-item">
+                    <a href="../index.html" class="nav-link">Inicio</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        Club
+                        <svg class="arrow-icon" viewBox="0 0 24 24">
+                            <path d="M7 10l5 5 5-5z" />
+                        </svg>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="nosotros.html">Nosotros</a></li>
+                        <li><a href="estadio.html">Estadio</a></li>
+                        <li><a href="casaclub.html">Casa Club</a></li>
+                        <li><a href="contacto.html">Contacto</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        Deportivo
+                        <svg class="arrow-icon" viewBox="0 0 24 24">
+                            <path d="M7 10l5 5 5-5z" />
+                        </svg>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="ligatdp.html">Liga TDP</a></li>
+                        <li><a href="fuerzasbasicas.html">Fuerzas Básicas</a></li>
+                        <li><a href="calendario.html">Calendario</a></li>
+                        <li class="dropdown-submenu-container">
+                            <a href="proyeccion.html" class="submenu-toggle">Proyección <span
+                                    class="arrow-right"></span></a>
+                            <ul class="submenu">
+                                <li><a href="equipos-tdp.html">Equipos TDP</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="articulos.html">Artículos</a></li>
+                        <li><a href="noticias.html" class="active">Noticias</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="escuela.html" class="nav-link">Escuela</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="brijitienda.html" class="nav-link">Brijitienda</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="../webvisorias/FormularioDeRegistroVisoria-main/index.html" class="nav-link nav-btn-cta"
+                        target="_blank" rel="noopener noreferrer">Visorias</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="login.html" id="nav-login-btn" class="nav-link nav-btn-login">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                            <polyline points="10 17 15 12 10 7"></polyline>
+                            <line x1="15" y1="12" x2="3" y2="12"></line>
+                        </svg>
+                        Iniciar Sesión
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- News Page Header with Search -->
+    <section class="news-page-header">
+        <div class="news-page-header-content">
+            <div class="container">
+                <div class="news-page-header-inner">
+                    <div>
+                        <h1 class="news-page-title">NOTICIAS</h1>
+                        <!-- Category Filters -->
+                        <div class="category-filters-bar">
+                            <button class="filter-btn-top active" data-filter="all">Todas</button>
+                            <button class="filter-btn-top" data-filter="liga-tdp">Liga TDP</button>
+                            <button class="filter-btn-top" data-filter="visorias">Visorias</button>
+                            <button class="filter-btn-top" data-filter="fuerzas-basicas">Fuerzas Básicas</button>
+                            <button class="filter-btn-top" data-filter="club">Club</button>
+                        </div>
+                    </div>
+                    <div class="news-search-top">
+                        <div class="search-input-container-top">
+                            <svg class="search-icon-top" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                            <input type="text" id="news-search" class="news-search-input-top"
+                                placeholder="Buscar noticias...">
+                            <button class="search-clear-btn-top" id="search-clear" style="display: none;"
+                                aria-label="Limpiar búsqueda">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recent News Carousel -->
+    <section class="news-carousel-section">
+        <div class="container">
+            <h2 class="carousel-section-title">Recientes</h2>
+            <div class="news-carousel-wrapper">
+                <div class="news-carousel" id="news-carousel">
+                    <!-- Carousel items will be populated by JavaScript -->
+                </div>
+                <button class="carousel-btn carousel-prev" id="carousel-prev" aria-label="Anterior">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
+                <button class="carousel-btn carousel-next" id="carousel-next" aria-label="Siguiente">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+                <div class="carousel-dots" id="carousel-dots">
+                    <!-- Dots will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Section -->
+    <section class="section news-main-section">
+        <div class="container">
+
+            <!-- News Grid -->
+            <div class="news-grid-container" id="news-grid">
+                <!-- News items will be dynamically loaded/rendered here -->
+                <!-- IMPORTANTE: Agregar nuevas noticias aquí al inicio, con atributo data-date en formato ISO (ej: data-date="2025-12-19T18:44:57") -->
+
+                <!-- Noticia 0: Jorge "La Pulga" Salazar - Goleador Temporada 2026 -->
+                <article class="news-card-modern news-card-large" data-category="club"
+                    data-title='"La Pulga" — El Diez de Teotihuacán'
+                    data-content="Jorge Salazar La Pulga goleador Teotihuacán club mediocampista ofensivo Temporada 2026 16 goles disciplina fair play NUI 174920"
+                    data-date="2026-04-12T11:00:00" id="jorge-salazar-la-pulga-goleador-2026">
+                    <div class="news-card-image">
+                        <img src="../assets/Noticias/Jorge Salazar - La Pulga/Jugador_Destacado_3.jpg"
+                            alt="Jorge Salazar La Pulga - Goleador Alebrijes Teotihuacán Temporada 2026"
+                            style="object-position: center top;">
+                        <button class="news-card-share" aria-label="Compartir">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <circle cx="18" cy="5" r="3"></circle>
+                                <circle cx="6" cy="12" r="3"></circle>
+                                <circle cx="18" cy="19" r="3"></circle>
+                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="news-card-content">
+                        <div class="news-card-meta">
+                            <span class="news-card-time" data-date="2026-04-12T11:00:00">Ahora</span>
+                            <span class="news-card-separator">|</span>
+                            <span class="news-card-type" data-category-dynamic="true">noticia</span>
+                        </div>
+                        <h3 class="news-card-title">"LA PULGA" EL DIEZ DE TEOTIHUACÁN</h3>
+                        <p class="news-card-subtitle">Con 16 goles en 28 partidos, cero tarjetas y 2,403 minutos de juego, nuestro mediocampista ofensivo se consolida como el máximo artillero de Alebrijes en la Temporada 2026.</p>
+                    </div>
+                </article>
+
+                <!-- Noticia 1: Preparación para Debut en Liga TDP -->
+                <article class="news-card-modern" data-category="liga-tdp"
+                    data-title="Preparación para Debut en Liga TDP"
+                    data-content="Preparación debut Liga TDP Jornada 16 Clausura 2026 Bombarderos Tecámac Alebrijes entrenamiento"
+                    data-date="2025-01-28T10:00:00" id="preparacion-debut-liga-tdp-clausura-2026">
+                    <div class="news-card-image">
+                        <img src="../assets/Noticias/Preparación_Para_El_Debut_En_El_Clausura_2026/611672315_26248273021441267_7472245763015193747_n.jpg"
+                            alt="Preparación para Debut en Liga TDP">
+                        <button class="news-card-share" aria-label="Compartir">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <circle cx="18" cy="5" r="3"></circle>
+                                <circle cx="6" cy="12" r="3"></circle>
+                                <circle cx="18" cy="19" r="3"></circle>
+                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="news-card-content">
+                        <div class="news-card-meta">
+                            <span class="news-card-time" data-date="2025-01-28T10:00:00">Ahora</span>
+                            <span class="news-card-separator">|</span>
+                            <span class="news-card-type" data-category-dynamic="true">noticia</span>
+                        </div>
+                        <h3 class="news-card-title">PREPARACIÓN PARA DEBUT EN LIGA TDP</h3>
+                        <p class="news-card-subtitle">El equipo se alista para su debut en la Jornada 16 del Clausura
+                            2026 ante Bombarderos de Tecámac, con una preparación intensiva y enfocada.</p>
+                    </div>
+                </article>
+
+                <!-- Noticia 2: Draft CL 2026: Selección de Talentos -->
+                <article class="news-card-modern" data-category="club" data-title="Draft CL 2026: Selección de Talentos"
+                    data-content="Draft CL 2026 selección talentos Alebrijes Soles Teotihuacán revisión deportiva Expansión TDP jugadores seleccionados"
+                    data-date="2025-01-27T10:00:00" id="draft-cl-2026-seleccion-talentos">
+                    <div class="news-card-image">
+                        <img src="../assets/Noticias/Draft_CL_2026/600915227_880335767858850_5268943101367662221_n.jpg"
+                            alt="Draft CL 2026 - Selección de Talentos">
+                        <button class="news-card-share" aria-label="Compartir">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <circle cx="18" cy="5" r="3"></circle>
+                                <circle cx="6" cy="12" r="3"></circle>
+                                <circle cx="18" cy="19" r="3"></circle>
+                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="news-card-content">
+                        <div class="news-card-meta">
+                            <span class="news-card-time" data-date="2025-01-27T10:00:00">Ahora</span>
+                            <span class="news-card-separator">|</span>
+                            <span class="news-card-type" data-category-dynamic="true">noticia</span>
+                        </div>
+                        <h3 class="news-card-title">DRAFT CL 2026: SELECCIÓN DE TALENTOS</h3>
+                        <p class="news-card-subtitle">Jugadores de Alebrijes Teotihuacán y Soles Teotihuacán
+                            participaron en el proceso de revisión deportiva para integrarse a los equipos de Expansión
+                            o TDP.</p>
+                    </div>
+                </article>
+
+                <!-- Noticia 2: Expansión Entrena en Teotihuacán -->
+                <article class="news-card-modern" data-category="club" data-title="Expansión Entrena en Teotihuacán"
+                    data-content="Alebrijes Oaxaca Expansión entrena instalaciones Teotihuacán equipo primera división sinergia categorías"
+                    data-date="2025-01-26T10:00:00" id="alebrijes-expansion-entrena-en-teotihuacan">
+                    <div class="news-card-image">
+                        <img src="../assets/Noticias/Expansión_En_Teotihuacán/WhatsApp Image 2025-12-30 at 7.35.35 PM.jpeg"
+                            alt="Alebrijes de Oaxaca entrenando en Teotihuacán">
+                        <button class="news-card-share" aria-label="Compartir">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <circle cx="18" cy="5" r="3"></circle>
+                                <circle cx="6" cy="12" r="3"></circle>
+                                <circle cx="18" cy="19" r="3"></circle>
+                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="news-card-content">
+                        <div class="news-card-meta">
+                            <span class="news-card-time" data-date="2025-01-26T10:00:00">Ahora</span>
+                            <span class="news-card-separator">|</span>
+                            <span class="news-card-type" data-category-dynamic="true">noticia</span>
+                        </div>
+                        <h3 class="news-card-title">EXPANSIÓN ENTRENA EN TEOTIHUACÁN</h3>
+                        <p class="news-card-subtitle">El equipo de Alebrijes de Oaxaca de la Liga de Expansión MX
+                            realizó una sesión de entrenamiento en nuestras instalaciones de Teotihuacán, fortaleciendo
+                            los lazos entre categorías.</p>
+                    </div>
+                </article>
+
+                <!-- Noticia 2: Alexis Armando al Torneo del Sol -->
+                <article class="news-card-modern" data-category="liga-tdp" data-title="Alexis Armando al Torneo del Sol"
+                    data-content="Alexis Armando Espinosa Domínguez seleccionado Torneo del Sol Liga TDP Grupo 9 Alebrijes reconocimiento"
+                    data-date="2025-01-25T10:00:00" id="alexis-armando-seleccionado-torneo-del-sol">
+                    <div class="news-card-image">
+                        <img src="../assets/Noticias/Alexis_Seleccionado_Torneo_Sol/Alexis_Torneo_Sol.jpg"
+                            alt="Alexis Armando Espinosa Seleccionado Torneo del Sol"
+                            style="object-position: center top;">
+                        <button class="news-card-share" aria-label="Compartir">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <circle cx="18" cy="5" r="3"></circle>
+                                <circle cx="6" cy="12" r="3"></circle>
+                                <circle cx="18" cy="19" r="3"></circle>
+                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="news-card-content">
+                        <div class="news-card-meta">
+                            <span class="news-card-time" data-date="2025-01-25T10:00:00">Ahora</span>
+                            <span class="news-card-separator">|</span>
+                            <span class="news-card-type" data-category-dynamic="true">noticia</span>
+                        </div>
+                        <h3 class="news-card-title">ALEXIS ARMANDO AL TORNEO DEL SOL</h3>
+                        <p class="news-card-subtitle">Nuestro jugador de Liga TDP ha sido seleccionado para representar
+                            al Grupo 9 en el prestigioso Torneo del Sol. Un reconocimiento a su esfuerzo y dedicación.
+                        </p>
+                    </div>
+                </article>
+
+                <!-- Noticia 3: Goleada 6-1 ante Aguilas -->
+                <article class="news-card-modern" data-category="liga-tdp" data-title="Goleada 6-1 ante Aguilas"
+                    data-content="Victoria contundente Aguilas Teotihuacán marcador 6-1 Liga TDP Alebrijes goleada"
+                    data-date="2025-12-19T18:44:57" id="victoria-contundente-ante-aguilas-de-teotihuacan">
+                    <div class="news-card-image">
+                        <img src="../assets/victoria-contundente-ante-aguilas-de-teotihuacan/InicioPartido.jpg"
+                            alt="Victoria ante Aguilas">
+                        <button class="news-card-share" aria-label="Compartir">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <circle cx="18" cy="5" r="3"></circle>
+                                <circle cx="6" cy="12" r="3"></circle>
+                                <circle cx="18" cy="19" r="3"></circle>
+                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="news-card-content">
+                        <div class="news-card-meta">
+                            <span class="news-card-time" data-date="2025-12-19T18:44:57">Ahora</span>
+                            <span class="news-card-separator">|</span>
+                            <span class="news-card-type" data-category-dynamic="true">noticia</span>
+                        </div>
+                        <h3 class="news-card-title">GOLEADA 6-1 ANTE AGUILAS</h3>
+                        <p class="news-card-subtitle">Victoria contundente 6-1 ante Aguilas de Teotihuacán. Los
+                            Alebrijes demostraron su superioridad en el campo.</p>
+                    </div>
+                </article>
+
+            </div>
+
+            <!-- Pagination -->
+            <div class="news-pagination-wrapper">
+                <div class="news-pagination" id="news-pagination">
+                    <button class="pagination-btn pagination-prev" id="pagination-prev" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                        <span>Anterior</span>
+                    </button>
+                    <div class="pagination-numbers" id="pagination-numbers">
+                        <button class="pagination-number active" data-page="1">1</button>
+                        <button class="pagination-number" data-page="2">2</button>
+                        <button class="pagination-number" data-page="3">3</button>
+                    </div>
+                    <button class="pagination-btn pagination-next" id="pagination-next">
+                        <span>Siguiente</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- No Results Message -->
+            <div class="no-results-message" id="no-results" style="display: none;">
+                <svg class="no-results-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <h3>No se encontraron noticias</h3>
+                <p>No hay resultados que coincidan con tu búsqueda. Intenta con otros términos o ajusta los filtros.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contacto">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <img src="../assets/Alebrijes Teotihuacan.png" alt="Logo Footer" class="footer-logo-img">
+                <p>Pasión y formación deportiva con identidad oaxaqueña.</p>
+            </div>
+
+            <div class="footer-links">
+                <h4>Navegación</h4>
+                <ul>
+                    <li><a href="../index.html">Inicio</a></li>
+                    <li><a href="nosotros.html">Nosotros</a></li>
+                    <li><a href="../webvisorias/FormularioDeRegistroVisoria-main/index.html" target="_blank"
+                            rel="noopener noreferrer">Visorias</a></li>
+                    <li><a href="ligatdp.html">Liga TDP</a></li>
+                    <li><a href="noticias.html">Noticias</a></li>
+                    <li><a href="fuerzasbasicas.html">Fuerzas Básicas</a></li>
+                    <li><a href="casaclub.html">Casa Club</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-contact">
+                <h4>Contacto</h4>
+                <p>
+                    <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                    </svg>
+                    Centro Deportivo Pascual Boing
+                </p>
+                <p>
+                    <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                    </svg>
+                    alebrijesclub6@gmail.com
+                </p>
+            </div>
+
+            <div class="footer-social">
+                <h4>Alebrijes de Oaxaca</h4>
+                <div class="social-links-footer">
+                    <a href="https://www.facebook.com/AlebrijesOficial/" target="_blank" class="social-link-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                        </svg>
+                        <span>Facebook</span>
+                    </a>
+                    <a href="https://www.instagram.com/alebrijesoaxacaoficial/" target="_blank"
+                        class="social-link-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                        </svg>
+                        <span>Instagram</span>
+                    </a>
+                    <a href="https://www.tiktok.com/@alebrijesoaxacaoficial?lang=es" target="_blank"
+                        class="social-link-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path
+                                d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
+                        </svg>
+                        <span>TikTok</span>
+                    </a>
+                    <a href="https://x.com/AlebrijesOaxaca" target="_blank" class="social-link-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path
+                                d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                        </svg>
+                        <span>X (Twitter)</span>
+                    </a>
+                    <a href="https://www.youtube.com/user/AlebrijesTV" target="_blank" class="social-link-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path
+                                d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                        </svg>
+                        <span>YouTube</span>
+                    </a>
+                </div>
+                <h4 style="margin-top: 20px;">Alebrijes Teotihuacán</h4>
+                <div class="social-links-footer">
+                    <a href="https://www.facebook.com/profile.php?id=100083182488673&locale=es_LA" target="_blank"
+                        class="social-link-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                        </svg>
+                        <span>Facebook</span>
+                    </a>
+                    <a href="https://www.instagram.com/alebrijes_teoti" target="_blank" class="social-link-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                        </svg>
+                        <span>Instagram</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Alebrijes de Oaxaca Teotihuacán. | <a href="politica-privacidad.html">Política de
+                    Privacidad</a> | <a href="terminos-condiciones.html">Términos y Condiciones</a></p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../scripts/script.js"></script>
+    <script type="module" src="../scripts/nav-auth.js"></script>
+    <script src="../scripts/news-utils.js"></script>
+    <script src="../scripts/noticias.js"></script>
+</body>
+
+</html>

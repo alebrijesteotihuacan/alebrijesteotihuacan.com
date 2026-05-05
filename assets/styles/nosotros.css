@@ -1,0 +1,1363 @@
+/* 
+   Alebrijes de Oaxaca Teotihuacán
+   Nosotros Page Styles - Creative & Dynamic Design
+*/
+
+/* Page Header */
+.page-header {
+    height: 100vh;
+    min-height: 600px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    text-align: center;
+    margin-top: 0;
+    padding-top: var(--header-height);
+    background-color: var(--dark);
+    overflow: hidden;
+}
+
+.header-bg-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    opacity: 0.6;
+    z-index: 1;
+    transform: scale(1.1);
+    transition: transform 15s ease;
+    filter: brightness(0.4) contrast(1.1);
+}
+
+.page-header:hover .header-bg-img {
+    transform: scale(1.15);
+    filter: brightness(0.5) contrast(1.15);
+}
+
+.header-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.4) 40%, rgba(0, 0, 0, 0.5) 70%, rgba(0, 0, 0, 0.8) 100%),
+        linear-gradient(to right, rgba(243, 106, 33, 0.15) 0%, transparent 60%),
+        linear-gradient(to left, rgba(0, 0, 0, 0.3) 0%, transparent 40%);
+    z-index: 2;
+}
+
+.header-content {
+    position: relative;
+    z-index: 3;
+    animation: fadeUp 1s ease-out;
+    max-width: 1200px;
+    padding: 0 20px;
+    margin-top: 0;
+}
+
+.header-content h1 {
+    font-size: clamp(4rem, 10vw, 8rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 10px;
+    color: var(--primary);
+    text-shadow: 
+        6px 6px 0 rgba(0, 0, 0, 0.9),
+        0 0 60px rgba(243, 106, 33, 0.8),
+        0 0 120px rgba(243, 106, 33, 0.6),
+        0 0 180px rgba(243, 106, 33, 0.4);
+    margin-bottom: 0;
+    line-height: 1.1;
+    position: relative;
+}
+
+
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* Section Label */
+.section-label {
+    display: inline-block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--primary);
+    margin-bottom: 15px;
+}
+
+/* Main NOSOTROS Section */
+.nosotros-main-section {
+    padding: 100px 0;
+    background: linear-gradient(180deg, var(--white) 0%, #fafafa 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.nosotros-main-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -200px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(243, 106, 33, 0.05) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.nosotros-main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 70px;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+.nosotros-main-image-wrapper {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(243, 106, 33, 0.1);
+    transform: perspective(1000px) rotateY(-5deg);
+    transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+.nosotros-main-image-wrapper:hover {
+    transform: perspective(1000px) rotateY(0deg) scale(1.02);
+    box-shadow: 
+        0 30px 80px rgba(0, 0, 0, 0.3),
+        0 0 0 3px rgba(243, 106, 33, 0.3);
+}
+
+.nosotros-main-image {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+    display: block;
+}
+
+.image-overlay-gradient {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 100%);
+    z-index: 1;
+}
+
+.image-badge {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    background: var(--primary);
+    color: var(--white);
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 800;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    z-index: 2;
+    box-shadow: 0 8px 25px rgba(243, 106, 33, 0.6);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.image-badge:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(243, 106, 33, 0.7);
+}
+
+.nosotros-main-text {
+    background: var(--white);
+    padding: 50px;
+    border-radius: 24px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+    border-left: 6px solid var(--primary);
+}
+
+.text-header {
+    margin-bottom: 35px;
+}
+
+.text-header h2 {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--dark);
+    margin-top: 15px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    line-height: 1.2;
+}
+
+.lead-text {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--dark);
+    line-height: 1.8;
+    margin-bottom: 30px;
+    padding: 25px;
+    background: linear-gradient(135deg, rgba(243, 106, 33, 0.1) 0%, rgba(243, 106, 33, 0.05) 100%);
+    border-left: 5px solid var(--primary);
+    border-radius: 12px;
+}
+
+.text-content p {
+    font-size: 1.1rem;
+    line-height: 1.9;
+    color: var(--text);
+    margin-bottom: 25px;
+    text-align: justify;
+}
+
+.text-content p strong {
+    color: var(--dark);
+    font-weight: 700;
+}
+
+
+/* Mission & Vision Section (Orange Boxes) */
+.mvv-section {
+    padding: 100px 0;
+    background: var(--dark);
+    position: relative;
+}
+
+.mvv-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 50%, rgba(243, 106, 33, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 50%, rgba(243, 106, 33, 0.1) 0%, transparent 50%);
+    z-index: 0;
+}
+
+.mvv-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 50px;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.mvv-card-orange {
+    background: linear-gradient(135deg, var(--primary) 0%, rgba(243, 106, 33, 0.95) 100%);
+    padding: 60px 50px;
+    border-radius: 0;
+    color: var(--white);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 
+        0 20px 60px rgba(243, 106, 33, 0.3),
+        inset 0 0 100px rgba(255, 255, 255, 0.05);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.mvv-card-orange::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.mvv-card-orange:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 
+        0 30px 80px rgba(243, 106, 33, 0.4),
+        inset 0 0 100px rgba(255, 255, 255, 0.1);
+}
+
+.mvv-card-orange h3 {
+    font-size: 3rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 35px;
+    color: var(--white);
+    position: relative;
+    z-index: 1;
+    text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
+}
+
+.mvv-card-orange p {
+    font-size: 1.15rem;
+    line-height: 2;
+    margin-bottom: 30px;
+    color: rgba(255, 255, 255, 0.98);
+    text-align: justify;
+    position: relative;
+    z-index: 1;
+}
+
+.mvv-card-orange p:last-child {
+    margin-bottom: 0;
+}
+
+.mvv-card-orange p strong {
+    font-weight: 800;
+    color: var(--white);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Los Alebrijes Section */
+.alebrijes-section {
+    padding: 100px 0;
+    background: var(--white);
+    position: relative;
+}
+
+.alebrijes-header {
+    margin-bottom: 60px;
+}
+
+.alebrijes-section-title {
+    font-size: clamp(3rem, 6vw, 5rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    color: var(--black);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.alebrijes-images-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-bottom: 80px;
+}
+
+.alebrijes-image-card {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.15),
+        0 0 0 1px rgba(0, 0, 0, 0.05);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    background: var(--white);
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    border: 3px solid transparent;
+}
+
+.alebrijes-image-card:hover {
+    transform: translateY(-12px) scale(1.02);
+    border-color: var(--primary);
+    box-shadow: 
+        0 35px 90px rgba(243, 106, 33, 0.3),
+        0 0 0 3px rgba(243, 106, 33, 0.2),
+        0 0 60px rgba(243, 106, 33, 0.15);
+}
+
+.alebrijes-image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+}
+
+.alebrijes-grid-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), filter 0.6s ease;
+    filter: brightness(0.85) contrast(1.1);
+}
+
+.alebrijes-image-card:hover .alebrijes-grid-img {
+    transform: scale(1.1);
+    filter: brightness(1) contrast(1.15);
+}
+
+.alebrijes-image-overlay-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 0, 0, 0.3) 50%,
+        rgba(0, 0, 0, 0.7) 100%
+    );
+    transition: opacity 0.5s ease;
+    z-index: 1;
+}
+
+.alebrijes-image-card:hover .alebrijes-image-overlay-card {
+    opacity: 0.6;
+}
+
+.alebrijes-image-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 30px 25px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.7) 50%, transparent 100%);
+    z-index: 2;
+    transition: padding 0.3s ease;
+}
+
+.alebrijes-image-card:hover .alebrijes-image-label {
+    padding: 35px 25px;
+}
+
+.alebrijes-image-label h3 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--white);
+    margin: 0 0 8px 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+.alebrijes-image-label p {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+    font-weight: 500;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+.alebrijes-text-content {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.alebrijes-content {
+    max-width: 100%;
+}
+
+.alebrijes-content p {
+    font-size: 1.15rem;
+    line-height: 2;
+    color: var(--text);
+    margin-bottom: 30px;
+    text-align: justify;
+}
+
+.alebrijes-content p:last-child {
+    margin-bottom: 0;
+}
+
+.alebrijes-content p strong {
+    color: var(--dark);
+    font-weight: 700;
+}
+
+/* Visorías Section */
+.visorias-section {
+    padding: 0;
+    background: var(--white);
+    position: relative;
+    min-height: 700px;
+}
+
+.visorias-hero-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.visorias-bg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.15;
+    filter: grayscale(100%);
+}
+
+.visorias-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%);
+    z-index: 1;
+}
+
+.visorias-container {
+    position: relative;
+    z-index: 2;
+    padding: 100px 0;
+}
+
+.visorias-header {
+    margin-bottom: 60px;
+}
+
+.section-title-left {
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: var(--dark);
+    margin-top: 15px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    line-height: 1.2;
+}
+
+.visorias-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 60px;
+    align-items: start;
+}
+
+.visorias-content .lead {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--dark);
+    line-height: 1.8;
+    margin-bottom: 35px;
+    padding: 30px;
+    background: linear-gradient(135deg, rgba(243, 106, 33, 0.1) 0%, rgba(243, 106, 33, 0.05) 100%);
+    border-left: 6px solid var(--primary);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.visorias-content p {
+    font-size: 1.15rem;
+    line-height: 2;
+    color: var(--text);
+    margin-bottom: 30px;
+    text-align: justify;
+}
+
+.visorias-content p:last-of-type {
+    margin-bottom: 40px;
+}
+
+.visorias-content p strong {
+    color: var(--dark);
+    font-weight: 700;
+}
+
+.visorias-content .btn {
+    margin-top: 20px;
+    padding: 18px 40px;
+    font-size: 1.1rem;
+}
+
+.visorias-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.stat-box {
+    background: linear-gradient(135deg, var(--primary) 0%, rgba(243, 106, 33, 0.9) 100%);
+    padding: 50px 35px;
+    border-radius: 20px;
+    text-align: center;
+    color: var(--white);
+    box-shadow: 
+        0 15px 40px rgba(243, 106, 33, 0.3),
+        inset 0 0 50px rgba(255, 255, 255, 0.1);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-box::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+    animation: rotate 15s linear infinite;
+}
+
+.stat-box:hover {
+    transform: translateY(-10px) scale(1.05);
+    box-shadow: 
+        0 20px 50px rgba(243, 106, 33, 0.4),
+        inset 0 0 50px rgba(255, 255, 255, 0.15);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    padding: 15px;
+}
+
+.stat-icon svg {
+    width: 30px;
+    height: 30px;
+    stroke-width: 2.5;
+}
+
+.stat-box .stat-number {
+    display: block;
+    font-size: 2.2rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
+}
+
+.stat-box .stat-label {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 600;
+    opacity: 0.95;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Compromiso Section */
+.compromiso-section {
+    padding: 100px 0;
+    background: linear-gradient(180deg, var(--grey) 0%, var(--white) 100%);
+}
+
+.compromiso-header {
+    margin-bottom: 70px;
+}
+
+.section-title {
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: var(--dark);
+    margin-top: 15px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    line-height: 1.2;
+}
+
+.compromiso-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.compromiso-item {
+    background: var(--white);
+    padding: 50px 40px;
+    border-radius: 24px;
+    text-align: center;
+    box-shadow: 
+        0 15px 40px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(243, 106, 33, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-top: 6px solid var(--primary);
+    position: relative;
+    overflow: hidden;
+}
+
+.compromiso-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--primary), rgba(243, 106, 33, 0.5));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+}
+
+.compromiso-item:hover {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 
+        0 25px 60px rgba(0, 0, 0, 0.15),
+        0 0 0 3px rgba(243, 106, 33, 0.2);
+}
+
+.compromiso-item:hover::before {
+    transform: scaleX(1);
+}
+
+.compromiso-icon {
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 30px;
+    background: linear-gradient(135deg, rgba(243, 106, 33, 0.15) 0%, rgba(243, 106, 33, 0.08) 100%);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    transition: all 0.4s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.compromiso-item:hover .compromiso-icon {
+    background: linear-gradient(135deg, var(--primary) 0%, rgba(243, 106, 33, 0.9) 100%);
+    color: var(--white);
+    transform: scale(1.15) rotate(5deg);
+    box-shadow: 0 10px 30px rgba(243, 106, 33, 0.4);
+}
+
+.compromiso-icon svg {
+    width: 45px;
+    height: 45px;
+    stroke-width: 2.5;
+}
+
+.compromiso-item h3 {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--dark);
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    position: relative;
+    z-index: 1;
+}
+
+.compromiso-item p {
+    font-size: 1.05rem;
+    line-height: 1.9;
+    color: var(--text);
+    position: relative;
+    z-index: 1;
+}
+
+/* Jugadores Exitosos Section */
+.jugadores-section {
+    padding: 120px 0;
+    background: var(--dark);
+    position: relative;
+}
+
+.jugadores-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 30% 30%, rgba(243, 106, 33, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 70% 70%, rgba(243, 106, 33, 0.1) 0%, transparent 50%);
+    z-index: 0;
+}
+
+.jugadores-header {
+    margin-bottom: 80px;
+    position: relative;
+    z-index: 1;
+    text-align: left;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 20px;
+}
+
+.jugadores-header .section-label {
+    margin-bottom: 20px;
+    display: block;
+}
+
+.jugadores-header .section-title {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 900;
+    color: var(--white);
+    margin-top: 0;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    line-height: 1.2;
+    text-align: left;
+}
+
+.jugadores-subtitle {
+    font-size: 1.25rem;
+    color: rgba(255, 255, 255, 0.85);
+    margin-top: 0;
+    width: 100%;
+    max-width: 100%;
+    line-height: 1.9;
+    text-align: left;
+    font-weight: 400;
+}
+
+.jugadores-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 50px;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    padding: 0 20px;
+}
+
+.jugador-card {
+    background: var(--white);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    transition: all 0.4s ease;
+    border: 3px solid transparent;
+    display: flex;
+    flex-direction: column;
+}
+
+.jugador-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 
+        0 30px 80px rgba(243, 106, 33, 0.4),
+        0 0 0 3px var(--primary);
+}
+
+.jugador-image {
+    width: 100%;
+    height: 400px;
+    overflow: hidden;
+    background: var(--dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.jugador-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center center;
+    transition: transform 0.3s ease;
+}
+
+.jugador-info {
+    padding: 45px 40px;
+    background: var(--white);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.jugador-info h3 {
+    font-size: 1.9rem;
+    font-weight: 900;
+    color: var(--dark);
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    line-height: 1.3;
+}
+
+.jugador-info p {
+    font-size: 1.1rem;
+    line-height: 1.95;
+    color: var(--text);
+    flex: 1;
+}
+
+/* Categorías Section */
+.categorias-section {
+    padding: 0;
+    background: var(--white);
+    position: relative;
+    min-height: 800px;
+}
+
+.categorias-hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.categorias-bg-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.12;
+    filter: grayscale(100%);
+}
+
+.categorias-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 1) 100%);
+    z-index: 1;
+}
+
+.categorias-container {
+    position: relative;
+    z-index: 2;
+    padding: 80px 20px;
+}
+
+.categorias-header {
+    margin-bottom: 70px;
+    padding: 0 20px;
+}
+
+.categorias-header .section-label {
+    display: block;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.categorias-header .section-title {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.categorias-subtitle {
+    font-size: 1.25rem;
+    color: var(--text-light);
+    margin-top: 0;
+    max-width: 750px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.85;
+    font-weight: 400;
+    text-align: justify;
+}
+
+.categorias-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 50px;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+.categoria-card {
+    background: var(--white);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 
+        0 15px 50px rgba(0, 0, 0, 0.12),
+        0 0 0 1px rgba(243, 106, 33, 0.08);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border: 2px solid transparent;
+}
+
+.categoria-card:hover {
+    transform: translateY(-12px);
+    box-shadow: 
+        0 30px 80px rgba(0, 0, 0, 0.18),
+        0 0 0 3px var(--primary);
+    border-color: var(--primary);
+}
+
+.categoria-visual {
+    position: relative;
+    height: 320px;
+    overflow: hidden;
+}
+
+.categoria-image-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.categoria-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: brightness(0.85);
+}
+
+/* Sub-16: Ajustar posición para mostrar mejor la imagen */
+.categoria-image[alt="Sub-16"] {
+    object-fit: cover;
+    object-position: center 35%;
+}
+
+/* Sub-14: Centrar la imagen */
+.categoria-image[alt="Sub-14"] {
+    object-fit: cover;
+    object-position: center center;
+}
+
+.categoria-card:hover .categoria-image {
+    transform: scale(1.2);
+    filter: brightness(1);
+}
+
+.categoria-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(0, 0, 0, 0.3) 70%,
+        rgba(0, 0, 0, 0.6) 100%
+    );
+    z-index: 1;
+    transition: opacity 0.4s ease;
+}
+
+.categoria-card:hover .categoria-overlay {
+    opacity: 0.8;
+}
+
+.categoria-number-badge {
+    position: absolute;
+    bottom: 25px;
+    right: 25px;
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, var(--primary) 0%, rgba(243, 106, 33, 0.95) 100%);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 900;
+    box-shadow: 
+        0 10px 30px rgba(243, 106, 33, 0.5),
+        0 0 0 5px rgba(255, 255, 255, 0.3),
+        inset 0 2px 5px rgba(255, 255, 255, 0.3);
+    z-index: 2;
+    transition: all 0.4s ease;
+}
+
+.categoria-card:hover .categoria-number-badge {
+    transform: scale(1.15) rotate(5deg);
+    box-shadow: 
+        0 15px 40px rgba(243, 106, 33, 0.6),
+        0 0 0 5px rgba(255, 255, 255, 0.4),
+        inset 0 2px 5px rgba(255, 255, 255, 0.4);
+}
+
+.categoria-content {
+    padding: 45px 40px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--white);
+    position: relative;
+}
+
+.categoria-label {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--primary);
+    margin-bottom: 15px;
+    opacity: 0.9;
+}
+
+.categoria-content h3 {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: var(--dark);
+    margin-bottom: 25px;
+    margin-top: 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    line-height: 1.2;
+}
+
+.categoria-content p {
+    font-size: 1.1rem;
+    line-height: 1.95;
+    color: var(--text);
+    text-align: justify;
+    flex: 1;
+}
+
+.bg-grey {
+    background-color: var(--grey);
+}
+
+.bg-dark {
+    background-color: var(--dark);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .nosotros-main-grid,
+    .visorias-grid {
+        grid-template-columns: 1fr;
+        gap: 50px;
+    }
+
+    .alebrijes-images-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+    }
+
+    .alebrijes-image-wrapper {
+        height: 350px;
+    }
+
+
+    .mvv-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .compromiso-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .categorias-grid,
+    .jugadores-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .nosotros-main-image-wrapper {
+        transform: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        min-height: 500px;
+    }
+
+    .header-content {
+        margin-top: 40px;
+    }
+
+    .header-content h1 {
+        font-size: clamp(2.5rem, 10vw, 4rem);
+        letter-spacing: 4px;
+    }
+
+    .nosotros-main-section,
+    .mvv-section,
+    .alebrijes-section,
+    .visorias-section,
+    .compromiso-section,
+    .jugadores-section,
+    .categorias-section {
+        padding: 60px 0;
+    }
+
+    .jugadores-header {
+        margin-bottom: 50px;
+        padding: 0 20px;
+    }
+
+    .jugadores-header .section-title {
+        font-size: clamp(2rem, 8vw, 3rem);
+        margin-bottom: 20px;
+    }
+
+    .jugadores-subtitle {
+        font-size: 1.1rem;
+    }
+
+    .jugadores-grid {
+        padding: 0 20px;
+        gap: 30px;
+    }
+
+    .jugador-image {
+        height: 350px;
+        padding: 15px;
+    }
+
+    .jugador-info {
+        padding: 35px 25px;
+    }
+
+    .jugador-info h3 {
+        font-size: 1.5rem;
+    }
+
+    .jugador-info p {
+        font-size: 1rem;
+    }
+
+    .nosotros-main-text {
+        padding: 35px 25px;
+    }
+
+    .text-header h2 {
+        font-size: 2rem;
+    }
+
+    .lead-text {
+        font-size: 1.1rem;
+        padding: 20px;
+    }
+
+    .text-content p {
+        font-size: 1rem;
+    }
+
+    .mvv-card-orange {
+        padding: 40px 30px;
+    }
+
+    .mvv-card-orange h3 {
+        font-size: 2.2rem;
+    }
+
+    .mvv-card-orange p {
+        font-size: 1rem;
+    }
+
+    .alebrijes-section-title {
+        font-size: clamp(2.5rem, 8vw, 4rem);
+        letter-spacing: 3px;
+    }
+
+    .alebrijes-images-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        margin-bottom: 50px;
+    }
+
+    .alebrijes-image-wrapper {
+        height: 350px;
+    }
+
+    .alebrijes-content p {
+        font-size: 1rem;
+    }
+
+    .section-title-left,
+    .section-title {
+        font-size: 2.2rem;
+    }
+
+    .visorias-content .lead {
+        font-size: 1.2rem;
+        padding: 25px;
+    }
+
+    .visorias-content p {
+        font-size: 1rem;
+    }
+
+    .stat-box {
+        padding: 40px 30px;
+    }
+
+    .stat-box .stat-number {
+        font-size: 1.8rem;
+    }
+
+    .compromiso-item {
+        padding: 40px 30px;
+    }
+
+    .categoria-visual {
+        height: 250px;
+    }
+
+    .categoria-content {
+        padding: 35px 25px;
+    }
+
+    .categoria-content h3 {
+        font-size: 1.7rem;
+    }
+
+    .categoria-number-badge {
+        width: 60px;
+        height: 60px;
+        font-size: 1.3rem;
+        bottom: 20px;
+        right: 20px;
+    }
+
+    .alebrijes-images-grid {
+        grid-template-columns: 1fr;
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+
+    .alebrijes-image-wrapper {
+        height: 300px;
+    }
+
+    .alebrijes-image-label {
+        padding: 25px 20px;
+    }
+
+    .alebrijes-image-label h3 {
+        font-size: 1.3rem;
+    }
+
+    .alebrijes-image-label p {
+        font-size: 0.85rem;
+    }
+}

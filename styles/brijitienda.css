@@ -400,6 +400,54 @@
     box-shadow: 0 1px 4px rgba(0, 0, 0, .06);
 }
 
+/* Sold-out state */
+.brijitienda-product-card.is-soldout .product-gallery-slide img {
+    filter: grayscale(100%);
+    opacity: 0.55;
+}
+
+.brijitienda-product-card.is-soldout:hover .product-gallery-slide img {
+    transform: none;
+}
+
+.brijitienda-product-card.is-soldout {
+    opacity: 0.85;
+}
+
+.brijitienda-product-card.is-soldout .product-badge {
+    display: none;
+}
+
+.product-soldout-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 5px 12px;
+    border-radius: 4px;
+    background: #111;
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    z-index: 4;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .15);
+}
+
+.brijitienda-product-card.is-soldout .brijitienda-inquire-btn {
+    background: #e0e0e0;
+    color: #888;
+    cursor: not-allowed;
+    pointer-events: none;
+    box-shadow: none;
+}
+
+.brijitienda-product-card.is-soldout .brijitienda-inquire-btn:hover {
+    background: #e0e0e0;
+    color: #888;
+    box-shadow: none;
+}
+
 /* Product info */
 .brijitienda-product-info {
     padding: 16px 18px 20px;

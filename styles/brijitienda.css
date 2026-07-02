@@ -695,3 +695,232 @@
         padding: 9px 12px 9px 36px;
     }
 }
+
+/* ============================================
+   Product Lightbox
+   ============================================ */
+.bj-lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.95);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    padding: 70px 24px 24px;
+    box-sizing: border-box;
+}
+
+.bj-lightbox.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.bj-lightbox-figure {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1 1 auto;
+    width: 100%;
+    min-height: 0;
+}
+
+.bj-lightbox-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: bjLightboxFadeIn 0.35s ease;
+    transition: opacity 0.2s ease;
+}
+
+.bj-lightbox-img.is-fading {
+    opacity: 0.2;
+}
+
+@keyframes bjLightboxFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.94);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.bj-lightbox-close {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 10001;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 0;
+}
+
+.bj-lightbox-close:hover,
+.bj-lightbox-close:focus-visible {
+    background: #f36a21;
+    border-color: #f36a21;
+    transform: rotate(90deg);
+    outline: none;
+}
+
+.bj-lightbox-close svg {
+    width: 22px;
+    height: 22px;
+}
+
+.bj-lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 56px;
+    height: 56px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 10001;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 0;
+}
+
+.bj-lightbox-nav:hover,
+.bj-lightbox-nav:focus-visible {
+    background: #f36a21;
+    border-color: #f36a21;
+    transform: translateY(-50%) scale(1.08);
+    outline: none;
+}
+
+.bj-lightbox-prev {
+    left: 24px;
+}
+
+.bj-lightbox-next {
+    right: 24px;
+}
+
+.bj-lightbox-nav svg {
+    width: 26px;
+    height: 26px;
+}
+
+.bj-lightbox-info {
+    flex: 0 0 auto;
+    color: #fff;
+    text-align: center;
+    margin-top: 18px;
+    max-width: 90vw;
+}
+
+.bj-lightbox-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin: 0 0 6px;
+    letter-spacing: 0.2px;
+    line-height: 1.3;
+}
+
+.bj-lightbox-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 0.9rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.bj-lightbox-sku {
+    color: rgba(255, 255, 255, 0.55);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+}
+
+.bj-lightbox-price {
+    color: #f36a21;
+    font-weight: 800;
+    font-size: 1.1rem;
+}
+
+body.bj-lb-open {
+    overflow: hidden;
+}
+
+/* Indica visualmente que las imágenes son clickeables */
+.product-gallery-slide img {
+    cursor: zoom-in;
+}
+
+@media (max-width: 640px) {
+    .bj-lightbox {
+        padding: 64px 12px 16px;
+    }
+
+    .bj-lightbox-close {
+        top: 14px;
+        right: 14px;
+        width: 42px;
+        height: 42px;
+    }
+
+    .bj-lightbox-close svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .bj-lightbox-nav {
+        width: 44px;
+        height: 44px;
+    }
+
+    .bj-lightbox-prev {
+        left: 8px;
+    }
+
+    .bj-lightbox-next {
+        right: 8px;
+    }
+
+    .bj-lightbox-nav svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    .bj-lightbox-title {
+        font-size: 0.95rem;
+    }
+
+    .bj-lightbox-price {
+        font-size: 1rem;
+    }
+}

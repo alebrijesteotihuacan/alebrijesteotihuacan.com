@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Scripts de utilidad local (no parte del sitio)
+apply-schema-pg.js
+delete-supabase-jugadores-profesores.js
+register-arturo.js
+register-luis-esteban.js
+
+# Archivos temporales y locales
+*.log
+.DS_Store
+Thumbs.db
+.env
+.env.local
+
+# Imagenes de jugadores eliminadas (no son parte del sitio publico)
+assets/JugadoresSoles/
+assets/JugadoresFuerzasBasicas/
+assets/JugadoresProyeccion/
+assets/JugadoresExpansion/
+assets/PlantillaLigaTDP_2026/

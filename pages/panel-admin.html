@@ -1276,30 +1276,8 @@
     </div>
 
     <script type="module">
-        import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyD5aakkUMk77EMKPwHvjXTqzPKBvejhjEo",
-            authDomain: "metricasalebrijes.firebaseapp.com",
-            projectId: "metricasalebrijes",
-            storageBucket: "metricasalebrijes.firebasestorage.app",
-            messagingSenderId: "822819596837",
-            appId: "1:822819596837:web:62f3f4139332830ee96dcc"
-        };
-
-        let app;
-        try { app = getApps().length ? getApp() : initializeApp(firebaseConfig); }
-        catch (e) { app = initializeApp(firebaseConfig, 'admin-' + Date.now()); }
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        const PROF_PASSWORDS = {
-            'juan': 'Juan123', 'abimael': 'Abimael123', 'lalo': 'Lalo123',
-            'ricardo': 'Ricardo123', 'hector': 'Hector123', 'oswaldo': 'Oswaldo123',
-            'emilio': 'Emilio123', 'ramiro': 'Ramiro123'
-        };
+        import { supabase } from '../scripts/supabase-client.js';
+        const db = supabase;
 
         // Available player images (PlantillaLigaTDP_2026)
         const PLAYER_IMAGES = [
@@ -1428,23 +1406,26 @@
         }
 
         // Auth
-        onAuthStateChanged(auth, async (user) => {
+        supabase.auth.onAuthStateChange(async (_event, session) => {
+            const user = session?.user || null;
             if (!user) { window.location.href = 'login.html'; return; }
-            const profRef = doc(db, 'profesores', user.uid);
-            const profSnap = await getDoc(profRef);
-            if (!profSnap.exists() || profSnap.data().rol !== 'admin') {
+            const { data: profData, error: profErr } = await supabase
+                .from('profesores')
+                .select('*')
+                .eq('id', user.id)
+                .maybeSingle();
+            if (!profData || profData.rol !== 'admin') {
                 window.location.href = 'panel-profesor.html'; return;
             }
-            const adminData = profSnap.data();
-            window.adminData = adminData; // Store globally for filtering
-            document.getElementById('adminName').textContent = adminData.nombre || 'Admin';
-            document.getElementById('adminGreeting').textContent = adminData.nombre || 'Admin';
-            document.getElementById('adminAvatar').textContent = (adminData.nombre || 'A').charAt(0).toUpperCase();
-            await loadDashboard(user.uid);
+            window.adminData = profData; // Store globally for filtering
+            document.getElementById('adminName').textContent = profData.nombre || 'Admin';
+            document.getElementById('adminGreeting').textContent = profData.nombre || 'Admin';
+            document.getElementById('adminAvatar').textContent = (profData.nombre || 'A').charAt(0).toUpperCase();
+            await loadDashboard(user.id);
         });
 
         document.getElementById('adminLogoutBtn').addEventListener('click', async () => {
-            await signOut(auth); window.location.href = 'login.html';
+            await supabase.auth.signOut(); window.location.href = 'login.html';
         });
 
         // Date
@@ -1455,54 +1436,51 @@
         async function loadDashboard(adminUid) {
             try {
                 // Load professors
-                const profsSnap = await getDocs(collection(db, 'profesores'));
+                const { data: profRows } = await supabase.from('profesores').select('*');
                 const professors = [];
-                profsSnap.forEach(d => {
-                    const data = d.data();
-                    if (data.rol !== 'admin') professors.push({ id: d.id, ...data });
+                (profRows || []).forEach(row => {
+                    if (row.rol !== 'admin') professors.push({ id: row.id, ...row });
                 });
 
                 // Load players
-                const playersSnap = await getDocs(collection(db, 'jugadores'));
+                const { data: playerRows } = await supabase.from('jugadores').select('*');
                 let allPlayers = [];
                 const CATEGORY_ALIAS_ADMIN = {'Sub-13':'Sub-14','Sub-15':'Sub-16','Sub-17':'Sub-18','Sub-20':'Sub-21'};
-                playersSnap.forEach(d => {
-                    const data = d.data();
-                    const normCat = CATEGORY_ALIAS_ADMIN[data.categoria] || data.categoria;
-                    const dataWithNorm = { ...data, categoria: normCat };
+                (playerRows || []).forEach(row => {
+                    const normCat = CATEGORY_ALIAS_ADMIN[row.categoria] || row.categoria;
+                    const dataWithNorm = { ...row, categoria: normCat };
                     if (window.adminData && window.adminData.equipoRestringido) {
                         const restrictStr = window.adminData.equipoRestringido.toLowerCase();
                         const cat = normCat.toLowerCase();
-                        const eq = (data.equipo || '').toLowerCase();
+                        const eq = (row.equipo || '').toLowerCase();
                         if (cat.includes(restrictStr) || eq.includes(restrictStr)) {
-                            allPlayers.push({ id: d.id, ...dataWithNorm });
+                            allPlayers.push({ id: row.id, ...dataWithNorm });
                         }
                     } else {
-                        allPlayers.push({ id: d.id, ...dataWithNorm });
+                        allPlayers.push({ id: row.id, ...dataWithNorm });
                     }
                 });
 
                 // Load evaluations
-                const evalsSnap = await getDocs(collection(db, 'evaluaciones'));
+                const { data: evalRows } = await supabase.from('evaluaciones').select('*');
 
                 // Count per professor
                 const playersByProf = {};
                 const evalsByProf = {};
                 professors.forEach(p => { playersByProf[p.id] = 0; evalsByProf[p.id] = 0; });
-                
+
                 // Set of valid player IDs for restricted admins
                 const validPlayerIds = new Set(allPlayers.map(p => p.id));
-                
+
                 allPlayers.forEach(p => {
                     if (p.registradoPor && playersByProf[p.registradoPor] !== undefined)
                         playersByProf[p.registradoPor]++;
                 });
-                evalsSnap.forEach(d => {
-                    const evData = d.data();
+                (evalRows || []).forEach(evData => {
                     if (window.adminData && window.adminData.equipoRestringido && !validPlayerIds.has(evData.jugadorId)) {
                         return; // Skip evaluations of players outside the restricted team
                     }
-                    const eid = evData.evaluadorId;
+                    const eid = evData.profesorId || evData.evaluadorId;
                     if (eid && evalsByProf[eid] !== undefined) evalsByProf[eid]++;
                 });
 
@@ -1512,10 +1490,15 @@
                 // Fetch latest avg
                 await Promise.all(allPlayers.map(async (player) => {
                     try {
-                        const evRef = collection(db, 'jugadores', player.id, 'evaluaciones');
-                        const evQ = query(evRef, orderBy('fechaEvaluacion', 'desc'));
-                        const evSnap = await getDocs(evQ);
-                        if (!evSnap.empty) player.latestPromedio = evSnap.docs[0].data().promedioGeneral || null;
+                        const { data: evPlayerRows } = await supabase
+                            .from('evaluaciones')
+                            .select('*')
+                            .eq('jugadorId', player.id)
+                            .order('fecha', { ascending: false })
+                            .limit(1);
+                        if (evPlayerRows && evPlayerRows.length > 0) {
+                            player.latestPromedio = evPlayerRows[0].promedioGeneral || null;
+                        }
                     } catch (e) { /* ignore */ }
                 }));
 

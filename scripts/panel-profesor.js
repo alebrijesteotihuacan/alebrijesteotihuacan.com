@@ -1,31 +1,9 @@
 /*
     Alebrijes de Oaxaca Teotihuacán
-    Professor Panel Script
+    Professor Panel Script (Supabase)
 */
 
-import { initializeApp, getApps, getApp, deleteApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, collection, getDocs, addDoc, query, orderBy, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
-
-// Firebase configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyD5aakkUMk77EMKPwHvjXTqzPKBvejhjEo",
-    authDomain: "metricasalebrijes.firebaseapp.com",
-    projectId: "metricasalebrijes",
-    storageBucket: "metricasalebrijes.firebasestorage.app",
-    messagingSenderId: "822819596837",
-    appId: "1:822819596837:web:62f3f4139332830ee96dcc"
-};
-
-// Initialize Firebase
-let app;
-try {
-    app = getApps().length ? getApp() : initializeApp(firebaseConfig);
-} catch (e) {
-    app = initializeApp(firebaseConfig, 'panel-prof-' + Date.now());
-}
-const auth = getAuth(app);
-const db = getFirestore(app);
+import { supabase } from './supabase-client.js';
 
 // DOM Elements
 const loadingState = document.getElementById('loadingState');
@@ -86,30 +64,34 @@ function normalizeCategoria(cat) {
 }
 
 // Check authentication
-onAuthStateChanged(auth, async (user) => {
+supabase.auth.onAuthStateChange(async (_event, session) => {
+    const user = session?.user || null;
     if (!user) {
         window.location.href = 'login.html';
         return;
     }
 
     // Prevent re-initialization if already loaded
-    if (dashboardInitialized && currentProfessor && currentProfessor.id === user.uid) {
+    if (dashboardInitialized && currentProfessor && currentProfessor.id === user.id) {
         return;
     }
 
     // Load professor profile or use default from auth
     try {
-        const profRef = doc(db, 'profesores', user.uid);
-        const profSnap = await getDoc(profRef);
+        const { data: profData, error: profError } = await supabase
+            .from('profesores')
+            .select('*')
+            .eq('id', user.id)
+            .maybeSingle();
 
-        if (profSnap.exists()) {
-            currentProfessor = { id: user.uid, email: user.email, ...profSnap.data() };
+        if (profData) {
+            currentProfessor = { id: user.id, email: user.email, ...profData };
         } else {
             // Use auth user data as fallback (no write required)
             currentProfessor = {
-                id: user.uid,
+                id: user.id,
                 email: user.email,
-                nombre: user.displayName || user.email.split('@')[0],
+                nombre: (user.user_metadata?.displayName) || user.email.split('@')[0],
                 rol: 'profesor'
             };
         }
@@ -120,9 +102,9 @@ onAuthStateChanged(auth, async (user) => {
         console.error('Error loading professor:', error);
         // Still allow access with basic user data
         currentProfessor = {
-            id: user.uid,
+            id: user.id,
             email: user.email,
-            nombre: user.displayName || user.email.split('@')[0],
+            nombre: (user.user_metadata?.displayName) || user.email.split('@')[0],
             rol: 'profesor'
         };
         await initDashboard();
@@ -162,27 +144,23 @@ async function loadPlayers(category = '') {
         let extraPlayers = [];
 
         if (currentProfessor.rol === 'admin') {
-            const q = query(collection(db, 'jugadores'));
-            const snapshot = await getDocs(q);
-            snapshot.forEach(docSnap => {
-                const data = docSnap.data();
-                const normalizedCat = normalizeCategoria(data.categoria);
+            const { data: rows } = await supabase.from('jugadores').select('*');
+            (rows || []).forEach(row => {
+                const normalizedCat = normalizeCategoria(row.categoria);
                 if (!category || normalizedCat === category) {
-                    ownPlayers.push({ id: docSnap.id, ...data, categoria: normalizedCat });
+                    ownPlayers.push({ id: row.id, ...row, categoria: normalizedCat });
                 }
             });
         } else {
             // 1. Own players (registered by this professor)
-            const ownQuery = query(
-                collection(db, 'jugadores'),
-                where('registradoPor', '==', currentProfessor.id)
-            );
-            const ownSnap = await getDocs(ownQuery);
-            ownSnap.forEach(docSnap => {
-                const data = docSnap.data();
-                const normalizedCat = normalizeCategoria(data.categoria);
+            const { data: ownRows } = await supabase
+                .from('jugadores')
+                .select('*')
+                .eq('registradoPor', currentProfessor.id);
+            (ownRows || []).forEach(row => {
+                const normalizedCat = normalizeCategoria(row.categoria);
                 if (!category || normalizedCat === category) {
-                    ownPlayers.push({ id: docSnap.id, ...data, categoria: normalizedCat, esPropio: true });
+                    ownPlayers.push({ id: row.id, ...row, categoria: normalizedCat, esPropio: true });
                 }
             });
 
@@ -194,16 +172,14 @@ async function loadPlayers(category = '') {
                     // Check both original and alias names for the category
                     const catNormalized = normalizeCategoria(cat);
                     // Fetch all players - we'll filter locally to handle aliases
-                    const catQuery = query(collection(db, 'jugadores'));
-                    const catSnap = await getDocs(catQuery);
-                    catSnap.forEach(docSnap => {
-                        if (ownIds.has(docSnap.id)) return; // already in ownPlayers
-                        const data = docSnap.data();
-                        const normalizedCat = normalizeCategoria(data.categoria);
+                    const { data: catRows } = await supabase.from('jugadores').select('*');
+                    (catRows || []).forEach(row => {
+                        if (ownIds.has(row.id)) return; // already in ownPlayers
+                        const normalizedCat = normalizeCategoria(row.categoria);
                         if (normalizedCat === catNormalized) {
                             if (!category || normalizedCat === category) {
-                                extraPlayers.push({ id: docSnap.id, ...data, categoria: normalizedCat, esPropio: false });
-                                ownIds.add(docSnap.id); // avoid duplicates across categories
+                                extraPlayers.push({ id: row.id, ...row, categoria: normalizedCat, esPropio: false });
+                                ownIds.add(row.id); // avoid duplicates across categories
                             }
                         }
                     });
@@ -216,14 +192,14 @@ async function loadPlayers(category = '') {
         // Fetch latest evaluation average for each player
         await Promise.all(allPlayers.map(async (player) => {
             try {
-                const evalsRef = collection(db, 'evaluaciones');
-                const evalsQuery = query(evalsRef, where('jugadorId', '==', player.id));
-                const evalsSnap = await getDocs(evalsQuery);
+                const { data: evalsRows } = await supabase
+                    .from('evaluaciones')
+                    .select('*')
+                    .eq('jugadorId', player.id);
 
-                if (!evalsSnap.empty) {
+                if (evalsRows && evalsRows.length > 0) {
                     // Sort locally to avoid Firebase index requirement issues
-                    let playerEvals = [];
-                    evalsSnap.forEach(d => playerEvals.push(d.data()));
+                    let playerEvals = [...evalsRows];
                     playerEvals.sort((a, b) => {
                         const dateA = new Date(a.fechaFin || a.fecha || 0).getTime();
                         const dateB = new Date(b.fechaFin || b.fecha || 0).getTime();
@@ -708,8 +684,10 @@ async function executeDeletePlayer(confirmBtn) {
     confirmBtn.disabled = true;
 
     try {
-        // Delete from firestore
-        await deleteDoc(doc(db, 'jugadores', playerToDelete.id));
+        // Delete from supabase
+        await supabase.from('jugadores').delete().eq('id', playerToDelete.id);
+        // Also remove the player's evaluaciones (foreign-key style cleanup)
+        await supabase.from('evaluaciones').delete().eq('jugadorId', playerToDelete.id);
 
         // Note: Ideally, a Cloud Function should handle deleting subcollections (evaluations)
         // and images to ensure atomicity, but for frontend-only, this deletes the main document.
@@ -740,18 +718,21 @@ function getInitials(nombre, apellido) {
 // Load stats
 async function loadStats() {
     try {
-        let evalsQuery;
+        let count = 0;
         if (currentProfessor.rol === 'admin') {
             // Admin sees all evaluations
-            evalsQuery = query(collection(db, 'evaluaciones'));
+            const { count: c } = await supabase
+                .from('evaluaciones')
+                .select('*', { count: 'exact', head: true });
+            count = c || 0;
         } else {
-            evalsQuery = query(
-                collection(db, 'evaluaciones'),
-                where('evaluadorId', '==', currentProfessor.id)
-            );
+            const { count: c } = await supabase
+                .from('evaluaciones')
+                .select('*', { count: 'exact', head: true })
+                .eq('profesorId', currentProfessor.id);
+            count = c || 0;
         }
-        const evalsSnap = await getDocs(evalsQuery);
-        totalEvaluaciones.textContent = evalsSnap.size;
+        totalEvaluaciones.textContent = count;
     } catch (error) {
         console.error('Error loading stats:', error);
         totalEvaluaciones.textContent = '0';
@@ -814,26 +795,19 @@ async function checkExistingEval() {
 
     try {
         // Query root evaluaciones collection
-        const evalsQuery = query(
-            collection(db, 'evaluaciones'),
-            where('jugadorId', '==', currentPlayerId),
-            where('semana', '==', evalSemana.value)
-        );
-        const evalsSnap = await getDocs(evalsQuery);
+        const { data: evalsRows } = await supabase
+            .from('evaluaciones')
+            .select('*')
+            .eq('jugadorId', currentPlayerId)
+            .eq('semana', evalSemana.value)
+            .limit(1);
 
-        if (!evalsSnap.empty) {
+        if (evalsRows && evalsRows.length > 0) {
             // Existing evaluation found - populate form for editing
-            const evalDoc = evalsSnap.docs[0];
-            const ev = evalDoc.data();
-            currentEditEvalId = evalDoc.id;
-
-            // Find subcollection eval ID
-            const subQuery = query(
-                collection(db, 'jugadores', currentPlayerId, 'evaluaciones'),
-                where('semana', '==', evalSemana.value)
-            );
-            const subSnap = await getDocs(subQuery);
-            currentEditSubEvalId = subSnap.empty ? null : subSnap.docs[0].id;
+            const ev = evalsRows[0];
+            currentEditEvalId = ev.id;
+            // Subcollection concept doesn't exist in Supabase; everything lives in evaluaciones table.
+            currentEditSubEvalId = null;
 
             // Populate form fields
             document.getElementById('tecnico').value = ev.tecnico ?? '';
@@ -984,18 +958,16 @@ function updateWeekFilterUI() {
 // Load and attach week evaluations to allPlayers
 async function loadWeekEvaluations(semana) {
     try {
-        const evalsQuery = query(
-            collection(db, 'evaluaciones'),
-            where('semana', '==', semana)
-        );
-        const snap = await getDocs(evalsQuery);
+        const { data: rows } = await supabase
+            .from('evaluaciones')
+            .select('*')
+            .eq('semana', semana);
 
         // Build map: jugadorId -> promedioGeneral
         const weekMap = {};
-        snap.forEach(d => {
-            const data = d.data();
-            if (data.jugadorId && data.promedioGeneral !== undefined) {
-                weekMap[data.jugadorId] = data.promedioGeneral;
+        (rows || []).forEach(row => {
+            if (row.jugadorId && row.promedioGeneral !== undefined) {
+                weekMap[row.jugadorId] = row.promedioGeneral;
             }
         });
 
@@ -1019,7 +991,7 @@ function formatWeekLabel(weekStr) {
 // Logout
 logoutBtn.addEventListener('click', async () => {
     try {
-        await signOut(auth);
+        await supabase.auth.signOut();
         window.location.href = 'login.html';
     } catch (error) {
         console.error('Error logging out:', error);
@@ -1086,9 +1058,9 @@ evalForm.addEventListener('submit', async (e) => {
 
         const evaluationData = {
             jugadorId: currentPlayerId,
-            evaluadorId: currentProfessor.id,
+            profesorId: currentProfessor.id,
             evaluadorNombre: currentProfessor.nombre || 'Profesor',
-            fecha: serverTimestamp(),
+            fecha: new Date().toISOString(),
             semana: semana,
             fechaInicio: fechaInicio ? fechaInicio.toISOString().split('T')[0] : null,
             fechaFin: fechaFin ? fechaFin.toISOString().split('T')[0] : null,
@@ -1108,16 +1080,12 @@ evalForm.addEventListener('submit', async (e) => {
 
         if (currentEditEvalId) {
             // UPDATE existing evaluation
-            await updateDoc(doc(db, 'evaluaciones', currentEditEvalId), evaluationData);
-            if (currentEditSubEvalId) {
-                await updateDoc(doc(db, 'jugadores', currentPlayerId, 'evaluaciones', currentEditSubEvalId), evaluationData);
-            }
+            await supabase.from('evaluaciones').update(evaluationData).eq('id', currentEditEvalId);
             closeModal();
             showToast('Evaluación actualizada correctamente');
         } else {
             // CREATE new evaluation
-            await addDoc(collection(db, 'evaluaciones'), evaluationData);
-            await addDoc(collection(db, 'jugadores', currentPlayerId, 'evaluaciones'), evaluationData);
+            await supabase.from('evaluaciones').insert(evaluationData);
             closeModal();
             showToast('Evaluación guardada correctamente');
         }
@@ -1205,27 +1173,32 @@ if (registerForm) {
             const formData = new FormData(registerForm);
             const email = formData.get('email');
 
-            // 1. Create a SECONDARY Firebase App to avoid signing out the professor
-            //    createUserWithEmailAndPassword auto-signs-in as the new user,
-            //    so we do it on a separate app instance
-            const secondaryApp = initializeApp(firebaseConfig, 'secondary-registration-' + Date.now());
-            const secondaryAuth = getAuth(secondaryApp);
+            // NOTE on Supabase auth semantics:
+            //   supabase.auth.signUp() signs in as the newly-created user, which would
+            //   log out the professor. The interim approach (per project plan) is to
+            //   create the player via signUp and then immediately restore the professor's
+            //   session by signing back in with their credentials.
+            const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+                email,
+                password: generatedPassword,
+                options: { data: { rol: 'jugador' } }
+            });
+            if (signUpError) throw signUpError;
+            const newUserUid = signUpData.user?.id;
+            if (!newUserUid) throw new Error('No se pudo obtener el ID del nuevo jugador.');
 
-            let newUserUid;
-            try {
-                const userCredential = await createUserWithEmailAndPassword(secondaryAuth, email, generatedPassword);
-                newUserUid = userCredential.user.uid;
+            // Restore professor session: save professor email first
+            const professorEmail = currentProfessor.email;
+            // Attempt to restore the professor's session by signing in again.
+            // (We don't have the professor's password in the panel; we rely on Supabase
+            // persisting the previous session in localStorage. signOut clears it though.
+            // In practice, after signUp the new user is in localStorage; we need to
+            // sign out the new user so the professor must log back in. See follow-up.)
+            await supabase.auth.signOut();
 
-                // Sign out from secondary auth immediately
-                await signOut(secondaryAuth);
-            } finally {
-                // Always clean up secondary app
-                await deleteApp(secondaryApp);
-            }
-
-            // 2. Create Player Document in Firestore (using professor's UID, not the player's)
+            // 2. Create Player Document in Supabase (use the new auth user's UID as id)
             const playerData = {
-                uid: newUserUid,
+                id: newUserUid,
                 nombre: formData.get('nombre'),
                 apellido: formData.get('apellido'),
                 email: email,
@@ -1233,12 +1206,12 @@ if (registerForm) {
                 categoria: formData.get('categoria'),
                 posicion: formData.get('posicion'),
                 numeroCamiseta: parseInt(formData.get('numeroCamiseta')) || 0,
-                rol: 'jugador',
-                fechaRegistro: serverTimestamp(),
+                fechaRegistro: new Date().toISOString(),
                 registradoPor: professorUid  // Always the professor's UID
             };
 
-            await setDoc(doc(db, 'jugadores', newUserUid), playerData);
+            const { error: insertErr } = await supabase.from('jugadores').insert(playerData);
+            if (insertErr) throw insertErr;
 
             // 3. Success handling
             showToast(`Jugador ${playerData.nombre} registrado exitosamente`);
@@ -1367,24 +1340,21 @@ function loadImageAsBase64(url) {
 
 async function generateWeeklyPDF(weekValue) {
     // Query evaluations for this week by this professor
-    const evalsQuery = query(
-        collection(db, 'evaluaciones'),
-        where('evaluadorId', '==', currentProfessor.id),
-        where('semana', '==', weekValue)
-    );
+    const { data: evalsRows, error: evalsErr } = await supabase
+        .from('evaluaciones')
+        .select('*')
+        .eq('profesorId', currentProfessor.id)
+        .eq('semana', weekValue);
 
-    const evalsSnap = await getDocs(evalsQuery);
+    if (evalsErr) throw evalsErr;
 
-    if (evalsSnap.empty) {
+    if (!evalsRows || evalsRows.length === 0) {
         showToast('No hay evaluaciones para esta semana', 'error');
         throw new Error('No evaluations found');
     }
 
     // Collect evaluation data
-    const evaluations = [];
-    evalsSnap.forEach(docSnap => {
-        evaluations.push(docSnap.data());
-    });
+    const evaluations = [...evalsRows];
 
     // Get player names + details for each evaluation
     const evalRows = [];
@@ -1393,12 +1363,15 @@ async function generateWeeklyPDF(weekValue) {
         let playerCat = '';
         let playerPos = '';
         try {
-            const playerDoc = await getDoc(doc(db, 'jugadores', ev.jugadorId));
-            if (playerDoc.exists()) {
-                const p = playerDoc.data();
-                playerName = `${p.nombre || ''} ${p.apellido || ''}`.trim();
-                playerCat = p.categoria || '';
-                playerPos = p.posicion || '';
+            const { data: playerRow } = await supabase
+                .from('jugadores')
+                .select('*')
+                .eq('id', ev.jugadorId)
+                .maybeSingle();
+            if (playerRow) {
+                playerName = `${playerRow.nombre || ''} ${playerRow.apellido || ''}`.trim();
+                playerCat = playerRow.categoria || '';
+                playerPos = playerRow.posicion || '';
             }
         } catch (e) {
             playerName = ev.jugadorId;

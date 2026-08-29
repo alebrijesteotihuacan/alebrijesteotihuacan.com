@@ -1,13 +1,35 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Administrativo | Alebrijes de Oaxaca Teotihuacán</title>
+    <meta name="description" content="Panel de administración de Alebrijes de Oaxaca Teotihuacán.">
+    <meta name="author" content="Alebrijes de Oaxaca Teotihuacán">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#E85D26">
+    <link rel="canonical" href="https://alebrijesteotihuacan.com/pages/panel-admin.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Panel Administrativo | Alebrijes de Oaxaca Teotihuacán">
+    <meta property="og:description" content="Panel de administración de Alebrijes de Oaxaca Teotihuacán.">
+    <meta property="og:image" content="https://alebrijesteotihuacan.com/assets/seo/og-image.png">
+    <meta property="og:url" content="https://alebrijesteotihuacan.com/pages/panel-admin.html">
+    <meta property="og:site_name" content="Alebrijes de Oaxaca Teotihuacán">
+    <meta property="og:locale" content="es_MX">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Panel Administrativo | Alebrijes de Oaxaca Teotihuacán">
+    <meta name="twitter:description" content="Panel de administración de Alebrijes de Oaxaca Teotihuacán.">
+    <meta name="twitter:image" content="https://alebrijesteotihuacan.com/assets/seo/og-image.png">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1254,29 +1276,8 @@
     </div>
 
     <script type="module">
-        import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyD5aakkUMk77EMKPwHvjXTqzPKBvejhjEo",
-            authDomain: "metricasalebrijes.firebaseapp.com",
-            projectId: "metricasalebrijes",
-            storageBucket: "metricasalebrijes.firebasestorage.app",
-            messagingSenderId: "822819596837",
-            appId: "1:822819596837:web:62f3f4139332830ee96dcc"
-        };
-
-        let app;
-        try { app = getApps().length ? getApp() : initializeApp(firebaseConfig); }
-        catch (e) { app = initializeApp(firebaseConfig, 'admin-' + Date.now()); }
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        const PROF_PASSWORDS = {
-            'juan': 'Juan123', 'abimael': 'Abimael123', 'lalo': 'Lalo123',
-            'ricardo': 'Ricardo123', 'hector': 'Hector123', 'oswaldo': 'Oswaldo123'
-        };
+        import { supabase } from '../scripts/supabase-client.js';
+        const db = supabase;
 
         // Available player images (PlantillaLigaTDP_2026)
         const PLAYER_IMAGES = [
@@ -1305,7 +1306,7 @@
             'Joshua_Alejo_Hernández_Portero.jpg',
             'Juan_Carlos_Guerrero_Peña_Medio.jpg',
             'Juan_José_Salazar_Sánchez_Medio.jpg',
-            'Julio_César_Gutiérrez_Díaz_Medio.jpg',
+            'Julio_Cezar_Gutierrez_Diaz_Medio.jpg',
             'Luis_Alberto_Olvera_Perez_Medio.jpg',
             'Luis_Alfonso_Martínez_Lupercio_Medio.jpg',
             'Luis_Gustavo_Emeterio_Hernandez_Defensa.jpg',
@@ -1321,29 +1322,83 @@
             'Santiago_Mael_Ortíz_Olivera_Medio.jpg'
         ];
 
+        const PLAYER_IMAGES_SOLES = [
+            'Adbeel_Jehiel_Ramirez_Juarez.jpg', 'Alexander_Villanueva_Huerta.jpg', 'Alfonso_Isaac_Jimenez_Calero.jpg', 'Angel_Gabriel_Barboza_Muñiz.jpg',
+            'Angel_Uriel_Castillo_Ramirez.jpg', 'Armando_Perez_Campos.jpg', 'Byron_Mishell_Mateos_Martinez.jpg', 'Carlos_Enrique_Landa_Landa.jpg',
+            'Cesar_Yovanni_Gomez_Anzastiga.jpg', 'Christopher_Armani_Camacho_Ibarguen.jpg', 'Cristian_Aldair_Marin_Ramirez.jpg', 'Diego_Ivan_Ramirez_Gonzalez.jpg',
+            'Edgar_Emanuel_Flores_Veliz.jpg', 'Elian_Fabian_Naranjo.jpg', 'Emilio_Andres_Cornelio_Lopez.jpg', 'Erick_Klebeer_Alanis_Guerrero.jpg',
+            'Felix_Eduardo_Martinez_Contreras.jpg', 'Franklin_Misael_Hernandez_Pablo.jpg', 'Hector_Gabriel_Castillo_Elizondo.jpg', 'Ibrahim_Rafael_Lopez_Zaragoza.jpg',
+            'Ignacio_Hazzam_Dominguez_Cruz.jpg', 'Irving_Daniel_Lopez_Luna.jpg', 'Jesus_Manuel_Nuñez_Gutierrez.jpg', 'Jesus_Manuel_Tarango_Maldonado.jpg',
+            'Jesus_Miguel_Xolio_Ortiz.jpg', 'Jesus_Rodrigo_Vela_Ramos.jpg', 'Jorge_Eduardo_Santiago_Reyes.jpg', 'Josaphat_Tapia_Vazquez.jpg',
+            'Jose_Enmanuel_Sanchez_Gonzalez.jpg', 'Juan_Carlos_Gonzalez_Ceniceros.jpg', 'Juan_Enrique_Rojas_Vargas.jpg', 'Juan_Uziel_Zarate_Navarrete.jpg',
+            'Kevin_Abel_Leon_Sanchez.jpg', 'Luciano_Ortiz_Melendez.jpg', 'Luis_Jareth_Dominguez_Meza.jpg', 'Miguel_David_Duran_Leon.jpg',
+            'Ricardo_Gael_Cruz_Santos.jpg', 'Richard_Aguilar_Perez.jpg', 'Roberto_Alcantar_Piña.jpg', 'Sebastian_Segundo_Becerril.jpg'
+        ];
+
+        const PLAYER_IMAGES_FUERZAS = [
+            'Abdiel_Monroy_García.jpeg', 'Alexander_Martínez_Domínguez.jpeg', 'Asiel_Zaid_Montoya_Rojas.jpeg', 'Axel_Antonio_Vázquez_Estrada.jpeg',
+            'Bruno_Arroyo_Sánchez.jpeg', 'Dejan_Kaled_Ramírez_Guijano.jpeg', 'Demian_Marcus_Arregui_Nava.jpeg', 'Derek_Jesús_Hernández_Licea.jpeg',
+            'Diego_Aaron_Alonso_Garcia.jpeg', 'Dylan_Quijano_Xolo.jpeg', 'Emiliano_Rodríguez_Hernández.jpeg', 'Iker_Damián_Ortega_Villegas.jpeg',
+            'Iram_Habid_Barrientos_García.jpeg', 'Irving_Nuñez_Fuentes.jpeg', 'Isaí_Daniel_Gómez_García.jpeg', 'Isaías_Adrian_Alvarado_Hernández.jpeg',
+            'Israel_Rivera_Hernández.jpeg', 'Jimenez_Carbajal_Johan_Eduardo.jpeg', 'Joel_Martinez_Cruz.jpeg', 'Jose_Emiliano_Sánchez_Gaspar.jpeg',
+            'Joshua_Dominguez_Acosta.jpeg', 'Josue_Alfredo_Vázquez_Valadez.jpeg', 'José_Asael_Rascon_Gurrola.jpeg', 'José_Carlos_Rivaldo_Silva_Baez.jpeg',
+            'José_Eduardo_Islas_Hernandez.jpeg', 'José_Francisco_González_Ceniceros.jpeg', 'Juan_Carlos_Maravilla_Maldonado.jpeg', 'Kevin_Damian_Alvarado_Montiel.jpeg',
+            'Kevin_Isael_Visoso_Lázaro.jpeg', 'Leonardo_Briones_Duran.jpeg', 'Leonardo_Madrigal_Velázquez.jpeg', 'Luis_Daniel_Martinez_Avedaño.jpeg',
+            'Luis_David_Olvera_Huerta.jpeg', 'Matteo_Cardona_Miranda.jpeg', 'Matteo_González_Rodríguez.jpeg', 'Mauricio_Fuentes_Ramos.jpeg',
+            'Mauricio_Mendoza_Montoya.jpeg', 'Miguel_Gutierrez_Cervantes.jpeg', 'Nicolas_Oliva_Pérez.jpeg', 'Uriel_Urieta_Robles.jpeg',
+            'William_Alfredo_Turrubiates_Camacho.jpeg'
+        ];
+
         function normalizeStr(s) {
             return (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
         }
 
-        function findPlayerImage(nombre, apellido) {
+        function findPlayerImageInfo(nombre, apellido) {
             const fullName = normalizeStr(`${nombre || ''} ${apellido || ''}`);
             const firstName = normalizeStr(nombre || '');
 
             for (const img of PLAYER_IMAGES) {
-                // Convert filename: "Cristian_Miguel_Padierna_Mojica_Defensa.jpg" → "cristian miguel padierna mojica"
-                const parts = img.replace('.jpg', '').split('_');
+                const parts = img.split('.')[0].split('_');
                 parts.pop(); // Remove position (Defensa, Medio, etc.)
                 const imgName = normalizeStr(parts.join(' '));
 
                 // Try full name match
-                if (imgName === fullName) return img;
+                if (imgName === fullName) return { file: img, folder: 'PlantillaLigaTDP_2026' };
 
                 // Try first name + last name (loose match)
                 if (fullName && imgName.includes(firstName) && firstName.length > 2) {
                     // Check if any part of apellido matches
                     const apellidoNorm = normalizeStr(apellido || '');
                     if (apellidoNorm && imgName.includes(apellidoNorm.split(' ')[0])) {
-                        return img;
+                        return { file: img, folder: 'PlantillaLigaTDP_2026' };
+                    }
+                }
+            }
+            
+            for (const img of PLAYER_IMAGES_SOLES) {
+                const parts = img.split('.')[0].split('_');
+                const imgName = normalizeStr(parts.join(' '));
+                
+                if (imgName === fullName) return { file: img, folder: 'JugadoresSoles' };
+                
+                if (fullName && imgName.includes(firstName) && firstName.length > 2) {
+                    const apellidoNorm = normalizeStr(apellido || '');
+                    if (apellidoNorm && imgName.includes(apellidoNorm.split(' ')[0])) {
+                        return { file: img, folder: 'JugadoresSoles' };
+                    }
+                }
+            }
+
+            for (const img of PLAYER_IMAGES_FUERZAS) {
+                const parts = img.split('.')[0].split('_');
+                const imgName = normalizeStr(parts.join(' '));
+                
+                if (imgName === fullName) return { file: img, folder: 'JugadoresFuerzasBasicas' };
+                
+                if (fullName && imgName.includes(firstName) && firstName.length > 2) {
+                    const apellidoNorm = normalizeStr(apellido || '');
+                    if (apellidoNorm && imgName.includes(apellidoNorm.split(' ')[0])) {
+                        return { file: img, folder: 'JugadoresFuerzasBasicas' };
                     }
                 }
             }
@@ -1351,22 +1406,26 @@
         }
 
         // Auth
-        onAuthStateChanged(auth, async (user) => {
+        supabase.auth.onAuthStateChange(async (_event, session) => {
+            const user = session?.user || null;
             if (!user) { window.location.href = 'login.html'; return; }
-            const profRef = doc(db, 'profesores', user.uid);
-            const profSnap = await getDoc(profRef);
-            if (!profSnap.exists() || profSnap.data().rol !== 'admin') {
+            const { data: profData, error: profErr } = await supabase
+                .from('profesores')
+                .select('*')
+                .eq('id', user.id)
+                .maybeSingle();
+            if (!profData || profData.rol !== 'admin') {
                 window.location.href = 'panel-profesor.html'; return;
             }
-            const adminData = profSnap.data();
-            document.getElementById('adminName').textContent = adminData.nombre || 'Admin';
-            document.getElementById('adminGreeting').textContent = adminData.nombre || 'Admin';
-            document.getElementById('adminAvatar').textContent = (adminData.nombre || 'A').charAt(0).toUpperCase();
-            await loadDashboard(user.uid);
+            window.adminData = profData; // Store globally for filtering
+            document.getElementById('adminName').textContent = profData.nombre || 'Admin';
+            document.getElementById('adminGreeting').textContent = profData.nombre || 'Admin';
+            document.getElementById('adminAvatar').textContent = (profData.nombre || 'A').charAt(0).toUpperCase();
+            await loadDashboard(user.id);
         });
 
         document.getElementById('adminLogoutBtn').addEventListener('click', async () => {
-            await signOut(auth); window.location.href = 'login.html';
+            await supabase.auth.signOut(); window.location.href = 'login.html';
         });
 
         // Date
@@ -1377,45 +1436,69 @@
         async function loadDashboard(adminUid) {
             try {
                 // Load professors
-                const profsSnap = await getDocs(collection(db, 'profesores'));
+                const { data: profRows } = await supabase.from('profesores').select('*');
                 const professors = [];
-                profsSnap.forEach(d => {
-                    const data = d.data();
-                    if (data.rol !== 'admin') professors.push({ id: d.id, ...data });
+                (profRows || []).forEach(row => {
+                    if (row.rol !== 'admin') professors.push({ id: row.id, ...row });
                 });
 
                 // Load players
-                const playersSnap = await getDocs(collection(db, 'jugadores'));
-                const allPlayers = [];
-                playersSnap.forEach(d => allPlayers.push({ id: d.id, ...d.data() }));
+                const { data: playerRows } = await supabase.from('jugadores').select('*');
+                let allPlayers = [];
+                const CATEGORY_ALIAS_ADMIN = {'Sub-13':'Sub-14','Sub-15':'Sub-16','Sub-17':'Sub-18','Sub-20':'Sub-21'};
+                (playerRows || []).forEach(row => {
+                    const normCat = CATEGORY_ALIAS_ADMIN[row.categoria] || row.categoria;
+                    const dataWithNorm = { ...row, categoria: normCat };
+                    if (window.adminData && window.adminData.equipoRestringido) {
+                        const restrictStr = window.adminData.equipoRestringido.toLowerCase();
+                        const cat = normCat.toLowerCase();
+                        const eq = (row.equipo || '').toLowerCase();
+                        if (cat.includes(restrictStr) || eq.includes(restrictStr)) {
+                            allPlayers.push({ id: row.id, ...dataWithNorm });
+                        }
+                    } else {
+                        allPlayers.push({ id: row.id, ...dataWithNorm });
+                    }
+                });
 
                 // Load evaluations
-                const evalsSnap = await getDocs(collection(db, 'evaluaciones'));
+                const { data: evalRows } = await supabase.from('evaluaciones').select('*');
 
                 // Count per professor
                 const playersByProf = {};
                 const evalsByProf = {};
                 professors.forEach(p => { playersByProf[p.id] = 0; evalsByProf[p.id] = 0; });
+
+                // Set of valid player IDs for restricted admins
+                const validPlayerIds = new Set(allPlayers.map(p => p.id));
+
                 allPlayers.forEach(p => {
                     if (p.registradoPor && playersByProf[p.registradoPor] !== undefined)
                         playersByProf[p.registradoPor]++;
                 });
-                evalsSnap.forEach(d => {
-                    const eid = d.data().evaluadorId;
+                (evalRows || []).forEach(evData => {
+                    if (window.adminData && window.adminData.equipoRestringido && !validPlayerIds.has(evData.jugadorId)) {
+                        return; // Skip evaluations of players outside the restricted team
+                    }
+                    const eid = evData.profesorId || evData.evaluadorId;
                     if (eid && evalsByProf[eid] !== undefined) evalsByProf[eid]++;
                 });
 
-                // Categories
                 const categories = new Set();
                 allPlayers.forEach(p => { if (p.categoria) categories.add(p.categoria); });
 
                 // Fetch latest avg
                 await Promise.all(allPlayers.map(async (player) => {
                     try {
-                        const evRef = collection(db, 'jugadores', player.id, 'evaluaciones');
-                        const evQ = query(evRef, orderBy('fechaEvaluacion', 'desc'));
-                        const evSnap = await getDocs(evQ);
-                        if (!evSnap.empty) player.latestPromedio = evSnap.docs[0].data().promedioGeneral || null;
+                        const { data: evPlayerRows } = await supabase
+                            .from('evaluaciones')
+                            .select('*')
+                            .eq('jugadorId', player.id)
+                            .order('fecha', { ascending: false })
+                            .limit(1);
+                        if (evPlayerRows && evPlayerRows.length > 0) {
+                            player.latestPromedio = evPlayerRows[0].promedioGeneral || null;
+                        }
                     } catch (e) { /* ignore */ }
                 }));
 
@@ -1479,10 +1562,12 @@
                 });
 
                 function renderPlayers(players) {
+                    const tc = s => (s || '').trim().toLowerCase().split(' ').filter(w => w.length > 0).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
                     document.getElementById('playersGrid').innerHTML = players.map(p => {
-                        const firstName = (p.nombre || 'Sin nombre').split(' ')[0];
-                        const imgFile = findPlayerImage(p.nombre, p.apellido);
-                        const imgSrc = imgFile ? `../assets/PlantillaLigaTDP_2026/${encodeURIComponent(imgFile)}` : null;
+                        const firstName = tc((p.nombre || 'Sin nombre').split(' ')[0]);
+                        const fullDisplayName = `${tc(p.nombre || '')} ${tc(p.apellido || '')}`.trim();
+                        const imgInfo = findPlayerImageInfo(p.nombre, p.apellido);
+                        const imgSrc = imgInfo ? `../assets/${imgInfo.folder}/${encodeURIComponent(imgInfo.file)}` : null;
                         const initials = ((p.nombre || '').charAt(0) + (p.apellido || '').charAt(0)).toUpperCase() || '?';
                         const avg = p.latestPromedio;
                         let avgHTML = '<span class="player-card-avg avg-none">--</span>';
@@ -1501,7 +1586,7 @@
                         return `
                             <div class="player-card">
                                 <div class="player-card-photo">${photoHTML}</div>
-                                <div class="player-card-name" title="${(p.nombre || '')} ${(p.apellido || '')}">${firstName}</div>
+                                <div class="player-card-name" title="${fullDisplayName}">${firstName}</div>
                                 <div class="player-card-pos">${p.posicion || 'Sin posición'}</div>
                                 ${avgHTML}
                                 ${profName ? `<div class="player-card-prof">
@@ -1541,7 +1626,11 @@
                 // ========================================
                 const allEvals = [];
                 evalsSnap.forEach(d => {
-                    allEvals.push({ id: d.id, ...d.data() });
+                    const evData = { id: d.id, ...d.data() };
+                    if (window.adminData && window.adminData.equipoRestringido && !validPlayerIds.has(evData.jugadorId)) {
+                        return; // Skip evaluations of players outside the restricted team
+                    }
+                    allEvals.push(evData);
                 });
                 // Sort by date (most recent first)
                 allEvals.sort((a, b) => {
@@ -1569,8 +1658,8 @@
                         const player = playerMap[ev.jugadorId] || {};
                         const firstName = (player.nombre || 'Jugador').split(' ')[0];
                         const fullName = `${player.nombre || ''} ${player.apellido || ''}`.trim() || 'Desconocido';
-                        const imgFile = findPlayerImage(player.nombre, player.apellido);
-                        const imgSrc = imgFile ? `../assets/PlantillaLigaTDP_2026/${encodeURIComponent(imgFile)}` : null;
+                        const imgInfo = findPlayerImageInfo(player.nombre, player.apellido);
+                        const imgSrc = imgInfo ? `../assets/${imgInfo.folder}/${encodeURIComponent(imgInfo.file)}` : null;
                         const initials = ((player.nombre || '').charAt(0) + (player.apellido || '').charAt(0)).toUpperCase() || '?';
                         const photoHTML = imgSrc
                             ? `<img src="${imgSrc}" alt="${firstName}" onerror="this.parentElement.innerHTML='<div class=\\'default-avatar\\'>${initials}</div>'">`
@@ -1597,7 +1686,7 @@
                             { label: 'Mental', value: ev.mental },
                             { label: 'Disc. Cancha', value: ev.disciplinaCancha },
                             { label: 'Disc. Casa Club', value: ev.disciplinaCasaClub },
-                            { label: 'Asistencia', value: ev.asistencia }
+                            { label: 'Inasistencias', value: ev.inasistencias ?? '0' }
                         ];
                         if (ev.rendimientoCancha !== undefined && ev.rendimientoCancha !== null) {
                             metrics.push({ label: 'Rend. Cancha', value: ev.rendimientoCancha });
@@ -1931,7 +2020,8 @@
                                     ev.semana || '--',
                                     ev.tecnico ?? '--', ev.tactico ?? '--', ev.fisico ?? '--',
                                     ev.mental ?? '--', ev.disciplinaCancha ?? '--',
-                                    ev.disciplinaCasaClub ?? '--', ev.asistencia ?? '--',
+                                    ev.disciplinaCasaClub ?? '--',
+                                    ev.inasistencias ?? '0',
                                     ev.promedioGeneral != null ? parseFloat(ev.promedioGeneral).toFixed(1) : '--',
                                     prof
                                 ];
@@ -1939,7 +2029,7 @@
 
                             doc.autoTable({
                                 startY: yP,
-                                head: [['SEMANA', 'TÉC', 'TÁC', 'FÍS', 'MEN', 'D.CAN', 'D.CLUB', 'ASIS', 'PROM', 'EVALUADOR']],
+                                head: [['SEMANA', 'TÉC', 'TÁC', 'FÍS', 'MEN', 'D.CAN', 'D.CLUB', 'FALTAS', 'PROM', 'EVALUADOR']],
                                 body: evalRows,
                                 margin: { left: m, right: m },
                                 styles: {

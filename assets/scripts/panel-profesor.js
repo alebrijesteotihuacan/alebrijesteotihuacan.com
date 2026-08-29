@@ -1,31 +1,9 @@
 /*
     Alebrijes de Oaxaca Teotihuacán
-    Professor Panel Script
+    Professor Panel Script (Supabase)
 */
 
-import { initializeApp, getApps, getApp, deleteApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, collection, getDocs, addDoc, query, orderBy, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
-
-// Firebase configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyD5aakkUMk77EMKPwHvjXTqzPKBvejhjEo",
-    authDomain: "metricasalebrijes.firebaseapp.com",
-    projectId: "metricasalebrijes",
-    storageBucket: "metricasalebrijes.firebasestorage.app",
-    messagingSenderId: "822819596837",
-    appId: "1:822819596837:web:62f3f4139332830ee96dcc"
-};
-
-// Initialize Firebase
-let app;
-try {
-    app = getApps().length ? getApp() : initializeApp(firebaseConfig);
-} catch (e) {
-    app = initializeApp(firebaseConfig, 'panel-prof-' + Date.now());
-}
-const auth = getAuth(app);
-const db = getFirestore(app);
+import { supabase } from './supabase-client.js';
 
 // DOM Elements
 const loadingState = document.getElementById('loadingState');
@@ -71,32 +49,49 @@ let allPlayers = [];
 let dashboardInitialized = false;
 let currentEditEvalId = null; // ID of evaluation being edited (null = new)
 let currentEditSubEvalId = null; // subcollection eval ID
+let activeWeekFilter = ''; // Semana seleccionada para filtrar calificaciones
+
+// Map old category names in Firebase → new display names
+const CATEGORY_ALIAS = {
+    'Sub-13': 'Sub-14',
+    'Sub-15': 'Sub-16',
+    'Sub-17': 'Sub-18',
+    'Sub-20': 'Sub-21',
+};
+
+function normalizeCategoria(cat) {
+    return CATEGORY_ALIAS[cat] || cat;
+}
 
 // Check authentication
-onAuthStateChanged(auth, async (user) => {
+supabase.auth.onAuthStateChange(async (_event, session) => {
+    const user = session?.user || null;
     if (!user) {
         window.location.href = 'login.html';
         return;
     }
 
     // Prevent re-initialization if already loaded
-    if (dashboardInitialized && currentProfessor && currentProfessor.id === user.uid) {
+    if (dashboardInitialized && currentProfessor && currentProfessor.id === user.id) {
         return;
     }
 
     // Load professor profile or use default from auth
     try {
-        const profRef = doc(db, 'profesores', user.uid);
-        const profSnap = await getDoc(profRef);
+        const { data: profData, error: profError } = await supabase
+            .from('profesores')
+            .select('*')
+            .eq('id', user.id)
+            .maybeSingle();
 
-        if (profSnap.exists()) {
-            currentProfessor = { id: user.uid, email: user.email, ...profSnap.data() };
+        if (profData) {
+            currentProfessor = { id: user.id, email: user.email, ...profData };
         } else {
             // Use auth user data as fallback (no write required)
             currentProfessor = {
-                id: user.uid,
+                id: user.id,
                 email: user.email,
-                nombre: user.displayName || user.email.split('@')[0],
+                nombre: (user.user_metadata?.displayName) || user.email.split('@')[0],
                 rol: 'profesor'
             };
         }
@@ -107,9 +102,9 @@ onAuthStateChanged(auth, async (user) => {
         console.error('Error loading professor:', error);
         // Still allow access with basic user data
         currentProfessor = {
-            id: user.uid,
+            id: user.id,
             email: user.email,
-            nombre: user.displayName || user.email.split('@')[0],
+            nombre: (user.user_metadata?.displayName) || user.email.split('@')[0],
             rol: 'profesor'
         };
         await initDashboard();
@@ -141,42 +136,70 @@ async function initDashboard() {
     dashboardContent.style.display = 'block';
 }
 
-// Load players registered by current professor
+// Load players registered by current professor (+ players from allowed categories)
 async function loadPlayers(category = '') {
     try {
-        // Admin sees ALL players, professors see only their own
-        let q;
+        // Admin sees ALL players, regular professors see only their own + allowed categories
+        let ownPlayers = [];
+        let extraPlayers = [];
+
         if (currentProfessor.rol === 'admin') {
-            q = query(collection(db, 'jugadores'));
+            const { data: rows } = await supabase.from('jugadores').select('*');
+            (rows || []).forEach(row => {
+                const normalizedCat = normalizeCategoria(row.categoria);
+                if (!category || normalizedCat === category) {
+                    ownPlayers.push({ id: row.id, ...row, categoria: normalizedCat });
+                }
+            });
         } else {
-            q = query(
-                collection(db, 'jugadores'),
-                where('registradoPor', '==', currentProfessor.id)
-            );
+            // 1. Own players (registered by this professor)
+            const { data: ownRows } = await supabase
+                .from('jugadores')
+                .select('*')
+                .eq('registradoPor', currentProfessor.id);
+            (ownRows || []).forEach(row => {
+                const normalizedCat = normalizeCategoria(row.categoria);
+                if (!category || normalizedCat === category) {
+                    ownPlayers.push({ id: row.id, ...row, categoria: normalizedCat, esPropio: true });
+                }
+            });
+
+            // 2. Players from permitted extra categories (categoriasPermitidas)
+            const allowedCats = currentProfessor.categoriasPermitidas || [];
+            if (allowedCats.length > 0) {
+                const ownIds = new Set(ownPlayers.map(p => p.id));
+                for (const cat of allowedCats) {
+                    // Check both original and alias names for the category
+                    const catNormalized = normalizeCategoria(cat);
+                    // Fetch all players - we'll filter locally to handle aliases
+                    const { data: catRows } = await supabase.from('jugadores').select('*');
+                    (catRows || []).forEach(row => {
+                        if (ownIds.has(row.id)) return; // already in ownPlayers
+                        const normalizedCat = normalizeCategoria(row.categoria);
+                        if (normalizedCat === catNormalized) {
+                            if (!category || normalizedCat === category) {
+                                extraPlayers.push({ id: row.id, ...row, categoria: normalizedCat, esPropio: false });
+                                ownIds.add(row.id); // avoid duplicates across categories
+                            }
+                        }
+                    });
+                }
+            }
         }
 
-        const snapshot = await getDocs(q);
-        allPlayers = [];
-
-        snapshot.forEach(docSnap => {
-            const data = docSnap.data();
-            // Apply category filter locally if needed
-            if (!category || data.categoria === category) {
-                allPlayers.push({ id: docSnap.id, ...data });
-            }
-        });
+        allPlayers = [...ownPlayers, ...extraPlayers];
 
         // Fetch latest evaluation average for each player
         await Promise.all(allPlayers.map(async (player) => {
             try {
-                const evalsRef = collection(db, 'evaluaciones');
-                const evalsQuery = query(evalsRef, where('jugadorId', '==', player.id));
-                const evalsSnap = await getDocs(evalsQuery);
+                const { data: evalsRows } = await supabase
+                    .from('evaluaciones')
+                    .select('*')
+                    .eq('jugadorId', player.id);
 
-                if (!evalsSnap.empty) {
+                if (evalsRows && evalsRows.length > 0) {
                     // Sort locally to avoid Firebase index requirement issues
-                    let playerEvals = [];
-                    evalsSnap.forEach(d => playerEvals.push(d.data()));
+                    let playerEvals = [...evalsRows];
                     playerEvals.sort((a, b) => {
                         const dateA = new Date(a.fechaFin || a.fecha || 0).getTime();
                         const dateB = new Date(b.fechaFin || b.fecha || 0).getTime();
@@ -199,6 +222,11 @@ async function loadPlayers(category = '') {
             return nameA.localeCompare(nameB);
         });
 
+        // If there's an active week filter, load week-specific evaluations
+        if (activeWeekFilter) {
+            await loadWeekEvaluations(activeWeekFilter);
+        }
+
         renderPlayers(allPlayers);
         totalJugadores.textContent = allPlayers.length;
     } catch (error) {
@@ -217,6 +245,7 @@ async function loadPlayers(category = '') {
         `;
     }
 }
+
 
 // Player images list (PlantillaLigaTDP_2026)
 const PLAYER_IMAGES = [
@@ -245,7 +274,7 @@ const PLAYER_IMAGES = [
     'Joshua_Alejo_Hernández_Portero.jpg',
     'Juan_Carlos_Guerrero_Peña_Medio.jpg',
     'Juan_José_Salazar_Sánchez_Medio.jpg',
-    'Julio_César_Gutiérrez_Díaz_Medio.jpg',
+    'Julio_Cezar_Gutierrez_Diaz_Medio.jpg',
     'Luis_Alberto_Olvera_Perez_Medio.jpg',
     'Luis_Alfonso_Martínez_Lupercio_Medio.jpg',
     'Luis_Gustavo_Emeterio_Hernandez_Defensa.jpg',
@@ -265,25 +294,87 @@ function normalizeStr(s) {
     return (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
 }
 
-function findPlayerImage(nombre, apellido) {
+    const PLAYER_IMAGES_SOLES = [
+        'Adbeel_Jehiel_Ramirez_Juarez.jpg', 'Alexander_Villanueva_Huerta.jpg', 'Alfonso_Isaac_Jimenez_Calero.jpg', 'Angel_Gabriel_Barboza_Muñiz.jpg',
+        'Angel_Uriel_Castillo_Ramirez.jpg', 'Armando_Perez_Campos.jpg', 'Byron_Mishell_Mateos_Martinez.jpg', 'Carlos_Enrique_Landa_Landa.jpg',
+        'Cesar_Yovanni_Gomez_Anzastiga.jpg', 'Christopher_Armani_Camacho_Ibarguen.jpg', 'Cristian_Aldair_Marin_Ramirez.jpg', 'Diego_Ivan_Ramirez_Gonzalez.jpg',
+        'Edgar_Emanuel_Flores_Veliz.jpg', 'Elian_Fabian_Naranjo.jpg', 'Emilio_Andres_Cornelio_Lopez.jpg', 'Erick_Klebeer_Alanis_Guerrero.jpg',
+        'Felix_Eduardo_Martinez_Contreras.jpg', 'Franklin_Misael_Hernandez_Pablo.jpg', 'Hector_Gabriel_Castillo_Elizondo.jpg', 'Ibrahim_Rafael_Lopez_Zaragoza.jpg',
+        'Ignacio_Hazzam_Dominguez_Cruz.jpg', 'Irving_Daniel_Lopez_Luna.jpg', 'Jesus_Manuel_Nuñez_Gutierrez.jpg', 'Jesus_Manuel_Tarango_Maldonado.jpg',
+        'Jesus_Miguel_Xolio_Ortiz.jpg', 'Jesus_Rodrigo_Vela_Ramos.jpg', 'Jorge_Eduardo_Santiago_Reyes.jpg', 'Josaphat_Tapia_Vazquez.jpg',
+        'Jose_Enmanuel_Sanchez_Gonzalez.jpg', 'Juan_Carlos_Gonzalez_Ceniceros.jpg', 'Juan_Enrique_Rojas_Vargas.jpg', 'Juan_Uziel_Zarate_Navarrete.jpg',
+        'Kevin_Abel_Leon_Sanchez.jpg', 'Luciano_Ortiz_Melendez.jpg', 'Luis_Jareth_Dominguez_Meza.jpg', 'Miguel_David_Duran_Leon.jpg',
+        'Ricardo_Gael_Cruz_Santos.jpg', 'Richard_Aguilar_Perez.jpg', 'Roberto_Alcantar_Piña.jpg', 'Sebastian_Segundo_Becerril.jpg'
+    ];
+
+    const PLAYER_IMAGES_FUERZAS = [
+        'Abdiel_Monroy_García.jpeg', 'Aldo_Emmanuel_Cortes_Santiago.jpeg', 'Alejandro_Aguilar_Reyes.jpeg',
+        'Alexander_Martínez_Domínguez.jpeg', 'Angel_David_Mendez_Hernandez.jpeg', 'Asiel_Zaid_Montoya_Rojas.jpeg',
+        'Axel_Antonio_Vázquez_Estrada.jpeg', 'Brandon_Uziel_Moya_Marquez.jpeg', 'Bruno_Arroyo_Sánchez.jpeg',
+        'Cesar_Alexis_Varela_Castillo.jpeg', 'David_Salvador_Téllez.jpeg', 'Dejan_Kaled_Ramírez_Guijano.jpeg',
+        'Demian_Marcus_Arregui_Nava.jpeg', 'Derek_Jesús_Hernández_Licea.jpeg', 'Diego_Aaron_Alonso_Garcia.jpeg',
+        'Diego_Joel_Miros_García.jpeg', 'Dylan_Quijano_Xolo.jpeg', 'Emiliano_Rodríguez_Hernández.jpeg',
+        'Iker_Damián_Ortega_Villegas.jpeg', 'Iram_Habid_Barrientos_García.jpeg', 'Irving_Nuñez_Fuentes.jpeg',
+        'Isaí_Daniel_Gómez_García.jpeg', 'Isaías_Adrian_Alvarado_Hernández.jpeg', 'Israel_Rivera_Hernández.jpeg',
+        'Jimenez_Carbajal_Johan_Eduardo.jpeg', 'Joel_Martinez_Cruz.jpeg', 'Johan_Miguel_Patricio_Casales.jpeg',
+        'Jose_Emiliano_Sánchez_Gaspar.jpeg', 'Joshua_Dominguez_Acosta.jpeg', 'Josue_Alfredo_Vázquez_Valadez.jpeg',
+        'José_Asael_Rascon_Gurrola.jpeg', 'José_Carlos_Rivaldo_Silva_Baez.jpeg', 'José_Eduardo_Islas_Hernandez.jpeg',
+        'José_Francisco_González_Ceniceros.jpeg', 'Juan_Carlos_Maravilla_Maldonado.jpeg', 'Kevin_Damian_Alvarado_Montiel.jpeg',
+        'Kevin_Isael_Visoso_Lázaro.jpeg', 'Leonardo_Briones_Duran.jpeg', 'Leonardo_Madrigal_Velázquez.jpeg',
+        'Luis_Daniel_Martinez_Avedaño.jpeg', 'Luis_David_Olvera_Huerta.jpeg', 'Luis_Yael_Rodriguez_Muñoz.jpeg',
+        'Matteo_Cardona_Miranda.jpeg', 'Matteo_González_Rodríguez.jpeg', 'Mauricio_Fuentes_Ramos.jpeg',
+        'Mauricio_Mendoza_Montoya.jpeg', 'Miguel_Gutierrez_Cervantes.jpeg', 'Nicolas_Oliva_Pérez.jpeg',
+        'Ricardo_Rodriguez_Montiel.jpeg', 'Uriel_Urieta_Robles.jpeg', 'Victor_Javier_Bautista_Avendaño.jpeg',
+        'William_Alfredo_Turrubiates_Camacho.jpeg', 'Ángel_David_Sanchez_Jimenez.jpeg'
+    ];
+
+function findPlayerImageInfo(nombre, apellido) {
     const fullName = normalizeStr(`${nombre || ''} ${apellido || ''}`);
     const firstName = normalizeStr(nombre || '');
+    
     for (const img of PLAYER_IMAGES) {
-        const parts = img.replace('.jpg', '').split('_');
+        const parts = img.split('.')[0].split('_');
         parts.pop();
         const imgName = normalizeStr(parts.join(' '));
-        if (imgName === fullName) return img;
+        if (imgName === fullName) return { file: img, folder: 'PlantillaLigaTDP_2026' };
         if (fullName && imgName.includes(firstName) && firstName.length > 2) {
             const apellidoNorm = normalizeStr(apellido || '');
-            if (apellidoNorm && imgName.includes(apellidoNorm.split(' ')[0])) return img;
+            if (apellidoNorm && imgName.includes(apellidoNorm.split(' ')[0])) return { file: img, folder: 'PlantillaLigaTDP_2026' };
+        }
+    }
+    
+    for (const img of PLAYER_IMAGES_SOLES) {
+        const imgName = normalizeStr(img.split('.')[0].split('_').join(' '));
+        if (imgName === fullName) return { file: img, folder: 'JugadoresSoles' };
+        if (fullName && imgName.includes(firstName) && firstName.length > 2) {
+            const apellidoNorm = normalizeStr(apellido || '');
+            if (apellidoNorm && imgName.includes(apellidoNorm.split(' ')[0])) return { file: img, folder: 'JugadoresSoles' };
+        }
+    }
+
+    for (const img of PLAYER_IMAGES_FUERZAS) {
+        const imgName = normalizeStr(img.split('.')[0].split('_').join(' '));
+        if (imgName === fullName) return { file: img, folder: 'JugadoresFuerzasBasicas' };
+        if (fullName && imgName.includes(firstName) && firstName.length > 2) {
+            const apellidoNorm = normalizeStr(apellido || '');
+            if (apellidoNorm && imgName.includes(apellidoNorm.split(' ')[0])) return { file: img, folder: 'JugadoresFuerzasBasicas' };
         }
     }
     return null;
 }
 
+function toTitleCase(str) {
+    if (!str) return '';
+    return str.trim().toLowerCase()
+        .split(' ')
+        .filter(w => w.length > 0)
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(' ');
+}
+
 function getShortName(nombre, apellido) {
-    const first = (nombre || '').split(' ')[0];
-    const last = (apellido || '').split(' ')[0];
+    const first = toTitleCase((nombre || '').split(' ')[0]);
+    const last = toTitleCase((apellido || '').split(' ')[0]);
     return `${first} ${last}`.trim() || 'Sin nombre';
 }
 
@@ -301,7 +392,6 @@ function renderPlayers(players) {
                     </svg>
                 </div>
                 <h3>No hay jugadores registrados</h3>
-                <p>Agrega jugadores en la colección "jugadores" de Firebase</p>
             </div>
         `;
         return;
@@ -319,12 +409,12 @@ function renderPlayers(players) {
     playersGrid.innerHTML = players.map((player, index) => {
         const initials = getInitials(player.nombre, player.apellido);
         const shortName = getShortName(player.nombre, player.apellido);
-        const fullName = `${player.nombre || ''} ${player.apellido || ''}`.trim() || 'Sin nombre';
+        const fullName = `${toTitleCase(player.nombre || '')} ${toTitleCase(player.apellido || '')}`.trim() || 'Sin nombre';
         const gradient = gradients[index % gradients.length];
 
         // Player photo
-        const imgFile = findPlayerImage(player.nombre, player.apellido);
-        const imgSrc = imgFile ? `../assets/PlantillaLigaTDP_2026/${encodeURIComponent(imgFile)}` : null;
+        const imgInfo = findPlayerImageInfo(player.nombre, player.apellido);
+        const imgSrc = imgInfo ? `../assets/${imgInfo.folder}/${encodeURIComponent(imgInfo.file)}` : null;
         const avatarHTML = imgSrc
             ? `<div class="player-avatar player-avatar-photo"><img src="${imgSrc}" alt="${shortName}" onerror="this.parentElement.style.background='${gradient}';this.parentElement.innerHTML='${initials}'"></div>`
             : `<div class="player-avatar" style="background: ${gradient}">${initials}</div>`;
@@ -335,28 +425,54 @@ function renderPlayers(players) {
         const generatedPassword = `${passInitials}${birthYear}`;
         const playerEmail = player.email || 'Sin correo';
 
-        // Build average badge
-        const avgValue = player.latestPromedio;
+        // Build average/week badge
         let avgBadgeHTML = '';
-        if (avgValue !== undefined && avgValue !== null) {
-            const avgNum = parseFloat(avgValue);
-            let avgColor = '#ef4444'; // red
-            let avgBg = '#fee2e2';
-            if (avgNum >= 7) { avgColor = '#10b981'; avgBg = '#d1fae5'; }
-            else if (avgNum >= 5) { avgColor = '#f59e0b'; avgBg = '#fef3c7'; }
-            avgBadgeHTML = `
-                <div class="player-avg" style="background: ${avgBg}; color: ${avgColor};">
-                    <span class="player-avg-value">${avgNum.toFixed(1)}</span>
-                    <span class="player-avg-label">Prom.</span>
-                </div>
-            `;
+        if (activeWeekFilter) {
+            // Show score for the selected week
+            const weekEval = player.weekEval;
+            if (weekEval !== undefined && weekEval !== null) {
+                const avgNum = parseFloat(weekEval);
+                let avgColor = '#ef4444';
+                let avgBg = '#fee2e2';
+                if (avgNum >= 7) { avgColor = '#10b981'; avgBg = '#d1fae5'; }
+                else if (avgNum >= 5) { avgColor = '#f59e0b'; avgBg = '#fef3c7'; }
+                avgBadgeHTML = `
+                    <div class="player-week-badge" style="background: ${avgBg}; color: ${avgColor};" title="Promedio semana ${activeWeekFilter}">
+                        <span class="player-avg-value">${avgNum.toFixed(1)}</span>
+                        <span class="player-avg-label">Sem.</span>
+                    </div>
+                `;
+            } else {
+                avgBadgeHTML = `
+                    <div class="player-week-badge player-avg-empty" title="Sin evaluación en semana ${activeWeekFilter}">
+                        <span class="player-avg-value">--</span>
+                        <span class="player-avg-label">Sem.</span>
+                    </div>
+                `;
+            }
         } else {
-            avgBadgeHTML = `
-                <div class="player-avg player-avg-empty">
-                    <span class="player-avg-value">--</span>
-                    <span class="player-avg-label">Prom.</span>
-                </div>
-            `;
+            // Show latest overall average
+            const avgValue = player.latestPromedio;
+            if (avgValue !== undefined && avgValue !== null) {
+                const avgNum = parseFloat(avgValue);
+                let avgColor = '#ef4444';
+                let avgBg = '#fee2e2';
+                if (avgNum >= 7) { avgColor = '#10b981'; avgBg = '#d1fae5'; }
+                else if (avgNum >= 5) { avgColor = '#f59e0b'; avgBg = '#fef3c7'; }
+                avgBadgeHTML = `
+                    <div class="player-avg" style="background: ${avgBg}; color: ${avgColor};">
+                        <span class="player-avg-value">${avgNum.toFixed(1)}</span>
+                        <span class="player-avg-label">Prom.</span>
+                    </div>
+                `;
+            } else {
+                avgBadgeHTML = `
+                    <div class="player-avg player-avg-empty">
+                        <span class="player-avg-value">--</span>
+                        <span class="player-avg-label">Prom.</span>
+                    </div>
+                `;
+            }
         }
 
         return `
@@ -364,16 +480,6 @@ function renderPlayers(players) {
                 ${avatarHTML}
                 <div class="player-details">
                     <div class="player-name" title="${fullName}">${shortName}</div>
-                    <div class="player-creds" id="creds-${player.id}" style="display:none;">
-                        <div class="cred-row">
-                            <span class="cred-label">Correo:</span>
-                            <span class="cred-value">${playerEmail}</span>
-                        </div>
-                        <div class="cred-row">
-                            <span class="cred-label">Contraseña:</span>
-                            <span class="cred-value cred-pass">${generatedPassword}</span>
-                        </div>
-                    </div>
                 </div>
                 ${avgBadgeHTML}
                 <div class="player-actions">
@@ -390,10 +496,36 @@ function renderPlayers(players) {
                         </svg>
                         Evaluar
                     </button>
+                    ${currentProfessor.rol === 'admin' || currentProfessor.id === player.registradoPor ? `
+                    <button class="delete-btn" data-id="${player.id}" title="Eliminar jugador">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 6h18"></path>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                        </svg>
+                    </button>
+                    ` : ''}
                 </div>
             </div>
         `;
     }).join('');
+
+    // Banner de semana activa
+    if (activeWeekFilter) {
+        const banner = document.createElement('div');
+        banner.className = 'week-filter-banner';
+        banner.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            Mostrando calificaciones de la semana: <strong>${formatWeekLabel(activeWeekFilter)}</strong>
+        `;
+        playersGrid.insertBefore(banner, playersGrid.firstChild);
+    }
 
     // Add event listeners to eval buttons
     document.querySelectorAll('.eval-btn').forEach(btn => {
@@ -408,14 +540,172 @@ function renderPlayers(players) {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
             const playerId = btn.dataset.player;
-            const credsEl = document.getElementById(`creds-${playerId}`);
-            if (credsEl) {
-                const isVisible = credsEl.style.display !== 'none';
-                credsEl.style.display = isVisible ? 'none' : 'flex';
-                btn.classList.toggle('active', !isVisible);
+            const player = players.find(p => p.id === playerId);
+            if(player) {
+                openCredsModal(player);
             }
         });
     });
+
+    // Add event listeners to delete buttons
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const playerId = btn.dataset.id;
+            const player = players.find(p => p.id === playerId);
+            if(player) {
+                openDeleteModal(player);
+            }
+        });
+    });
+}
+
+function openCredsModal(player) {
+    const credsModal = document.getElementById('credsModal');
+    if(!credsModal) return;
+
+    const shortName = getShortName(player.nombre, player.apellido);
+    const initials = getInitials(player.nombre, player.apellido);
+    const passInitials = ((player.nombre || '').charAt(0) + (player.apellido || '').charAt(0)).toUpperCase();
+    const birthYear = player.fechaNacimiento ? player.fechaNacimiento.split('-')[0] : '????';
+    const generatedPassword = `${passInitials}${birthYear}`;
+    
+    // UI elements
+    const avatarEl = document.getElementById('credsPlayerAvatar');
+    const nameEl = document.getElementById('credsPlayerName');
+    const emailEl = document.getElementById('credsPlayerEmail');
+    const passEl = document.getElementById('credsPlayerPass');
+
+    nameEl.textContent = `${toTitleCase(player.nombre || '')} ${toTitleCase(player.apellido || '')}`.trim() || 'Sin nombre';
+    emailEl.textContent = player.email || 'Sin correo asignado';
+    passEl.textContent = generatedPassword;
+
+    // Avatar
+    const imgInfo = findPlayerImageInfo(player.nombre, player.apellido);
+    const imgSrc = imgInfo ? `../assets/${imgInfo.folder}/${encodeURIComponent(imgInfo.file)}` : null;
+    if (imgSrc) {
+        avatarEl.style.background = '#e2e8f0';
+        avatarEl.innerHTML = `<img src="${imgSrc}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+    } else {
+        avatarEl.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        avatarEl.innerHTML = initials;
+    }
+
+    credsModal.classList.add('active');
+
+    const closeModalBtn = document.getElementById('credsModalClose');
+    const closeHandler = () => {
+        credsModal.classList.remove('active');
+        closeModalBtn.removeEventListener('click', closeHandler);
+    };
+    closeModalBtn.addEventListener('click', closeHandler);
+    
+    // Click outside
+    const outsideHandler = (e) => {
+        if(e.target === credsModal) {
+            credsModal.classList.remove('active');
+            credsModal.removeEventListener('click', outsideHandler);
+        }
+    };
+    credsModal.addEventListener('click', outsideHandler);
+}
+
+// ==========================================
+// DELETE PLAYER LOGIC
+// ==========================================
+
+let playerToDelete = null;
+
+function openDeleteModal(player) {
+    const deleteModal = document.getElementById('deleteModal');
+    if(!deleteModal) return;
+
+    playerToDelete = player;
+    
+    // UI elements
+    const nameEl = document.getElementById('deletePlayerName');
+    nameEl.textContent = `${toTitleCase(player.nombre || '')} ${toTitleCase(player.apellido || '')}`.trim() || 'Sin nombre';
+
+    // Reset overlay
+    const overlay = document.getElementById('deleteLoadingOverlay');
+    if (overlay) overlay.classList.remove('active');
+
+    deleteModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+
+    // Event listeners for close
+    const closeModalBtn = document.getElementById('deleteModalClose');
+    const cancelBtn = document.getElementById('deleteBtnCancel');
+    const confirmBtn = document.getElementById('deleteBtnConfirm');
+
+    const closeHandler = () => {
+        closeDeleteModal();
+    };
+
+    closeModalBtn.addEventListener('click', closeHandler, { once: true });
+    cancelBtn.addEventListener('click', closeHandler, { once: true });
+    
+    // Remove previous event listener and add new one
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+    
+    newConfirmBtn.addEventListener('click', async () => {
+        await executeDeletePlayer(newConfirmBtn);
+    });
+
+    // Click outside
+    const outsideHandler = (e) => {
+        if(e.target === deleteModal) {
+            closeDeleteModal();
+            deleteModal.removeEventListener('click', outsideHandler);
+        }
+    };
+    deleteModal.addEventListener('click', outsideHandler);
+}
+
+function closeDeleteModal() {
+    const deleteModal = document.getElementById('deleteModal');
+    if(deleteModal) {
+        deleteModal.classList.remove('active');
+    }
+    document.body.style.overflow = '';
+    playerToDelete = null;
+
+    const overlay = document.getElementById('deleteLoadingOverlay');
+    if (overlay) overlay.classList.remove('active');
+}
+
+async function executeDeletePlayer(confirmBtn) {
+    if (!playerToDelete) return;
+    
+    const overlay = document.getElementById('deleteLoadingOverlay');
+    if (overlay) overlay.classList.add('active');
+    
+    confirmBtn.disabled = true;
+
+    try {
+        // Delete from supabase
+        await supabase.from('jugadores').delete().eq('id', playerToDelete.id);
+        // Also remove the player's evaluaciones (foreign-key style cleanup)
+        await supabase.from('evaluaciones').delete().eq('jugadorId', playerToDelete.id);
+
+        // Note: Ideally, a Cloud Function should handle deleting subcollections (evaluations)
+        // and images to ensure atomicity, but for frontend-only, this deletes the main document.
+
+        showToast('Jugador eliminado correctamente');
+        closeDeleteModal();
+        
+        // Refresh dashboard
+        await loadPlayers(document.getElementById('categoryFilter').value);
+        await loadStats();
+
+    } catch (error) {
+        console.error('Error deleting player:', error);
+        showToast('Error al eliminar el jugador: ' + error.message, 'error');
+        if (overlay) overlay.classList.remove('active');
+    } finally {
+        confirmBtn.disabled = false;
+    }
 }
 
 // Get initials
@@ -428,18 +718,21 @@ function getInitials(nombre, apellido) {
 // Load stats
 async function loadStats() {
     try {
-        let evalsQuery;
+        let count = 0;
         if (currentProfessor.rol === 'admin') {
             // Admin sees all evaluations
-            evalsQuery = query(collection(db, 'evaluaciones'));
+            const { count: c } = await supabase
+                .from('evaluaciones')
+                .select('*', { count: 'exact', head: true });
+            count = c || 0;
         } else {
-            evalsQuery = query(
-                collection(db, 'evaluaciones'),
-                where('evaluadorId', '==', currentProfessor.id)
-            );
+            const { count: c } = await supabase
+                .from('evaluaciones')
+                .select('*', { count: 'exact', head: true })
+                .eq('profesorId', currentProfessor.id);
+            count = c || 0;
         }
-        const evalsSnap = await getDocs(evalsQuery);
-        totalEvaluaciones.textContent = evalsSnap.size;
+        totalEvaluaciones.textContent = count;
     } catch (error) {
         console.error('Error loading stats:', error);
         totalEvaluaciones.textContent = '0';
@@ -456,10 +749,17 @@ async function openEvalModal(playerId) {
     currentEditSubEvalId = null;
 
     const initials = getInitials(player.nombre, player.apellido);
-    const fullName = `${player.nombre || ''} ${player.apellido || ''}`.trim() || 'Sin nombre';
+    const fullName = `${toTitleCase(player.nombre || '')} ${toTitleCase(player.apellido || '')}`.trim() || 'Sin nombre';
+
+    const imgInfo = findPlayerImageInfo(player.nombre, player.apellido);
+    const imgSrc = imgInfo ? `../assets/${imgInfo.folder}/${encodeURIComponent(imgInfo.file)}` : null;
+    
+    const avatarHTML = imgSrc
+        ? `<div class="avatar" style="background: transparent; padding: 0;"><img src="${imgSrc}" alt="${fullName}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" onerror="this.parentElement.style.background='var(--primary)';this.parentElement.style.padding='0';this.parentElement.innerHTML='${initials}'"></div>`
+        : `<div class="avatar">${initials}</div>`;
 
     playerEvalInfo.innerHTML = `
-        <div class="avatar">${initials}</div>
+        ${avatarHTML}
         <div class="info">
             <h4>${fullName}</h4>
             <p>${player.posicion || 'Sin posición'} • ${player.categoria || 'Sin categoría'}</p>
@@ -495,26 +795,19 @@ async function checkExistingEval() {
 
     try {
         // Query root evaluaciones collection
-        const evalsQuery = query(
-            collection(db, 'evaluaciones'),
-            where('jugadorId', '==', currentPlayerId),
-            where('semana', '==', evalSemana.value)
-        );
-        const evalsSnap = await getDocs(evalsQuery);
+        const { data: evalsRows } = await supabase
+            .from('evaluaciones')
+            .select('*')
+            .eq('jugadorId', currentPlayerId)
+            .eq('semana', evalSemana.value)
+            .limit(1);
 
-        if (!evalsSnap.empty) {
+        if (evalsRows && evalsRows.length > 0) {
             // Existing evaluation found - populate form for editing
-            const evalDoc = evalsSnap.docs[0];
-            const ev = evalDoc.data();
-            currentEditEvalId = evalDoc.id;
-
-            // Find subcollection eval ID
-            const subQuery = query(
-                collection(db, 'jugadores', currentPlayerId, 'evaluaciones'),
-                where('semana', '==', evalSemana.value)
-            );
-            const subSnap = await getDocs(subQuery);
-            currentEditSubEvalId = subSnap.empty ? null : subSnap.docs[0].id;
+            const ev = evalsRows[0];
+            currentEditEvalId = ev.id;
+            // Subcollection concept doesn't exist in Supabase; everything lives in evaluaciones table.
+            currentEditSubEvalId = null;
 
             // Populate form fields
             document.getElementById('tecnico').value = ev.tecnico ?? '';
@@ -523,7 +816,7 @@ async function checkExistingEval() {
             document.getElementById('mental').value = ev.mental ?? '';
             document.getElementById('disciplinaCancha').value = ev.disciplinaCancha ?? '';
             document.getElementById('disciplinaCasaClub').value = ev.disciplinaCasaClub ?? '';
-            document.getElementById('asistencia').value = ev.asistencia ?? '';
+            document.getElementById('inasistencias').value = ev.inasistencias ?? '0';
             document.getElementById('rendimientoCancha').value = ev.rendimientoCancha ?? '';
             document.getElementById('minutosJugados').value = ev.minutosJugados ?? '';
             document.getElementById('observaciones').value = ev.observaciones || '';
@@ -621,10 +914,84 @@ if (searchInput) {
     });
 }
 
+// ---- Week Filter logic ----
+const weekFilterInput = document.getElementById('weekFilter');
+const weekFilterClear = document.getElementById('weekFilterClear');
+const weekFilterWrapper = document.getElementById('weekFilterWrapper');
+
+if (weekFilterInput) {
+    weekFilterInput.addEventListener('change', async () => {
+        activeWeekFilter = weekFilterInput.value || '';
+        updateWeekFilterUI();
+        // Reload evaluations for the new week (players already loaded)
+        if (activeWeekFilter) {
+            await loadWeekEvaluations(activeWeekFilter);
+        } else {
+            // Clear week evals from players
+            allPlayers.forEach(p => { delete p.weekEval; });
+        }
+        renderPlayers(allPlayers);
+    });
+}
+
+if (weekFilterClear) {
+    weekFilterClear.addEventListener('click', async () => {
+        weekFilterInput.value = '';
+        activeWeekFilter = '';
+        updateWeekFilterUI();
+        allPlayers.forEach(p => { delete p.weekEval; });
+        renderPlayers(allPlayers);
+    });
+}
+
+function updateWeekFilterUI() {
+    if (!weekFilterWrapper || !weekFilterClear) return;
+    if (activeWeekFilter) {
+        weekFilterWrapper.classList.add('has-value');
+        weekFilterClear.style.display = 'flex';
+    } else {
+        weekFilterWrapper.classList.remove('has-value');
+        weekFilterClear.style.display = 'none';
+    }
+}
+
+// Load and attach week evaluations to allPlayers
+async function loadWeekEvaluations(semana) {
+    try {
+        const { data: rows } = await supabase
+            .from('evaluaciones')
+            .select('*')
+            .eq('semana', semana);
+
+        // Build map: jugadorId -> promedioGeneral
+        const weekMap = {};
+        (rows || []).forEach(row => {
+            if (row.jugadorId && row.promedioGeneral !== undefined) {
+                weekMap[row.jugadorId] = row.promedioGeneral;
+            }
+        });
+
+        // Attach to players
+        allPlayers.forEach(p => {
+            p.weekEval = weekMap[p.id] !== undefined ? weekMap[p.id] : null;
+        });
+    } catch (err) {
+        console.warn('Error loading week evaluations:', err);
+    }
+}
+
+// Format week label for display: "2026-W15" → "Semana 15, 2026"
+function formatWeekLabel(weekStr) {
+    if (!weekStr) return weekStr;
+    const [year, wPart] = weekStr.split('-W');
+    if (!wPart) return weekStr;
+    return `Semana ${wPart}, ${year}`;
+}
+
 // Logout
 logoutBtn.addEventListener('click', async () => {
     try {
-        await signOut(auth);
+        await supabase.auth.signOut();
         window.location.href = 'login.html';
     } catch (error) {
         console.error('Error logging out:', error);
@@ -638,11 +1005,19 @@ evalForm.addEventListener('submit', async (e) => {
     if (!currentPlayerId) return;
 
     const submitBtn = document.getElementById('btnSubmit');
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Guardando...';
 
     try {
         const formData = new FormData(evalForm);
+
+        // Required fields validation
+        const observaciones = formData.get('observaciones');
+        if (!observaciones || observaciones.trim() === '') {
+            showToast('El campo de observaciones es obligatorio', 'error');
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Guardando...';
 
         // Get week value
         const semana = formData.get('semana') || '';
@@ -668,21 +1043,24 @@ evalForm.addEventListener('submit', async (e) => {
         const mental = parseFloat(formData.get('mental'));
         const disciplinaCancha = parseFloat(formData.get('disciplinaCancha'));
         const disciplinaCasaClub = parseFloat(formData.get('disciplinaCasaClub'));
-        const asistencia = parseFloat(formData.get('asistencia'));
+        
+        // Inasistencias field
+        let inasistencias = parseInt(formData.get('inasistencias'), 10);
+        if (isNaN(inasistencias)) inasistencias = 0;
 
         // New fields
         const rendimientoCanchaRaw = formData.get('rendimientoCancha') || '';
         const rendimientoCancha = rendimientoCanchaRaw === 'RP' ? 'RP' : (rendimientoCanchaRaw ? parseFloat(rendimientoCanchaRaw) : null);
         const minutosJugados = parseInt(formData.get('minutosJugados')) || 0;
 
-        // Calculate average (original 7 metrics only, rendimientoCancha is separate)
-        const promedioGeneral = ((tecnico + tactico + fisico + mental + disciplinaCancha + disciplinaCasaClub + asistencia) / 7).toFixed(1);
+        // Calculate average (original 6 metrics only, rendimientoCancha is separate)
+        const promedioGeneral = ((tecnico + tactico + fisico + mental + disciplinaCancha + disciplinaCasaClub) / 6).toFixed(1);
 
         const evaluationData = {
             jugadorId: currentPlayerId,
-            evaluadorId: currentProfessor.id,
+            profesorId: currentProfessor.id,
             evaluadorNombre: currentProfessor.nombre || 'Profesor',
-            fecha: serverTimestamp(),
+            fecha: new Date().toISOString(),
             semana: semana,
             fechaInicio: fechaInicio ? fechaInicio.toISOString().split('T')[0] : null,
             fechaFin: fechaFin ? fechaFin.toISOString().split('T')[0] : null,
@@ -692,7 +1070,7 @@ evalForm.addEventListener('submit', async (e) => {
             mental,
             disciplinaCancha,
             disciplinaCasaClub,
-            asistencia,
+            inasistencias,
             rendimientoCancha,
             minutosJugados,
             promedioGeneral: parseFloat(promedioGeneral),
@@ -702,16 +1080,12 @@ evalForm.addEventListener('submit', async (e) => {
 
         if (currentEditEvalId) {
             // UPDATE existing evaluation
-            await updateDoc(doc(db, 'evaluaciones', currentEditEvalId), evaluationData);
-            if (currentEditSubEvalId) {
-                await updateDoc(doc(db, 'jugadores', currentPlayerId, 'evaluaciones', currentEditSubEvalId), evaluationData);
-            }
+            await supabase.from('evaluaciones').update(evaluationData).eq('id', currentEditEvalId);
             closeModal();
             showToast('Evaluación actualizada correctamente');
         } else {
             // CREATE new evaluation
-            await addDoc(collection(db, 'evaluaciones'), evaluationData);
-            await addDoc(collection(db, 'jugadores', currentPlayerId, 'evaluaciones'), evaluationData);
+            await supabase.from('evaluaciones').insert(evaluationData);
             closeModal();
             showToast('Evaluación guardada correctamente');
         }
@@ -799,27 +1173,32 @@ if (registerForm) {
             const formData = new FormData(registerForm);
             const email = formData.get('email');
 
-            // 1. Create a SECONDARY Firebase App to avoid signing out the professor
-            //    createUserWithEmailAndPassword auto-signs-in as the new user,
-            //    so we do it on a separate app instance
-            const secondaryApp = initializeApp(firebaseConfig, 'secondary-registration-' + Date.now());
-            const secondaryAuth = getAuth(secondaryApp);
+            // NOTE on Supabase auth semantics:
+            //   supabase.auth.signUp() signs in as the newly-created user, which would
+            //   log out the professor. The interim approach (per project plan) is to
+            //   create the player via signUp and then immediately restore the professor's
+            //   session by signing back in with their credentials.
+            const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+                email,
+                password: generatedPassword,
+                options: { data: { rol: 'jugador' } }
+            });
+            if (signUpError) throw signUpError;
+            const newUserUid = signUpData.user?.id;
+            if (!newUserUid) throw new Error('No se pudo obtener el ID del nuevo jugador.');
 
-            let newUserUid;
-            try {
-                const userCredential = await createUserWithEmailAndPassword(secondaryAuth, email, generatedPassword);
-                newUserUid = userCredential.user.uid;
+            // Restore professor session: save professor email first
+            const professorEmail = currentProfessor.email;
+            // Attempt to restore the professor's session by signing in again.
+            // (We don't have the professor's password in the panel; we rely on Supabase
+            // persisting the previous session in localStorage. signOut clears it though.
+            // In practice, after signUp the new user is in localStorage; we need to
+            // sign out the new user so the professor must log back in. See follow-up.)
+            await supabase.auth.signOut();
 
-                // Sign out from secondary auth immediately
-                await signOut(secondaryAuth);
-            } finally {
-                // Always clean up secondary app
-                await deleteApp(secondaryApp);
-            }
-
-            // 2. Create Player Document in Firestore (using professor's UID, not the player's)
+            // 2. Create Player Document in Supabase (use the new auth user's UID as id)
             const playerData = {
-                uid: newUserUid,
+                id: newUserUid,
                 nombre: formData.get('nombre'),
                 apellido: formData.get('apellido'),
                 email: email,
@@ -827,12 +1206,12 @@ if (registerForm) {
                 categoria: formData.get('categoria'),
                 posicion: formData.get('posicion'),
                 numeroCamiseta: parseInt(formData.get('numeroCamiseta')) || 0,
-                rol: 'jugador',
-                fechaRegistro: serverTimestamp(),
+                fechaRegistro: new Date().toISOString(),
                 registradoPor: professorUid  // Always the professor's UID
             };
 
-            await setDoc(doc(db, 'jugadores', newUserUid), playerData);
+            const { error: insertErr } = await supabase.from('jugadores').insert(playerData);
+            if (insertErr) throw insertErr;
 
             // 3. Success handling
             showToast(`Jugador ${playerData.nombre} registrado exitosamente`);
@@ -961,24 +1340,21 @@ function loadImageAsBase64(url) {
 
 async function generateWeeklyPDF(weekValue) {
     // Query evaluations for this week by this professor
-    const evalsQuery = query(
-        collection(db, 'evaluaciones'),
-        where('evaluadorId', '==', currentProfessor.id),
-        where('semana', '==', weekValue)
-    );
+    const { data: evalsRows, error: evalsErr } = await supabase
+        .from('evaluaciones')
+        .select('*')
+        .eq('profesorId', currentProfessor.id)
+        .eq('semana', weekValue);
 
-    const evalsSnap = await getDocs(evalsQuery);
+    if (evalsErr) throw evalsErr;
 
-    if (evalsSnap.empty) {
+    if (!evalsRows || evalsRows.length === 0) {
         showToast('No hay evaluaciones para esta semana', 'error');
         throw new Error('No evaluations found');
     }
 
     // Collect evaluation data
-    const evaluations = [];
-    evalsSnap.forEach(docSnap => {
-        evaluations.push(docSnap.data());
-    });
+    const evaluations = [...evalsRows];
 
     // Get player names + details for each evaluation
     const evalRows = [];
@@ -987,12 +1363,15 @@ async function generateWeeklyPDF(weekValue) {
         let playerCat = '';
         let playerPos = '';
         try {
-            const playerDoc = await getDoc(doc(db, 'jugadores', ev.jugadorId));
-            if (playerDoc.exists()) {
-                const p = playerDoc.data();
-                playerName = `${p.nombre || ''} ${p.apellido || ''}`.trim();
-                playerCat = p.categoria || '';
-                playerPos = p.posicion || '';
+            const { data: playerRow } = await supabase
+                .from('jugadores')
+                .select('*')
+                .eq('id', ev.jugadorId)
+                .maybeSingle();
+            if (playerRow) {
+                playerName = `${playerRow.nombre || ''} ${playerRow.apellido || ''}`.trim();
+                playerCat = playerRow.categoria || '';
+                playerPos = playerRow.posicion || '';
             }
         } catch (e) {
             playerName = ev.jugadorId;
@@ -1008,7 +1387,6 @@ async function generateWeeklyPDF(weekValue) {
             mental: ev.mental ?? '--',
             disciplinaCancha: ev.disciplinaCancha ?? '--',
             disciplinaCasaClub: ev.disciplinaCasaClub ?? '--',
-            asistencia: ev.asistencia ?? '--',
             promedio: ev.promedioGeneral ?? '--',
             observaciones: ev.observaciones || ''
         });
@@ -1114,7 +1492,7 @@ async function generateWeeklyPDF(weekValue) {
 
     // ---- TABLE ----
     const tableHeaders = [
-        ['Jugador', 'Cat.', 'Pos.', 'Téc', 'Tác', 'Fís', 'Men', 'D.Cancha', 'D.Casa', 'Asist.', 'Prom.', 'Observaciones']
+        ['Jugador', 'Cat.', 'Pos.', 'Téc', 'Tác', 'Fís', 'Men', 'D.Cancha', 'D.Casa', 'Prom.', 'Observaciones']
     ];
 
     const tableBody = evalRows.map(row => [
@@ -1127,7 +1505,6 @@ async function generateWeeklyPDF(weekValue) {
         row.mental,
         row.disciplinaCancha,
         row.disciplinaCasaClub,
-        row.asistencia,
         row.promedio,
         row.observaciones
     ]);
@@ -1166,9 +1543,8 @@ async function generateWeeklyPDF(weekValue) {
             6: { cellWidth: 12, halign: 'center' },
             7: { cellWidth: 18, halign: 'center' },
             8: { cellWidth: 18, halign: 'center' },
-            9: { cellWidth: 14, halign: 'center' },
-            10: { cellWidth: 14, halign: 'center', fontStyle: 'bold', textColor: [243, 106, 33] },
-            11: { cellWidth: 'auto', fontSize: 7 }
+            9: { cellWidth: 14, halign: 'center', fontStyle: 'bold', textColor: [243, 106, 33] },
+            10: { cellWidth: 'auto', fontSize: 7 }
         },
         margin: { left: 10, right: 10 },
         didDrawPage: function (data) {

@@ -1,41 +1,22 @@
 /*
     Alebrijes de Oaxaca Teotihuacán
-    Navigation Authentication State Handler
-    
+    Navigation Authentication State Handler (Supabase)
+
     Este script debe incluirse en todas las páginas para actualizar
     dinámicamente el botón de login/logout en la navegación.
 */
 
-import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
-
-// Firebase configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyD5aakkUMk77EMKPwHvjXTqzPKBvejhjEo",
-    authDomain: "metricasalebrijes.firebaseapp.com",
-    projectId: "metricasalebrijes",
-    storageBucket: "metricasalebrijes.firebasestorage.app",
-    messagingSenderId: "822819596837",
-    appId: "1:822819596837:web:62f3f4139332830ee96dcc"
-};
-
-// Initialize Firebase - reuse existing app if already initialized
-let app;
-try {
-    app = getApps().length ? getApp() : initializeApp(firebaseConfig);
-} catch (e) {
-    app = initializeApp(firebaseConfig, 'nav-auth-' + Date.now());
-}
-const auth = getAuth(app);
-const db = getFirestore(app);
+import { supabase } from './supabase-client.js';
 
 // Check if user is a professor
 async function isProfesor(userId) {
     try {
-        const profRef = doc(db, 'profesores', userId);
-        const profSnap = await getDoc(profRef);
-        return profSnap.exists();
+        const { data } = await supabase
+            .from('profesores')
+            .select('id')
+            .eq('id', userId)
+            .maybeSingle();
+        return !!data;
     } catch (error) {
         console.error('Error checking professor status:', error);
         return false;
@@ -52,9 +33,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Listen for auth state changes
-    onAuthStateChanged(auth, async (user) => {
+    supabase.auth.onAuthStateChange((_event, session) => {
+        const user = session?.user || null;
         console.log('Nav auth state changed:', user ? 'logged in' : 'logged out');
-        await updateNavButton(user, loginBtn);
+        updateNavButton(user, loginBtn);
     });
 });
 
@@ -72,7 +54,7 @@ async function updateNavButton(user, button) {
 
     if (user) {
         // Check if user is a professor
-        const isProf = await isProfesor(user.uid);
+        const isProf = await isProfesor(user.id);
         const portalLink = isProf ? 'panel-profesor.html' : 'mi-rendimiento.html';
         const portalText = isProf ? 'Dashboard' : 'Mi Portal';
 
@@ -117,7 +99,7 @@ async function updateNavButton(user, button) {
                     e.preventDefault();
                     e.stopPropagation();
                     try {
-                        await signOut(auth);
+                        await supabase.auth.signOut();
                         window.location.href = pathPrefix + 'login.html';
                     } catch (error) {
                         console.error('Error logging out:', error);

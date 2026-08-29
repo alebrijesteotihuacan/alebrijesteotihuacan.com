@@ -4,26 +4,7 @@
     from the last evaluation week and renders the featured players section.
 */
 
-import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
-
-// ── Firebase Config ──────────────────────────────────────────
-const firebaseConfig = {
-    apiKey: "AIzaSyD5aakkUMk77EMKPwHvjXTqzPKBvejhjEo",
-    authDomain: "metricasalebrijes.firebaseapp.com",
-    projectId: "metricasalebrijes",
-    storageBucket: "metricasalebrijes.firebasestorage.app",
-    messagingSenderId: "822819596837",
-    appId: "1:822819596837:web:62f3f4139332830ee96dcc"
-};
-
-let app;
-try {
-    app = getApps().length ? getApp() : initializeApp(firebaseConfig);
-} catch (e) {
-    app = initializeApp(firebaseConfig, 'jugador-semana-' + Date.now());
-}
-const db = getFirestore(app);
+import { supabase } from './supabase-client.js';
 
 
 // ── Categories to display ────────────────────────────────────
@@ -196,14 +177,14 @@ async function loadJugadoresSemana() {
 
     try {
         // 1. Load all players map
-        const playersSnap = await getDocs(collection(db, 'jugadores'));
+        const { data: playersRows } = await supabase.from('jugadores').select('*');
         const playerMap = {};
-        playersSnap.forEach(d => { playerMap[d.id] = { id: d.id, ...d.data() }; });
+        (playersRows || []).forEach(row => { playerMap[row.id] = { id: row.id, ...row }; });
 
         // 2. Load all evaluaciones
-        const evalsSnap = await getDocs(collection(db, 'evaluaciones'));
+        const { data: evalsRows } = await supabase.from('evaluaciones').select('*');
         const evals = [];
-        evalsSnap.forEach(d => { evals.push({ id: d.id, ...d.data() }); });
+        (evalsRows || []).forEach(row => { evals.push({ id: row.id, ...row }); });
 
         if (evals.length === 0) {
             container.innerHTML = '<p class="featured-empty">No hay evaluaciones registradas aún.</p>';

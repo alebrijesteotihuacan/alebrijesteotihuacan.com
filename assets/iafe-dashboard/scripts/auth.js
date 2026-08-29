@@ -1,9 +1,11 @@
 /**
- * IAFE Dashboard - Authentication Module
+ * IAFE Dashboard - Authentication Module (Supabase)
  * Instituto Azteca de Formación Empresarial
  * ==========================================
- * Módulo de autenticación real con Firebase
+ * Módulo de autenticación con Supabase.
  */
+
+import { supabase } from './supabase-client.js';
 
 // Auth state management
 let currentUser = null;
@@ -14,55 +16,40 @@ let currentUserData = null;
  * Initialize authentication and check current state
  */
 async function initAuth() {
-    // Ensure Firebase is initialized
+    // Ensure Supabase is initialized
     if (typeof initializeFirebaseApp === 'function') {
         await initializeFirebaseApp();
     }
 
-    return new Promise((resolve) => {
-        if (typeof auth !== 'undefined' && auth) {
-            auth.onAuthStateChanged(async (user) => {
-                if (user) {
-                    currentUser = user;
-                    // Get user data from Firestore
-                    currentUserData = await getUserById(user.uid);
-                    if (currentUserData) {
-                        currentUserType = currentUserData.tipo;
-                        // Store in session
-                        sessionStorage.setItem('iafe_user', JSON.stringify({
-                            uid: user.uid,
-                            email: user.email,
-                            ...currentUserData
-                        }));
-                    }
-                    resolve(user);
-                } else {
-                    currentUser = null;
-                    currentUserData = null;
-                    currentUserType = null;
-                    sessionStorage.removeItem('iafe_user');
-                    resolve(null);
-                }
-            });
-        } else {
-            // Fallback to session storage
-            const stored = sessionStorage.getItem('iafe_user');
-            if (stored) {
-                currentUserData = JSON.parse(stored);
-                currentUserType = currentUserData.tipo;
-                resolve(currentUserData);
-            } else {
-                resolve(null);
-            }
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user) {
+        currentUser = session.user;
+        currentUserData = await getUserById(currentUser.id);
+        if (currentUserData) {
+            currentUserType = currentUserData.tipo;
+            sessionStorage.setItem('iafe_user', JSON.stringify({
+                uid: currentUser.id,
+                email: currentUser.email,
+                ...currentUserData
+            }));
         }
-    });
+        return currentUser;
+    }
+
+    // No active session
+    const stored = sessionStorage.getItem('iafe_user');
+    if (stored) {
+        currentUserData = JSON.parse(stored);
+        currentUserType = currentUserData.tipo;
+        return currentUserData;
+    }
+    return null;
 }
 
 /**
  * Check authentication state and return current user
  */
 function checkAuthState() {
-    // Get current user from session storage
     const storedUser = sessionStorage.getItem('iafe_user');
     if (storedUser) {
         currentUserData = JSON.parse(storedUser);
@@ -74,49 +61,36 @@ function checkAuthState() {
 
 /**
  * Login user with email and password
- * @param {string} email 
- * @param {string} password 
- * @param {string} expectedType - 'estudiante' or 'docente'
- * @returns {Promise<object>}
  */
 async function loginUser(email, password, expectedType = null) {
-    // Ensure Firebase is initialized
     if (typeof initializeFirebaseApp === 'function') {
         await initializeFirebaseApp();
     }
 
-    if (!auth) {
-        throw new Error('Firebase no está disponible. Por favor recarga la página.');
-    }
-
     try {
-        // Sign in with Firebase Auth
-        const userCredential = await auth.signInWithEmailAndPassword(email, password);
-        const user = userCredential.user;
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        const user = data.user;
 
-        // Get user data from Firestore
-        const userData = await getUserById(user.uid);
+        const userData = await getUserById(user.id);
 
         if (!userData) {
-            await auth.signOut();
+            await supabase.auth.signOut();
             throw new Error('Usuario no encontrado en el sistema. Contacta al administrador.');
         }
 
-        // Verify user type if expected
         if (expectedType && userData.tipo !== expectedType) {
-            await auth.signOut();
+            await supabase.auth.signOut();
             throw new Error(`Esta página es solo para ${expectedType === 'docente' ? 'docentes' : 'estudiantes'}. Por favor usa el acceso correcto.`);
         }
 
-        // Check if user is active
         if (userData.activo === false) {
-            await auth.signOut();
+            await supabase.auth.signOut();
             throw new Error('Tu cuenta está desactivada. Contacta al administrador.');
         }
 
-        // Store user in session
         currentUser = user;
-        currentUserData = { uid: user.uid, email: user.email, ...userData };
+        currentUserData = { uid: user.id, email: user.email, ...userData };
         currentUserType = userData.tipo;
 
         sessionStorage.setItem('iafe_user', JSON.stringify(currentUserData));
@@ -126,15 +100,12 @@ async function loginUser(email, password, expectedType = null) {
     } catch (error) {
         console.error('Error en login:', error);
 
-        // Translate Firebase error messages
         let message = error.message;
-        if (error.code === 'auth/user-not-found') {
-            message = 'No existe una cuenta con este correo electrónico.';
-        } else if (error.code === 'auth/wrong-password') {
-            message = 'Contraseña incorrecta.';
-        } else if (error.code === 'auth/invalid-email') {
-            message = 'El correo electrónico no es válido.';
-        } else if (error.code === 'auth/too-many-requests') {
+        if (error.message === 'Invalid login credentials') {
+            message = 'Correo o contraseña incorrectos.';
+        } else if (error.message === 'Email not confirmed') {
+            message = 'Debes confirmar tu correo electrónico.';
+        } else if (error.message === 'Too many requests') {
             message = 'Demasiados intentos fallidos. Intenta más tarde.';
         }
 
@@ -147,9 +118,7 @@ async function loginUser(email, password, expectedType = null) {
  */
 async function logoutUser() {
     try {
-        if (auth) {
-            await auth.signOut();
-        }
+        await supabase.auth.signOut();
     } catch (error) {
         console.error('Error en logout:', error);
     }
@@ -162,38 +131,29 @@ async function logoutUser() {
 
 /**
  * Register new student (called by teacher from dashboard)
- * @param {object} studentData 
- * @returns {Promise<object>}
  */
 async function registerStudent(studentData) {
-    // Ensure Firebase is initialized
     if (typeof initializeFirebaseApp === 'function') {
         await initializeFirebaseApp();
     }
 
-    if (!auth || !db) {
-        throw new Error('Firebase no está disponible.');
-    }
-
-    // Validate CURP format (basic)
     if (studentData.curp && !/^[A-Z]{4}\d{6}[HM][A-Z]{5}[A-Z0-9]\d$/.test(studentData.curp)) {
         throw new Error('Formato de CURP inválido');
     }
 
-    // Save current user to restore after creating student
-    const currentAuthUser = auth.currentUser;
+    const currentAuthUser = currentUser;
 
     try {
-        // Create user in Firebase Auth
-        const userCredential = await auth.createUserWithEmailAndPassword(
-            studentData.email,
-            studentData.password
-        );
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+            email: studentData.email,
+            password: studentData.password
+        });
+        if (signUpError) throw signUpError;
+        const userId = signUpData.user?.id;
+        if (!userId) throw new Error('No se obtuvo el ID del nuevo estudiante');
 
-        const userId = userCredential.user.uid;
-
-        // Create document in Firestore
-        const userData = {
+        const userRow = {
+            id: userId,
             nombre: studentData.nombre,
             apellidos: studentData.apellidos,
             email: studentData.email,
@@ -204,19 +164,20 @@ async function registerStudent(studentData) {
             grupoId: studentData.grupoId || null,
             pagoVerificado: false,
             activo: true,
-            fechaRegistro: firebase.firestore.FieldValue.serverTimestamp(),
-            creadoPor: currentAuthUser ? currentAuthUser.uid : null
+            fechaRegistro: new Date().toISOString(),
+            creadoPor: currentAuthUser ? currentAuthUser.id : null
         };
 
-        await db.collection('usuarios').doc(userId).set(userData);
+        const { error: insertErr } = await supabase
+            .schema('iafe')
+            .from('usuarios')
+            .insert(userRow);
+        if (insertErr) throw insertErr;
 
-        // Sign out the newly created user
-        await auth.signOut();
+        // Sign out the newly created user (interino: el docente debe volver a iniciar sesión)
+        await supabase.auth.signOut();
 
-        // Re-authenticate the teacher if they were logged in
         if (currentAuthUser) {
-            // The teacher needs to log in again - we'll handle this in the UI
-            // For now, restore from session
             const storedUser = sessionStorage.getItem('iafe_user');
             if (storedUser) {
                 currentUserData = JSON.parse(storedUser);
@@ -224,18 +185,15 @@ async function registerStudent(studentData) {
         }
 
         console.info('✅ Estudiante registrado:', userId);
-        return { id: userId, ...userData };
+        return { id: userId, ...userRow };
     } catch (error) {
         console.error('Error al registrar estudiante:', error);
 
-        // Translate Firebase error messages
         let message = error.message;
-        if (error.code === 'auth/email-already-in-use') {
+        if (error.message?.toLowerCase().includes('already') || error.message?.toLowerCase().includes('registered')) {
             message = 'Ya existe una cuenta con este correo electrónico.';
-        } else if (error.code === 'auth/weak-password') {
+        } else if (error.message?.toLowerCase().includes('password')) {
             message = 'La contraseña debe tener al menos 6 caracteres.';
-        } else if (error.code === 'auth/invalid-email') {
-            message = 'El correo electrónico no es válido.';
         }
 
         throw new Error(message);
@@ -244,36 +202,35 @@ async function registerStudent(studentData) {
 
 /**
  * Create initial teacher account (admin function)
- * This should be called only once to create the first teacher
  */
 async function createInitialTeacher(teacherData) {
-    if (!auth || !db) {
-        throw new Error('Firebase no está disponible.');
-    }
-
     try {
-        // Create user in Firebase Auth
-        const userCredential = await auth.createUserWithEmailAndPassword(
-            teacherData.email,
-            teacherData.password
-        );
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+            email: teacherData.email,
+            password: teacherData.password
+        });
+        if (signUpError) throw signUpError;
+        const userId = signUpData.user?.id;
+        if (!userId) throw new Error('No se obtuvo el ID del nuevo docente');
 
-        const userId = userCredential.user.uid;
-
-        // Create document in Firestore
-        const userData = {
+        const userRow = {
+            id: userId,
             nombre: teacherData.nombre,
             apellidos: teacherData.apellidos,
             email: teacherData.email,
             tipo: 'docente',
             activo: true,
-            fechaRegistro: firebase.firestore.FieldValue.serverTimestamp()
+            fechaRegistro: new Date().toISOString()
         };
 
-        await db.collection('usuarios').doc(userId).set(userData);
+        const { error: insertErr } = await supabase
+            .schema('iafe')
+            .from('usuarios')
+            .insert(userRow);
+        if (insertErr) throw insertErr;
 
         console.info('✅ Docente creado:', userId);
-        return { id: userId, ...userData };
+        return { id: userId, ...userRow };
     } catch (error) {
         console.error('Error al crear docente:', error);
         throw error;
@@ -282,13 +239,11 @@ async function createInitialTeacher(teacherData) {
 
 /**
  * Protect dashboard page - redirect if not authenticated
- * @param {string} requiredType - 'estudiante', 'docente', or null for any
  */
 function protectRoute(requiredType = null) {
     const user = checkAuthState();
 
     if (!user) {
-        // Redirect to appropriate login page
         if (requiredType === 'docente') {
             window.location.href = '../login-docente.html';
         } else if (requiredType === 'estudiante') {
@@ -302,7 +257,6 @@ function protectRoute(requiredType = null) {
     const userType = user.tipo || user.userType;
 
     if (requiredType && userType !== requiredType) {
-        // Redirect to correct dashboard
         if (userType === 'estudiante') {
             window.location.href = 'estudiante.html';
         } else if (userType === 'docente') {
@@ -314,10 +268,6 @@ function protectRoute(requiredType = null) {
     return true;
 }
 
-/**
- * Get current user data
- * @returns {object|null}
- */
 function getCurrentUser() {
     if (!currentUserData) {
         checkAuthState();
@@ -325,11 +275,6 @@ function getCurrentUser() {
     return currentUserData;
 }
 
-/**
- * Get user initials for avatar
- * @param {object} user 
- * @returns {string}
- */
 function getUserInitials(user) {
     if (!user) return '?';
     const nombre = user.nombre || '';
@@ -337,27 +282,15 @@ function getUserInitials(user) {
     return (nombre.charAt(0) + apellidos.charAt(0)).toUpperCase();
 }
 
-/**
- * Get user full name
- * @param {object} user 
- * @returns {string}
- */
 function getUserFullName(user) {
     if (!user) return 'Usuario';
     return `${user.nombre || ''} ${user.apellidos || ''}`.trim() || 'Usuario';
 }
 
-/**
- * Format date for display
- * @param {string|Date|object} dateInput 
- * @returns {string}
- */
 function formatDate(dateInput) {
     let date;
-
     if (!dateInput) return '-';
 
-    // Handle Firestore Timestamp
     if (dateInput && typeof dateInput.toDate === 'function') {
         date = dateInput.toDate();
     } else if (dateInput instanceof Date) {
@@ -375,17 +308,10 @@ function formatDate(dateInput) {
     });
 }
 
-/**
- * Format relative date
- * @param {string|Date|object} dateInput 
- * @returns {string}
- */
 function formatRelativeDate(dateInput) {
     let date;
-
     if (!dateInput) return '-';
 
-    // Handle Firestore Timestamp
     if (dateInput && typeof dateInput.toDate === 'function') {
         date = dateInput.toDate();
     } else if (dateInput instanceof Date) {
@@ -406,11 +332,6 @@ function formatRelativeDate(dateInput) {
     return formatDate(date);
 }
 
-/**
- * Generate a random password
- * @param {number} length 
- * @returns {string}
- */
 function generatePassword(length = 8) {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%';
     let password = '';

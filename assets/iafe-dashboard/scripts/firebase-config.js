@@ -1,71 +1,32 @@
 /**
- * IAFE Dashboard - Firebase Configuration
+ * IAFE Dashboard - Supabase Configuration
  * Instituto Azteca de Formación Empresarial
  * ==========================================
- * Configuración real de Firebase para sistema escolar
+ * Cliente Supabase para sistema escolar.
  */
 
-// Configuración de Firebase (Credenciales reales)
-const firebaseConfig = {
-    apiKey: "AIzaSyDIPkpCrWwR5y90v2vrDS7bEf1uGFJ25Y0",
-    authDomain: "sistemainstitutoazteca.firebaseapp.com",
-    projectId: "sistemainstitutoazteca",
-    storageBucket: "sistemainstitutoazteca.firebasestorage.app",
-    messagingSenderId: "725086607986",
-    appId: "1:725086607986:web:9d4b940b70bd1da02900eb"
-};
+// Cliente Supabase (cargado como módulo ES)
+import { supabase } from './supabase-client.js';
 
-// Variables globales para Firebase
-let app = null;
-let auth = null;
-let db = null;
-let firebaseConfigured = false;
+// Estado de configuración
+let supabaseReady = false;
 
-// Función para inicializar Firebase (se llama después de cargar los scripts de Firebase)
+// Inicialización (compatible con la API anterior basada en Firebase)
 async function initializeFirebaseApp() {
-    if (firebaseConfigured) return true;
-
+    if (supabaseReady) return true;
     try {
-        // Verificar que Firebase está cargado
-        if (typeof firebase === 'undefined') {
-            console.error('Firebase SDK no está cargado');
+        if (typeof supabase === 'undefined') {
+            console.error('Supabase SDK no está cargado');
             return false;
         }
+        supabaseReady = true;
+        console.info('✅ Supabase inicializado correctamente (IAFE)');
 
-        // Inicializar app si no existe
-        if (!firebase.apps.length) {
-            app = firebase.initializeApp(firebaseConfig);
-        } else {
-            app = firebase.apps[0];
-        }
-
-        // Obtener servicios
-        auth = firebase.auth();
-        db = firebase.firestore();
-
-        // Configurar persistencia offline para Firestore
-        try {
-            await db.enablePersistence({ synchronizeTabs: true });
-        } catch (err) {
-            if (err.code === 'failed-precondition') {
-                console.warn('Firestore persistence failed: Multiple tabs open');
-            } else if (err.code === 'unimplemented') {
-                console.warn('Firestore persistence not supported by browser');
-            }
-        }
-
-        firebaseConfigured = true;
-        console.info('✅ Firebase inicializado correctamente');
-
-        // Exportar a window
-        window.app = app;
-        window.auth = auth;
-        window.db = db;
-        window.firebaseConfigured = true;
-
+        window.supabase = supabase;
+        window.supabaseConfigured = true;
         return true;
     } catch (error) {
-        console.error('❌ Error al inicializar Firebase:', error);
+        console.error('❌ Error al inicializar Supabase:', error);
         return false;
     }
 }
@@ -74,80 +35,69 @@ async function initializeFirebaseApp() {
 // FUNCIONES DE BASE DE DATOS
 // ==========================================
 
-/**
- * Obtener usuario por ID
- */
 async function getUserById(userId) {
-    if (!db) return null;
     try {
-        const doc = await db.collection('usuarios').doc(userId).get();
-        if (doc.exists) {
-            return { id: doc.id, ...doc.data() };
-        }
-        return null;
+        const { data, error } = await supabase
+            .schema('iafe')
+            .from('usuarios')
+            .select('*')
+            .eq('id', userId)
+            .maybeSingle();
+        if (error) throw error;
+        return data ? { id: data.id, ...data } : null;
     } catch (error) {
         console.error('Error al obtener usuario:', error);
         return null;
     }
 }
 
-/**
- * Obtener usuario por email
- */
 async function getUserByEmail(email) {
-    if (!db) return null;
     try {
-        const snapshot = await db.collection('usuarios')
-            .where('email', '==', email)
+        const { data, error } = await supabase
+            .schema('iafe')
+            .from('usuarios')
+            .select('*')
+            .eq('email', email)
             .limit(1)
-            .get();
-
-        if (!snapshot.empty) {
-            const doc = snapshot.docs[0];
-            return { id: doc.id, ...doc.data() };
-        }
-        return null;
+            .maybeSingle();
+        if (error) throw error;
+        return data ? { id: data.id, ...data } : null;
     } catch (error) {
         console.error('Error al obtener usuario por email:', error);
         return null;
     }
 }
 
-/**
- * Obtener todos los estudiantes
- */
 async function getAllStudents() {
-    if (!db) return [];
     try {
-        const snapshot = await db.collection('usuarios')
-            .where('tipo', '==', 'estudiante')
-            .orderBy('fechaRegistro', 'desc')
-            .get();
-
-        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const { data, error } = await supabase
+            .schema('iafe')
+            .from('usuarios')
+            .select('*')
+            .eq('tipo', 'estudiante')
+            .order('fechaRegistro', { ascending: false });
+        if (error) throw error;
+        return (data || []).map(row => ({ id: row.id, ...row }));
     } catch (error) {
         console.error('Error al obtener estudiantes:', error);
         return [];
     }
 }
 
-/**
- * Crear nuevo estudiante
- */
 async function createStudent(studentData) {
-    if (!auth || !db) throw new Error('Firebase no está inicializado');
-
     try {
-        // Crear usuario en Firebase Auth
-        const userCredential = await auth.createUserWithEmailAndPassword(
-            studentData.email,
-            studentData.password
-        );
+        // Crear usuario en Supabase Auth
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+            email: studentData.email,
+            password: studentData.password
+        });
+        if (signUpError) throw signUpError;
+        const userId = signUpData.user?.id;
+        if (!userId) throw new Error('No se obtuvo el ID del nuevo estudiante');
 
-        const userId = userCredential.user.uid;
-
-        // Crear documento en Firestore
-        const userData = {
+        // Crear fila en iafe.usuarios
+        const userRow = {
+            id: userId,
             nombre: studentData.nombre,
             apellidos: studentData.apellidos,
             email: studentData.email,
@@ -158,27 +108,31 @@ async function createStudent(studentData) {
             grupoId: studentData.grupoId || null,
             pagoVerificado: false,
             activo: true,
-            fechaRegistro: firebase.firestore.FieldValue.serverTimestamp()
+            fechaRegistro: new Date().toISOString()
         };
 
-        await db.collection('usuarios').doc(userId).set(userData);
+        const { error: insertErr } = await supabase
+            .schema('iafe')
+            .from('usuarios')
+            .insert(userRow);
+        if (insertErr) throw insertErr;
 
         console.info('✅ Estudiante creado:', userId);
-        return { id: userId, ...userData };
+        return { id: userId, ...userRow };
     } catch (error) {
         console.error('Error al crear estudiante:', error);
         throw error;
     }
 }
 
-/**
- * Actualizar estudiante
- */
 async function updateStudent(studentId, data) {
-    if (!db) throw new Error('Firebase no está inicializado');
-
     try {
-        await db.collection('usuarios').doc(studentId).update(data);
+        const { error } = await supabase
+            .schema('iafe')
+            .from('usuarios')
+            .update(data)
+            .eq('id', studentId);
+        if (error) throw error;
         console.info('✅ Estudiante actualizado:', studentId);
         return true;
     } catch (error) {
@@ -187,15 +141,14 @@ async function updateStudent(studentId, data) {
     }
 }
 
-/**
- * Eliminar estudiante
- */
 async function deleteStudent(studentId) {
-    if (!db) throw new Error('Firebase no está inicializado');
-
     try {
-        // Marcar como inactivo en lugar de eliminar
-        await db.collection('usuarios').doc(studentId).update({ activo: false });
+        const { error } = await supabase
+            .schema('iafe')
+            .from('usuarios')
+            .update({ activo: false })
+            .eq('id', studentId);
+        if (error) throw error;
         console.info('✅ Estudiante desactivado:', studentId);
         return true;
     } catch (error) {
@@ -208,59 +161,55 @@ async function deleteStudent(studentId) {
 // FUNCIONES DE GRUPOS
 // ==========================================
 
-/**
- * Obtener todos los grupos
- */
 async function getAllGroups() {
-    if (!db) return [];
     try {
-        const snapshot = await db.collection('grupos')
-            .orderBy('nombre')
-            .get();
-
-        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const { data, error } = await supabase
+            .schema('iafe')
+            .from('grupos')
+            .select('*')
+            .order('nombre', { ascending: true });
+        if (error) throw error;
+        return (data || []).map(row => ({ id: row.id, ...row }));
     } catch (error) {
         console.error('Error al obtener grupos:', error);
         return [];
     }
 }
 
-/**
- * Crear nuevo grupo
- */
 async function createGroup(groupData) {
-    if (!db) throw new Error('Firebase no está inicializado');
-
     try {
-        const data = {
+        const row = {
             nombre: groupData.nombre,
             nivelAcademico: groupData.nivelAcademico,
             docenteId: groupData.docenteId || null,
-            fechaCreacion: firebase.firestore.FieldValue.serverTimestamp()
+            fechaCreacion: new Date().toISOString()
         };
-
-        const docRef = await db.collection('grupos').add(data);
-        console.info('✅ Grupo creado:', docRef.id);
-        return { id: docRef.id, ...data };
+        const { data, error } = await supabase
+            .schema('iafe')
+            .from('grupos')
+            .insert(row)
+            .select()
+            .single();
+        if (error) throw error;
+        console.info('✅ Grupo creado:', data.id);
+        return { id: data.id, ...row };
     } catch (error) {
         console.error('Error al crear grupo:', error);
         throw error;
     }
 }
 
-/**
- * Contar alumnos en un grupo
- */
 async function countStudentsInGroup(grupoId) {
-    if (!db) return 0;
     try {
-        const snapshot = await db.collection('usuarios')
-            .where('tipo', '==', 'estudiante')
-            .where('grupoId', '==', grupoId)
-            .where('activo', '==', true)
-            .get();
-
-        return snapshot.size;
+        const { count, error } = await supabase
+            .schema('iafe')
+            .from('usuarios')
+            .select('*', { count: 'exact', head: true })
+            .eq('tipo', 'estudiante')
+            .eq('grupoId', grupoId)
+            .eq('activo', true);
+        if (error) throw error;
+        return count || 0;
     } catch (error) {
         console.error('Error al contar estudiantes:', error);
         return 0;
@@ -271,60 +220,56 @@ async function countStudentsInGroup(grupoId) {
 // FUNCIONES DE TAREAS
 // ==========================================
 
-/**
- * Obtener todas las tareas
- */
 async function getAllTasks() {
-    if (!db) return [];
     try {
-        const snapshot = await db.collection('tareas')
-            .orderBy('fechaLimite', 'desc')
-            .get();
-
-        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const { data, error } = await supabase
+            .schema('iafe')
+            .from('tareas')
+            .select('*')
+            .order('fechaLimite', { ascending: false });
+        if (error) throw error;
+        return (data || []).map(row => ({ id: row.id, ...row }));
     } catch (error) {
         console.error('Error al obtener tareas:', error);
         return [];
     }
 }
 
-/**
- * Obtener tareas por grupo
- */
 async function getTasksByGroup(grupoId) {
-    if (!db) return [];
     try {
-        const snapshot = await db.collection('tareas')
-            .where('grupoId', '==', grupoId)
-            .orderBy('fechaLimite', 'desc')
-            .get();
-
-        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const { data, error } = await supabase
+            .schema('iafe')
+            .from('tareas')
+            .select('*')
+            .eq('grupoId', grupoId)
+            .order('fechaLimite', { ascending: false });
+        if (error) throw error;
+        return (data || []).map(row => ({ id: row.id, ...row }));
     } catch (error) {
         console.error('Error al obtener tareas por grupo:', error);
         return [];
     }
 }
 
-/**
- * Crear nueva tarea
- */
 async function createTask(taskData) {
-    if (!db) throw new Error('Firebase no está inicializado');
-
     try {
-        const data = {
+        const row = {
             titulo: taskData.titulo,
             descripcion: taskData.descripcion || '',
             grupoId: taskData.grupoId,
             docenteId: taskData.docenteId,
             fechaLimite: taskData.fechaLimite,
-            fechaCreacion: firebase.firestore.FieldValue.serverTimestamp()
+            fechaCreacion: new Date().toISOString()
         };
-
-        const docRef = await db.collection('tareas').add(data);
-        console.info('✅ Tarea creada:', docRef.id);
-        return { id: docRef.id, ...data };
+        const { data, error } = await supabase
+            .schema('iafe')
+            .from('tareas')
+            .insert(row)
+            .select()
+            .single();
+        if (error) throw error;
+        console.info('✅ Tarea creada:', data.id);
+        return { id: data.id, ...row };
     } catch (error) {
         console.error('Error al crear tarea:', error);
         throw error;
@@ -335,38 +280,41 @@ async function createTask(taskData) {
 // FUNCIONES DE CALIFICACIONES
 // ==========================================
 
-/**
- * Obtener calificaciones de un estudiante
- */
 async function getStudentGrades(studentId) {
-    if (!db) return null;
     try {
-        const snapshot = await db.collection('calificaciones')
-            .where('estudianteId', '==', studentId)
-            .get();
-
-        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const { data, error } = await supabase
+            .schema('iafe')
+            .from('calificaciones')
+            .select('*')
+            .eq('estudianteId', studentId);
+        if (error) throw error;
+        return (data || []).map(row => ({ id: row.id, ...row }));
     } catch (error) {
         console.error('Error al obtener calificaciones:', error);
         return [];
     }
 }
 
-/**
- * Guardar/actualizar calificación
- */
 async function saveGrade(gradeData) {
-    if (!db) throw new Error('Firebase no está inicializado');
-
     try {
         if (gradeData.id) {
-            // Actualizar existente
-            await db.collection('calificaciones').doc(gradeData.id).update(gradeData);
+            const { id, ...rest } = gradeData;
+            const { error } = await supabase
+                .schema('iafe')
+                .from('calificaciones')
+                .update(rest)
+                .eq('id', id);
+            if (error) throw error;
             return { ...gradeData };
         } else {
-            // Crear nueva
-            const docRef = await db.collection('calificaciones').add(gradeData);
-            return { id: docRef.id, ...gradeData };
+            const { data, error } = await supabase
+                .schema('iafe')
+                .from('calificaciones')
+                .insert(gradeData)
+                .select()
+                .single();
+            if (error) throw error;
+            return { id: data.id, ...data };
         }
     } catch (error) {
         console.error('Error al guardar calificación:', error);
@@ -378,68 +326,64 @@ async function saveGrade(gradeData) {
 // FUNCIONES DE MENSAJES (CHAT)
 // ==========================================
 
-/**
- * Obtener mensajes de un grupo
- */
 async function getGroupMessages(grupoId, limit = 50) {
-    if (!db) return [];
     try {
-        const snapshot = await db.collection('mensajes')
-            .where('grupoId', '==', grupoId)
-            .where('esPrivado', '==', false)
-            .orderBy('timestamp', 'desc')
-            .limit(limit)
-            .get();
-
-        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).reverse();
+        const { data, error } = await supabase
+            .schema('iafe')
+            .from('mensajes')
+            .select('*')
+            .eq('grupoId', grupoId)
+            .eq('esPrivado', false)
+            .order('timestamp', { ascending: false })
+            .limit(limit);
+        if (error) throw error;
+        return (data || []).map(row => ({ id: row.id, ...row })).reverse();
     } catch (error) {
         console.error('Error al obtener mensajes:', error);
         return [];
     }
 }
 
-/**
- * Enviar mensaje
- */
 async function sendMessage(messageData) {
-    if (!db) throw new Error('Firebase no está inicializado');
-
     try {
-        const data = {
+        const row = {
             grupoId: messageData.grupoId,
             usuarioId: messageData.usuarioId,
             nombreUsuario: messageData.nombreUsuario,
             texto: messageData.texto,
             esPrivado: messageData.esPrivado || false,
             destinatarioId: messageData.destinatarioId || null,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            timestamp: new Date().toISOString()
         };
-
-        const docRef = await db.collection('mensajes').add(data);
-        return { id: docRef.id, ...data };
+        const { data, error } = await supabase
+            .schema('iafe')
+            .from('mensajes')
+            .insert(row)
+            .select()
+            .single();
+        if (error) throw error;
+        return { id: data.id, ...row };
     } catch (error) {
         console.error('Error al enviar mensaje:', error);
         throw error;
     }
 }
 
-/**
- * Escuchar mensajes en tiempo real
- */
 function subscribeToMessages(grupoId, callback) {
-    if (!db) return () => { };
-
-    return db.collection('mensajes')
-        .where('grupoId', '==', grupoId)
-        .where('esPrivado', '==', false)
-        .orderBy('timestamp', 'desc')
-        .limit(100)
-        .onSnapshot(snapshot => {
-            const messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).reverse();
-            callback(messages);
-        }, error => {
-            console.error('Error en suscripción de mensajes:', error);
-        });
+    // Suscripción en tiempo real vía Supabase Realtime
+    const channel = supabase
+        .channel(`iafe-mensajes-${grupoId}`)
+        .on('postgres_changes', {
+            event: 'INSERT',
+            schema: 'iafe',
+            table: 'mensajes',
+            filter: `grupoId=eq.${grupoId}`
+        }, payload => {
+            const msg = { id: payload.new.id, ...payload.new };
+            callback([msg]);
+        })
+        .subscribe();
+    return () => supabase.removeChannel(channel);
 }
 
 // ==========================================
@@ -447,7 +391,6 @@ function subscribeToMessages(grupoId, callback) {
 // ==========================================
 
 window.initializeFirebaseApp = initializeFirebaseApp;
-window.firebaseConfig = firebaseConfig;
 
 // Funciones de usuarios
 window.getUserById = getUserById;

@@ -41,15 +41,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Scroll Effect
     let lastScrollY = window.scrollY;
     let separatorOffset = 0;
-    
-    window.addEventListener('scroll', () => {
+
+    function handleScroll() {
         const currentScrollY = window.scrollY;
-        
+
         if (currentScrollY > 50) {
-            navbar.classList.add('scrolled');
+            if (navbar) navbar.classList.add('scrolled');
             document.body.classList.add('scrolled');
         } else {
-            navbar.classList.remove('scrolled');
+            if (navbar) navbar.classList.remove('scrolled');
             document.body.classList.remove('scrolled');
         }
         
@@ -77,7 +77,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         lastScrollY = currentScrollY;
-    }, { passive: true });
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
 
     if (mobileMenuBtn && navLinks) {
         // Toggle menu on button click

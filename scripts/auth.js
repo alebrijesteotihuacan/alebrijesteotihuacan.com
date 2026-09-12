@@ -83,13 +83,11 @@ export function getCurrentUser() {
 // Get user role (jugador, profesor, or admin)
 export async function getUserRole(userId) {
     try {
-        console.log('[getUserRole] userId=', userId);
         const { data: profData, error: profError } = await supabase
             .from('profesores')
             .select('rol')
             .eq('id', userId)
             .maybeSingle();
-        console.log('[getUserRole] profesores ->', { profData, profError });
 
         if (profData) {
             if (profData.rol === 'admin') {
@@ -103,7 +101,6 @@ export async function getUserRole(userId) {
             .select('id')
             .eq('id', userId)
             .maybeSingle();
-        console.log('[getUserRole] jugadores ->', { playerData, playerError });
 
         if (playerData) {
             return 'jugador';

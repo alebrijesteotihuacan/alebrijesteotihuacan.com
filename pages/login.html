@@ -361,7 +361,7 @@
         // Check if user is already logged in
         checkAuthState(async (user) => {
             if (user) {
-                const role = await getUserRole(user.uid);
+                const role = await getUserRole(user.id);
                 console.log('[login.html checkAuthState] role=', role);
                 if (role === 'admin') {
                     window.location.href = 'panel-admin.html';
@@ -502,7 +502,7 @@
 
             if (result.success) {
                 // Verify role
-                const role = await getUserRole(result.user.uid);
+                const role = await getUserRole(result.user.id);
                 console.log('[login.html loginFormProf] role=', role);
 
                 if (role === 'admin') {

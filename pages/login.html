@@ -362,6 +362,7 @@
         checkAuthState(async (user) => {
             if (user) {
                 const role = await getUserRole(user.uid);
+                console.log('[login.html checkAuthState] role=', role);
                 if (role === 'admin') {
                     window.location.href = 'panel-admin.html';
                 } else if (role === 'profesor') {
@@ -497,10 +498,12 @@
             }
 
             const result = await handleLogin(email, password);
+            console.log('[login.html loginFormProf] handleLogin result=', result);
 
             if (result.success) {
                 // Verify role
                 const role = await getUserRole(result.user.uid);
+                console.log('[login.html loginFormProf] role=', role);
 
                 if (role === 'admin') {
                     showSuccessProf('¡Acceso de administrador! Redirigiendo...');

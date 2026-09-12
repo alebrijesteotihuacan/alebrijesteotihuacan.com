@@ -327,7 +327,7 @@
     <script src="../scripts/script.js"></script>
     <script type="module" src="../scripts/nav-auth.js"></script>
     <script type="module">
-        import { handleLogin, handlePasswordReset, checkAuthState, getUserRole } from '../scripts/auth.js';
+        import { handleLogin, handlePasswordReset, checkAuthState, getUserRole, supabase } from '../scripts/auth.js';
 
         // Tab switching
         const tabs = document.querySelectorAll('.login-tab');
@@ -452,18 +452,6 @@
         const usernameProf = document.getElementById('usernameProf');
         const passwordProf = document.getElementById('passwordProf');
 
-        const PROFESOR_EMAILS = {
-            'juan': 'juan@alebrijes.com',
-            'abimael': 'abimael@alebrijes.com',
-            'lalo': 'lalo@alebrijes.com',
-            'ricardo': 'ricardo@alebrijes.com',
-            'hector': 'hector@alebrijes.com',
-            'oswaldo': 'oswaldo@alebrijes.com',
-            'emilio': 'emilio@alebrijes.com',
-            'ramiro': 'ramiro@alebrijes.com',
-            'arturo': 'arturotejeda@alebrijes.club'
-        };
-
         function showErrorProf(message) {
             errorMessageProf.textContent = message;
             loginErrorProf.classList.add('show');
@@ -485,7 +473,7 @@
             e.preventDefault();
             hideMessagesProf();
 
-            const username = usernameProf.value.trim().toLowerCase();
+            const username = usernameProf.value.trim();
             const password = passwordProf.value;
 
             if (!username || !password) {
@@ -493,15 +481,20 @@
                 return;
             }
 
-            // Resolve email from username
-            const email = PROFESOR_EMAILS[username];
-            if (!email) {
-                showErrorProf('Usuario no reconocido. Verifica tu nombre de usuario.');
-                return;
-            }
-
             loginBtnProf.disabled = true;
             loginBtnProf.innerHTML = '<span>Verificando...</span>';
+
+            // Resolve email from username via RPC
+            const { data: email, error: rpcError } = await supabase.rpc('get_email_for_username', {
+                p_username: username
+            });
+
+            if (rpcError || !email) {
+                showErrorProf('Usuario no reconocido. Verifica tu nombre de usuario.');
+                loginBtnProf.disabled = false;
+                loginBtnProf.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg> Acceder al Panel`;
+                return;
+            }
 
             const result = await handleLogin(email, password);
 

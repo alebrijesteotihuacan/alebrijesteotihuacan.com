@@ -3238,7 +3238,7 @@ footer {
 
 .next-match-title {
     font-family: 'Anton', sans-serif;
-    font-size: clamp(1.5rem, 2.8vw, 1.95rem);
+    font-size: clamp(1.4rem, 2.6vw, 1.8rem);
     font-weight: 400;
     letter-spacing: 1px;
     color: #1A1A1A;

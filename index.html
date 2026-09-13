@@ -40,13 +40,14 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Anton&family=Bowlby+One+SC&family=Bungee&family=Montserrat:wght@300;400;600;700;900&display=swap"
         rel="stylesheet">
 
     <!-- Main Styles -->
-    <link rel="stylesheet" href="styles/styles.css?v=5">
+    <link rel="stylesheet" href="styles/styles.css?v=6">
     <!-- Noticias Styles for Separator -->
-    <link rel="stylesheet" href="styles/noticias.css?v=5">
+    <link rel="stylesheet" href="styles/noticias.css?v=6">
 </head>
 
 <body>
@@ -159,37 +160,151 @@
 
     <!-- Próximo Partido Section -->
     <section class="next-match-section" id="liga-tdp">
+        <div class="next-match-bg-grecas" aria-hidden="true"></div>
         <div class="container">
-            <h2 class="next-match-title">PRÓXIMO PARTIDO</h2>
-            <div class="next-match-card">
-                <div class="next-match-meta">
-                    <span class="next-match-temporada">TEMPORADA 2026-2027, LIGA , JORNADA 3</span>
-                    <span class="next-match-fecha">Domingo, 20 de Septiembre de 2026, 17:00 HRS.</span>
+            <div class="next-match-banner">
+                <div class="next-match-zigzag-zigzag" aria-hidden="true">
+                    <svg viewBox="0 0 1200 24" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0,24 L0,0 L20,12 L40,0 L60,12 L80,0 L100,12 L120,0 L140,12 L160,0 L180,12 L200,0 L220,12 L240,0 L260,12 L280,0 L300,12 L320,0 L340,12 L360,0 L380,12 L400,0 L420,12 L440,0 L460,12 L480,0 L500,12 L520,0 L540,12 L560,0 L580,12 L600,0 L620,12 L640,0 L660,12 L680,0 L700,12 L720,0 L740,12 L760,0 L780,12 L800,0 L820,12 L840,0 L860,12 L880,0 L900,12 L920,0 L940,12 L960,0 L980,12 L1000,0 L1020,12 L1040,0 L1060,12 L1080,0 L1100,12 L1120,0 L1140,12 L1160,0 L1180,12 L1200,0 L1200,24 Z" fill="#F26A21"/>
+                    </svg>
                 </div>
-                <div class="next-match-estadio">
-                    <span class="next-match-estadio-label">ESTADIO:</span>
-                    <span class="next-match-estadio-name">TAMAULIPAS</span>
+                <div class="next-match-banner-inner">
+                    <span class="next-match-eyebrow">
+                        <span class="eyebrow-dot"></span>
+                        Temporada 2026–2027 · Grupo 9 · Liga TDP
+                    </span>
+                    <h2 class="next-match-title">
+                        <span class="title-line title-line--1">PRÓXIMO</span>
+                        <span class="title-line title-line--2">PARTIDO</span>
+                    </h2>
                 </div>
+                <div class="next-match-zigzag-zigzag next-match-zigzag-zigzag--bottom" aria-hidden="true">
+                    <svg viewBox="0 0 1200 24" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0,0 L0,24 L20,12 L40,24 L60,12 L80,24 L100,12 L120,24 L140,12 L160,24 L180,12 L200,24 L220,12 L240,24 L260,12 L280,24 L300,12 L320,24 L340,12 L360,24 L380,12 L400,24 L420,12 L440,24 L460,12 L480,24 L500,12 L520,24 L540,12 L560,24 L580,12 L600,24 L620,12 L640,24 L660,12 L680,24 L700,12 L720,24 L740,12 L760,24 L780,12 L800,24 L820,12 L840,24 L860,12 L880,24 L900,12 L920,24 L940,12 L960,24 L980,12 L1000,24 L1020,12 L1040,24 L1060,12 L1080,24 L1100,12 L1120,24 L1140,12 L1160,24 L1180,12 L1200,24 L1200,0 Z" fill="#5D2A8C"/>
+                    </svg>
+                </div>
+            </div>
+
+            <article class="next-match-card">
+                <div class="next-match-greca-strip" aria-hidden="true">
+                    <svg viewBox="0 0 1200 16" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                        <pattern id="greca-alebrije" x="0" y="0" width="48" height="16" patternUnits="userSpaceOnUse">
+                            <path d="M0,16 L8,0 L16,16 L24,0 L32,16 L40,0 L48,16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="miter"/>
+                        </pattern>
+                        <rect width="1200" height="16" fill="url(#greca-alebrije)"/>
+                    </svg>
+                </div>
+
+                <div class="next-match-card-header">
+                    <div class="next-match-jornada-badge" aria-label="Jornada 3">
+                        <span class="jornada-pre">JORNADA</span>
+                        <span class="jornada-num">03</span>
+                    </div>
+                    <div class="next-match-date-block">
+                        <div class="date-row">
+                            <span class="date-day">DOM</span>
+                            <span class="date-num">20</span>
+                            <span class="date-month">SEP</span>
+                        </div>
+                        <div class="date-time">
+                            <svg class="clock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <circle cx="12" cy="12" r="9"></circle>
+                                <polyline points="12 7 12 12 16 14"></polyline>
+                            </svg>
+                            <span>17:00 HRS</span>
+                        </div>
+                    </div>
+                    <div class="next-match-status-badge">
+                        <span class="status-pulse"></span>
+                        <span class="status-text">SIN INICIAR</span>
+                    </div>
+                </div>
+
                 <div class="next-match-board">
-                    <div class="team-block team-block--left">
-                        <span class="team-name">JAIBA BRAVA</span>
-                        <div class="team-parallelogram team-parallelogram--left" data-team-id="14366">
+                    <div class="team-block team-block--away">
+                        <div class="team-crest-wrap" data-team-id="14366">
+                            <div class="team-crest-ring team-crest-ring--away"></div>
                             <img src="assets/EquiposGrupo9_LigaTDP/JaibaBrava.png" alt="Jaiba Brava" class="team-logo">
                         </div>
+                        <div class="team-info team-info--left">
+                            <span class="team-tag team-tag--away">VISITANTE</span>
+                            <h3 class="team-name">JAIBA<br>BRAVA</h3>
+                            <span class="team-sub">Tampico, Tamps.</span>
+                        </div>
                     </div>
-                    <div class="match-center">
-                        <div class="match-score">- - -</div>
-                        <div class="match-status">SIN INICIAR</div>
+
+                    <div class="vs-block" aria-hidden="true">
+                        <svg class="vs-star vs-star--tl" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 1 L14.4 8.6 L22.4 9.2 L16 14.4 L18 22 L12 17.6 L6 22 L8 14.4 L1.6 9.2 L9.6 8.6 Z" fill="#5D2A8C"/>
+                        </svg>
+                        <svg class="vs-star vs-star--tr" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 1 L14.4 8.6 L22.4 9.2 L16 14.4 L18 22 L12 17.6 L6 22 L8 14.4 L1.6 9.2 L9.6 8.6 Z" fill="#00C9B7"/>
+                        </svg>
+                        <svg class="vs-star vs-star--bl" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 1 L14.4 8.6 L22.4 9.2 L16 14.4 L18 22 L12 17.6 L6 22 L8 14.4 L1.6 9.2 L9.6 8.6 Z" fill="#FFD600"/>
+                        </svg>
+                        <svg class="vs-star vs-star--br" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 1 L14.4 8.6 L22.4 9.2 L16 14.4 L18 22 L12 17.6 L6 22 L8 14.4 L1.6 9.2 L9.6 8.6 Z" fill="#F26A21"/>
+                        </svg>
+                        <div class="vs-text">VS</div>
+                        <div class="vs-ball" aria-hidden="true">
+                            <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="16" cy="16" r="14" fill="#1A0E2E"/>
+                                <polygon points="16,4 22,9 20,16 12,16 10,9" fill="#FFF6E5"/>
+                                <polygon points="22,9 28,12 26,18 20,16" fill="#FFF6E5"/>
+                                <polygon points="10,9 4,12 6,18 12,16" fill="#FFF6E5"/>
+                                <polygon points="12,16 20,16 22,22 16,25 10,22" fill="#FFF6E5"/>
+                                <polygon points="10,22 6,18 4,24 8,27" fill="#FFF6E5"/>
+                                <polygon points="22,22 26,18 28,24 24,27" fill="#FFF6E5"/>
+                            </svg>
+                        </div>
                     </div>
-                    <div class="team-block team-block--right">
-                        <div class="team-parallelogram team-parallelogram--right" data-team-id="12621">
+
+                    <div class="team-block team-block--home">
+                        <div class="team-info team-info--right">
+                            <span class="team-tag team-tag--home">LOCAL</span>
+                            <h3 class="team-name">ALEBRIJES<br>TEOTIHUACÁN</h3>
+                            <span class="team-sub">Teotihuacán, Méx.</span>
+                        </div>
+                        <div class="team-crest-wrap" data-team-id="12621">
+                            <div class="team-crest-ring team-crest-ring--home"></div>
                             <img src="assets/EquiposGrupo9_LigaTDP/AlebrijesTeotihuacán.png" alt="Alebrijes Teotihuacán" class="team-logo">
                         </div>
-                        <span class="team-name">ALEBRIJES TEOTIHUACÁN</span>
                     </div>
                 </div>
-                <a href="pages/calendario.html" class="next-match-footer">Ver Calendario Completo</a>
-            </div>
+
+                <div class="next-match-card-footer">
+                    <div class="estadio-info">
+                        <div class="estadio-icon" aria-hidden="true">
+                            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 12 Q16 4 28 12 L28 22 Q28 26 24 26 L8 26 Q4 26 4 22 Z"/>
+                                <line x1="4" y1="20" x2="28" y2="20"/>
+                                <line x1="9" y1="12" x2="9" y2="26"/>
+                                <line x1="16" y1="8" x2="16" y2="26"/>
+                                <line x1="23" y1="12" x2="23" y2="26"/>
+                            </svg>
+                        </div>
+                        <div class="estadio-text">
+                            <span class="estadio-label">ESTADIO</span>
+                            <span class="estadio-name">TAMAULIPAS</span>
+                        </div>
+                    </div>
+
+                    <a href="pages/calendario.html" class="next-match-cta">
+                        <span class="cta-stub cta-stub--l" aria-hidden="true"></span>
+                        <span class="cta-content">
+                            <span class="cta-text">Ver Calendario Completo</span>
+                            <span class="cta-arrow" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                    <polyline points="13 6 19 12 13 18"/>
+                                </svg>
+                            </span>
+                        </span>
+                        <span class="cta-stub cta-stub--r" aria-hidden="true"></span>
+                    </a>
+                </div>
+            </article>
         </div>
     </section>
     <!-- Latest Results Carousel -->

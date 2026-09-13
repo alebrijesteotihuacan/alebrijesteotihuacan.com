@@ -593,36 +593,8 @@ ul {
     gap: 15px;
 }
 
-/* Next Match Section (Compact) */
-.next-match-section {
-    position: relative;
-    z-index: 10;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-
-.next-match-title {
-    text-align: center;
-    font-size: 2rem;
-    font-weight: 900;
-    margin-bottom: 30px;
-    color: var(--black);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-}
-
-.match-card.compact {
-    background: var(--white);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    overflow: hidden;
-    position: relative;
-    max-width: 850px;
-    /* Reduced width */
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-}
+/* Next Match Section (Compact) — legacy styles removed,
+   see the institutional definition further down in the file */
 
 /* Alebrije Jersey Divider */
 .alebrije-divider {

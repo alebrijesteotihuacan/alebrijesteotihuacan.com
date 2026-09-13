@@ -76,8 +76,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Archivos de la plantilla actual de Liga TDP.
         // Formato: Name_Position_Number.jpg  | DT: Name_DirectorTecnico.jpg
-        const FOLDER_ALEBRIJES = 'PlantillaAlebrijesTeotihuacanLigaTDP';
-        const FOLDER_SOLES     = 'PlantillaSolesTeotihuacanLigaTDP';
+        const FOLDER_ALEBRIJES      = 'PlantillaAlebrijesTeotihuacanLigaTDP';
+        const FOLDER_SOLES          = 'PlantillaSolesTeotihuacanLigaTDP';
+        const FOLDER_ALEBRIJES_SUB16 = 'PlantillaAlebrijesTeotihuacanSub-16_TDP';
 
         const playerFilesAlebrijes = [
             // Director Técnico
@@ -169,6 +170,41 @@ document.addEventListener('DOMContentLoaded', () => {
             'Gerardo_Antonio_Roman_Tellez_Delantero_32.jpg'
         ];
 
+        const playerFilesAlebrijesSub16 = [
+            // Director Técnico
+            'Derk_Alexandro_Reyes_Rosas_DirectorTecnico.jpg',
+
+            // Porteros
+            'Anker_Matias_Paez_Ramirez_Portero_811.jpg',
+            'Adriel_Fernando_Camacho_Ramirez_Portero_812.jpg',
+            'Julio_Antonio_Alonso_Santos_Portero_813.jpg',
+            'Uriel_Urieta_Robles_Portero_821.jpg',
+
+            // Defensas
+            'Marco_Eliel_Arenas_Trejo_Defensa_802.jpg',
+            'Axel_Antonio_Vazquez_Estrada_Defensa_804.jpg',
+            'Roberto_Adair_Perez_Arana_Defensa_805.jpg',
+            'Derek_Jesus_Hernandez_Licea_Defensa_806.jpg',
+            'Bruno_Arroyo_Sanchez_Defensa_814.jpg',
+            'Leonardo_Briones_Duran_Defensa_817.jpg',
+
+            // Mediocampistas
+            'Diego_Miguel_Rosas_Romero_Medio_801.jpg',
+            'Kevin_Damian_Alvarado_Montiel_Medio_803.jpg',
+            'Juan_Carlos_Maravilla_Maldonado_Medio_808.jpg',
+            'Dejan_Kaled_Ramirez_Quijano_Medio_810.jpg',
+            'Emiliano_Rodriguez_Hernandez_Medio_815.jpg',
+            'Javier_Lopez_Balderas_Medio_816.jpg',
+            'Justin_Anderson_Aguilar_Hernandez_Medio_822.jpg',
+
+            // Delanteros
+            'Iker_Damian_Ortega_Villegas_Delantero_807.jpg',
+            'Ian_Garcia_Ramos_Delantero_809.jpg',
+            'Sergio_Jatniel_Hernandez_Hernandez_Delantero_818.jpg',
+            'Mateo_Ezequiel_Moreno_Gil_Delantero_819.jpg',
+            'Gerardo_Daniel_Morales_Vargas_Delantero_820.jpg'
+        ];
+
         // Parser: nombre + posición + número desde el filename.
         // Recibe la carpeta para construir la ruta correcta de la imagen.
         const parsePlayerFromFilename = (filename, folder) => {
@@ -220,10 +256,11 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         };
 
-        const alebrijesTdp = playerFilesAlebrijes.map(f => parsePlayerFromFilename(f, FOLDER_ALEBRIJES));
-        const solesTdp     = playerFilesSoles.map(f     => parsePlayerFromFilename(f, FOLDER_SOLES));
+        const alebrijesTdp      = playerFilesAlebrijes.map(f      => parsePlayerFromFilename(f, FOLDER_ALEBRIJES));
+        const solesTdp          = playerFilesSoles.map(f          => parsePlayerFromFilename(f, FOLDER_SOLES));
+        const alebrijesSub16    = playerFilesAlebrijesSub16.map(f => parsePlayerFromFilename(f, FOLDER_ALEBRIJES_SUB16));
 
-        // 4 categorías. Las Sub-16 se llenan cuando se tengan los datos.
+        // 4 categorías. Soles Sub-16 se llena cuando se tengan los datos.
         const teams = {
             'alebrijes-tdp': {
                 name: 'Alebrijes TDP',
@@ -241,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 name: 'Alebrijes Sub-16',
                 fullName: 'Alebrijes Teotihuacán · Sub-16',
                 accent: 'orange',
-                players: []
+                players: alebrijesSub16
             },
             'soles-sub16': {
                 name: 'Soles Sub-16',

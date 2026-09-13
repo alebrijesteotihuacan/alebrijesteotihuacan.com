@@ -661,8 +661,22 @@ ul {
    ============================================================ */
 
 .results-section {
+    position: relative;
     padding: 40px 0;
     background: #FAFAFA;
+}
+
+/* Separador sutil entre Próximo Partido y Últimos Resultados:
+   hairline centrado con degradado a los extremos (estilo editorial) */
+.results-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(60%, 600px);
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, #C8C8C8 50%, transparent 100%);
 }
 
 /* Carrusel */
@@ -3204,7 +3218,7 @@ footer {
 
 .next-match-card {
     position: relative;
-    max-width: 880px;
+    max-width: 920px;
     margin: 0 auto;
     background: #FFFFFF;
     border: 1px solid #ECECEC;

@@ -656,7 +656,7 @@ ul {
     display: flex;
     align-items: center;
     gap: 14px;
-    max-width: 1020px;
+    max-width: 968px;
     margin: 0 auto;
 }
 
@@ -3190,7 +3190,7 @@ footer {
 
 .next-match-card {
     position: relative;
-    max-width: 920px;
+    max-width: 874px;
     margin: 0 auto;
     background: #FFFFFF;
     border: 1px solid #ECECEC;

@@ -3007,729 +3007,318 @@ footer {
 }
 
 /* ============================================================
-   Next Match — "Mural de Estadio" (Jornada 3 - Temporada 2026-2027)
-   Alebrijes Teotihuacán · Estética alebrije oaxaqueño + cartel de fútbol
+   Next Match — Sobrio / Institucional (Jornada 3 - Temporada 2026-2027)
+   Sin animaciones. Sin decoraciones folclóricas. Paleta restringida.
    ============================================================ */
 
-:root {
-    --nm-orange: #F26A21;
-    --nm-orange-light: #FF9A3C;
-    --nm-purple: #5D2A8C;
-    --nm-purple-deep: #2A0E47;
-    --nm-teal: #00C9B7;
-    --nm-teal-dark: #007E73;
-    --nm-cream: #FFF6E5;
-    --nm-cream-deep: #FBE7C6;
-    --nm-ink: #1A0E2E;
-    --nm-sun: #FFD600;
-    --nm-coral: #E63946;
-}
-
 .next-match-section {
-    position: relative;
-    padding: 60px 0 80px;
-    overflow: hidden;
-    background:
-        radial-gradient(ellipse at 20% 0%, rgba(93, 42, 140, 0.06) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 100%, rgba(242, 106, 33, 0.06) 0%, transparent 50%),
-        linear-gradient(180deg, #FBE7C6 0%, #FFF6E5 60%, #FBE7C6 100%);
-    isolation: isolate;
+    padding: 64px 0 80px;
+    background: #FAFAFA;
 }
 
-.next-match-bg-grecas {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    opacity: 0.18;
-    pointer-events: none;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'><g fill='none' stroke='%235D2A8C' stroke-width='2' stroke-linejoin='miter'><path d='M0 40 L10 20 L20 40 L30 20 L40 40 L50 20 L60 40 L70 20 L80 40'/><path d='M0 60 L10 40 L20 60 L30 40 L40 60 L50 40 L60 60 L70 40 L80 60'/><circle cx='20' cy='10' r='2'/><circle cx='60' cy='10' r='2'/><circle cx='20' cy='70' r='2'/><circle cx='60' cy='70' r='2'/></g></svg>");
-    background-size: 160px 160px;
-    background-repeat: repeat;
-}
-
-/* Banner superior con título "PRÓXIMO PARTIDO" */
-.next-match-banner {
-    position: relative;
-    max-width: 1000px;
-    margin: 0 auto 36px;
-    padding: 0;
-}
-
-.next-match-zigzag-zigzag {
-    line-height: 0;
-    height: 24px;
-    overflow: hidden;
-    position: relative;
-    z-index: 2;
-}
-.next-match-zigzag-zigzag svg {
-    display: block;
-    width: 100%;
-    height: 100%;
-}
-.next-match-zigzag-zigzag--bottom {
-    margin-top: -1px;
-}
-
-.next-match-banner-inner {
-    background: linear-gradient(135deg, var(--nm-purple-deep) 0%, var(--nm-purple) 60%, var(--nm-orange) 130%);
-    color: var(--nm-cream);
-    padding: 36px 24px 44px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-}
-
-.next-match-banner-inner::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'><path d='M0 20 L5 10 L10 20 L15 10 L20 20 L25 10 L30 20 L35 10 L40 20' fill='none' stroke='%23ffffff' stroke-width='1' opacity='0.07'/></svg>");
-    background-size: 80px 40px;
-    pointer-events: none;
-}
-
-.next-match-eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--nm-sun);
-    background: rgba(0, 0, 0, 0.25);
-    border: 1px solid rgba(255, 214, 0, 0.4);
-    padding: 6px 18px;
-    border-radius: 50px;
-    margin-bottom: 18px;
-    position: relative;
-    z-index: 1;
-}
-.eyebrow-dot {
-    width: 8px;
-    height: 8px;
-    background: var(--nm-sun);
-    border-radius: 50%;
-    box-shadow: 0 0 0 4px rgba(255, 214, 0, 0.25);
-    animation: nm-pulse 1.6s ease-in-out infinite;
-}
-@keyframes nm-pulse {
-    0%, 100% { transform: scale(1); box-shadow: 0 0 0 4px rgba(255, 214, 0, 0.25); }
-    50% { transform: scale(1.2); box-shadow: 0 0 0 8px rgba(255, 214, 0, 0); }
-}
-
-.next-match-title {
-    font-family: 'Bowlby One SC', sans-serif;
-    font-size: clamp(2.5rem, 6.5vw, 4.5rem);
-    line-height: 0.95;
-    margin: 0;
-    letter-spacing: 2px;
-    color: var(--nm-cream);
-    text-shadow: 0 4px 0 var(--nm-purple-deep), 0 6px 24px rgba(0, 0, 0, 0.4);
-    position: relative;
-    z-index: 1;
-}
-.title-line {
-    display: block;
-}
-.title-line--1 {
-    color: var(--nm-cream);
-}
-.title-line--2 {
-    color: var(--nm-sun);
-    margin-top: 4px;
-    transform: translateX(6px);
-}
-
-/* Card principal */
 .next-match-card {
     position: relative;
     max-width: 1000px;
     margin: 0 auto;
-    background:
-        linear-gradient(180deg, #ffffff 0%, #FFF6E5 100%);
-    border-radius: 24px;
-    box-shadow:
-        0 30px 80px -20px rgba(42, 14, 71, 0.35),
-        0 10px 30px -10px rgba(242, 106, 33, 0.25),
-        0 0 0 1px rgba(42, 14, 71, 0.06);
+    background: #FFFFFF;
+    border: 1px solid #ECECEC;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 12px 32px -16px rgba(0, 0, 0, 0.08);
     overflow: hidden;
-    isolation: isolate;
 }
 
-/* Tira superior con grecas prehispánicas */
-.next-match-greca-strip {
-    height: 16px;
-    color: var(--nm-orange);
-    background: var(--nm-purple-deep);
-    position: relative;
-    z-index: 1;
-}
-.next-match-greca-strip svg {
-    display: block;
-    width: 100%;
-    height: 100%;
+/* Único detalle creativo: barra de gradiente naranja → púrpura */
+.next-match-accent {
+    height: 4px;
+    background: linear-gradient(90deg, #F26A21 0%, #5D2A8C 100%);
 }
 
-/* Header: badge jornada + fecha + status */
-.next-match-card-header {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: 24px;
-    padding: 28px 32px 22px;
-    background:
-        linear-gradient(180deg, rgba(242, 106, 33, 0.06) 0%, transparent 100%);
-    border-bottom: 2px dashed rgba(93, 42, 140, 0.18);
-}
-
-/* Badge circular de jornada (patch de camisa) */
-.next-match-jornada-badge {
-    position: relative;
-    width: 88px;
-    height: 88px;
-    background: var(--nm-orange);
-    color: var(--nm-cream);
-    border-radius: 50%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    box-shadow:
-        0 0 0 4px var(--nm-cream),
-        0 0 0 6px var(--nm-orange),
-        0 8px 20px rgba(242, 106, 33, 0.4);
-    transform: rotate(-8deg);
-    flex-shrink: 0;
-}
-.jornada-pre {
-    font-family: 'Anton', sans-serif;
-    font-size: 0.7rem;
-    letter-spacing: 1.5px;
-    color: var(--nm-cream);
-    line-height: 1;
-    margin-bottom: 2px;
-}
-.jornada-num {
-    font-family: 'Bowlby One SC', sans-serif;
-    font-size: 2rem;
-    line-height: 1;
-    color: var(--nm-cream);
-    text-shadow: 0 2px 0 var(--nm-purple-deep);
-}
-
-/* Bloque fecha central */
-.next-match-date-block {
+.next-match-header {
+    padding: 40px 48px 32px;
     text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
+    border-bottom: 1px solid #ECECEC;
 }
-.date-row {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    color: var(--nm-ink);
+
+.next-match-eyebrow {
+    display: block;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 12px;
 }
-.date-day {
+
+.next-match-title {
     font-family: 'Anton', sans-serif;
-    font-size: 1.6rem;
-    letter-spacing: 4px;
-    color: var(--nm-purple);
-    line-height: 1;
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    font-weight: 400;
+    letter-spacing: 1px;
+    color: #1A1A1A;
+    margin: 0 0 4px;
+    text-transform: uppercase;
+    line-height: 1.1;
 }
-.date-num {
-    font-family: 'Bowlby One SC', sans-serif;
-    font-size: 3.2rem;
-    line-height: 0.9;
-    color: var(--nm-orange);
-    text-shadow: 0 3px 0 var(--nm-purple-deep);
-    letter-spacing: -1px;
-}
-.date-month {
-    font-family: 'Anton', sans-serif;
-    font-size: 1.6rem;
-    letter-spacing: 3px;
-    color: var(--nm-purple);
-    line-height: 1;
-}
-.date-time {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+
+.next-match-subtitle {
+    display: block;
     font-family: 'Anton', sans-serif;
     font-size: 0.95rem;
-    letter-spacing: 2px;
-    color: var(--nm-teal-dark);
-    background: rgba(0, 201, 183, 0.1);
-    padding: 4px 12px;
-    border-radius: 20px;
-    border: 1px dashed rgba(0, 126, 115, 0.4);
-    margin-top: 4px;
-}
-.clock-icon {
-    width: 14px;
-    height: 14px;
+    font-weight: 400;
+    letter-spacing: 2.5px;
+    color: #F26A21;
+    text-transform: uppercase;
 }
 
-/* Status badge "SIN INICIAR" */
-.next-match-status-badge {
-    display: inline-flex;
+.next-match-meta {
+    display: flex;
     align-items: center;
-    gap: 8px;
-    background: var(--nm-ink);
-    color: var(--nm-sun);
-    padding: 10px 16px;
-    border-radius: 30px;
-    font-family: 'Bungee', sans-serif;
-    font-size: 0.78rem;
-    letter-spacing: 1.5px;
-    box-shadow: 0 4px 12px rgba(26, 14, 46, 0.3);
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 36px;
+    padding: 22px 48px;
+    background: #FAFAFA;
+    border-bottom: 1px solid #ECECEC;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.meta-icon {
+    width: 18px;
+    height: 18px;
+    color: #F26A21;
     flex-shrink: 0;
 }
-.status-pulse {
-    width: 10px;
-    height: 10px;
-    background: var(--nm-sun);
-    border-radius: 50%;
-    box-shadow: 0 0 0 0 rgba(255, 214, 0, 0.6);
-    animation: status-pulse 1.8s infinite;
-}
-@keyframes status-pulse {
-    0% { box-shadow: 0 0 0 0 rgba(255, 214, 0, 0.7); }
-    70% { box-shadow: 0 0 0 12px rgba(255, 214, 0, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(255, 214, 0, 0); }
+
+.meta-content {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
 }
 
-/* Board: 3 columnas (away | vs | home) */
+.meta-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #999;
+}
+
+.meta-value {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #1A1A1A;
+    margin-top: 2px;
+}
+
+.status-pill {
+    display: inline-block;
+    padding: 5px 12px;
+    background: #1A1A1A;
+    color: #F26A21;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border-radius: 3px;
+}
+
+/* Board: 3 columnas sobrias */
 .next-match-board {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    gap: 20px;
-    padding: 36px 32px 40px;
-    position: relative;
+    gap: 32px;
+    padding: 56px 48px;
 }
 
 .team-block {
+    text-align: center;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 22px;
-}
-.team-block--away {
-    justify-content: flex-end;
-}
-.team-block--home {
-    justify-content: flex-start;
+    gap: 14px;
 }
 
-/* Crest wrap con ring decorativo */
-.team-crest-wrap {
-    position: relative;
+.team-crest {
     width: 130px;
     height: 130px;
-    flex-shrink: 0;
+    background: #FFFFFF;
+    border: 1px solid #E5E5E5;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-}
-.team-crest-ring {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    z-index: 0;
-}
-.team-crest-ring--away {
-    background: conic-gradient(from 0deg, #1B4F8C 0%, #2E78C7 25%, #1B4F8C 50%, #2E78C7 75%, #1B4F8C 100%);
-    box-shadow:
-        0 0 0 4px var(--nm-cream),
-        0 0 0 6px rgba(27, 79, 140, 0.4),
-        0 10px 30px rgba(27, 79, 140, 0.3);
-    animation: spin 18s linear infinite;
-}
-.team-crest-ring--home {
-    background: conic-gradient(from 0deg, var(--nm-orange) 0%, var(--nm-sun) 25%, var(--nm-coral) 50%, var(--nm-orange) 75%, var(--nm-sun) 100%);
-    box-shadow:
-        0 0 0 4px var(--nm-cream),
-        0 0 0 6px rgba(242, 106, 33, 0.4),
-        0 10px 30px rgba(242, 106, 33, 0.4);
-    animation: spin 14s linear infinite;
-}
-@keyframes spin {
-    to { transform: rotate(360deg); }
+    padding: 18px;
+    margin-bottom: 4px;
+    transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
-.team-crest-wrap::after {
-    content: "";
-    position: absolute;
-    inset: 8px;
-    background: var(--nm-cream);
-    border-radius: 50%;
-    z-index: 1;
-    box-shadow: inset 0 0 0 2px rgba(42, 14, 71, 0.1);
+.team-crest--home {
+    border-color: #F26A21;
+    border-width: 2px;
 }
 
-.team-logo {
-    width: 78%;
-    height: 78%;
+.team-crest:hover {
+    transform: scale(1.04);
+}
+
+.team-crest img {
+    width: 100%;
+    height: 100%;
     object-fit: contain;
-    position: relative;
-    z-index: 2;
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
-}
-
-/* Info del equipo: tag + nombre + ciudad */
-.team-info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    min-width: 0;
-}
-.team-info--left {
-    align-items: flex-end;
-    text-align: right;
-}
-.team-info--right {
-    align-items: flex-start;
-    text-align: left;
 }
 
 .team-tag {
-    font-family: 'Anton', sans-serif;
-    font-size: 0.7rem;
-    letter-spacing: 3px;
-    padding: 3px 10px;
-    border-radius: 4px;
-    color: var(--nm-cream);
     display: inline-block;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #777;
+    padding: 3px 10px;
+    background: #F2F2F2;
+    border-radius: 3px;
 }
-.team-tag--away {
-    background: var(--nm-purple);
-}
+
 .team-tag--home {
-    background: var(--nm-orange);
+    background: #FFF0E6;
+    color: #F26A21;
 }
 
 .team-name {
-    font-family: 'Bowlby One SC', sans-serif;
-    font-size: 1.45rem;
-    line-height: 1;
-    letter-spacing: 1px;
-    color: var(--nm-ink);
-    margin: 2px 0;
-}
-.team-sub {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: var(--nm-text-light, #777);
-    letter-spacing: 0.5px;
-}
-
-/* Bloque VS central */
-.vs-block {
-    position: relative;
-    width: 140px;
-    height: 140px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.vs-text {
-    font-family: 'Bowlby One SC', sans-serif;
-    font-size: 3.4rem;
-    line-height: 1;
-    color: var(--nm-cream);
-    background: linear-gradient(135deg, var(--nm-purple) 0%, var(--nm-purple-deep) 100%);
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow:
-        0 0 0 5px var(--nm-cream),
-        0 0 0 7px var(--nm-orange),
-        0 12px 30px rgba(93, 42, 140, 0.4);
-    position: relative;
-    z-index: 2;
-    transform: rotate(-6deg);
-    text-shadow: 0 3px 0 var(--nm-orange);
-}
-.vs-star {
-    position: absolute;
-    width: 22px;
-    height: 22px;
-    z-index: 3;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-}
-.vs-star--tl { top: 0; left: 0; transform: rotate(-12deg); }
-.vs-star--tr { top: 0; right: 0; transform: rotate(15deg); }
-.vs-star--bl { bottom: 0; left: 6px; transform: rotate(-20deg); }
-.vs-star--br { bottom: 0; right: 6px; transform: rotate(8deg); }
-
-.vs-ball {
-    position: absolute;
-    width: 28px;
-    height: 28px;
-    bottom: -8px;
-    right: -8px;
-    z-index: 3;
-    transform: rotate(15deg);
-    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.3));
-}
-
-/* Footer: estadio + CTA */
-.next-match-card-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 20px;
-    padding: 22px 32px 28px;
-    background:
-        linear-gradient(180deg, transparent 0%, rgba(93, 42, 140, 0.05) 100%);
-    border-top: 2px dashed rgba(93, 42, 140, 0.18);
-    position: relative;
-}
-
-.estadio-info {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-.estadio-icon {
-    width: 40px;
-    height: 40px;
-    background: var(--nm-purple);
-    color: var(--nm-cream);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 10px rgba(93, 42, 140, 0.3);
-}
-.estadio-icon svg {
-    width: 24px;
-    height: 24px;
-}
-.estadio-text {
-    display: flex;
-    flex-direction: column;
-    line-height: 1;
-}
-.estadio-label {
     font-family: 'Anton', sans-serif;
-    font-size: 0.7rem;
-    letter-spacing: 3px;
-    color: var(--nm-text-light, #777);
-    margin-bottom: 4px;
-}
-.estadio-name {
-    font-family: 'Bowlby One SC', sans-serif;
-    font-size: 1.1rem;
-    letter-spacing: 1.5px;
-    color: var(--nm-ink);
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: #1A1A1A;
+    margin: 0;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    line-height: 1.1;
 }
 
-/* CTA tipo ticket/brazalete con bordes troquelados */
-.next-match-cta {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    gap: 0;
-    text-decoration: none;
-    color: var(--nm-cream);
-    font-family: 'Bowlby One SC', sans-serif;
-    font-size: 0.95rem;
-    letter-spacing: 1.5px;
-    background: linear-gradient(135deg, var(--nm-orange) 0%, var(--nm-coral) 100%);
-    padding: 0;
-    border-radius: 8px;
-    box-shadow:
-        0 8px 20px rgba(242, 106, 33, 0.4),
-        0 0 0 2px var(--nm-cream),
-        0 0 0 4px var(--nm-orange);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-    overflow: visible;
-}
-.next-match-cta:hover {
-    transform: translateY(-2px);
-    box-shadow:
-        0 14px 30px rgba(242, 106, 33, 0.5),
-        0 0 0 2px var(--nm-cream),
-        0 0 0 4px var(--nm-orange),
-        0 0 30px rgba(242, 106, 33, 0.3);
-}
-.next-match-cta:hover .cta-arrow {
-    transform: translateX(4px);
-}
-.next-match-cta:hover .cta-arrow svg {
-    animation: arrow-bounce 0.8s ease-in-out infinite;
-}
-@keyframes arrow-bounce {
-    0%, 100% { transform: translateX(0); }
-    50% { transform: translateX(4px); }
+.team-city {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.82rem;
+    color: #888;
+    font-weight: 500;
 }
 
-.cta-content {
-    display: inline-flex;
+/* VS: confianza, entre dos líneas finas */
+.match-vs {
+    display: flex;
     align-items: center;
     gap: 14px;
-    padding: 16px 22px;
-}
-.cta-text {
-    line-height: 1;
-}
-.cta-arrow {
-    display: inline-flex;
-    align-items: center;
-    transition: transform 0.25s ease;
-}
-.cta-arrow svg {
-    width: 20px;
-    height: 20px;
-    display: block;
 }
 
-/* Troqueles (medio círculos recortados) a los lados del ticket */
-.cta-stub {
-    width: 14px;
-    height: 28px;
-    background: var(--nm-cream);
-    position: relative;
-    align-self: center;
-    flex-shrink: 0;
+.vs-line {
+    width: 28px;
+    height: 1px;
+    background: #D5D5D5;
 }
-.cta-stub--l {
-    border-radius: 0 50px 50px 0;
-    margin-right: -1px;
+
+.vs-text {
+    font-family: 'Anton', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 400;
+    color: #F26A21;
+    letter-spacing: 2px;
 }
-.cta-stub--r {
-    border-radius: 50px 0 0 50px;
-    margin-left: -1px;
+
+/* Footer: CTA sólido, profesional */
+.next-match-footer {
+    padding: 0 48px 40px;
+    text-align: center;
 }
-.next-match-cta::before,
-.next-match-cta::after {
-    content: "";
-    position: absolute;
-    width: 12px;
-    height: 12px;
-    background: var(--nm-cream-deep);
-    border-radius: 50%;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 1;
+
+.next-match-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: #F26A21;
+    color: #FFFFFF;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background 0.2s ease, transform 0.2s ease;
 }
-.next-match-cta::before { left: -6px; }
-.next-match-cta::after { right: -6px; }
+
+.next-match-cta:hover {
+    background: #D65612;
+    transform: translateY(-1px);
+}
+
+.cta-arrow {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.2s ease;
+}
+
+.next-match-cta:hover .cta-arrow {
+    transform: translateX(3px);
+}
 
 /* ============================================================
    Responsive
    ============================================================ */
-@media (max-width: 880px) {
-    .next-match-card-header {
-        grid-template-columns: 1fr;
-        gap: 18px;
-        padding: 24px 22px 20px;
-        text-align: center;
-    }
-    .next-match-jornada-badge {
-        margin: 0 auto;
-    }
-    .next-match-status-badge {
-        margin: 0 auto;
-    }
-}
-
 @media (max-width: 760px) {
     .next-match-section {
-        padding: 40px 0 60px;
+        padding: 48px 0 60px;
     }
+
     .next-match-board {
         grid-template-columns: 1fr;
         gap: 28px;
-        padding: 28px 22px 32px;
+        padding: 40px 24px;
     }
-    .team-block {
-        justify-content: center !important;
+
+    .next-match-header {
+        padding: 32px 24px 24px;
     }
-    .team-block--away {
-        flex-direction: row;
-    }
-    .team-block--home {
-        flex-direction: row-reverse;
-    }
-    .team-info--left,
-    .team-info--right {
-        align-items: center;
-        text-align: center;
-    }
-    .vs-block {
-        order: 0;
-        width: 120px;
-        height: 120px;
-        margin: 0 auto;
-    }
-    .vs-text {
-        font-size: 2.8rem;
-        width: 76px;
-        height: 76px;
-    }
-    .next-match-card-footer {
+
+    .next-match-meta {
         flex-direction: column;
-        align-items: stretch;
-        padding: 22px 22px 24px;
+        align-items: flex-start;
+        gap: 18px;
+        padding: 22px 24px;
     }
-    .estadio-info {
-        justify-content: center;
-    }
-    .next-match-cta {
-        align-self: center;
+
+    .next-match-footer {
+        padding: 0 24px 32px;
     }
 }
 
 @media (max-width: 480px) {
-    .next-match-title {
-        font-size: 2.4rem;
+    .team-crest {
+        width: 110px;
+        height: 110px;
+        padding: 14px;
     }
-    .title-line--2 {
-        transform: translateX(0);
-    }
-    .next-match-jornada-badge {
-        width: 72px;
-        height: 72px;
-    }
-    .jornada-num {
-        font-size: 1.6rem;
-    }
-    .date-day, .date-month {
+
+    .team-name {
         font-size: 1.2rem;
     }
-    .date-num {
-        font-size: 2.4rem;
-    }
-    .team-crest-wrap {
-        width: 100px;
-        height: 100px;
-    }
-    .team-name {
-        font-size: 1.15rem;
-    }
-    .cta-content {
-        padding: 13px 16px;
-        font-size: 0.85rem;
-    }
-}
 
-@media (prefers-reduced-motion: reduce) {
-    .team-crest-ring,
-    .eyebrow-dot,
-    .status-pulse,
-    .next-match-cta:hover .cta-arrow svg {
-        animation: none;
+    .vs-text {
+        font-size: 1.9rem;
+    }
+
+    .next-match-cta {
+        width: 100%;
+        justify-content: center;
     }
 }

@@ -31,9 +31,8 @@ const registerBtnCancel = document.getElementById('registerBtnCancel');
 const registerForm = document.getElementById('registerForm');
 const sessionCounter = document.getElementById('sessionCounter');
 const registrationCounter = document.querySelector('.registration-counter');
-const passwordPreview = document.getElementById('passwordPreview');
 
-// Registration inputs for password generation
+// Registration inputs
 const regNombre = document.getElementById('regNombre');
 const regApellido = document.getElementById('regApellido');
 const regFechaNac = document.getElementById('regFechaNac');
@@ -420,12 +419,6 @@ function renderPlayers(players) {
             ? `<div class="player-avatar player-avatar-photo"><img src="${imgSrc}" alt="${shortName}" onerror="this.parentElement.style.background='${gradient}';this.parentElement.innerHTML='${initials}'"></div>`
             : `<div class="player-avatar" style="background: ${gradient}">${initials}</div>`;
 
-        // Generate password from initials + birth year (same logic as registration)
-        const passInitials = ((player.nombre || '').charAt(0) + (player.apellido || '').charAt(0)).toUpperCase();
-        const birthYear = player.fecha_nacimiento ? player.fecha_nacimiento.split('-')[0] : '????';
-        const generatedPassword = `${passInitials}${birthYear}`;
-        const playerEmail = player.email || 'Sin correo';
-
         // Build average/week badge
         let avgBadgeHTML = '';
         if (activeWeekFilter) {
@@ -567,10 +560,7 @@ function openCredsModal(player) {
 
     const shortName = getShortName(player.nombre, player.apellido);
     const initials = getInitials(player.nombre, player.apellido);
-    const passInitials = ((player.nombre || '').charAt(0) + (player.apellido || '').charAt(0)).toUpperCase();
-    const birthYear = player.fecha_nacimiento ? player.fecha_nacimiento.split('-')[0] : '????';
-    const generatedPassword = `${passInitials}${birthYear}`;
-    
+
     // UI elements
     const avatarEl = document.getElementById('credsPlayerAvatar');
     const nameEl = document.getElementById('credsPlayerName');
@@ -579,7 +569,11 @@ function openCredsModal(player) {
 
     nameEl.textContent = `${toTitleCase(player.nombre || '')} ${toTitleCase(player.apellido || '')}`.trim() || 'Sin nombre';
     emailEl.textContent = player.email || 'Sin correo asignado';
-    passEl.textContent = generatedPassword;
+    // The password is not stored (only its bcrypt hash lives in auth.users).
+    // The profesor sets it at registration time; show a placeholder so the
+    // modal still works without leaking or inventing a wrong password.
+    passEl.textContent = '••••••••';
+    passEl.title = 'La contraseña fue definida por el profesor al registrar al jugador. No se muestra por seguridad.';
 
     // Avatar
     const imgInfo = findPlayerImageInfo(player.nombre, player.apellido);
@@ -1112,7 +1106,6 @@ if (btnAddPlayer) {
         // Reset form if it's a fresh start (optional, maybe keep previous category)
         if (registeredCount === 0) {
             registerForm.reset();
-            passwordPreview.textContent = '--';
         }
     });
 }
@@ -1125,29 +1118,6 @@ function closeRegisterModal() {
 if (registerModalClose) registerModalClose.addEventListener('click', closeRegisterModal);
 if (registerBtnCancel) registerBtnCancel.addEventListener('click', closeRegisterModal);
 
-// Generate Password Preview
-function updatePasswordPreview() {
-    const nombre = regNombre.value.trim();
-    const apellido = regApellido.value.trim();
-    const fecha = regFechaNac.value;
-
-    if (nombre && apellido && fecha) {
-        const initials = (nombre.charAt(0) + apellido.charAt(0)).toUpperCase();
-        const year = fecha.split('-')[0];
-        const password = `${initials}${year}`;
-        passwordPreview.textContent = password;
-        return password;
-    } else {
-        passwordPreview.textContent = '--';
-        return null;
-    }
-}
-
-// Listen for input changes to update password
-if (regNombre) regNombre.addEventListener('input', updatePasswordPreview);
-if (regApellido) regApellido.addEventListener('input', updatePasswordPreview);
-if (regFechaNac) regFechaNac.addEventListener('input', updatePasswordPreview);
-
 // Handle Registration Submit
 if (registerForm) {
     registerForm.addEventListener('submit', async (e) => {
@@ -1155,10 +1125,17 @@ if (registerForm) {
 
         const submitBtn = document.getElementById('registerBtnSubmit');
         const originalBtnText = submitBtn.innerHTML;
-        const generatedPassword = updatePasswordPreview();
 
-        if (!generatedPassword) {
-            showToast('Por favor completa los campos para generar la contraseña', 'error');
+        const formData = new FormData(registerForm);
+        const email = (formData.get('email') || '').toString().trim();
+        const password = (formData.get('password') || '').toString();
+
+        if (!email || !password) {
+            showToast('Por favor completa email y contraseña', 'error');
+            return;
+        }
+        if (password.length < 6) {
+            showToast('La contraseña debe tener al menos 6 caracteres', 'error');
             return;
         }
 
@@ -1166,17 +1143,36 @@ if (registerForm) {
         submitBtn.innerHTML = '<span>Registrando...</span>';
 
         try {
-            const formData = new FormData(registerForm);
-            const newPlayerId = crypto.randomUUID();
+            // 1. Save the current (profesor's) session so we can restore it
+            //    after signUp, which auto-logs in as the new jugador.
+            const { data: sessionData } = await supabase.auth.getSession();
+            const oldSession = sessionData?.session;
 
-            // Jugadores are pure data rows: no auth.users account is created
-            // (they don't log in to the website). The id is a fresh UUID and
-            // the equipo is auto-assigned from the professor's restricted team.
+            // 2. Create the auth account for the jugador
+            const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+                email,
+                password,
+                options: { data: { rol: 'jugador' } }
+            });
+            if (signUpError) throw signUpError;
+            const newUserUid = signUpData.user?.id;
+            if (!newUserUid) throw new Error('No se pudo obtener el ID del nuevo jugador.');
+
+            // 3. Restore the profesor's session (signUp auto-logs in as the new user)
+            if (oldSession?.access_token && oldSession?.refresh_token) {
+                const { error: setSessionErr } = await supabase.auth.setSession({
+                    access_token: oldSession.access_token,
+                    refresh_token: oldSession.refresh_token
+                });
+                if (setSessionErr) console.warn('No se pudo restaurar la sesión del profesor:', setSessionErr);
+            }
+
+            // 4. Insert the jugador row using the auth user's UUID as id
             const playerData = {
-                id: newPlayerId,
+                id: newUserUid,
                 nombre: formData.get('nombre'),
                 apellido: formData.get('apellido'),
-                email: formData.get('email'),
+                email: email,
                 fecha_nacimiento: formData.get('fechaNacimiento') || null,
                 equipo: currentProfessor.equipo_restringido || null,
                 posicion: formData.get('posicion'),
@@ -1190,7 +1186,7 @@ if (registerForm) {
             if (insertErr) throw insertErr;
 
             // Success
-            showToast(`Jugador ${playerData.nombre} registrado exitosamente`);
+            showToast(`Jugador ${playerData.nombre} registrado. Email: ${email}`);
 
             // Update session counter
             registeredCount++;
@@ -1204,7 +1200,6 @@ if (registerForm) {
 
             // Restore context for next entry
             document.getElementById('regFechaNac').value = lastDate;
-            passwordPreview.textContent = '--';
 
             // Focus on first field
             regNombre.focus();
@@ -1215,8 +1210,17 @@ if (registerForm) {
         } catch (error) {
             console.error('Error registering player:', error);
             let errorMsg = 'Error al registrar jugador';
-            if (error.code === 'auth/email-already-in-use') {
-                errorMsg = 'El correo electrónico ya está registrado';
+            const msg = (error.message || '').toLowerCase();
+            if (error.code === 'user_already_exists' || msg.includes('already') || msg.includes('registered')) {
+                errorMsg = 'Ya existe una cuenta con ese correo';
+            } else if (msg.includes('invalid') || msg.includes('email')) {
+                errorMsg = 'El correo no es válido o el dominio no está permitido';
+            } else if (msg.includes('rate limit') || msg.includes('too many')) {
+                errorMsg = 'Demasiados intentos. Espera unos minutos.';
+            } else if (msg.includes('password') && msg.includes('short')) {
+                errorMsg = 'La contraseña es muy corta (mínimo 6 caracteres)';
+            } else if (error.message) {
+                errorMsg = `Error: ${error.message}`;
             }
             showToast(errorMsg, 'error');
         } finally {

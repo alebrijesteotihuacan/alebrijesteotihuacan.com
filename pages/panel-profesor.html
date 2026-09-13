@@ -340,10 +340,16 @@
                         </div>
 
                         <div class="register-row">
-                            <div class="register-field full">
+                            <div class="register-field">
                                 <label>Correo Electrónico *</label>
                                 <input type="email" id="regEmail" name="email" required
                                     placeholder="jugador@ejemplo.com">
+                            </div>
+                            <div class="register-field">
+                                <label>Contraseña *</label>
+                                <input type="text" id="regPassword" name="password" required minlength="6"
+                                    placeholder="Mínimo 6 caracteres"
+                                    title="El jugador usará esta contraseña para iniciar sesión">
                             </div>
                         </div>
 
@@ -370,11 +376,6 @@
                                     <option value="Delantero">Delantero</option>
                                 </select>
                             </div>
-                        </div>
-
-                        <div class="password-box">
-                            <span class="password-label">Contraseña:</span>
-                            <span class="password-value" id="passwordPreview">--</span>
                         </div>
 
                         <div class="modal-actions">
@@ -750,7 +751,7 @@
     <script src="https://unpkg.com/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
     <script src="../scripts/script.js"></script>
     <script type="module" src="../scripts/nav-auth.js"></script>
-    <script type="module" src="../scripts/panel-profesor.js?v=2"></script>
+    <script type="module" src="../scripts/panel-profesor.js?v=3"></script>
     <script>
         // Set current date
         const dateEl = document.getElementById('currentDate');

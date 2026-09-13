@@ -8,6 +8,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuButtons = document.querySelectorAll('.ligatdp-menu-btn');
     const contentSections = document.querySelectorAll('.ligatdp-content-section');
 
+    // SVG icons for the meta section (date, venue) - must be defined before
+    // any init function is called, otherwise ReferenceError (TDZ) on first use.
+    const RESULT_META_ICONS = {
+        calendar: `<svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>`,
+        location: `<svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+        </svg>`
+    };
+
     // Initialize menu
     initMenuNavigation();
 
@@ -395,20 +410,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateActiveTab();
         renderContent();
     }
-
-    // SVG icons para la sección de meta (fecha, sede)
-    const RESULT_META_ICONS = {
-        calendar: `<svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-            <line x1="16" y1="2" x2="16" y2="6"></line>
-            <line x1="8" y1="2" x2="8" y2="6"></line>
-            <line x1="3" y1="10" x2="21" y2="10"></line>
-        </svg>`,
-        location: `<svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-            <circle cx="12" cy="10" r="3"></circle>
-        </svg>`
-    };
 
     // Section 3: Últimos Resultados - Carrusel
     function initResultados() {

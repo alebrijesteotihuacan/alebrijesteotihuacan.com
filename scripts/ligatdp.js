@@ -74,9 +74,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // URLs de perfil de jugador (ligatdp.mx). Vacío por ahora.
         const playerProfiles = {};
 
-        // Archivos de la plantilla actual de Liga TDP (Alebrijes Teotihuacán).
+        // Archivos de la plantilla actual de Liga TDP.
         // Formato: Name_Position_Number.jpg  | DT: Name_DirectorTecnico.jpg
-        const playerFiles = [
+        const FOLDER_ALEBRIJES = 'PlantillaAlebrijesTeotihuacanLigaTDP';
+        const FOLDER_SOLES     = 'PlantillaSolesTeotihuacanLigaTDP';
+
+        const playerFilesAlebrijes = [
             // Director Técnico
             'Rafael_Arturo_Tejeda_Arellano_DirectorTecnico.jpg',
 
@@ -121,8 +124,54 @@ document.addEventListener('DOMContentLoaded', () => {
             'Iker_Castillo_Tede_Delantero_32.jpg'
         ];
 
+        const playerFilesSoles = [
+            // Director Técnico
+            'Ignacio_Morales_Campos_DirectorTecnico.jpg',
+
+            // Porteros
+            'Mauricio_Fuentes_Ramos_Portero_1.jpg',
+            'Steve_Julian_Serrano_Luevanos_Portero_12.jpg',
+            'Julio_Axel_Delgado_Estrada_Portero_13.jpg',
+            'Cesar_Alexander_Hernandez_Zacarias_Portero_25.jpg',
+            'Samuel_Alexander_Hernandez_Romero_Portero_28.jpg',
+
+            // Defensas
+            'Jaffet_Sandoval_Martinez_Defensa_2.jpg',
+            'Ian_Alexander_Garcia_Martinez_Defensa_3.jpg',
+            'Farid_Omar_Avendaño_Vazquez_Defensa_4.jpg',
+            'Lisandro_Alain_Contreras_Dorantes_Defensa_20.jpg',
+            'Julio_César_Gutiérrez_Díaz_Defensa_21.jpg',
+            'Angel_David_Sanchez_Jimenez_Defensa_24.jpg',
+            'Johan_Ivan_Robles_Cid_Defensa_27.jpg',
+            'Jesus_Esteban_Ricardez_Zarate_Defensa_29.jpg',
+            'Fabricio_Santiago_Del_Angel_Defensa_30.jpg',
+            'Ricardo_Rodriguez_Montiel_Defensa_31.jpg',
+
+            // Mediocampistas
+            'Faviel_Isidro_Morales_Perez_Medio_5.jpg',
+            'Kevin_Alexander_Castro_Aguilar_Medio_6.jpg',
+            'Jose_Luis_Ruiz_Maldonado_Medio_7.jpg',
+            'Oliver_De_Jesus_Morales_Moreno_Medio_8.jpg',
+            'Cristian_Fabian_Ramirez_Martinez_Medio_10.jpg',
+            'Mauricio_Luna_Sanchez_Medio_11.jpg',
+            'Ellioth_Omar_Cuevas_Alcala_Medio_14.jpg',
+            'Jonathan_Darío_Galindo_Guerrero_Medio_16.jpg',
+            'Cristobal_Rosas_Franco_Medio_17.jpg',
+            'Erick_Isaac_Lopez_Borjas_Medio_18.jpg',
+            'Pablo_Aldahir_Gomez_Archundia_Medio_23.jpg',
+
+            // Delanteros
+            'Jesus_Rodrigo_Vela_Ramos_Delantero_9.jpg',
+            'Leandro_Gael_Contreras_Aviles_Delantero_15.jpg',
+            'Jose_Godofredo_Pedro_Fiscal_Delantero_19.jpg',
+            'Carlos_Adrian_Suarez_Hernandez_Delantero_22.jpg',
+            'Luis_Antonio_Sanchez_Flores_Delantero_26.jpg',
+            'Gerardo_Antonio_Roman_Tellez_Delantero_32.jpg'
+        ];
+
         // Parser: nombre + posición + número desde el filename.
-        const parsePlayerFromFilename = (filename) => {
+        // Recibe la carpeta para construir la ruta correcta de la imagen.
+        const parsePlayerFromFilename = (filename, folder) => {
             const nameWithoutExt = filename.replace('.jpg', '');
             const parts = nameWithoutExt.split('_');
             const lastPart = parts[parts.length - 1];
@@ -166,14 +215,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 position: positionDisplay,
                 filterCategory,
                 jersey,
-                image: `../assets/PlantillaAlebrijesTeotihuacanLigaTDP/${filename}`,
+                image: `../assets/${folder}/${filename}`,
                 profileUrl: playerProfiles[fullName] || null
             };
         };
 
-        const alebrijesTdp = playerFiles.map(parsePlayerFromFilename);
+        const alebrijesTdp = playerFilesAlebrijes.map(f => parsePlayerFromFilename(f, FOLDER_ALEBRIJES));
+        const solesTdp     = playerFilesSoles.map(f     => parsePlayerFromFilename(f, FOLDER_SOLES));
 
-        // 4 categorías. Las otras 3 se llenan cuando se tengan los datos.
+        // 4 categorías. Las Sub-16 se llenan cuando se tengan los datos.
         const teams = {
             'alebrijes-tdp': {
                 name: 'Alebrijes TDP',
@@ -185,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 name: 'Soles TDP',
                 fullName: 'Soles Teotihuacán · Liga TDP',
                 accent: 'purple',
-                players: []
+                players: solesTdp
             },
             'alebrijes-sub16': {
                 name: 'Alebrijes Sub-16',

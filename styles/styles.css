@@ -848,8 +848,8 @@ ul {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    gap: 24px;
-    padding: 40px 32px;
+    gap: 16px;
+    padding: 40px 20px;
 }
 
 .result-board .team-block {
@@ -857,20 +857,20 @@ ul {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
     min-width: 0;
 }
 
 .result-board .team-crest {
-    width: 108px;
-    height: 108px;
+    width: 140px;
+    height: 140px;
     background: #FFFFFF;
     border: 1px solid #E5E5E5;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 14px;
+    padding: 16px;
     margin-bottom: 2px;
     transition: transform 0.2s ease, border-color 0.2s ease;
 }
@@ -1002,12 +1002,12 @@ ul {
         scroll-snap-align: start;
     }
     .result-board .team-crest {
-        width: 88px;
-        height: 88px;
-        padding: 10px;
+        width: 120px;
+        height: 120px;
+        padding: 14px;
     }
     .result-board .team-name {
-        font-size: 0.95rem;
+        font-size: 1.05rem;
     }
 }
 
@@ -1023,12 +1023,12 @@ ul {
         padding-bottom: 24px;
     }
     .result-board .team-crest {
-        width: 80px;
-        height: 80px;
-        padding: 9px;
+        width: 104px;
+        height: 104px;
+        padding: 12px;
     }
     .result-board .team-name {
-        font-size: 0.9rem;
+        font-size: 0.95rem;
     }
     .score-value {
         font-size: 1.4rem;
@@ -3295,8 +3295,8 @@ footer {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    gap: 24px;
-    padding: 40px 32px;
+    gap: 16px;
+    padding: 40px 20px;
 }
 
 .team-block {
@@ -3304,20 +3304,20 @@ footer {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
     min-width: 0;
 }
 
 .team-crest {
-    width: 108px;
-    height: 108px;
+    width: 140px;
+    height: 140px;
     background: #FFFFFF;
     border: 1px solid #E5E5E5;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 14px;
+    padding: 16px;
     margin-bottom: 2px;
     transition: transform 0.2s ease, border-color 0.2s ease;
 }
@@ -3457,9 +3457,9 @@ footer {
     }
 
     .team-crest {
-        width: 96px;
-        height: 96px;
-        padding: 12px;
+        width: 120px;
+        height: 120px;
+        padding: 14px;
     }
 
     .team-name {
@@ -3477,9 +3477,9 @@ footer {
         padding-right: 16px;
     }
     .team-crest {
-        width: 86px;
-        height: 86px;
-        padding: 10px;
+        width: 104px;
+        height: 104px;
+        padding: 12px;
     }
     .team-name {
         font-size: 0.95rem;

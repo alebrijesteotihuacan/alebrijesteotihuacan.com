@@ -42,7 +42,7 @@
     <!-- News Styles (for news-card-modern) -->
     <link rel="stylesheet" href="../styles/noticias.css">
     <!-- Liga TDP Specific Styles -->
-    <link rel="stylesheet" href="../styles/ligatdp.css?v=6">
+    <link rel="stylesheet" href="../styles/ligatdp.css?v=7">
 </head>
 
 <body>
@@ -571,26 +571,27 @@
     <section class="section ligatdp-content-section bg-grey" id="section-resultados">
         <div class="container">
             <h2 class="section-title">Últimos Resultados</h2>
-            <div class="results-carousel-wrapper">
-                <button class="carousel-btn carousel-prev" aria-label="Anterior">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2">
+            <div class="results-carousel">
+                <button class="results-carousel-btn prev" aria-label="Anterior" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
                 </button>
-                <div class="results-carousel">
+
+                <div class="results-carousel-viewport">
                     <div class="results-carousel-track">
-                        <!-- Results will be loaded dynamically -->
+                        <!-- Result cards rendered by JS -->
                     </div>
                 </div>
-                <button class="carousel-btn carousel-next" aria-label="Siguiente">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2">
+
+                <button class="results-carousel-btn next" aria-label="Siguiente" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <polyline points="9 18 15 12 9 6"></polyline>
                     </svg>
                 </button>
-                <div class="carousel-indicators"></div>
             </div>
+
+            <div class="results-carousel-dots" role="tablist" aria-label="Navegación de resultados"></div>
         </div>
     </section>
 
@@ -728,7 +729,7 @@
     <!-- Scripts -->
     <script src="../scripts/script.js"></script>
     <script type="module" src="../scripts/nav-auth.js"></script> <!-- Main script for navbar -->
-    <script src="../scripts/ligatdp.js?v=4"></script>
+    <script src="../scripts/ligatdp.js?v=5"></script>
 </body>
 
 </html>

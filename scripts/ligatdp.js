@@ -396,162 +396,239 @@ document.addEventListener('DOMContentLoaded', () => {
         renderContent();
     }
 
+    // SVG icons para la sección de meta (fecha, sede)
+    const RESULT_META_ICONS = {
+        calendar: `<svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>`,
+        location: `<svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+        </svg>`
+    };
+
     // Section 3: Últimos Resultados - Carrusel
     function initResultados() {
-        const carouselTrack = document.querySelector('.results-carousel-track');
-        const prevBtn = document.querySelector('.carousel-prev');
-        const nextBtn = document.querySelector('.carousel-next');
-        const indicators = document.querySelector('.carousel-indicators');
+        const track = document.querySelector('.results-carousel-track');
+        const prevBtn = document.querySelector('.results-carousel-btn.prev');
+        const nextBtn = document.querySelector('.results-carousel-btn.next');
+        const dotsContainer = document.querySelector('.results-carousel-dots');
+        const viewport = document.querySelector('.results-carousel-viewport');
 
-        if (!carouselTrack) return;
+        if (!track) return;
 
-        // Últimos 3 resultados reales
+        // Últimos resultados (más reciente primero)
         const results = [
             {
-                jornada: 'Jornada 30',
-                date: '17 ABR 2026',
-                homeTeam: 'Alebrijes Teotihuacán',
-                homeScore: 2,
-                awayTeam: 'Atlético Huejutla',
-                awayScore: 3,
-                result: 'loss',
-                location: 'Casa',
-                homeLogo: '../assets/EquiposGrupo9_LigaTDP/AlebrijesTeotihuacán.png',
-                awayLogo: '../assets/EquiposGrupo9_LigaTDP/AtleticoHuejutla.png'
+                jornada: 'Jornada 2',
+                eyebrow: 'Liga TDP · Grupo 9 · Temporada 2026–2027',
+                title: 'Último resultado',
+                meta: [
+                    { icon: 'calendar', label: 'Fecha y hora', value: 'Viernes 11 de septiembre · 12:00 hrs' },
+                    { icon: 'location', label: 'Sede',         value: 'Centro Recreativo Pascual Boing' }
+                ],
+                homeTeam: {
+                    name: 'Alebrijes Teotihuacán',
+                    tag: 'Local',
+                    logo: '../assets/EquiposGrupo9_LigaTDP/AlebrijesTeotihuacán.png',
+                    id: 12621
+                },
+                awayTeam: {
+                    name: 'Industriales de Altamira FC',
+                    tag: 'Visitante',
+                    logo: '../assets/EquiposGrupo9_LigaTDP/IndustrialesDeAltamiraFC.png',
+                    id: 14478
+                },
+                scoreValue: '0 (7) – (8) 0',
+                scoreStatus: 'Finalizado',
+                result: 'draw'
             },
             {
-                jornada: 'Jornada 29',
-                date: '11 ABR 2026',
-                homeTeam: 'Águilas de Teotihuacán',
-                homeScore: 1,
-                awayTeam: 'Alebrijes Teotihuacán',
-                awayScore: 0,
-                result: 'loss',
-                location: 'Visita',
-                homeLogo: '../assets/EquiposGrupo9_LigaTDP/AguilasTeotihuacan.png',
-                awayLogo: '../assets/EquiposGrupo9_LigaTDP/AlebrijesTeotihuacán.png'
-            },
-            {
-                jornada: 'Jornada 28',
-                date: '3 ABR 2026',
-                homeTeam: 'Alebrijes Teotihuacán',
-                homeScore: '1 (4)',
-                awayTeam: 'Club Deportivo Matamoros',
-                awayScore: '(3) 1',
-                result: 'win',
-                location: 'Casa',
-                homeLogo: '../assets/EquiposGrupo9_LigaTDP/AlebrijesTeotihuacán.png',
-                awayLogo: '../assets/EquiposGrupo9_LigaTDP/ClubDeportivoMatamoros.png'
+                jornada: 'Jornada 1',
+                eyebrow: 'Liga TDP · Grupo 9 · Temporada 2026–2027',
+                title: 'Último resultado',
+                meta: [
+                    { icon: 'calendar', label: 'Fecha y hora', value: 'Viernes 4 de septiembre · 11:00 hrs' },
+                    { icon: 'location', label: 'Sede',         value: 'Universidad del Fútbol' }
+                ],
+                homeTeam: {
+                    name: 'Tuzos Pachuca',
+                    tag: 'Local',
+                    logo: '../assets/EquiposGrupo9_LigaTDP/TuzosPachuca.png',
+                    id: 11002
+                },
+                awayTeam: {
+                    name: 'Alebrijes Teotihuacán',
+                    tag: 'Visitante',
+                    logo: '../assets/EquiposGrupo9_LigaTDP/AlebrijesTeotihuacán.png',
+                    id: 12621
+                },
+                scoreValue: '0 – 1',
+                scoreStatus: 'Final',
+                result: 'win'
             }
         ];
 
-        let currentIndex = 0;
+        let resultIndex = 0;
+        const resultTotal = results.length;
+        let autoPlayTimer = null;
+        const AUTO_PLAY_MS = 5000;
 
-        // Create result cards
+        // Render cards + dots
         results.forEach((result, index) => {
             const card = createResultCard(result);
-            carouselTrack.appendChild(card);
+            track.appendChild(card);
 
-            // Create indicator
-            const indicator = document.createElement('div');
-            indicator.className = `carousel-indicator ${index === 0 ? 'active' : ''}`;
-            indicator.addEventListener('click', () => goToSlide(index));
-            indicators.appendChild(indicator);
+            if (dotsContainer) {
+                const dot = document.createElement('button');
+                dot.type = 'button';
+                dot.className = 'results-carousel-dot' + (index === 0 ? ' active' : '');
+                dot.setAttribute('aria-label', `Ir al resultado ${index + 1}`);
+                dot.addEventListener('click', () => {
+                    goToResult(index);
+                    restartAutoPlay();
+                });
+                dotsContainer.appendChild(dot);
+            }
         });
 
-        // Navigation handlers
-        if (prevBtn) {
-            prevBtn.addEventListener('click', () => {
-                currentIndex = (currentIndex - 1 + results.length) % results.length;
-                goToSlide(currentIndex);
+        const dots = document.querySelectorAll('.results-carousel-dot');
+
+        function updateCarousel() {
+            track.style.transform = `translateX(-${resultIndex * 100}%)`;
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === resultIndex);
             });
+            if (prevBtn) prevBtn.disabled = resultIndex === 0;
+            if (nextBtn) nextBtn.disabled = resultIndex === resultTotal - 1;
         }
 
-        if (nextBtn) {
-            nextBtn.addEventListener('click', () => {
-                currentIndex = (currentIndex + 1) % results.length;
-                goToSlide(currentIndex);
-            });
+        function goToResult(i) {
+            // Wrap-around
+            if (i >= resultTotal) i = 0;
+            if (i < 0) i = resultTotal - 1;
+            resultIndex = i;
+            updateCarousel();
         }
 
-        function goToSlide(index) {
-            currentIndex = index;
-            carouselTrack.style.transform = `translateX(-${index * 100}%)`;
+        if (prevBtn) prevBtn.addEventListener('click', () => {
+            goToResult(resultIndex - 1);
+            restartAutoPlay();
+        });
+        if (nextBtn) nextBtn.addEventListener('click', () => {
+            goToResult(resultIndex + 1);
+            restartAutoPlay();
+        });
 
-            // Update indicators
-            document.querySelectorAll('.carousel-indicator').forEach((ind, i) => {
-                ind.classList.toggle('active', i === index);
-            });
+        // Swipe en mobile
+        if (viewport) {
+            let touchStartX = 0;
+            viewport.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+            viewport.addEventListener('touchend', e => {
+                const touchEndX = e.changedTouches[0].screenX;
+                const threshold = 50;
+                if (touchEndX < touchStartX - threshold) goToResult(resultIndex + 1);
+                if (touchEndX > touchStartX + threshold) goToResult(resultIndex - 1);
+                restartAutoPlay();
+            }, { passive: true });
         }
 
-        // Auto-play carousel cada 5 segundos
-        let autoPlayInterval = setInterval(() => {
-            currentIndex = (currentIndex + 1) % results.length;
-            goToSlide(currentIndex);
-        }, 5000);
-
-        // Pausar auto-play al hacer hover
-        const carouselWrapper = document.querySelector('.results-carousel-wrapper');
-        if (carouselWrapper) {
-            carouselWrapper.addEventListener('mouseenter', () => {
-                clearInterval(autoPlayInterval);
-            });
-            carouselWrapper.addEventListener('mouseleave', () => {
-                autoPlayInterval = setInterval(() => {
-                    currentIndex = (currentIndex + 1) % results.length;
-                    goToSlide(currentIndex);
-                }, 5000);
-            });
+        // Auto-play
+        function startAutoPlay() {
+            if (autoPlayTimer) return;
+            autoPlayTimer = setInterval(() => {
+                goToResult(resultIndex + 1);
+            }, AUTO_PLAY_MS);
         }
+
+        function stopAutoPlay() {
+            if (autoPlayTimer) {
+                clearInterval(autoPlayTimer);
+                autoPlayTimer = null;
+            }
+        }
+
+        function restartAutoPlay() {
+            stopAutoPlay();
+            startAutoPlay();
+        }
+
+        // Pausar al hacer hover
+        if (viewport) {
+            viewport.addEventListener('mouseenter', stopAutoPlay);
+            viewport.addEventListener('mouseleave', startAutoPlay);
+        }
+
+        // Respetar prefers-reduced-motion
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        if (!prefersReducedMotion.matches) {
+            startAutoPlay();
+        }
+
+        // Pausar cuando la pestaña no es visible
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                stopAutoPlay();
+            } else if (!prefersReducedMotion.matches) {
+                startAutoPlay();
+            }
+        });
+
+        updateCarousel();
     }
 
     function createResultCard(result) {
-        const card = document.createElement('div');
-        card.className = `result-card ${result.result}`;
+        const card = document.createElement('article');
+        card.className = `result-card result-card--${result.result}`;
 
-        const isHome = result.location === 'Casa';
-        const homeTeamName = isHome ? result.homeTeam : result.awayTeam;
-        const awayTeamName = isHome ? result.awayTeam : result.homeTeam;
-        const homeScore = isHome ? result.homeScore : result.awayScore;
-        const awayScore = isHome ? result.awayScore : result.homeScore;
-        const homeIsWinner = result.result === 'win';
-        const awayIsWinner = result.result === 'loss';
-
-        // Intercambiar logos también cuando es partido de visita
-        const homeLogo = isHome
-            ? (result.homeLogo || '../assets/EquiposGrupo9_LigaTDP/AlebrijesTeotihuacán.png')
-            : (result.awayLogo || '../assets/EquiposGrupo9_LigaTDP/AlebrijesTeotihuacán.png');
-        const awayLogo = isHome
-            ? (result.awayLogo || '../assets/EquiposGrupo9_LigaTDP/AlebrijesTeotihuacán.png')
-            : (result.homeLogo || '../assets/EquiposGrupo9_LigaTDP/AlebrijesTeotihuacán.png');
+        const metaHtml = result.meta.map(item => `
+            <div class="meta-item">
+                ${RESULT_META_ICONS[item.icon] || ''}
+                <div class="meta-content">
+                    <span class="meta-label">${item.label}</span>
+                    <span class="meta-value">${item.value}</span>
+                </div>
+            </div>
+        `).join('');
 
         card.innerHTML = `
-            <div class="result-header">
-                <span class="result-jornada">${result.jornada}</span>
-                <span class="result-date">${result.date}</span>
+            <div class="result-accent result-accent--${result.result}" aria-hidden="true"></div>
+            <header class="result-header">
+                <span class="result-eyebrow">${result.eyebrow}</span>
+                <h3 class="result-title">${result.title}</h3>
+                <span class="result-subtitle">${result.jornada}</span>
+            </header>
+            <div class="result-meta">
+                ${metaHtml}
             </div>
-            <div class="result-teams">
-                <div class="team-res home">
-                    <div class="team-logo-score">
-                        <img src="${homeLogo}" alt="${homeTeamName}" class="team-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                        <div class="placeholder-crest" style="display:none;"></div>
-                        <span class="score ${homeIsWinner ? 'winner' : ''}">${homeScore}</span>
+            <div class="result-board">
+                <div class="team-block team-block--home" data-team-id="${result.homeTeam.id}">
+                    <div class="team-crest">
+                        <img src="${result.homeTeam.logo}" alt="${result.homeTeam.name}">
                     </div>
-                    <span class="team-name">${homeTeamName}</span>
-                </div>
-                <div class="vs-res">VS</div>
-                <div class="team-res away">
-                    <div class="team-logo-score">
-                        <img src="${awayLogo}" alt="${awayTeamName}" class="team-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                        <div class="placeholder-crest" style="display:none;"></div>
-                        <span class="score ${awayIsWinner ? 'winner' : ''}">${awayScore}</span>
+                    <div class="team-info">
+                        <span class="team-tag">${result.homeTeam.tag}</span>
+                        <h4 class="team-name">${result.homeTeam.name}</h4>
                     </div>
-                    <span class="team-name">${awayTeamName}</span>
                 </div>
-            </div>
-            <div class="result-footer">
-                <span class="result-status ${result.result}">${result.result === 'win' ? 'Victoria' : result.result === 'draw' ? 'Empate' : 'Derrota'}</span>
-                <span class="result-location">${result.location === 'Casa' ? 'En Casa' : 'De Visita'}</span>
+                <div class="result-score">
+                    <span class="score-value">${result.scoreValue}</span>
+                    <span class="score-status">${result.scoreStatus}</span>
+                </div>
+                <div class="team-block team-block--away" data-team-id="${result.awayTeam.id}">
+                    <div class="team-crest">
+                        <img src="${result.awayTeam.logo}" alt="${result.awayTeam.name}">
+                    </div>
+                    <div class="team-info">
+                        <span class="team-tag">${result.awayTeam.tag}</span>
+                        <h4 class="team-name">${result.awayTeam.name}</h4>
+                    </div>
+                </div>
             </div>
         `;
         return card;

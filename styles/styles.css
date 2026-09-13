@@ -668,7 +668,11 @@ ul {
 
 .results-carousel-track {
     display: flex;
-    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    /* Easing "standard" tipo Material: arranca rápido, desacelera suave */
+    transition: transform 0.55s cubic-bezier(0.32, 0.72, 0, 1);
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 .results-carousel-btn {
@@ -683,13 +687,22 @@ ul {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+    transition: background 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    touch-action: manipulation;
 }
 
 .results-carousel-btn:hover:not(:disabled) {
     background: #F26A21;
     border-color: #F26A21;
     color: #FFFFFF;
+}
+
+.results-carousel-btn:active:not(:disabled) {
+    transform: scale(0.92);
 }
 
 .results-carousel-btn:disabled {
@@ -715,18 +728,38 @@ ul {
     border-radius: 50%;
     background: #D5D5D5;
     cursor: pointer;
-    transition: background 0.2s ease, transform 0.2s ease;
+    transition: background 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: none;
     padding: 0;
+    touch-action: manipulation;
 }
 
 .results-carousel-dot.active {
     background: #F26A21;
-    transform: scale(1.25);
+    transform: scale(1.3);
 }
 
 .results-carousel-dot:hover:not(.active) {
     background: #B0B0B0;
+    transform: scale(1.15);
+}
+
+.results-carousel-dot:active {
+    transform: scale(0.85);
+}
+
+/* Respetar preferencia de movimiento reducido (accesibilidad) */
+@media (prefers-reduced-motion: reduce) {
+    .results-carousel-track,
+    .results-carousel-btn,
+    .results-carousel-dot {
+        transition-duration: 0.01ms !important;
+    }
+    .results-carousel-btn:active:not(:disabled),
+    .results-carousel-dot:active {
+        transform: none !important;
+    }
 }
 
 /* Card de resultado */
@@ -1056,15 +1089,24 @@ ul {
         scroll-snap-type: x mandatory;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
+        /* Scroll programático (cuando JS llama scrollTo) suave */
+        scroll-behavior: smooth;
+        /* Evitar que el scroll se propague al body al llegar a los extremos */
+        overscroll-behavior-x: contain;
+        touch-action: pan-x;
     }
     .results-carousel-viewport::-webkit-scrollbar {
         display: none;
     }
+    /* En mobile el JS no anima la transform, dejamos que el scroll-snap nativo
+       se encargue. Pero mantenemos un transition corto por si se anima via JS. */
     .results-carousel-track {
-        transition: none;
+        transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
     }
     .result-card {
         scroll-snap-align: start;
+        /* Evita que el swipe "salte" dos cards en swipes rápidos */
+        scroll-snap-stop: always;
     }
 }
 

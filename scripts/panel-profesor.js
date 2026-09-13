@@ -124,11 +124,8 @@ async function initDashboard() {
         }
     }
 
-    // Load players
-    await loadPlayers();
-
-    // Load stats
-    await loadStats();
+    // Load players + stats in parallel (independent queries)
+    await Promise.all([loadPlayers(), loadStats()]);
 
     // Hide loading, show content
     loadingState.style.display = 'none';
@@ -188,31 +185,36 @@ async function loadPlayers(category = '') {
 
         allPlayers = [...ownPlayers, ...extraPlayers];
 
-        // Fetch latest evaluation average for each player
-        await Promise.all(allPlayers.map(async (player) => {
-            try {
-                const { data: evalsRows } = await supabase
-                    .from('evaluaciones')
-                    .select('*')
-                    .eq('jugador_id', player.id);
+        // Single batch query for all latest evaluations (avoids N+1)
+        if (allPlayers.length > 0) {
+            const { data: allEvals, error: evalsErr } = await supabase
+                .from('evaluaciones')
+                .select('jugador_id, fecha_fin, promedio_general, semana')
+                .in('jugador_id', allPlayers.map(p => p.id));
 
-                if (evalsRows && evalsRows.length > 0) {
-                    // Sort locally to avoid Firebase index requirement issues
-                    let playerEvals = [...evalsRows];
-                    playerEvals.sort((a, b) => {
-                        const dateA = new Date(a.fecha_fin || a.fecha || 0).getTime();
-                        const dateB = new Date(b.fecha_fin || b.fecha || 0).getTime();
-                        return dateB - dateA;
-                    });
-
-                    const latestEval = playerEvals[0];
-                    player.latestPromedio = latestEval.promedio_general || null;
-                    player.latestSemana = latestEval.semana || '';
+            if (evalsErr) {
+                console.warn('Could not load evals:', evalsErr);
+            } else if (allEvals && allEvals.length > 0) {
+                // Group by jugador_id and find the latest
+                const latestByPlayer = {};
+                for (const ev of allEvals) {
+                    const pid = ev.jugador_id;
+                    if (!pid) continue;
+                    const current = latestByPlayer[pid];
+                    const evDate = new Date(ev.fecha_fin || ev.semana || 0).getTime();
+                    if (!current || evDate > current.date) {
+                        latestByPlayer[pid] = { ev, date: evDate };
+                    }
                 }
-            } catch (e) {
-                console.warn('Could not load evals for', player.id, e);
+                for (const player of allPlayers) {
+                    const latest = latestByPlayer[player.id];
+                    if (latest) {
+                        player.latestPromedio = latest.ev.promedio_general || null;
+                        player.latestSemana = latest.ev.semana || '';
+                    }
+                }
             }
-        }));
+        }
 
         // Sort locally by name
         allPlayers.sort((a, b) => {
@@ -722,12 +724,12 @@ async function loadStats() {
             // Admin sees all evaluations
             const { count: c } = await supabase
                 .from('evaluaciones')
-                .select('*', { count: 'exact', head: true });
+                .select('id', { count: 'exact', head: true });
             count = c || 0;
         } else {
             const { count: c } = await supabase
                 .from('evaluaciones')
-                .select('*', { count: 'exact', head: true })
+                .select('id', { count: 'exact', head: true })
                 .eq('evaluador_id', currentProfessor.id);
             count = c || 0;
         }

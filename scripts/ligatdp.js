@@ -55,84 +55,80 @@ document.addEventListener('DOMContentLoaded', () => {
         const squadGrid = document.querySelector('#section-plantilla .squad-grid');
         if (!squadGrid) return;
 
-        // Player profile URLs mapping
-        const playerProfiles = {
-            'Abimael Torres Nava': 'https://ligatdp.mx/cuerpoTecnico/41036',
-            'Rizieri Pérez Valenzo': 'https://ligatdp.mx/jugador/174233',
-            'Luis Gustavo Emeterio Hernandez': 'https://ligatdp.mx/jugador/168919',
-            'Cristian Miguel Padierna Mojica': 'https://ligatdp.mx/jugador/184363',
-            'Luis Alberto Olvera Perez': 'https://ligatdp.mx/jugador/175924',
-            'Jorge Salazar Jiménez': 'https://ligatdp.mx/jugador/184374',
-            'Juan Carlos Guerrero Peña': 'https://ligatdp.mx/jugador/180278',
-            'Alexis Armando Espinosa Domínguez': 'https://ligatdp.mx/jugador/185609',
-            'Diego Efraín Martínez Ríos': 'https://ligatdp.mx/jugador/184392',
-            'Ignacio Jesús López Joachín': 'https://ligatdp.mx/jugador/184383',
-            'Diego Alberto Váldez Sánchez': 'https://ligatdp.mx/jugador/184386',
-            'Emiliano Gutiérrez Castro': 'https://ligatdp.mx/jugador/184360',
-            'Iker Baizabal Hernández': 'https://ligatdp.mx/jugador/184391',
-            'Baruk Martín Curiel Cornejo': 'https://ligatdp.mx/jugador/184537',
-            'Noé Miguel Estefes': 'https://ligatdp.mx/jugador/184376',
+        // Player profile URLs (LigaTDP.mx). Vacío por ahora - llenar cuando se tengan los IDs.
+        const playerProfiles = {};
 
-            'Melvin Rafael Maximo': 'https://ligatdp.mx/jugador/185612',
-            'Darío Magariño Castillejos': 'https://ligatdp.mx/jugador/184384',
-            'Martín Magaña Vázquez': 'https://ligatdp.mx/jugador/184394',
-            'Oscar Gabriel Ortega Ramos': 'https://ligatdp.mx/jugador/186198',
-            'Cristian Alexander García Morales': 'https://ligatdp.mx/jugador/186205'
-        };
-
-        // Player images from PlantillaLigaTDP_2026 folder (including DT)
+        // Player images from PlantillaAlebrijesTeotihuacanLigaTDP folder.
+        // Formato: Nombre_Nombre_Position_Number.jpg (DT sin número).
+        // Orden: DT primero, luego Porteros, Defensas, Mediocampistas, Delanteros
+        //        (ordenados por número de playera).
         const playerFiles = [
-            'Abimael_Torres_Nava_DirectorTecnico.jpg',
-            'Alan_Mauricio_Chimal_Barajas_Portero.jpg',
-            'Alexander_Peralta_Selvan_Medio.jpg',
-            'Alexis_Armando_Espinosa_Domínguez_Delantero.jpg',
-            'Alexis_Eduardo_Cagal_Cruz_Delantero.jpg',
-            'Baruk_Martín_Curiel_Cornejo_Medio.jpg',
-            'Carlos_Alberto_Espinosa_Valentín_Defensa.jpg',
-            'Cristian_Alexander_García_Morales_Medio.jpg',
-            'Cristian_Miguel_Padierna_Mojica_Defensa.jpg',
-            'Darío_Magariño_Castillejos_Defensa.jpg',
-            'David_Eduardo_Delgadillo_Hernández_Medio.jpg',
-            'Diego_Alberto_Váldez_Sánchez_Defensa.jpg',
-            'Diego_Efraín_Martínez_Ríos_Portero.jpg',
-            'Emiliano_Gutiérrez_Castro_Defensa.jpg',
-            'Gabriel_Villagran_Toledo_Defensa.jpg',
-            'Horus_Axel_Minor_Ortíz_Medio.jpg',
-            'Ignacio_Jesús_López_Joachín_Defensa.jpg',
-            'Iker_Baizabal_Hernández_Defensa.jpg',
-            'Jireh_Ismael_Alvarado_Sánchez_Medio.jpg',
-            'Jocsan_Adrián_Sánchez_Ballona_Medio.jpg',
-            'Jorge_Salazar_Jiménez_Medio.jpg',
-            'Jose_Luis_Tavares_Torres_Defensa.jpg',
-            'Joshua_Alejo_Hernández_Portero.jpg',
-            'Juan_Carlos_Guerrero_Peña_Medio.jpg',
-            'Juan_José_Salazar_Sánchez_Medio.jpg',
-            'Julio_Cezar_Gutierrez_Diaz_Medio.jpg',
-            'Luis_Alberto_Olvera_Perez_Medio.jpg',
-            'Luis_Alfonso_Martínez_Lupercio_Medio.jpg',
-            'Luis_Gustavo_Emeterio_Hernandez_Defensa.jpg',
-            'Martín_Magaña_Vázquez_Defensa.jpg',
-            'Mauro_Exsael_Paredes_Sánchez_Medio.jpg',
-            'Melvin_Rafael_Maximo_Delantero.jpg',
-            'Noé_Miguel_Estefes_Medio.jpg',
-            'Oliver_De_La_Torre_Pérez_Medio.jpg',
-            'Orbi_Ríos_Rodríguez_Delantero.jpg',
-            'Oscar_Gabriel_Ortega_Ramos_Medio.jpg',
-            'Rizieri_Pérez_Valenzo_Defensa.jpg',
-            'Rodrigo_Samuel_Camacho_Rodriguez_Defensa.jpg',
-            'Santiago_Mael_Ortíz_Olivera_Medio.jpg'
+            // Director Técnico
+            'Rafael_Arturo_Tejeda_Arellano_DirectorTecnico.jpg',
+
+            // Porteros
+            'Roberto_Alcantar_Piña_Portero_1.jpg',
+            'Joshua_Alejo_Hernández_Portero_12.jpg',
+            'Miguel_Angel_Rodriguez_Luna_Portero_25.jpg',
+
+            // Defensas
+            'Luis_Jareth_Dominguez_Meza_Defensa_2.jpg',
+            'Deivid_Antony_Fuentes_Acevedo_Defensa_3.jpg',
+            'José_Luis_Tavares_Torres_Defensa_4.jpg',
+            'Angel_Uriel_Castillo_Ramirez_Defensa_5.jpg',
+            'Jose_Julian_Linares_Mendoza_Defensa_13.jpg',
+            'Gerardo_Gael_Uribe_Ponce_Defensa_14.jpg',
+            'Iram_Habid_Barrientos_Garcia_Defensa_15.jpg',
+            'Juan_Ramírez_Bautista_Defensa_16.jpg',
+            'Diego_Luna_Librado_Defensa_17.jpg',
+
+            // Mediocampistas
+            'Jesus_Miguel_Xolio_Ortiz_Medio_6.jpg',
+            'Felix_Eduardo_Martinez_Contreras_Medio_7.jpg',
+            'Miguel_Ángel_Sánchez_Dionisio_Medio_8.jpg',
+            'Jorge_Eduardo_Santiago_Reyes_Medio_10.jpg',
+            'Bayron_Mishell_Mateos_Martínez_Medio_11.jpg',
+            'Demian_Marcus_Arregui_Nava_Medio_18.jpg',
+            'Alejandro_Yoed_Espíritu_Hernández_Medio_19.jpg',
+            'Ignacio_Hazzam_Dominguez_Cruz_Medio_21.jpg',
+            'Brandon_Uziel_Moya_Marquez_Medio_22.jpg',
+            'Abdiel_Monroy_Garcia_Medio_23.jpg',
+            'Noé_Miguel_Estefes_Medio_24.jpg',
+            'Luis_Esteban_Radilla_Moreno_Medio_26.jpg',
+            'Henry_Ruben_Hernandez_Cisneros_Medio_30.jpg',
+            'William_Alfredo_Turrubiates_Camacho_Medio_31.jpg',
+
+            // Delanteros
+            'Diego_Ivan_Ramirez_Gonzalez_Delantero_9.jpg',
+            'Alexis_Eduardo_Cagal_Cruz_Delantero_20.jpg',
+            'Cesar_Alexis_Varela_Castillo_Delantero_27.jpg',
+            'Franco_Luciano_Cruz_Benitez_Delantero_28.jpg',
+            'Oscar_Gabriel_Ortega_Ramos_Delantero_29.jpg',
+            'Iker_Castillo_Tede_Delantero_32.jpg'
         ];
 
-        // Parse player data from filename
+        // Parse player data from filename.
+        // Formato nuevo: Name_Position_Number  (DT: Name_DirectorTecnico)
         const players = playerFiles.map(filename => {
             const nameWithoutExt = filename.replace('.jpg', '');
             const parts = nameWithoutExt.split('_');
 
-            // Last part is the position
-            const position = parts[parts.length - 1];
+            const lastPart = parts[parts.length - 1];
+            const isJerseyNumeric = /^\d+$/.test(lastPart);
 
-            // All other parts are the name
-            const nameParts = parts.slice(0, -1);
+            let position, jersey, nameParts;
+            if (isJerseyNumeric) {
+                // Name_Position_Number
+                position = parts[parts.length - 2];
+                jersey = parseInt(lastPart, 10);
+                nameParts = parts.slice(0, -2);
+            } else {
+                // Name_DirectorTecnico (sin número)
+                position = lastPart;
+                jersey = null;
+                nameParts = parts.slice(0, -1);
+            }
+
             const fullName = nameParts.join(' ');
 
             // Map position names
@@ -140,13 +136,16 @@ document.addEventListener('DOMContentLoaded', () => {
             let filterCategory = position.toLowerCase();
 
             if (position === 'Medio') {
-                positionDisplay = 'Medio';
+                positionDisplay = 'Mediocampista';
                 filterCategory = 'medios';
             } else if (position === 'Defensa') {
+                positionDisplay = 'Defensa';
                 filterCategory = 'defensas';
             } else if (position === 'Portero') {
+                positionDisplay = 'Portero';
                 filterCategory = 'porteros';
             } else if (position === 'Delantero') {
+                positionDisplay = 'Delantero';
                 filterCategory = 'delanteros';
             } else if (position === 'DirectorTecnico') {
                 positionDisplay = 'Director Técnico';
@@ -157,7 +156,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 name: fullName,
                 position: positionDisplay,
                 filterCategory: filterCategory,
-                image: `../assets/PlantillaLigaTDP_2026/${filename}`,
+                jersey: jersey,
+                image: `../assets/PlantillaAlebrijesTeotihuacanLigaTDP/${filename}`,
                 profileUrl: playerProfiles[fullName] || null
             };
         });
@@ -221,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Clear grid
         squadGrid.innerHTML = '';
 
-        // Sort players by position
+        // Sort players by position, then by jersey number (DT al inicio sin número)
         const positionOrder = {
             'Director Técnico': 0,
             'Portero': 1,
@@ -234,6 +234,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const orderA = positionOrder[a.position] || 5;
             const orderB = positionOrder[b.position] || 5;
             if (orderA !== orderB) return orderA - orderB;
+            // Dentro de la misma posición: por número de playera
+            if (a.jersey !== null && b.jersey !== null) {
+                return a.jersey - b.jersey;
+            }
             return a.name.localeCompare(b.name);
         });
 
@@ -258,9 +262,15 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
+        // Jersey number badge (solo jugadores, no DT)
+        const jerseyBadge = (player.jersey !== null && !isDT)
+            ? `<span class="player-number" aria-label="Número de playera ${player.jersey}">${player.jersey}</span>`
+            : '';
+
         card.innerHTML = `
             <div class="player-img">
                 <img src="${player.image}" alt="${player.name}" onerror="this.src='../assets/Alebrijes Teotihuacan.png'">
+                ${jerseyBadge}
             </div>
             <div class="player-info">
                 <h3>${player.name}</h3>

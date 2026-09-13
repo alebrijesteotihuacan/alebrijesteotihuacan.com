@@ -1502,16 +1502,18 @@
             }
 
             const photoFiles = [
-                'Abimael_Torres_Nava_DirectorTecnico', 'Alan_Mauricio_Chimal_Barajas_Portero', 'Alexander_Peralta_Selvan_Medio', 'Alexis_Armando_Espinosa_Domínguez_Delantero', 
-                'Alexis_Eduardo_Cagal_Cruz_Delantero', 'Baruk_Martín_Curiel_Cornejo_Medio', 'Carlos_Alberto_Espinosa_Valentín_Defensa', 'Cristian_Alexander_García_Morales_Medio', 
-                'Cristian_Miguel_Padierna_Mojica_Defensa', 'Darío_Magariño_Castillejos_Defensa', 'David_Eduardo_Delgadillo_Hernández_Medio', 'Diego_Alberto_Váldez_Sánchez_Defensa', 
-                'Diego_Efraín_Martínez_Ríos_Portero', 'Emiliano_Gutiérrez_Castro_Defensa', 'Gabriel_Villagran_Toledo_Defensa', 'Horus_Axel_Minor_Ortíz_Medio', 
-                'Ignacio_Jesús_López_Joachín_Defensa', 'Iker_Baizabal_Hernández_Defensa', 'Jireh_Ismael_Alvarado_Sánchez_Medio', 'Jocsan_Adrián_Sánchez_Ballona_Medio', 
-                'Jorge_Salazar_Jiménez_Medio', 'Jose_Luis_Tavares_Torres_Defensa', 'Joshua_Alejo_Hernández_Portero', 'Juan_Carlos_Guerrero_Peña_Medio', 
-                'Juan_José_Salazar_Sánchez_Medio', 'Julio_Cezar_Gutierrez_Diaz_Medio', 'Luis_Alberto_Olvera_Perez_Medio', 'Luis_Alfonso_Martínez_Lupercio_Medio', 
-                'Luis_Gustavo_Emeterio_Hernandez_Defensa', 'Martín_Magaña_Vázquez_Defensa', 'Mauro_Exsael_Paredes_Sánchez_Medio', 'Melvin_Rafael_Maximo_Delantero', 
-                'Noé_Miguel_Estefes_Medio', 'Oliver_De_La_Torre_Pérez_Medio', 'Orbi_Ríos_Rodríguez_Delantero', 'Oscar_Gabriel_Ortega_Ramos_Medio', 
-                'Rizieri_Pérez_Valenzo_Defensa', 'Rodrigo_Samuel_Camacho_Rodriguez_Defensa', 'Santiago_Mael_Ortíz_Olivera_Medio'
+                'Rafael_Arturo_Tejeda_Arellano_DirectorTecnico',
+                'Roberto_Alcantar_Piña_Portero_1', 'Joshua_Alejo_Hernández_Portero_12', 'Miguel_Angel_Rodriguez_Luna_Portero_25',
+                'Luis_Jareth_Dominguez_Meza_Defensa_2', 'Deivid_Antony_Fuentes_Acevedo_Defensa_3', 'José_Luis_Tavares_Torres_Defensa_4',
+                'Angel_Uriel_Castillo_Ramirez_Defensa_5', 'Jose_Julian_Linares_Mendoza_Defensa_13', 'Gerardo_Gael_Uribe_Ponce_Defensa_14',
+                'Iram_Habid_Barrientos_Garcia_Defensa_15', 'Juan_Ramírez_Bautista_Defensa_16', 'Diego_Luna_Librado_Defensa_17',
+                'Jesus_Miguel_Xolio_Ortiz_Medio_6', 'Felix_Eduardo_Martinez_Contreras_Medio_7', 'Miguel_Ángel_Sánchez_Dionisio_Medio_8',
+                'Jorge_Eduardo_Santiago_Reyes_Medio_10', 'Bayron_Mishell_Mateos_Martínez_Medio_11', 'Demian_Marcus_Arregui_Nava_Medio_18',
+                'Alejandro_Yoed_Espíritu_Hernández_Medio_19', 'Ignacio_Hazzam_Dominguez_Cruz_Medio_21', 'Brandon_Uziel_Moya_Marquez_Medio_22',
+                'Abdiel_Monroy_Garcia_Medio_23', 'Noé_Miguel_Estefes_Medio_24', 'Luis_Esteban_Radilla_Moreno_Medio_26',
+                'Henry_Ruben_Hernandez_Cisneros_Medio_30', 'William_Alfredo_Turrubiates_Camacho_Medio_31',
+                'Diego_Ivan_Ramirez_Gonzalez_Delantero_9', 'Alexis_Eduardo_Cagal_Cruz_Delantero_20', 'Cesar_Alexis_Varela_Castillo_Delantero_27',
+                'Franco_Luciano_Cruz_Benitez_Delantero_28', 'Oscar_Gabriel_Ortega_Ramos_Delantero_29', 'Iker_Castillo_Tede_Delantero_32'
             ];
             
             const photoFilesSoles = [
@@ -1550,7 +1552,7 @@
 
             // Search each group in priority order
             const tdpMatch = bestMatch(photoFiles);
-            if (tdpMatch) return '../assets/PlantillaLigaTDP_2026/' + tdpMatch + '.jpg';
+            if (tdpMatch) return '../assets/PlantillaAlebrijesTeotihuacanLigaTDP/' + tdpMatch + '.jpg';
 
             const solesMatch = bestMatch(photoFilesSoles);
             if (solesMatch) return '../assets/JugadoresSoles/' + solesMatch + '.jpg';

@@ -32,27 +32,41 @@ const CATEGORY_COLORS = {
 };
 
 // ── Image helpers (same logic as panel-profesor.js) ──────────
+// PlantillaAlebrijesTeotihuacanLigaTDP - Formato: Name_Position_Number.jpg
 const PLAYER_IMAGES = [
-    'Abimael_Torres_Nava_DirectorTecnico.jpg','Alan_Mauricio_Chimal_Barajas_Portero.jpg',
-    'Alexander_Peralta_Selvan_Medio.jpg','Alexis_Armando_Espinosa_Domínguez_Delantero.jpg',
-    'Alexis_Eduardo_Cagal_Cruz_Delantero.jpg','Baruk_Martín_Curiel_Cornejo_Medio.jpg',
-    'Carlos_Alberto_Espinosa_Valentín_Defensa.jpg','Cristian_Alexander_García_Morales_Medio.jpg',
-    'Cristian_Miguel_Padierna_Mojica_Defensa.jpg','Darío_Magariño_Castillejos_Defensa.jpg',
-    'David_Eduardo_Delgadillo_Hernández_Medio.jpg','Diego_Alberto_Váldez_Sánchez_Defensa.jpg',
-    'Diego_Efraín_Martínez_Ríos_Portero.jpg','Emiliano_Gutiérrez_Castro_Defensa.jpg',
-    'Gabriel_Villagran_Toledo_Defensa.jpg','Horus_Axel_Minor_Ortíz_Medio.jpg',
-    'Ignacio_Jesús_López_Joachín_Defensa.jpg','Iker_Baizabal_Hernández_Defensa.jpg',
-    'Jireh_Ismael_Alvarado_Sánchez_Medio.jpg','Jocsan_Adrián_Sánchez_Ballona_Medio.jpg',
-    'Jorge_Salazar_Jiménez_Medio.jpg','Jose_Luis_Tavares_Torres_Defensa.jpg',
-    'Joshua_Alejo_Hernández_Portero.jpg','Juan_Carlos_Guerrero_Peña_Medio.jpg',
-    'Juan_José_Salazar_Sánchez_Medio.jpg','Julio_Cezar_Gutierrez_Diaz_Medio.jpg',
-    'Luis_Alberto_Olvera_Perez_Medio.jpg','Luis_Alfonso_Martínez_Lupercio_Medio.jpg',
-    'Luis_Gustavo_Emeterio_Hernandez_Defensa.jpg','Martín_Magaña_Vázquez_Defensa.jpg',
-    'Mauro_Exsael_Paredes_Sánchez_Medio.jpg','Melvin_Rafael_Maximo_Delantero.jpg',
-    'Noé_Miguel_Estefes_Medio.jpg','Oliver_De_La_Torre_Pérez_Medio.jpg',
-    'Orbi_Ríos_Rodríguez_Delantero.jpg','Oscar_Gabriel_Ortega_Ramos_Medio.jpg',
-    'Rizieri_Pérez_Valenzo_Defensa.jpg','Rodrigo_Samuel_Camacho_Rodriguez_Defensa.jpg',
-    'Santiago_Mael_Ortíz_Olivera_Medio.jpg'
+    'Rafael_Arturo_Tejeda_Arellano_DirectorTecnico.jpg',
+    'Roberto_Alcantar_Piña_Portero_1.jpg',
+    'Joshua_Alejo_Hernández_Portero_12.jpg',
+    'Miguel_Angel_Rodriguez_Luna_Portero_25.jpg',
+    'Luis_Jareth_Dominguez_Meza_Defensa_2.jpg',
+    'Deivid_Antony_Fuentes_Acevedo_Defensa_3.jpg',
+    'José_Luis_Tavares_Torres_Defensa_4.jpg',
+    'Angel_Uriel_Castillo_Ramirez_Defensa_5.jpg',
+    'Jose_Julian_Linares_Mendoza_Defensa_13.jpg',
+    'Gerardo_Gael_Uribe_Ponce_Defensa_14.jpg',
+    'Iram_Habid_Barrientos_Garcia_Defensa_15.jpg',
+    'Juan_Ramírez_Bautista_Defensa_16.jpg',
+    'Diego_Luna_Librado_Defensa_17.jpg',
+    'Jesus_Miguel_Xolio_Ortiz_Medio_6.jpg',
+    'Felix_Eduardo_Martinez_Contreras_Medio_7.jpg',
+    'Miguel_Ángel_Sánchez_Dionisio_Medio_8.jpg',
+    'Jorge_Eduardo_Santiago_Reyes_Medio_10.jpg',
+    'Bayron_Mishell_Mateos_Martínez_Medio_11.jpg',
+    'Demian_Marcus_Arregui_Nava_Medio_18.jpg',
+    'Alejandro_Yoed_Espíritu_Hernández_Medio_19.jpg',
+    'Ignacio_Hazzam_Dominguez_Cruz_Medio_21.jpg',
+    'Brandon_Uziel_Moya_Marquez_Medio_22.jpg',
+    'Abdiel_Monroy_Garcia_Medio_23.jpg',
+    'Noé_Miguel_Estefes_Medio_24.jpg',
+    'Luis_Esteban_Radilla_Moreno_Medio_26.jpg',
+    'Henry_Ruben_Hernandez_Cisneros_Medio_30.jpg',
+    'William_Alfredo_Turrubiates_Camacho_Medio_31.jpg',
+    'Diego_Ivan_Ramirez_Gonzalez_Delantero_9.jpg',
+    'Alexis_Eduardo_Cagal_Cruz_Delantero_20.jpg',
+    'Cesar_Alexis_Varela_Castillo_Delantero_27.jpg',
+    'Franco_Luciano_Cruz_Benitez_Delantero_28.jpg',
+    'Oscar_Gabriel_Ortega_Ramos_Delantero_29.jpg',
+    'Iker_Castillo_Tede_Delantero_32.jpg'
 ];
 
 const PLAYER_IMAGES_SOLES = [
@@ -118,12 +132,15 @@ function findPlayerImage(nombre, apellido) {
 
     for (const img of PLAYER_IMAGES) {
         const parts = img.split('.')[0].split('_');
+        // Pop jersey number (si existe) y luego la posición
+        const lastPart = parts[parts.length - 1];
+        if (/^\d+$/.test(lastPart)) parts.pop();
         parts.pop();
         const imgName = normalizeStr(parts.join(' '));
-        if (imgName === fullName) return `assets/PlantillaLigaTDP_2026/${img}`;
+        if (imgName === fullName) return `assets/PlantillaAlebrijesTeotihuacanLigaTDP/${img}`;
         if (fullName && imgName.includes(firstName) && firstName.length > 2) {
             const ap = normalizeStr(apellido || '');
-            if (ap && imgName.includes(ap.split(' ')[0])) return `assets/PlantillaLigaTDP_2026/${img}`;
+            if (ap && imgName.includes(ap.split(' ')[0])) return `assets/PlantillaAlebrijesTeotihuacanLigaTDP/${img}`;
         }
     }
     for (const img of PLAYER_IMAGES_SOLES) {

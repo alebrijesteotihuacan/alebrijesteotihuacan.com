@@ -485,6 +485,28 @@
     color: var(--white);
 }
 
+/* Jersey number badge (overlay on player image) */
+.player-number {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: var(--primary);
+    color: var(--white);
+    font-family: 'Anton', sans-serif;
+    font-size: 1.5rem;
+    line-height: 1;
+    padding: 12px 16px;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    z-index: 2;
+    min-width: 48px;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 0.5px;
+}
+
 /* Section 2: Tabla de Posiciones */
 .table-title-wrapper {
     text-align: center;
@@ -1182,6 +1204,15 @@
 
     .player-info h3 {
         font-size: 1.15rem;
+    }
+
+    .player-number {
+        top: 10px;
+        right: 10px;
+        font-size: 1.15rem;
+        padding: 9px 12px;
+        min-width: 38px;
+        min-height: 38px;
     }
 
 

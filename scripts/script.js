@@ -186,10 +186,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultPrevBtn = document.querySelector('.results-carousel-btn.prev');
     const resultNextBtn = document.querySelector('.results-carousel-btn.next');
     const resultDotsContainer = document.querySelector('.results-carousel-dots');
+    const resultsViewport = document.querySelector('.results-carousel-viewport');
 
     if (resultsTrack && resultCards.length > 0) {
         let resultIndex = 0;
         const resultTotal = resultCards.length;
+        let autoPlayTimer = null;
+        const AUTO_PLAY_MS = 5000;
 
         // Crear dots
         if (resultDotsContainer) {
@@ -198,7 +201,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 dot.type = 'button';
                 dot.className = 'results-carousel-dot' + (i === 0 ? ' active' : '');
                 dot.setAttribute('aria-label', `Ir al resultado ${i + 1}`);
-                dot.addEventListener('click', () => goToResult(i));
+                dot.addEventListener('click', () => {
+                    goToResult(i);
+                    restartAutoPlay();
+                });
                 resultDotsContainer.appendChild(dot);
             });
         }
@@ -216,17 +222,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         function goToResult(i) {
-            resultIndex = Math.max(0, Math.min(i, resultTotal - 1));
+            // Soporte wrap-around: si i >= total, vuelve a 0
+            if (i >= resultTotal) i = 0;
+            if (i < 0) i = resultTotal - 1;
+            resultIndex = i;
             updateResultsCarousel();
         }
 
-        if (resultPrevBtn) resultPrevBtn.addEventListener('click', () => goToResult(resultIndex - 1));
-        if (resultNextBtn) resultNextBtn.addEventListener('click', () => goToResult(resultIndex + 1));
+        if (resultPrevBtn) resultPrevBtn.addEventListener('click', () => {
+            goToResult(resultIndex - 1);
+            restartAutoPlay();
+        });
+        if (resultNextBtn) resultNextBtn.addEventListener('click', () => {
+            goToResult(resultIndex + 1);
+            restartAutoPlay();
+        });
 
         // Soporte de swipe en mobile
         let touchStartX = 0;
         let touchEndX = 0;
-        const resultsViewport = document.querySelector('.results-carousel-viewport');
         if (resultsViewport) {
             resultsViewport.addEventListener('touchstart', e => {
                 touchStartX = e.changedTouches[0].screenX;
@@ -236,8 +250,50 @@ document.addEventListener('DOMContentLoaded', () => {
                 const threshold = 50;
                 if (touchEndX < touchStartX - threshold) goToResult(resultIndex + 1);
                 if (touchEndX > touchStartX + threshold) goToResult(resultIndex - 1);
+                restartAutoPlay();
             }, { passive: true });
         }
+
+        // Auto-play: avanza cada AUTO_PLAY_MS, con wrap-around
+        function startAutoPlay() {
+            if (autoPlayTimer) return;
+            autoPlayTimer = setInterval(() => {
+                goToResult(resultIndex + 1);
+            }, AUTO_PLAY_MS);
+        }
+
+        function stopAutoPlay() {
+            if (autoPlayTimer) {
+                clearInterval(autoPlayTimer);
+                autoPlayTimer = null;
+            }
+        }
+
+        function restartAutoPlay() {
+            stopAutoPlay();
+            startAutoPlay();
+        }
+
+        // Pausar al hacer hover (PC) y reanudar al salir
+        if (resultsViewport) {
+            resultsViewport.addEventListener('mouseenter', stopAutoPlay);
+            resultsViewport.addEventListener('mouseleave', startAutoPlay);
+        }
+
+        // Respetar prefers-reduced-motion: no auto-play si el usuario lo prefiere
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        if (!prefersReducedMotion.matches) {
+            startAutoPlay();
+        }
+
+        // Pausar cuando la pestaña no es visible (ahorra batería)
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                stopAutoPlay();
+            } else if (!prefersReducedMotion.matches) {
+                startAutoPlay();
+            }
+        });
 
         updateResultsCarousel();
     }

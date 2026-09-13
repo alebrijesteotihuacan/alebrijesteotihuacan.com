@@ -3536,14 +3536,14 @@ footer {
 .calendar-cta {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    padding: 14px 28px;
+    gap: 8px;
+    padding: 10px 22px;
     background: #F26A21;
     color: #FFFFFF;
     font-family: 'Montserrat', sans-serif;
-    font-size: 0.85rem;
+    font-size: 0.78rem;
     font-weight: 700;
-    letter-spacing: 1.5px;
+    letter-spacing: 1.2px;
     text-transform: uppercase;
     text-decoration: none;
     border-radius: 4px;

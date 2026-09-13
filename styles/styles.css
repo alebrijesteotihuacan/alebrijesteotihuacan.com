@@ -3118,19 +3118,6 @@ footer {
     margin-top: 2px;
 }
 
-.status-pill {
-    display: inline-block;
-    padding: 5px 12px;
-    background: #1A1A1A;
-    color: #F26A21;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    border-radius: 3px;
-}
-
 /* Board: 3 columnas sobrias */
 .next-match-board {
     display: grid;

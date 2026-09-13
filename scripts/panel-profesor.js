@@ -14,7 +14,6 @@ const logoutBtn = document.getElementById('logoutBtn');
 const totalJugadores = document.getElementById('totalJugadores');
 const totalEvaluaciones = document.getElementById('totalEvaluaciones');
 const playersGrid = document.getElementById('playersGrid');
-const categoryFilter = document.getElementById('categoryFilter');
 const searchInput = document.getElementById('searchInput');
 const evalModal = document.getElementById('evalModal');
 const modalClose = document.getElementById('modalClose');
@@ -696,7 +695,7 @@ async function executeDeletePlayer(confirmBtn) {
         closeDeleteModal();
         
         // Refresh dashboard
-        await loadPlayers(document.getElementById('categoryFilter').value);
+        await loadPlayers();
         await loadStats();
 
     } catch (error) {
@@ -897,10 +896,8 @@ if (evalSemanaInput) {
     });
 }
 
-// Category filter
-categoryFilter.addEventListener('change', () => {
-    loadPlayers(categoryFilter.value);
-});
+// Category filter removed: Arturo is DT of a single team (Alebrijes TDP), so the
+// categoria filter is no longer shown in the dashboard.
 
 // Search input
 if (searchInput) {
@@ -1166,54 +1163,31 @@ if (registerForm) {
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<span>Registrando...</span>';
 
-        // CRITICAL: Save professor's UID BEFORE creating the player user
-        const professorUid = currentProfessor.id;
-
         try {
             const formData = new FormData(registerForm);
-            const email = formData.get('email');
+            const newPlayerId = crypto.randomUUID();
 
-            // NOTE on Supabase auth semantics:
-            //   supabase.auth.signUp() signs in as the newly-created user, which would
-            //   log out the professor. The interim approach (per project plan) is to
-            //   create the player via signUp and then immediately restore the professor's
-            //   session by signing back in with their credentials.
-            const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-                email,
-                password: generatedPassword,
-                options: { data: { rol: 'jugador' } }
-            });
-            if (signUpError) throw signUpError;
-            const newUserUid = signUpData.user?.id;
-            if (!newUserUid) throw new Error('No se pudo obtener el ID del nuevo jugador.');
-
-            // Restore professor session: save professor email first
-            const professorEmail = currentProfessor.email;
-            // Attempt to restore the professor's session by signing in again.
-            // (We don't have the professor's password in the panel; we rely on Supabase
-            // persisting the previous session in localStorage. signOut clears it though.
-            // In practice, after signUp the new user is in localStorage; we need to
-            // sign out the new user so the professor must log back in. See follow-up.)
-            await supabase.auth.signOut();
-
-            // 2. Create Player Document in Supabase (use the new auth user's UID as id)
+            // Jugadores are pure data rows: no auth.users account is created
+            // (they don't log in to the website). The id is a fresh UUID and
+            // the equipo is auto-assigned from the professor's restricted team.
             const playerData = {
-                id: newUserUid,
+                id: newPlayerId,
                 nombre: formData.get('nombre'),
                 apellido: formData.get('apellido'),
-                email: email,
-                fechaNacimiento: formData.get('fechaNacimiento'),
-                categoria: formData.get('categoria'),
+                email: formData.get('email'),
+                fecha_nacimiento: formData.get('fechaNacimiento') || null,
+                equipo: currentProfessor.equipo_restringido || null,
                 posicion: formData.get('posicion'),
-                numeroCamiseta: parseInt(formData.get('numeroCamiseta')) || 0,
-                fechaRegistro: new Date().toISOString(),
-                registradoPor: professorUid  // Always the professor's UID
+                numero_camiseta: parseInt(formData.get('numeroCamiseta')) || null,
+                registrado_por: currentProfessor.id,
+                fecha_registro: new Date().toISOString(),
+                rol: 'jugador'
             };
 
             const { error: insertErr } = await supabase.from('jugadores').insert(playerData);
             if (insertErr) throw insertErr;
 
-            // 3. Success handling
+            // Success
             showToast(`Jugador ${playerData.nombre} registrado exitosamente`);
 
             // Update session counter
@@ -1221,14 +1195,12 @@ if (registerForm) {
             sessionCounter.textContent = registeredCount;
             registrationCounter.style.display = 'block';
 
-            // 4. Reset form but keep Category and Date for speed
-            const lastCategory = formData.get('categoria');
+            // Reset form but keep Date for speed
             const lastDate = formData.get('fechaNacimiento');
 
             registerForm.reset();
 
             // Restore context for next entry
-            document.getElementById('regCategoria').value = lastCategory;
             document.getElementById('regFechaNac').value = lastDate;
             passwordPreview.textContent = '--';
 

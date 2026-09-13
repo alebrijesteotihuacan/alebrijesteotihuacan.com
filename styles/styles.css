@@ -656,7 +656,8 @@ ul {
 }
 
 /* ============================================================
-   Últimos Resultados — mismo patrón institucional que Next Match
+   Últimos Resultados — Carrusel horizontal con mismo patrón
+   institucional que Next Match. Franja superior indica resultado.
    ============================================================ */
 
 .results-section {
@@ -672,16 +673,89 @@ ul {
     background: #E5E5E5;
 }
 
-.results-list {
+/* Carrusel */
+.results-carousel {
     display: flex;
-    flex-direction: column;
-    gap: 28px;
-    max-width: 1000px;
+    align-items: center;
+    gap: 16px;
+    max-width: 1040px;
     margin: 0 auto;
 }
 
+.results-carousel-viewport {
+    overflow: hidden;
+    flex: 1;
+    min-width: 0;
+}
+
+.results-carousel-track {
+    display: flex;
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.results-carousel-btn {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    border: 1px solid #E5E5E5;
+    color: #1A1A1A;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+}
+
+.results-carousel-btn:hover:not(:disabled) {
+    background: #F26A21;
+    border-color: #F26A21;
+    color: #FFFFFF;
+}
+
+.results-carousel-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.results-carousel-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.results-carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
+}
+
+.results-carousel-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #D5D5D5;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+    border: none;
+    padding: 0;
+}
+
+.results-carousel-dot.active {
+    background: #F26A21;
+    transform: scale(1.25);
+}
+
+.results-carousel-dot:hover:not(.active) {
+    background: #B0B0B0;
+}
+
+/* Card de resultado */
 .result-card {
     position: relative;
+    min-width: 100%;
+    flex-shrink: 0;
     background: #FFFFFF;
     border: 1px solid #ECECEC;
     border-radius: 8px;
@@ -691,7 +765,18 @@ ul {
 
 .result-accent {
     height: 4px;
-    background: linear-gradient(90deg, #F26A21 0%, #5D2A8C 100%);
+}
+
+.result-accent--win {
+    background: linear-gradient(90deg, #2E9C53 0%, #1E7D3D 50%, #0F5A2A 100%);
+}
+
+.result-accent--loss {
+    background: linear-gradient(90deg, #C04343 0%, #9B2C2C 50%, #6A1A1A 100%);
+}
+
+.result-accent--draw {
+    background: linear-gradient(90deg, #8A8A8A 0%, #5A5A5A 50%, #2E2E2E 100%);
 }
 
 .result-header {
@@ -779,30 +864,6 @@ ul {
     margin-top: 2px;
 }
 
-.outcome-pill {
-    display: inline-block;
-    padding: 6px 14px;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 1.8px;
-    text-transform: uppercase;
-    border-radius: 3px;
-    color: #FFFFFF;
-}
-
-.outcome-pill--win {
-    background: #1E7D3D;
-}
-
-.outcome-pill--loss {
-    background: #9B2C2C;
-}
-
-.outcome-pill--draw {
-    background: #5A5A5A;
-}
-
 .result-board {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
@@ -833,17 +894,6 @@ ul {
     transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
-.result-board .team-crest--winner {
-    border-color: #1E7D3D;
-    border-width: 2px;
-}
-
-.result-board .team-crest--loser {
-    border-color: #9B2C2C;
-    border-width: 2px;
-    opacity: 0.85;
-}
-
 .result-board .team-crest:hover {
     transform: scale(1.04);
 }
@@ -867,11 +917,6 @@ ul {
     border-radius: 3px;
 }
 
-.result-board .team-tag--winner {
-    background: #E6F2EB;
-    color: #1E7D3D;
-}
-
 .result-board .team-name {
     font-family: 'Anton', sans-serif;
     font-size: 1.2rem;
@@ -881,10 +926,6 @@ ul {
     letter-spacing: 1px;
     text-transform: uppercase;
     line-height: 1.1;
-}
-
-.result-board .team-name--winner {
-    color: #1E7D3D;
 }
 
 /* Score central */
@@ -941,6 +982,24 @@ ul {
         flex-direction: column;
         align-items: flex-start;
         gap: 16px;
+    }
+    .results-carousel-btn {
+        display: none;
+    }
+    .results-carousel-viewport {
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+    .results-carousel-viewport::-webkit-scrollbar {
+        display: none;
+    }
+    .results-carousel-track {
+        transition: none;
+    }
+    .result-card {
+        scroll-snap-align: start;
     }
 }
 

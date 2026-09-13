@@ -13,7 +13,7 @@ const teamLogos = {
     'Lonsdaleíta FC': '../assets/EquiposGrupo9_LigaTDP/LonsdaleitaFC.png',
     'ATLÉTICO TOLTECAS F.C.': '../assets/EquiposGrupo9_LigaTDP/AtleticoToltecas.png',
     'Halcones Negros F.C.': '../assets/EquiposGrupo9_LigaTDP/HalconesNegros.png',
-    'Tuzos Pachuca': '../assets/EquiposGrupo9_LigaTDP/UFD.png',
+    'Tuzos Pachuca': '../assets/EquiposGrupo9_LigaTDP/TuzosPachuca.png',
     'CEFOR 3030': '../assets/EquiposGrupo9_LigaTDP/CEFOR3030.png',
     'Club Deportivo Muxes': '../assets/EquiposGrupo9_LigaTDP/ClubMuxes.png',
     'Club Deportivo Matamoros': '../assets/EquiposGrupo9_LigaTDP/ClubDeportivoMatamoros.png',

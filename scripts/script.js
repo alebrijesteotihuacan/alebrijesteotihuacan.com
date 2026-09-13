@@ -180,5 +180,65 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Home Latest Results Carousel removed — now uses static cards
+    // Home Latest Results Carousel
+    const resultsTrack = document.querySelector('.results-carousel-track');
+    const resultCards = document.querySelectorAll('.result-card');
+    const resultPrevBtn = document.querySelector('.results-carousel-btn.prev');
+    const resultNextBtn = document.querySelector('.results-carousel-btn.next');
+    const resultDotsContainer = document.querySelector('.results-carousel-dots');
+
+    if (resultsTrack && resultCards.length > 0) {
+        let resultIndex = 0;
+        const resultTotal = resultCards.length;
+
+        // Crear dots
+        if (resultDotsContainer) {
+            resultCards.forEach((_, i) => {
+                const dot = document.createElement('button');
+                dot.type = 'button';
+                dot.className = 'results-carousel-dot' + (i === 0 ? ' active' : '');
+                dot.setAttribute('aria-label', `Ir al resultado ${i + 1}`);
+                dot.addEventListener('click', () => goToResult(i));
+                resultDotsContainer.appendChild(dot);
+            });
+        }
+        const resultDots = document.querySelectorAll('.results-carousel-dot');
+
+        function updateResultsCarousel() {
+            resultsTrack.style.transform = `translateX(-${resultIndex * 100}%)`;
+            if (resultDots.length) {
+                resultDots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === resultIndex);
+                });
+            }
+            if (resultPrevBtn) resultPrevBtn.disabled = resultIndex === 0;
+            if (resultNextBtn) resultNextBtn.disabled = resultIndex === resultTotal - 1;
+        }
+
+        function goToResult(i) {
+            resultIndex = Math.max(0, Math.min(i, resultTotal - 1));
+            updateResultsCarousel();
+        }
+
+        if (resultPrevBtn) resultPrevBtn.addEventListener('click', () => goToResult(resultIndex - 1));
+        if (resultNextBtn) resultNextBtn.addEventListener('click', () => goToResult(resultIndex + 1));
+
+        // Soporte de swipe en mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const resultsViewport = document.querySelector('.results-carousel-viewport');
+        if (resultsViewport) {
+            resultsViewport.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+            resultsViewport.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                const threshold = 50;
+                if (touchEndX < touchStartX - threshold) goToResult(resultIndex + 1);
+                if (touchEndX > touchStartX + threshold) goToResult(resultIndex - 1);
+            }, { passive: true });
+        }
+
+        updateResultsCarousel();
+    }
 });

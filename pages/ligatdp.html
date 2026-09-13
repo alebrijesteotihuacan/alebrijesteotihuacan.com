@@ -42,7 +42,7 @@
     <!-- News Styles (for news-card-modern) -->
     <link rel="stylesheet" href="../styles/noticias.css">
     <!-- Liga TDP Specific Styles -->
-    <link rel="stylesheet" href="../styles/ligatdp.css?v=2">
+    <link rel="stylesheet" href="../styles/ligatdp.css?v=3">
 </head>
 
 <body>
@@ -195,31 +195,45 @@
     <!-- Section 1: Plantilla de Jugadores -->
     <section class="section ligatdp-content-section active" id="section-plantilla">
         <div class="container">
-            <h2 class="section-title">Plantilla de Jugadores</h2>
-
-            <!-- Filter Select Dropdown -->
-            <div class="squad-filters">
-                <div class="filter-select-wrapper">
-                    <label for="squad-filter" class="filter-label">Filtrar por posición:</label>
-                    <div class="select-container">
-                        <select id="squad-filter" class="filter-select">
-                            <option value="all" selected>Todos los jugadores</option>
-                            <option value="cuerpo-tecnico">Cuerpo Técnico</option>
-                            <option value="porteros">Porteros</option>
-                            <option value="defensas">Defensas</option>
-                            <option value="medios">Mediocampistas</option>
-                            <option value="delanteros">Delanteros</option>
-                        </select>
-                        <svg class="select-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="6 9 12 15 18 9"></polyline>
-                        </svg>
-                    </div>
-                </div>
+            <div class="plantilla-header">
+                <p class="section-eyebrow">Temporada 2025-2026</p>
+                <h2 class="section-title">Plantilla</h2>
+                <p class="section-subtitle">Conoce a los jugadores de nuestras cuatro plantillas competitivas.</p>
             </div>
 
-            <div class="squad-grid">
-                <!-- Players will be loaded dynamically -->
+            <!-- Tabs: 4 categorías de equipo -->
+            <div class="plantilla-tabs" role="tablist" aria-label="Categorías de plantilla">
+                <button type="button" class="plantilla-tab is-active" role="tab" aria-selected="true" data-category="alebrijes-tdp">
+                    <span class="plantilla-tab-name">Alebrijes TDP</span>
+                    <span class="plantilla-tab-count">33</span>
+                </button>
+                <button type="button" class="plantilla-tab" role="tab" aria-selected="false" data-category="soles-tdp" data-accent="purple">
+                    <span class="plantilla-tab-name">Soles TDP</span>
+                    <span class="plantilla-tab-count">—</span>
+                </button>
+                <button type="button" class="plantilla-tab" role="tab" aria-selected="false" data-category="alebrijes-sub16">
+                    <span class="plantilla-tab-name">Alebrijes Sub-16</span>
+                    <span class="plantilla-tab-count">—</span>
+                </button>
+                <button type="button" class="plantilla-tab" role="tab" aria-selected="false" data-category="soles-sub16" data-accent="purple">
+                    <span class="plantilla-tab-name">Soles Sub-16</span>
+                    <span class="plantilla-tab-count">—</span>
+                </button>
+            </div>
+
+            <!-- Buscador -->
+            <div class="plantilla-search">
+                <svg class="plantilla-search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="7"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="search" id="plantilla-search" class="plantilla-search-input" placeholder="Buscar jugador por nombre o apellido..." aria-label="Buscar jugador">
+                <button type="button" class="plantilla-search-clear" aria-label="Limpiar búsqueda" hidden>×</button>
+            </div>
+
+            <!-- Contenido de la plantilla (renderizado por JS) -->
+            <div id="plantilla-content" class="plantilla-content">
+                <!-- Secciones por posición renderizadas dinámicamente -->
             </div>
         </div>
     </section>
@@ -712,7 +726,7 @@
     <!-- Scripts -->
     <script src="../scripts/script.js"></script>
     <script type="module" src="../scripts/nav-auth.js"></script> <!-- Main script for navbar -->
-    <script src="../scripts/ligatdp.js?v=2"></script>
+    <script src="../scripts/ligatdp.js?v=3"></script>
 </body>
 
 </html>

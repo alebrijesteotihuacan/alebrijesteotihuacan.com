@@ -51,17 +51,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Section 1: Plantilla de Jugadores
+    // 4 categorías (equipos), buscador, agrupado por posición dentro de cada equipo.
     function initPlantilla() {
-        const squadGrid = document.querySelector('#section-plantilla .squad-grid');
-        if (!squadGrid) return;
+        const section = document.getElementById('section-plantilla');
+        if (!section) return;
 
-        // Player profile URLs (LigaTDP.mx). Vacío por ahora - llenar cuando se tengan los IDs.
+        // URLs de perfil de jugador (ligatdp.mx). Vacío por ahora.
         const playerProfiles = {};
 
-        // Player images from PlantillaAlebrijesTeotihuacanLigaTDP folder.
-        // Formato: Nombre_Nombre_Position_Number.jpg (DT sin número).
-        // Orden: DT primero, luego Porteros, Defensas, Mediocampistas, Delanteros
-        //        (ordenados por número de playera).
+        // Archivos de la plantilla actual de Liga TDP (Alebrijes Teotihuacán).
+        // Formato: Name_Position_Number.jpg  | DT: Name_DirectorTecnico.jpg
         const playerFiles = [
             // Director Técnico
             'Rafael_Arturo_Tejeda_Arellano_DirectorTecnico.jpg',
@@ -107,23 +106,19 @@ document.addEventListener('DOMContentLoaded', () => {
             'Iker_Castillo_Tede_Delantero_32.jpg'
         ];
 
-        // Parse player data from filename.
-        // Formato nuevo: Name_Position_Number  (DT: Name_DirectorTecnico)
-        const players = playerFiles.map(filename => {
+        // Parser: nombre + posición + número desde el filename.
+        const parsePlayerFromFilename = (filename) => {
             const nameWithoutExt = filename.replace('.jpg', '');
             const parts = nameWithoutExt.split('_');
-
             const lastPart = parts[parts.length - 1];
             const isJerseyNumeric = /^\d+$/.test(lastPart);
 
             let position, jersey, nameParts;
             if (isJerseyNumeric) {
-                // Name_Position_Number
                 position = parts[parts.length - 2];
                 jersey = parseInt(lastPart, 10);
                 nameParts = parts.slice(0, -2);
             } else {
-                // Name_DirectorTecnico (sin número)
                 position = lastPart;
                 jersey = null;
                 nameParts = parts.slice(0, -1);
@@ -131,7 +126,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const fullName = nameParts.join(' ');
 
-            // Map position names
             let positionDisplay = position;
             let filterCategory = position.toLowerCase();
 
@@ -155,129 +149,255 @@ document.addEventListener('DOMContentLoaded', () => {
             return {
                 name: fullName,
                 position: positionDisplay,
-                filterCategory: filterCategory,
-                jersey: jersey,
+                filterCategory,
+                jersey,
                 image: `../assets/PlantillaAlebrijesTeotihuacanLigaTDP/${filename}`,
                 profileUrl: playerProfiles[fullName] || null
             };
-        });
-
-        // Store players globally for filtering
-        window.allPlayers = players;
-
-        // Initialize filter buttons
-        initFilters();
-
-        // Render all players initially
-        renderPlayers(players);
-    }
-
-    function initFilters() {
-        const filterSelect = document.getElementById('squad-filter');
-
-        if (filterSelect) {
-            filterSelect.addEventListener('change', (e) => {
-                const filter = e.target.value;
-                filterPlayers(filter);
-            });
-        }
-    }
-
-    function filterPlayers(filter) {
-        const squadGrid = document.querySelector('#section-plantilla .squad-grid');
-        if (!squadGrid || !window.allPlayers) return;
-
-        let filteredPlayers;
-
-        // Get DT separately
-        const dt = window.allPlayers.find(player => player.filterCategory === 'cuerpo-tecnico');
-
-        if (filter === 'all') {
-            // Show all players with DT first
-            filteredPlayers = window.allPlayers.filter(player =>
-                player.filterCategory !== 'cuerpo-tecnico'
-            );
-            // Add DT at the beginning
-            if (dt) {
-                filteredPlayers = [dt, ...filteredPlayers];
-            }
-        } else if (filter === 'cuerpo-tecnico') {
-            // Only show DT
-            filteredPlayers = dt ? [dt] : [];
-        } else {
-            // Show only filtered players (no DT)
-            filteredPlayers = window.allPlayers.filter(player =>
-                player.filterCategory === filter
-            );
-        }
-
-        renderPlayers(filteredPlayers);
-    }
-
-    function renderPlayers(players) {
-        const squadGrid = document.querySelector('#section-plantilla .squad-grid');
-        if (!squadGrid) return;
-
-        // Clear grid
-        squadGrid.innerHTML = '';
-
-        // Sort players by position, then by jersey number (DT al inicio sin número)
-        const positionOrder = {
-            'Director Técnico': 0,
-            'Portero': 1,
-            'Defensa': 2,
-            'Mediocampista': 3,
-            'Delantero': 4
         };
 
-        const sortedPlayers = [...players].sort((a, b) => {
-            const orderA = positionOrder[a.position] || 5;
-            const orderB = positionOrder[b.position] || 5;
-            if (orderA !== orderB) return orderA - orderB;
-            // Dentro de la misma posición: por número de playera
-            if (a.jersey !== null && b.jersey !== null) {
-                return a.jersey - b.jersey;
+        const alebrijesTdp = playerFiles.map(parsePlayerFromFilename);
+
+        // 4 categorías. Las otras 3 se llenan cuando se tengan los datos.
+        const teams = {
+            'alebrijes-tdp': {
+                name: 'Alebrijes TDP',
+                fullName: 'Alebrijes Teotihuacán · Liga TDP',
+                accent: 'orange',
+                players: alebrijesTdp
+            },
+            'soles-tdp': {
+                name: 'Soles TDP',
+                fullName: 'Soles Teotihuacán · Liga TDP',
+                accent: 'purple',
+                players: []
+            },
+            'alebrijes-sub16': {
+                name: 'Alebrijes Sub-16',
+                fullName: 'Alebrijes Teotihuacán · Sub-16',
+                accent: 'orange',
+                players: []
+            },
+            'soles-sub16': {
+                name: 'Soles Sub-16',
+                fullName: 'Soles Teotihuacán · Sub-16',
+                accent: 'purple',
+                players: []
             }
-            return a.name.localeCompare(b.name);
+        };
+
+        // Orden de las posiciones con título visible y numeración editorial.
+        const positionGroups = [
+            { id: 'cuerpo-tecnico', title: 'Cuerpo Técnico', num: '00' },
+            { id: 'porteros',       title: 'Porteros',       num: '01' },
+            { id: 'defensas',       title: 'Defensas',       num: '02' },
+            { id: 'medios',         title: 'Mediocampistas', num: '03' },
+            { id: 'delanteros',     title: 'Delanteros',     num: '04' }
+        ];
+
+        // Sort de jugadores: por posición y luego por número de playera.
+        const sortPlayers = (list) => {
+            const positionOrder = {
+                'Director Técnico': 0,
+                'Portero': 1,
+                'Defensa': 2,
+                'Mediocampista': 3,
+                'Delantero': 4
+            };
+            return [...list].sort((a, b) => {
+                const oa = positionOrder[a.position] ?? 5;
+                const ob = positionOrder[b.position] ?? 5;
+                if (oa !== ob) return oa - ob;
+                if (a.jersey !== null && b.jersey !== null) return a.jersey - b.jersey;
+                return a.name.localeCompare(b.name);
+            });
+        };
+
+        // ── State ──
+        let currentCategory = 'alebrijes-tdp';
+        let currentSearch = '';
+
+        // ── Tabs ──
+        const tabs = section.querySelectorAll('.plantilla-tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const cat = tab.dataset.category;
+                if (!cat || cat === currentCategory) return;
+                currentCategory = cat;
+                currentSearch = ''; // reset search on team switch
+                const searchInput = document.getElementById('plantilla-search');
+                if (searchInput) searchInput.value = '';
+                const clear = section.querySelector('.plantilla-search-clear');
+                if (clear) clear.hidden = true;
+                updateActiveTab();
+                renderContent();
+            });
         });
 
-        // Add players to grid
-        sortedPlayers.forEach(player => {
-            const playerCard = createPlayerCard(player);
-            squadGrid.appendChild(playerCard);
-        });
-    }
-
-    function createPlayerCard(player) {
-        const card = document.createElement('div');
-        const isDT = player.filterCategory === 'cuerpo-tecnico';
-        card.className = `player-card ${isDT ? 'coach-card' : ''}`;
-        card.setAttribute('data-category', player.filterCategory);
-
-        // Add click handler if player has a profile URL
-        if (player.profileUrl) {
-            card.style.cursor = 'pointer';
-            card.addEventListener('click', () => {
-                window.open(player.profileUrl, '_blank', 'noopener,noreferrer');
+        function updateActiveTab() {
+            tabs.forEach(tab => {
+                const isActive = tab.dataset.category === currentCategory;
+                tab.classList.toggle('is-active', isActive);
+                tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            });
+            // Refresh counts
+            Object.keys(teams).forEach(cat => {
+                const tab = section.querySelector(`.plantilla-tab[data-category="${cat}"]`);
+                if (!tab) return;
+                const countEl = tab.querySelector('.plantilla-tab-count');
+                const players = teams[cat].players;
+                const playersCount = players.filter(p => p.filterCategory !== 'cuerpo-tecnico').length;
+                countEl.textContent = playersCount > 0 ? playersCount : '—';
             });
         }
 
-        // Jersey number badge (solo jugadores, no DT)
-        const jerseyBadge = (player.jersey !== null && !isDT)
-            ? `<span class="player-number" aria-label="Número de playera ${player.jersey}">${player.jersey}</span>`
-            : '';
+        // ── Search ──
+        const searchInput = document.getElementById('plantilla-search');
+        const searchClear = section.querySelector('.plantilla-search-clear');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                currentSearch = e.target.value.trim().toLowerCase();
+                if (searchClear) searchClear.hidden = currentSearch.length === 0;
+                renderContent();
+            });
+        }
+        if (searchClear && searchInput) {
+            searchClear.addEventListener('click', () => {
+                searchInput.value = '';
+                currentSearch = '';
+                searchClear.hidden = true;
+                searchInput.focus();
+                renderContent();
+            });
+        }
 
-        card.innerHTML = `
-            <div class="player-img">
-                <img src="${player.image}" alt="${player.name}" onerror="this.src='../assets/Alebrijes Teotihuacan.png'">
-                ${jerseyBadge}
-            </div>
-            <div class="player-info">
-                <h3>${player.name}</h3>
-                <p class="player-pos">${player.position}</p>
-            </div>
-        `;
-        return card;
+        // ── Render ──
+        const content = document.getElementById('plantilla-content');
+
+        function renderContent() {
+            if (!content) return;
+            content.innerHTML = '';
+
+            const team = teams[currentCategory];
+            if (!team) return;
+
+            if (team.players.length === 0) {
+                content.appendChild(createEmptyState(team));
+                return;
+            }
+
+            // Filtrar por nombre si hay búsqueda
+            const filtered = currentSearch
+                ? team.players.filter(p => p.name.toLowerCase().includes(currentSearch))
+                : team.players;
+
+            if (filtered.length === 0) {
+                content.appendChild(createNoResultsState(currentSearch));
+                return;
+            }
+
+            // Agrupar por posición
+            const groups = positionGroups
+                .map(g => ({ ...g, players: filtered.filter(p => p.filterCategory === g.id) }))
+                .filter(g => g.players.length > 0);
+
+            groups.forEach(group => {
+                content.appendChild(createPositionGroup(group));
+            });
+        }
+
+        function createPositionGroup(group) {
+            const el = document.createElement('div');
+            el.className = 'position-group';
+            el.setAttribute('data-position', group.id);
+            const countLabel = group.players.length === 1 ? 'jugador' : 'jugadores';
+            el.innerHTML = `
+                <div class="position-group-header">
+                    <span class="position-group-num">${group.num}</span>
+                    <h3 class="position-group-title">${group.title}</h3>
+                    <span class="position-group-count">${group.players.length} ${countLabel}</span>
+                </div>
+                <div class="squad-grid"></div>
+            `;
+            const grid = el.querySelector('.squad-grid');
+            sortPlayers(group.players).forEach(player => {
+                grid.appendChild(createPlayerCard(player));
+            });
+            return el;
+        }
+
+        function createEmptyState(team) {
+            const el = document.createElement('div');
+            el.className = 'empty-state';
+            el.innerHTML = `
+                <div class="empty-state-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 6v6l4 2"></path>
+                    </svg>
+                </div>
+                <h3 class="empty-state-title">${team.fullName}</h3>
+                <p class="empty-state-text">La plantilla de este equipo se publicará próximamente.</p>
+            `;
+            return el;
+        }
+
+        function createNoResultsState(query) {
+            const el = document.createElement('div');
+            el.className = 'empty-state';
+            el.innerHTML = `
+                <div class="empty-state-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="7"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </div>
+                <h3 class="empty-state-title">Sin resultados</h3>
+                <p class="empty-state-text">No encontramos jugadores que coincidan con "<strong>${query}</strong>". Prueba con otro nombre o apellido.</p>
+            `;
+            return el;
+        }
+
+        function createPlayerCard(player) {
+            const card = document.createElement('div');
+            const isDT = player.filterCategory === 'cuerpo-tecnico';
+            card.className = `player-card${isDT ? ' player-card--dt' : ''}`;
+            card.setAttribute('data-category', player.filterCategory);
+
+            if (player.profileUrl) {
+                card.style.cursor = 'pointer';
+                card.addEventListener('click', () => {
+                    window.open(player.profileUrl, '_blank', 'noopener,noreferrer');
+                });
+            }
+
+            // Watermark grande detrás de la foto + badge esquina (solo jugadores, no DT)
+            const showNumber = player.jersey !== null && !isDT;
+            const watermark = showNumber
+                ? `<span class="player-card-watermark" aria-hidden="true">${player.jersey}</span>`
+                : '';
+            const badge = showNumber
+                ? `<span class="player-card-badge" aria-label="Número de playera ${player.jersey}">${player.jersey}</span>`
+                : '';
+
+            card.innerHTML = `
+                <div class="player-card-photo">
+                    <img src="${player.image}" alt="${player.name}" loading="lazy" onerror="this.src='../assets/Alebrijes Teotihuacan.png'">
+                    ${watermark}
+                    ${badge}
+                    <div class="player-card-overlay" aria-hidden="true"></div>
+                </div>
+                <div class="player-card-info">
+                    <h4 class="player-card-name">${player.name}</h4>
+                    <span class="player-card-pos">${player.position}</span>
+                </div>
+            `;
+            return card;
+        }
+
+        // Inicializar
+        updateActiveTab();
+        renderContent();
     }
 
     // Section 3: Últimos Resultados - Carrusel

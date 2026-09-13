@@ -591,26 +591,6 @@
     text-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
 }
 
-.player-card-badge {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background: var(--primary);
-    color: #FFFFFF;
-    font-family: 'Anton', sans-serif;
-    font-size: 1.3rem;
-    line-height: 1;
-    padding: 10px 14px;
-    border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    z-index: 2;
-    min-width: 44px;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 .player-card-info {
     padding: 18px 16px 20px;
     text-align: center;
@@ -1449,15 +1429,6 @@
         font-size: 6.5rem;
         bottom: -16px;
         right: -8px;
-    }
-
-    .player-card-badge {
-        top: 8px;
-        right: 8px;
-        font-size: 1.05rem;
-        padding: 8px 11px;
-        min-width: 36px;
-        min-height: 36px;
     }
 
     .player-card-info {

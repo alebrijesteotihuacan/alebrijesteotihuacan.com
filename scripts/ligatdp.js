@@ -371,20 +371,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
 
-            // Watermark grande detrás de la foto + badge esquina (solo jugadores, no DT)
+            // Watermark grande detrás de la foto (solo jugadores, no DT)
             const showNumber = player.jersey !== null && !isDT;
             const watermark = showNumber
                 ? `<span class="player-card-watermark" aria-hidden="true">${player.jersey}</span>`
-                : '';
-            const badge = showNumber
-                ? `<span class="player-card-badge" aria-label="Número de playera ${player.jersey}">${player.jersey}</span>`
                 : '';
 
             card.innerHTML = `
                 <div class="player-card-photo">
                     <img src="${player.image}" alt="${player.name}" loading="lazy" onerror="this.src='../assets/Alebrijes Teotihuacan.png'">
                     ${watermark}
-                    ${badge}
                     <div class="player-card-overlay" aria-hidden="true"></div>
                 </div>
                 <div class="player-card-info">

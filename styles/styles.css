@@ -762,11 +762,20 @@ ul {
     }
 }
 
-/* Card de resultado */
+/* Card de resultado
+   - flex: 0 0 100% fuerza EXACTAMENTE 100% del ancho del track
+     (antes era min-width: 100% + flex-shrink: 0, que permitia al
+     contenido del grid interno (crest 140px + score nowrap)
+     inflar la card, desfasando translateX(-100%) y dejando
+     "tantito" de la card anterior visible al cambiar).
+   - width: 100% y max-width: 100% son cinturones de seguridad
+     extra para que la card nunca exceda el ancho del track. */
 .result-card {
     position: relative;
-    min-width: 100%;
-    flex-shrink: 0;
+    flex: 0 0 100%;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
     background: #FFFFFF;
     border: 1px solid #ECECEC;
     border-radius: 8px;

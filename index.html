@@ -45,9 +45,9 @@
         rel="stylesheet">
 
     <!-- Main Styles -->
-    <link rel="stylesheet" href="styles/styles.css?v=7">
+    <link rel="stylesheet" href="styles/styles.css?v=8">
     <!-- Noticias Styles for Separator -->
-    <link rel="stylesheet" href="styles/noticias.css?v=7">
+    <link rel="stylesheet" href="styles/noticias.css?v=8">
 </head>
 
 <body>
@@ -229,102 +229,143 @@
             </article>
         </div>
     </section>
-    <!-- Latest Results Carousel -->
-    <section class="home-results-section">
+    <!-- Últimos Resultados Section -->
+    <section class="results-section" id="resultados">
         <div class="container">
-            <div class="section-header">
+            <header class="section-header">
                 <h2 class="section-title">
                     <a href="pages/ligatdp.html#resultados" style="text-decoration: none; color: inherit;">
                         Últimos Resultados
                     </a>
                 </h2>
                 <div class="section-line"></div>
-            </div>
+            </header>
 
-            <div class="home-carousel-wrapper">
-                <button class="home-carousel-btn prev" aria-label="Anterior">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2">
-                        <polyline points="15 18 9 12 15 6"></polyline>
-                    </svg>
-                </button>
+            <div class="results-list">
+                <!-- Resultado 1: Jornada 1 — Victoria fuera de casa -->
+                <article class="result-card">
+                    <div class="result-accent" aria-hidden="true"></div>
 
-                <div class="home-carousel-container">
-                    <div class="home-carousel-track">
-                        <!-- Match 1 - Más reciente: Jornada 30 -->
-                        <div class="home-result-card loss"
-                            onclick="window.location.href='pages/ligatdp.html#resultados'" style="cursor: pointer;">
-                            <div class="result-badge">Jornada 30</div>
-                            <div class="result-teams-row">
-                                <div class="team-col home-team">
-                                    <img src="assets/Alebrijes Teotihuacan.png" alt="Alebrijes">
-                                    <span class="team-name-abbr">Alebrijes</span>
-                                </div>
-                                <div class="score-col">
-                                    <span class="score-text">2 - 3</span>
-                                    <span class="match-status">Finalizado</span>
-                                </div>
-                                <div class="team-col away-team">
-                                    <img src="assets/EquiposGrupo9_LigaTDP/AtleticoHuejutla.png"
-                                        onerror="this.src='assets/LigaTDP.png';" alt="Atlético Huejutla">
-                                    <span class="team-name-abbr">Huejutla</span>
-                                </div>
+                    <header class="result-header">
+                        <span class="result-eyebrow">Liga TDP · Grupo 9 · Temporada 2026–2027</span>
+                        <h3 class="result-title">Último resultado</h3>
+                        <span class="result-subtitle">Jornada 1</span>
+                    </header>
+
+                    <div class="result-meta">
+                        <div class="meta-item">
+                            <svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            <div class="meta-content">
+                                <span class="meta-label">Fecha y hora</span>
+                                <span class="meta-value">Viernes 4 de septiembre · 11:00 hrs</span>
                             </div>
                         </div>
-
-                        <!-- Match 2: Jornada 29 -->
-                        <div class="home-result-card loss"
-                            onclick="window.location.href='pages/ligatdp.html#resultados'" style="cursor: pointer;">
-                            <div class="result-badge">Jornada 29</div>
-                            <div class="result-teams-row">
-                                <div class="team-col home-team">
-                                    <img src="assets/EquiposGrupo9_LigaTDP/AguilasTeotihuacan.png"
-                                        onerror="this.src='assets/LigaTDP.png';" alt="Águilas">
-                                    <span class="team-name-abbr">Águilas</span>
-                                </div>
-                                <div class="score-col">
-                                    <span class="score-text">1 - 0</span>
-                                    <span class="match-status">Finalizado</span>
-                                </div>
-                                <div class="team-col away-team">
-                                    <img src="assets/Alebrijes Teotihuacan.png" alt="Alebrijes">
-                                    <span class="team-name-abbr">Alebrijes</span>
-                                </div>
+                        <div class="meta-item">
+                            <svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            <div class="meta-content">
+                                <span class="meta-label">Sede</span>
+                                <span class="meta-value">Universidad del Fútbol</span>
                             </div>
                         </div>
-
-                        <!-- Match 3: Jornada 28 -->
-                        <div class="home-result-card win" onclick="window.location.href='pages/ligatdp.html#resultados'"
-                            style="cursor: pointer;">
-                            <div class="result-badge">Jornada 28</div>
-                            <div class="result-teams-row">
-                                <div class="team-col home-team">
-                                    <img src="assets/Alebrijes Teotihuacan.png" alt="Alebrijes">
-                                    <span class="team-name-abbr">Alebrijes</span>
-                                </div>
-                                <div class="score-col">
-                                    <span class="score-text">1 <small>(4)</small> - <small>(3)</small> 1</span>
-                                    <span class="match-status">Penales</span>
-                                </div>
-                                <div class="team-col away-team">
-                                    <img src="assets/EquiposGrupo9_LigaTDP/ClubDeportivoMatamoros.png"
-                                        onerror="this.src='assets/LigaTDP.png';" alt="Matamoros">
-                                    <span class="team-name-abbr">Matamoros</span>
-                                </div>
-                            </div>
+                        <div class="meta-item">
+                            <span class="outcome-pill outcome-pill--win">Victoria</span>
                         </div>
                     </div>
-                </div>
 
-                <button class="home-carousel-btn next" aria-label="Siguiente">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                </button>
+                    <div class="result-board">
+                        <div class="team-block team-block--home" data-team-id="11002">
+                            <div class="team-crest">
+                                <img src="assets/EquiposGrupo9_LigaTDP/Pachuca.png" alt="Tuzos Pachuca">
+                            </div>
+                            <span class="team-tag">Local</span>
+                            <h4 class="team-name">Tuzos Pachuca</h4>
+                        </div>
+
+                        <div class="result-score">
+                            <span class="score-value">0 – 1</span>
+                            <span class="score-status">Final</span>
+                        </div>
+
+                        <div class="team-block team-block--away team-block--winner" data-team-id="12621">
+                            <div class="team-crest team-crest--winner">
+                                <img src="assets/EquiposGrupo9_LigaTDP/AlebrijesTeotihuacán.png" alt="Alebrijes Teotihuacán">
+                            </div>
+                            <span class="team-tag team-tag--winner">Visitante</span>
+                            <h4 class="team-name team-name--winner">Alebrijes Teotihuacán</h4>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Resultado 2: Jornada 2 — Derrota en penaltis -->
+                <article class="result-card">
+                    <div class="result-accent" aria-hidden="true"></div>
+
+                    <header class="result-header">
+                        <span class="result-eyebrow">Liga TDP · Grupo 9 · Temporada 2026–2027</span>
+                        <h3 class="result-title">Último resultado</h3>
+                        <span class="result-subtitle">Jornada 2</span>
+                    </header>
+
+                    <div class="result-meta">
+                        <div class="meta-item">
+                            <svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            <div class="meta-content">
+                                <span class="meta-label">Fecha y hora</span>
+                                <span class="meta-value">Viernes 11 de septiembre · 12:00 hrs</span>
+                            </div>
+                        </div>
+                        <div class="meta-item">
+                            <svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            <div class="meta-content">
+                                <span class="meta-label">Sede</span>
+                                <span class="meta-value">No disponible</span>
+                            </div>
+                        </div>
+                        <div class="meta-item">
+                            <span class="outcome-pill outcome-pill--loss">Derrota</span>
+                        </div>
+                    </div>
+
+                    <div class="result-board">
+                        <div class="team-block team-block--home team-block--loser" data-team-id="12621">
+                            <div class="team-crest">
+                                <img src="assets/EquiposGrupo9_LigaTDP/AlebrijesTeotihuacán.png" alt="Alebrijes Teotihuacán">
+                            </div>
+                            <span class="team-tag">Local</span>
+                            <h4 class="team-name">Alebrijes Teotihuacán</h4>
+                        </div>
+
+                        <div class="result-score">
+                            <span class="score-value">0 (7) – (8) 0</span>
+                            <span class="score-status">Penales</span>
+                        </div>
+
+                        <div class="team-block team-block--away" data-team-id="14478">
+                            <div class="team-crest">
+                                <img src="assets/EquiposGrupo9_LigaTDP/IndustrialesDeAltamiraFC.png" alt="Industriales de Altamira">
+                            </div>
+                            <span class="team-tag">Visitante</span>
+                            <h4 class="team-name">Altamira</h4>
+                        </div>
+                    </div>
+                </article>
             </div>
-
-            <div class="home-carousel-dots"></div>
         </div>
     </section>
 

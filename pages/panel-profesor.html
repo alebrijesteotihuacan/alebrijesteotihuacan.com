@@ -639,7 +639,12 @@
                         </div>
                         <div>
                             <label style="display: block; font-size: 0.8rem; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 5px;">Contraseña</label>
-                            <div id="credsPlayerPass" style="font-family: 'Courier New', monospace; font-size: 1.3rem; color: #5a67d8; font-weight: 700; letter-spacing: 1px;"></div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div id="credsPlayerPass" style="font-family: 'Courier New', monospace; font-size: 1.3rem; color: #5a67d8; font-weight: 700; letter-spacing: 1px; flex: 1;"></div>
+                                <button type="button" id="credsCopyPass" class="cred-copy-btn" title="Copiar contraseña" style="background: transparent; border: 1px solid #5a67d8; color: #5a67d8; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600;">
+                                    Copiar
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -751,7 +756,7 @@
     <script src="https://unpkg.com/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
     <script src="../scripts/script.js"></script>
     <script type="module" src="../scripts/nav-auth.js"></script>
-    <script type="module" src="../scripts/panel-profesor.js?v=3"></script>
+    <script type="module" src="../scripts/panel-profesor.js?v=4"></script>
     <script>
         // Set current date
         const dateEl = document.getElementById('currentDate');

@@ -569,11 +569,37 @@ function openCredsModal(player) {
 
     nameEl.textContent = `${toTitleCase(player.nombre || '')} ${toTitleCase(player.apellido || '')}`.trim() || 'Sin nombre';
     emailEl.textContent = player.email || 'Sin correo asignado';
-    // The password is not stored (only its bcrypt hash lives in auth.users).
-    // The profesor sets it at registration time; show a placeholder so the
-    // modal still works without leaking or inventing a wrong password.
-    passEl.textContent = '••••••••';
-    passEl.title = 'La contraseña fue definida por el profesor al registrar al jugador. No se muestra por seguridad.';
+    passEl.textContent = player.password || 'No almacenada';
+    passEl.title = player.password
+        ? 'Contraseña definida al registrar al jugador'
+        : 'No hay contraseña almacenada (registros antiguos)';
+
+    // Wire up the copy button for this open
+    const copyBtn = document.getElementById('credsCopyPass');
+    if (copyBtn) {
+        copyBtn.onclick = async () => {
+            const text = player.password || '';
+            if (!text) return;
+            try {
+                await navigator.clipboard.writeText(text);
+                const original = copyBtn.textContent;
+                copyBtn.textContent = '¡Copiado!';
+                copyBtn.style.background = '#5a67d8';
+                copyBtn.style.color = '#fff';
+                setTimeout(() => {
+                    copyBtn.textContent = original;
+                    copyBtn.style.background = '';
+                    copyBtn.style.color = '';
+                }, 1500);
+            } catch (err) {
+                // Fallback: select the text in the pass element
+                const range = document.createRange();
+                range.selectNode(passEl);
+                window.getSelection().removeAllRanges();
+                window.getSelection().addRange(range);
+            }
+        };
+    }
 
     // Avatar
     const imgInfo = findPlayerImageInfo(player.nombre, player.apellido);
@@ -1173,6 +1199,7 @@ if (registerForm) {
                 nombre: formData.get('nombre'),
                 apellido: formData.get('apellido'),
                 email: email,
+                password: password,
                 fecha_nacimiento: formData.get('fechaNacimiento') || null,
                 equipo: currentProfessor.equipo_restringido || null,
                 posicion: formData.get('posicion'),

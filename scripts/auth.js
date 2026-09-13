@@ -160,15 +160,15 @@ export async function getPlayerEvaluations(userId, limitCount = 10) {
         const { data, error } = await supabase
             .from('evaluaciones')
             .select('*')
-            .eq('jugadorId', playerId);
+            .eq('jugador_id', playerId);
 
         if (error) throw error;
 
         let evaluations = (data || []).map(row => ({ id: row.id, ...row }));
 
         evaluations.sort((a, b) => {
-            const dateA = new Date(b.fechaFin || b.fecha || 0).getTime();
-            const dateB = new Date(a.fechaFin || a.fecha || 0).getTime();
+            const dateA = new Date(b.fecha_fin || b.fecha || 0).getTime();
+            const dateB = new Date(a.fecha_fin || a.fecha || 0).getTime();
             return dateA - dateB;
         });
 

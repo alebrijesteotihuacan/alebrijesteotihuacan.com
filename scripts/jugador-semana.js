@@ -210,7 +210,7 @@ async function loadJugadoresSemana() {
         // Group evals by player (a player may have multiple evals in one week)
         const evalsByPlayer = {};
         for (const ev of evalsThisWeek) {
-            const pid = ev.jugadorId;
+            const pid = ev.jugador_id;
             if (!pid) continue;
             if (!evalsByPlayer[pid]) evalsByPlayer[pid] = [];
             evalsByPlayer[pid].push(ev);
@@ -225,14 +225,14 @@ async function loadJugadoresSemana() {
             };
             const numSum = key => evList.map(e => parseFloat(e[key]) || 0).reduce((a, b) => a + b, 0);
 
-            const pg = numAvg('promedioGeneral');
+            const pg = numAvg('promedio_general');
             if (pg === null) continue; // skip players with no valid promedio
 
             playerStats[pid] = {
                 pid,
                 promedioGeneral:   pg,
-                rendimientoCancha: numAvg('rendimientoCancha'), // null if all 'RP'
-                minutosJugados:    numSum('minutosJugados'),
+                rendimientoCancha: numAvg('rendimiento_cancha'), // null if all 'RP'
+                minutosJugados:    numSum('minutos_jugados'),
             };
         }
 

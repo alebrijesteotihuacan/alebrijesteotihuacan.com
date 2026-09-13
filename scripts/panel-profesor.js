@@ -155,7 +155,7 @@ async function loadPlayers(category = '') {
             const { data: ownRows } = await supabase
                 .from('jugadores')
                 .select('*')
-                .eq('registradoPor', currentProfessor.id);
+                .eq('registrado_por', currentProfessor.id);
             (ownRows || []).forEach(row => {
                 const normalizedCat = normalizeCategoria(row.categoria);
                 if (!category || normalizedCat === category) {
@@ -164,7 +164,7 @@ async function loadPlayers(category = '') {
             });
 
             // 2. Players from permitted extra categories (categoriasPermitidas)
-            const allowedCats = currentProfessor.categoriasPermitidas || [];
+            const allowedCats = currentProfessor.categorias_permitidas || [];
             if (allowedCats.length > 0) {
                 const ownIds = new Set(ownPlayers.map(p => p.id));
                 for (const cat of allowedCats) {
@@ -194,19 +194,19 @@ async function loadPlayers(category = '') {
                 const { data: evalsRows } = await supabase
                     .from('evaluaciones')
                     .select('*')
-                    .eq('jugadorId', player.id);
+                    .eq('jugador_id', player.id);
 
                 if (evalsRows && evalsRows.length > 0) {
                     // Sort locally to avoid Firebase index requirement issues
                     let playerEvals = [...evalsRows];
                     playerEvals.sort((a, b) => {
-                        const dateA = new Date(a.fechaFin || a.fecha || 0).getTime();
-                        const dateB = new Date(b.fechaFin || b.fecha || 0).getTime();
+                        const dateA = new Date(a.fecha_fin || a.fecha || 0).getTime();
+                        const dateB = new Date(b.fecha_fin || b.fecha || 0).getTime();
                         return dateB - dateA;
                     });
 
                     const latestEval = playerEvals[0];
-                    player.latestPromedio = latestEval.promedioGeneral || null;
+                    player.latestPromedio = latestEval.promedio_general || null;
                     player.latestSemana = latestEval.semana || '';
                 }
             } catch (e) {
@@ -420,7 +420,7 @@ function renderPlayers(players) {
 
         // Generate password from initials + birth year (same logic as registration)
         const passInitials = ((player.nombre || '').charAt(0) + (player.apellido || '').charAt(0)).toUpperCase();
-        const birthYear = player.fechaNacimiento ? player.fechaNacimiento.split('-')[0] : '????';
+        const birthYear = player.fecha_nacimiento ? player.fecha_nacimiento.split('-')[0] : '????';
         const generatedPassword = `${passInitials}${birthYear}`;
         const playerEmail = player.email || 'Sin correo';
 
@@ -495,7 +495,7 @@ function renderPlayers(players) {
                         </svg>
                         Evaluar
                     </button>
-                    ${currentProfessor.rol === 'admin' || currentProfessor.id === player.registradoPor ? `
+                    ${currentProfessor.rol === 'admin' || currentProfessor.id === player.registrado_por ? `
                     <button class="delete-btn" data-id="${player.id}" title="Eliminar jugador">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M3 6h18"></path>
@@ -566,7 +566,7 @@ function openCredsModal(player) {
     const shortName = getShortName(player.nombre, player.apellido);
     const initials = getInitials(player.nombre, player.apellido);
     const passInitials = ((player.nombre || '').charAt(0) + (player.apellido || '').charAt(0)).toUpperCase();
-    const birthYear = player.fechaNacimiento ? player.fechaNacimiento.split('-')[0] : '????';
+    const birthYear = player.fecha_nacimiento ? player.fecha_nacimiento.split('-')[0] : '????';
     const generatedPassword = `${passInitials}${birthYear}`;
     
     // UI elements
@@ -686,7 +686,7 @@ async function executeDeletePlayer(confirmBtn) {
         // Delete from supabase
         await supabase.from('jugadores').delete().eq('id', playerToDelete.id);
         // Also remove the player's evaluaciones (foreign-key style cleanup)
-        await supabase.from('evaluaciones').delete().eq('jugadorId', playerToDelete.id);
+        await supabase.from('evaluaciones').delete().eq('jugador_id', playerToDelete.id);
 
         // Note: Ideally, a Cloud Function should handle deleting subcollections (evaluations)
         // and images to ensure atomicity, but for frontend-only, this deletes the main document.
@@ -728,7 +728,7 @@ async function loadStats() {
             const { count: c } = await supabase
                 .from('evaluaciones')
                 .select('*', { count: 'exact', head: true })
-                .eq('profesorId', currentProfessor.id);
+                .eq('evaluador_id', currentProfessor.id);
             count = c || 0;
         }
         totalEvaluaciones.textContent = count;
@@ -797,7 +797,7 @@ async function checkExistingEval() {
         const { data: evalsRows } = await supabase
             .from('evaluaciones')
             .select('*')
-            .eq('jugadorId', currentPlayerId)
+            .eq('jugador_id', currentPlayerId)
             .eq('semana', evalSemana.value)
             .limit(1);
 
@@ -813,11 +813,11 @@ async function checkExistingEval() {
             document.getElementById('tactico').value = ev.tactico ?? '';
             document.getElementById('fisico').value = ev.fisico ?? '';
             document.getElementById('mental').value = ev.mental ?? '';
-            document.getElementById('disciplinaCancha').value = ev.disciplinaCancha ?? '';
-            document.getElementById('disciplinaCasaClub').value = ev.disciplinaCasaClub ?? '';
+            document.getElementById('disciplinaCancha').value = ev.disciplina_cancha ?? '';
+            document.getElementById('disciplinaCasaClub').value = ev.disciplina_casa_club ?? '';
             document.getElementById('inasistencias').value = ev.inasistencias ?? '0';
-            document.getElementById('rendimientoCancha').value = ev.rendimientoCancha ?? '';
-            document.getElementById('minutosJugados').value = ev.minutosJugados ?? '';
+            document.getElementById('rendimientoCancha').value = ev.rendimiento_cancha ?? '';
+            document.getElementById('minutosJugados').value = ev.minutos_jugados ?? '';
             document.getElementById('observaciones').value = ev.observaciones || '';
 
             // Update button text to indicate editing
@@ -963,8 +963,8 @@ async function loadWeekEvaluations(semana) {
         // Build map: jugadorId -> promedioGeneral
         const weekMap = {};
         (rows || []).forEach(row => {
-            if (row.jugadorId && row.promedioGeneral !== undefined) {
-                weekMap[row.jugadorId] = row.promedioGeneral;
+            if (row.jugador_id && row.promedio_general !== undefined) {
+                weekMap[row.jugador_id] = row.promedio_general;
             }
         });
 
@@ -1054,23 +1054,23 @@ evalForm.addEventListener('submit', async (e) => {
         const promedioGeneral = ((tecnico + tactico + fisico + mental + disciplinaCancha + disciplinaCasaClub) / 6).toFixed(1);
 
         const evaluationData = {
-            jugadorId: currentPlayerId,
-            profesorId: currentProfessor.id,
-            evaluadorNombre: currentProfessor.nombre || 'Profesor',
+            jugador_id: currentPlayerId,
+            evaluador_id: currentProfessor.id,
+            evaluador_nombre: currentProfessor.nombre || 'Profesor',
             fecha: new Date().toISOString(),
             semana: semana,
-            fechaInicio: fechaInicio ? fechaInicio.toISOString().split('T')[0] : null,
-            fechaFin: fechaFin ? fechaFin.toISOString().split('T')[0] : null,
+            fecha_inicio: fechaInicio ? fechaInicio.toISOString().split('T')[0] : null,
+            fecha_fin: fechaFin ? fechaFin.toISOString().split('T')[0] : null,
             tecnico,
             tactico,
             fisico,
             mental,
-            disciplinaCancha,
-            disciplinaCasaClub,
+            disciplina_cancha: disciplinaCancha,
+            disciplina_casa_club: disciplinaCasaClub,
             inasistencias,
-            rendimientoCancha,
-            minutosJugados,
-            promedioGeneral: parseFloat(promedioGeneral),
+            rendimiento_cancha: rendimientoCancha,
+            minutos_jugados: minutosJugados,
+            promedio_general: parseFloat(promedioGeneral),
             observaciones: formData.get('observaciones') || '',
             tipo: 'Evaluación Semanal'
         };
@@ -1315,7 +1315,7 @@ async function generateWeeklyPDF(weekValue) {
     const { data: evalsRows, error: evalsErr } = await supabase
         .from('evaluaciones')
         .select('*')
-        .eq('profesorId', currentProfessor.id)
+        .eq('evaluador_id', currentProfessor.id)
         .eq('semana', weekValue);
 
     if (evalsErr) throw evalsErr;
@@ -1338,7 +1338,7 @@ async function generateWeeklyPDF(weekValue) {
             const { data: playerRow } = await supabase
                 .from('jugadores')
                 .select('*')
-                .eq('id', ev.jugadorId)
+                .eq('id', ev.jugador_id)
                 .maybeSingle();
             if (playerRow) {
                 playerName = `${playerRow.nombre || ''} ${playerRow.apellido || ''}`.trim();
@@ -1346,7 +1346,7 @@ async function generateWeeklyPDF(weekValue) {
                 playerPos = playerRow.posicion || '';
             }
         } catch (e) {
-            playerName = ev.jugadorId;
+            playerName = ev.jugador_id;
         }
 
         evalRows.push({
@@ -1357,9 +1357,9 @@ async function generateWeeklyPDF(weekValue) {
             tactico: ev.tactico ?? '--',
             fisico: ev.fisico ?? '--',
             mental: ev.mental ?? '--',
-            disciplinaCancha: ev.disciplinaCancha ?? '--',
-            disciplinaCasaClub: ev.disciplinaCasaClub ?? '--',
-            promedio: ev.promedioGeneral ?? '--',
+            disciplinaCancha: ev.disciplina_cancha ?? '--',
+            disciplinaCasaClub: ev.disciplina_casa_club ?? '--',
+            promedio: ev.promedio_general ?? '--',
             observaciones: ev.observaciones || ''
         });
     }
@@ -1475,8 +1475,8 @@ async function generateWeeklyPDF(weekValue) {
         row.tactico,
         row.fisico,
         row.mental,
-        row.disciplinaCancha,
-        row.disciplinaCasaClub,
+        row.disciplina_cancha,
+        row.disciplina_casa_club,
         row.promedio,
         row.observaciones
     ]);

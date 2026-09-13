@@ -1592,7 +1592,7 @@
                 playerName.textContent = `${profile.nombre || ''} ${profile.apellido || ''}`.trim() || 'Jugador';
                 playerPosition.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg> ${profile.posicion || 'Sin posicion'}`;
                 playerCategory.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg> ${profile.categoria || 'Sin categoria'}`;
-                playerNumber.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg> #${profile.numeroCamiseta || '--'}`;
+                playerNumber.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg> #${profile.numero_camiseta || '--'}`;
 
                 setPlayerPhoto(profile.nombre, profile.apellido, profile.fotoUrl);
 
@@ -1648,7 +1648,7 @@
                 html += `<div class="stat-box"><div class="stat-box-icon ${m.icon}">${m.svg}</div><div class="stat-box-value">${v !== undefined && v !== null ? v : '--'}</div><div class="stat-box-label">${m.label}</div></div>`;
             });
 
-            const prom = ev.promedioGeneral;
+            const prom = ev.promedio_general;
             html += `<div class="stat-box promedio"><div class="stat-box-icon i-general">${generalSvg}</div><div class="stat-box-value">${typeof prom === 'number' ? prom.toFixed(1) : '--'}</div><div class="stat-box-label">Promedio General</div></div>`;
 
             statsRow.innerHTML = html;
@@ -1798,7 +1798,7 @@
             });
 
             // Center text
-            const avg = ev.promedioGeneral;
+            const avg = ev.promedio_general;
             const avgText = typeof avg === 'number' ? avg.toFixed(1) : '--';
             svgContent += `<text x="${cx}" y="${cy - 6}" text-anchor="middle" class="pie-center-label" font-size="28">${avgText}</text>`;
             svgContent += `<text x="${cx}" y="${cy + 14}" text-anchor="middle" class="pie-center-sub">Promedio</text>`;
@@ -1824,7 +1824,7 @@
 
         // Rendimiento en Cancha
         function renderRendimientoCancha(ev) {
-            const rc = ev.rendimientoCancha;
+            const rc = ev.rendimiento_cancha;
             if (rc === undefined || rc === null) return;
 
             rendimientoCard.style.display = 'block';
@@ -1850,7 +1850,7 @@
             rendimientoStatus.textContent = info.status;
 
             // Minutes
-            minutosValue.textContent = ev.minutosJugados || 0;
+            minutosValue.textContent = ev.minutos_jugados || 0;
 
             // Highlight active badge in catalog
             const allBadges = rendimientoCard.querySelectorAll('.cpb');
@@ -1866,13 +1866,13 @@
             evaluationsList.innerHTML = '';
             evaluations.forEach(ev => {
                 let d;
-                if (ev.fechaFin) {
-                    const parts = ev.fechaFin.split('-');
+                if (ev.fecha_fin) {
+                    const parts = ev.fecha_fin.split('-');
                     d = { day: parseInt(parts[2], 10).toString(), month: months[parseInt(parts[1], 10) - 1] };
                 } else {
                     d = formatDateCard(ev.fecha);
                 }
-                const score = ev.promedioGeneral?.toFixed(1) || '--';
+                const score = ev.promedio_general?.toFixed(1) || '--';
                 evaluationsList.innerHTML += `
                     <div class="history-item">
                         <div class="history-date-badge">
@@ -1881,7 +1881,7 @@
                         </div>
                         <div class="history-info">
                             <div class="history-type">${ev.tipo || 'Evaluacion Semanal'}</div>
-                            <div class="history-evaluator">Por: ${ev.evaluadorNombre || 'Cuerpo Tecnico'}</div>
+                            <div class="history-evaluator">Por: ${ev.evaluador_nombre || 'Cuerpo Tecnico'}</div>
                         </div>
                         <div class="history-score">
                             <div class="history-score-value">${score}</div>

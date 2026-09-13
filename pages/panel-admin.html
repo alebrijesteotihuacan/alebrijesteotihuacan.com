@@ -1449,8 +1449,8 @@
                 (playerRows || []).forEach(row => {
                     const normCat = CATEGORY_ALIAS_ADMIN[row.categoria] || row.categoria;
                     const dataWithNorm = { ...row, categoria: normCat };
-                    if (window.adminData && window.adminData.equipoRestringido) {
-                        const restrictStr = window.adminData.equipoRestringido.toLowerCase();
+                    if (window.adminData && window.adminData.equipo_restringido) {
+                        const restrictStr = window.adminData.equipo_restringido.toLowerCase();
                         const cat = normCat.toLowerCase();
                         const eq = (row.equipo || '').toLowerCase();
                         if (cat.includes(restrictStr) || eq.includes(restrictStr)) {
@@ -1473,14 +1473,14 @@
                 const validPlayerIds = new Set(allPlayers.map(p => p.id));
 
                 allPlayers.forEach(p => {
-                    if (p.registradoPor && playersByProf[p.registradoPor] !== undefined)
-                        playersByProf[p.registradoPor]++;
+                    if (p.registrado_por && playersByProf[p.registrado_por] !== undefined)
+                        playersByProf[p.registrado_por]++;
                 });
                 (evalRows || []).forEach(evData => {
-                    if (window.adminData && window.adminData.equipoRestringido && !validPlayerIds.has(evData.jugadorId)) {
+                    if (window.adminData && window.adminData.equipo_restringido && !validPlayerIds.has(evData.jugador_id)) {
                         return; // Skip evaluations of players outside the restricted team
                     }
-                    const eid = evData.profesorId || evData.evaluadorId;
+                    const eid = evData.evaluador_id || evData.evaluador_id;
                     if (eid && evalsByProf[eid] !== undefined) evalsByProf[eid]++;
                 });
 
@@ -1493,11 +1493,11 @@
                         const { data: evPlayerRows } = await supabase
                             .from('evaluaciones')
                             .select('*')
-                            .eq('jugadorId', player.id)
+                            .eq('jugador_id', player.id)
                             .order('fecha', { ascending: false })
                             .limit(1);
                         if (evPlayerRows && evPlayerRows.length > 0) {
-                            player.latestPromedio = evPlayerRows[0].promedioGeneral || null;
+                            player.latestPromedio = evPlayerRows[0].promedio_general || null;
                         }
                     } catch (e) { /* ignore */ }
                 }));
@@ -1578,7 +1578,7 @@
                             else if (n >= 5) cls = 'avg-mid';
                             avgHTML = `<span class="player-card-avg ${cls}">${n.toFixed(1)}</span>`;
                         }
-                        const profName = profNameMap[p.registradoPor] || '';
+                        const profName = profNameMap[p.registrado_por] || '';
                         const photoHTML = imgSrc
                             ? `<img src="${imgSrc}" alt="${firstName}" onerror="this.parentElement.innerHTML='<div class=\\'default-avatar\\'>${initials}</div>'">`
                             : `<div class="default-avatar">${initials}</div>`;
@@ -1612,7 +1612,7 @@
                         const name = `${p.nombre || ''} ${p.apellido || ''}`.toLowerCase();
                         if (q && !name.includes(q)) return false;
                         if (cat && p.categoria !== cat) return false;
-                        if (prof && p.registradoPor !== prof) return false;
+                        if (prof && p.registrado_por !== prof) return false;
                         return true;
                     });
                     renderPlayers(filtered);
@@ -1627,7 +1627,7 @@
                 const allEvals = [];
                 evalsSnap.forEach(d => {
                     const evData = { id: d.id, ...d.data() };
-                    if (window.adminData && window.adminData.equipoRestringido && !validPlayerIds.has(evData.jugadorId)) {
+                    if (window.adminData && window.adminData.equipo_restringido && !validPlayerIds.has(evData.jugador_id)) {
                         return; // Skip evaluations of players outside the restricted team
                     }
                     allEvals.push(evData);
@@ -1655,7 +1655,7 @@
 
                 function renderEvals(evals) {
                     document.getElementById('evalsGrid').innerHTML = evals.map(ev => {
-                        const player = playerMap[ev.jugadorId] || {};
+                        const player = playerMap[ev.jugador_id] || {};
                         const firstName = (player.nombre || 'Jugador').split(' ')[0];
                         const fullName = `${player.nombre || ''} ${player.apellido || ''}`.trim() || 'Desconocido';
                         const imgInfo = findPlayerImageInfo(player.nombre, player.apellido);
@@ -1664,10 +1664,10 @@
                         const photoHTML = imgSrc
                             ? `<img src="${imgSrc}" alt="${firstName}" onerror="this.parentElement.innerHTML='<div class=\\'default-avatar\\'>${initials}</div>'">`
                             : `<div class="default-avatar">${initials}</div>`;
-                        const profName = ev.evaluadorNombre || profNameMap[ev.evaluadorId] || 'Desconocido';
+                        const profName = ev.evaluador_nombre || profNameMap[ev.evaluador_id] || 'Desconocido';
 
                         // Average
-                        const avg = ev.promedioGeneral;
+                        const avg = ev.promedio_general;
                         let avgCls = 'avg-none';
                         let avgVal = '--';
                         if (avg !== undefined && avg !== null) {
@@ -1684,15 +1684,15 @@
                             { label: 'Táctico', value: ev.tactico },
                             { label: 'Físico', value: ev.fisico },
                             { label: 'Mental', value: ev.mental },
-                            { label: 'Disc. Cancha', value: ev.disciplinaCancha },
-                            { label: 'Disc. Casa Club', value: ev.disciplinaCasaClub },
+                            { label: 'Disc. Cancha', value: ev.disciplina_cancha },
+                            { label: 'Disc. Casa Club', value: ev.disciplina_casa_club },
                             { label: 'Inasistencias', value: ev.inasistencias ?? '0' }
                         ];
-                        if (ev.rendimientoCancha !== undefined && ev.rendimientoCancha !== null) {
-                            metrics.push({ label: 'Rend. Cancha', value: ev.rendimientoCancha });
+                        if (ev.rendimiento_cancha !== undefined && ev.rendimiento_cancha !== null) {
+                            metrics.push({ label: 'Rend. Cancha', value: ev.rendimiento_cancha });
                         }
-                        if (ev.minutosJugados) {
-                            metrics.push({ label: 'Min. Jugados', value: ev.minutosJugados });
+                        if (ev.minutos_jugados) {
+                            metrics.push({ label: 'Min. Jugados', value: ev.minutos_jugados });
                         }
 
                         const metricsHTML = metrics.map(m => `
@@ -1742,10 +1742,10 @@
                     const q = document.getElementById('evalSearch').value.toLowerCase();
                     const prof = filterEvalProf.value;
                     const filtered = allEvals.filter(ev => {
-                        const player = playerMap[ev.jugadorId] || {};
+                        const player = playerMap[ev.jugador_id] || {};
                         const name = `${player.nombre || ''} ${player.apellido || ''}`.toLowerCase();
                         if (q && !name.includes(q)) return false;
-                        if (prof && ev.evaluadorId !== prof) return false;
+                        if (prof && ev.evaluador_id !== prof) return false;
                         return true;
                     });
                     renderEvals(filtered);
@@ -1820,7 +1820,7 @@
                         let filteredPlayers = [...allPlayers];
                         if (selectedCat) filteredPlayers = filteredPlayers.filter(p => p.categoria === selectedCat);
                         const filteredPlayerIds = new Set(filteredPlayers.map(p => p.id));
-                        filteredEvals = filteredEvals.filter(ev => filteredPlayerIds.has(ev.jugadorId));
+                        filteredEvals = filteredEvals.filter(ev => filteredPlayerIds.has(ev.jugador_id));
 
                         if (filteredEvals.length === 0 && filteredPlayers.length === 0) {
                             setPdfStatus('No hay datos para generar el reporte.', 'error');
@@ -1940,10 +1940,10 @@
 
                         const playerRows = filteredPlayers.map(p => {
                             const name = `${(p.nombre || '').split(' ')[0]} ${(p.apellido || '').split(' ')[0]}`.trim();
-                            const pEvals = filteredEvals.filter(ev => ev.jugadorId === p.id);
+                            const pEvals = filteredEvals.filter(ev => ev.jugador_id === p.id);
                             let avgP = '--';
                             if (pEvals.length > 0) {
-                                const s = pEvals.reduce((a, ev) => a + (parseFloat(ev.promedioGeneral) || 0), 0);
+                                const s = pEvals.reduce((a, ev) => a + (parseFloat(ev.promedio_general) || 0), 0);
                                 avgP = (s / pEvals.length).toFixed(1);
                             }
                             return [name, p.posicion || '--', p.categoria || '--', pEvals.length.toString(), avgP];
@@ -1985,8 +1985,8 @@
                         // =====================
                         const evalsByPlayer = {};
                         filteredEvals.forEach(ev => {
-                            if (!evalsByPlayer[ev.jugadorId]) evalsByPlayer[ev.jugadorId] = [];
-                            evalsByPlayer[ev.jugadorId].push(ev);
+                            if (!evalsByPlayer[ev.jugador_id]) evalsByPlayer[ev.jugador_id] = [];
+                            evalsByPlayer[ev.jugador_id].push(ev);
                         });
 
                         for (const playerId of Object.keys(evalsByPlayer)) {
@@ -2015,14 +2015,14 @@
                             yP = sectionTitle(doc, 'MÉTRICAS POR SEMANA', yP);
 
                             const evalRows = evals.map(ev => {
-                                const prof = ev.evaluadorNombre || profNameMap[ev.evaluadorId] || 'N/A';
+                                const prof = ev.evaluador_nombre || profNameMap[ev.evaluador_id] || 'N/A';
                                 return [
                                     ev.semana || '--',
                                     ev.tecnico ?? '--', ev.tactico ?? '--', ev.fisico ?? '--',
-                                    ev.mental ?? '--', ev.disciplinaCancha ?? '--',
-                                    ev.disciplinaCasaClub ?? '--',
+                                    ev.mental ?? '--', ev.disciplina_cancha ?? '--',
+                                    ev.disciplina_casa_club ?? '--',
                                     ev.inasistencias ?? '0',
-                                    ev.promedioGeneral != null ? parseFloat(ev.promedioGeneral).toFixed(1) : '--',
+                                    ev.promedio_general != null ? parseFloat(ev.promedio_general).toFixed(1) : '--',
                                     prof
                                 ];
                             });

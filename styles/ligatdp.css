@@ -834,6 +834,26 @@
     background: rgba(205, 127, 50, 0.05);
 }
 
+/* Nuestro equipo - fila resaltada (Alebrijes) */
+.standings-table tr.team-ours td {
+    color: var(--primary);
+    font-weight: 700;
+    background: rgba(243, 106, 33, 0.06);
+}
+
+.standings-table tr.team-ours td:first-child {
+    border-left: 5px solid var(--primary);
+    background: rgba(243, 106, 33, 0.12);
+}
+
+.standings-table tr.team-ours:hover td {
+    background: rgba(243, 106, 33, 0.1);
+}
+
+.standings-table tr.team-ours:hover td:first-child {
+    background: rgba(243, 106, 33, 0.18);
+}
+
 /* Team Cell Specifics */
 .team-cell {
     display: flex;

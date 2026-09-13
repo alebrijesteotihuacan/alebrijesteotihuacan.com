@@ -282,6 +282,15 @@
     }
 }
 
+/* Override para que la sección de Resultados matchee index.html (padding 40px).
+   .ligatdp-content-section define padding: 60px 0, gana por orden de carga.
+   min-height se hereda de .ligatdp-content-section para que la sección no se vea
+   más baja que las otras 3 secciones de la página. */
+#section-resultados.results-section {
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
 /* =========================================================================
    Section 1: Plantilla de Jugadores
    Diseño editorial: 4 tabs (equipos) + buscador + agrupación por posición.

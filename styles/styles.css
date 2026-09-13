@@ -973,11 +973,76 @@ ul {
         padding-top: 14px;
         padding-bottom: 14px;
     }
+    /* Board: stack vertical, cada team block es horizontal (crest izq, info der) */
     .result-board {
         grid-template-columns: 1fr;
-        gap: 22px;
-        padding-top: 28px;
-        padding-bottom: 28px;
+        gap: 0;
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+    .result-board .team-block {
+        flex-direction: row;
+        align-items: center;
+        gap: 18px;
+        text-align: left;
+        padding: 16px 4px;
+        position: relative;
+    }
+    /* Divisor sutil entre team blocks (excepto el último) */
+    .result-board .team-block:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        transform: translateX(-50%);
+        width: 60%;
+        height: 1px;
+        background: #ECECEC;
+    }
+    .result-board .team-info {
+        align-items: flex-start;
+        gap: 4px;
+        flex: 1;
+        min-width: 0;
+    }
+    .result-board .team-crest {
+        width: clamp(64px, 18vw, 84px);
+        height: clamp(64px, 18vw, 84px);
+        padding: 10px;
+        margin-bottom: 0;
+        flex-shrink: 0;
+    }
+    .result-board .team-name {
+        font-size: 1rem;
+        line-height: 1.15;
+    }
+    .result-board .team-tag {
+        font-size: 0.62rem;
+        padding: 2px 8px;
+        letter-spacing: 1.5px;
+    }
+    /* Score: compacto, divisor abajo (el de arriba viene del team-block anterior) */
+    .result-score {
+        padding: 14px 0;
+        position: relative;
+    }
+    .result-score::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        transform: translateX(-50%);
+        width: 60%;
+        height: 1px;
+        background: #ECECEC;
+    }
+    .score-value {
+        font-size: 1.6rem;
+        letter-spacing: 1.5px;
+    }
+    .score-penalties {
+        font-size: 0.65rem;
+        margin-top: 4px;
     }
     .result-meta {
         flex-direction: column;
@@ -1001,14 +1066,6 @@ ul {
     .result-card {
         scroll-snap-align: start;
     }
-    .result-board .team-crest {
-        width: 120px;
-        height: 120px;
-        padding: 14px;
-    }
-    .result-board .team-name {
-        font-size: 1.05rem;
-    }
 }
 
 @media (max-width: 420px) {
@@ -1019,19 +1076,24 @@ ul {
         padding-right: 16px;
     }
     .result-board {
-        padding-top: 24px;
-        padding-bottom: 24px;
+        padding-top: 16px;
+        padding-bottom: 16px;
+    }
+    .result-board .team-block {
+        gap: 14px;
+        padding: 14px 2px;
     }
     .result-board .team-crest {
-        width: 104px;
-        height: 104px;
-        padding: 12px;
+        padding: 8px;
     }
     .result-board .team-name {
         font-size: 0.95rem;
     }
+    .result-score {
+        padding: 12px 0;
+    }
     .score-value {
-        font-size: 1.4rem;
+        font-size: 1.45rem;
     }
 }
 
@@ -3375,6 +3437,32 @@ footer {
     font-weight: 500;
 }
 
+/* Team info wrapper — agrupa tag + name + city.
+   En desktop es flex column centrado (mismo look que antes).
+   En mobile se hace flex row con el crest a la izquierda. */
+.team-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+/* Penalties info — debajo del score principal cuando aplica */
+.score-penalties {
+    display: inline-block;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #999;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    background: #F8F8F8;
+    border-radius: 3px;
+    margin-top: 2px;
+}
+
 /* VS: confianza, entre dos líneas finas */
 .match-vs {
     display: flex;
@@ -3439,59 +3527,99 @@ footer {
         padding: 32px 0;
     }
 
+    /* Board: stack vertical. Cada team block es horizontal (crest izq, info der).
+       El match-vs decorativo se oculta porque solo tiene sentido en layout horizontal. */
     .next-match-board {
         grid-template-columns: 1fr;
-        gap: 24px;
-        padding: 32px 20px;
+        gap: 0;
+        padding: 24px 16px;
+    }
+
+    .next-match-board .team-block {
+        flex-direction: row;
+        align-items: center;
+        gap: 18px;
+        text-align: left;
+        padding: 16px 4px;
+        position: relative;
+    }
+
+    /* Divisor sutil entre team blocks (excepto el último) */
+    .next-match-board .team-block:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        transform: translateX(-50%);
+        width: 60%;
+        height: 1px;
+        background: #ECECEC;
+    }
+
+    .next-match-board .team-info {
+        align-items: flex-start;
+        gap: 4px;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .next-match-board .team-crest {
+        width: clamp(64px, 18vw, 84px);
+        height: clamp(64px, 18vw, 84px);
+        padding: 10px;
+        margin-bottom: 0;
+        flex-shrink: 0;
+    }
+
+    .next-match-board .team-name {
+        font-size: 1rem;
+        line-height: 1.15;
+    }
+
+    .next-match-board .team-city {
+        font-size: 0.78rem;
+    }
+
+    .next-match-board .team-tag {
+        font-size: 0.62rem;
+        padding: 2px 8px;
+        letter-spacing: 1.5px;
+    }
+
+    /* Ocultar el match-vs decorativo en mobile (no tiene sentido vertical) */
+    .next-match-board .match-vs {
+        display: none;
     }
 
     .next-match-header {
-        padding: 24px 20px 18px;
+        padding: 22px 18px 18px;
     }
 
     .next-match-meta {
         flex-direction: column;
         align-items: flex-start;
-        gap: 16px;
-        padding: 20px 20px;
+        gap: 12px;
+        padding: 14px 18px;
     }
 
-    .team-crest {
-        width: 120px;
-        height: 120px;
-        padding: 14px;
-    }
-
-    .team-name {
-        font-size: 1.05rem;
+    .meta-value {
+        font-size: 0.88rem;
     }
 }
 
 @media (max-width: 420px) {
     .next-match-board {
-        padding: 24px 16px;
+        padding: 20px 14px;
     }
-    .next-match-header,
-    .next-match-meta {
-        padding-left: 16px;
-        padding-right: 16px;
+    .next-match-board .team-block {
+        gap: 14px;
+        padding: 14px 2px;
     }
-    .team-crest {
-        width: 104px;
-        height: 104px;
-        padding: 12px;
+    .next-match-board .team-crest {
+        padding: 8px;
     }
-    .team-name {
+    .next-match-board .team-name {
         font-size: 0.95rem;
-    }
-    .vs-text {
-        font-size: 1.7rem;
-    }
-    .vs-line {
-        width: 16px;
-    }
-    .match-vs {
-        gap: 8px;
     }
     .calendar-cta {
         width: calc(100% - 32px);

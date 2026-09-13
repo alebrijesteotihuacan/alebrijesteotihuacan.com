@@ -3262,16 +3262,6 @@ footer {
     transform: translateY(-1px);
 }
 
-.cta-arrow {
-    width: 16px;
-    height: 16px;
-    transition: transform 0.2s ease;
-}
-
-.next-match-cta:hover .cta-arrow {
-    transform: translateX(3px);
-}
-
 /* ============================================================
    Responsive
    ============================================================ */

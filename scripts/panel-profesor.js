@@ -5,7 +5,9 @@
 
 import { supabase } from './supabase-client.js';
 
-// DOM Elements
+// ==========================================
+// DOM ELEMENTS
+// ==========================================
 const loadingState = document.getElementById('loadingState');
 const dashboardContent = document.getElementById('dashboardContent');
 const profName = document.getElementById('profName');
@@ -13,6 +15,7 @@ const profEmail = document.getElementById('profEmail');
 const logoutBtn = document.getElementById('logoutBtn');
 const totalJugadores = document.getElementById('totalJugadores');
 const totalEvaluaciones = document.getElementById('totalEvaluaciones');
+const playersCountBadge = document.getElementById('playersCount');
 const playersGrid = document.getElementById('playersGrid');
 const searchInput = document.getElementById('searchInput');
 const evalModal = document.getElementById('evalModal');
@@ -22,6 +25,7 @@ const evalForm = document.getElementById('evalForm');
 const playerEvalInfo = document.getElementById('playerEvalInfo');
 const successToast = document.getElementById('successToast');
 const toastMessage = document.getElementById('toastMessage');
+const toastIcon = document.getElementById('toastIcon');
 
 // Registration DOM Elements
 const btnAddPlayer = document.getElementById('btnAddPlayer');
@@ -30,24 +34,42 @@ const registerModalClose = document.getElementById('registerModalClose');
 const registerBtnCancel = document.getElementById('registerBtnCancel');
 const registerForm = document.getElementById('registerForm');
 const sessionCounter = document.getElementById('sessionCounter');
-const registrationCounter = document.querySelector('.registration-counter');
+const registrationCounter = document.getElementById('registrationCounterBox');
 
 // Registration inputs
 const regNombre = document.getElementById('regNombre');
 const regApellido = document.getElementById('regApellido');
 const regFechaNac = document.getElementById('regFechaNac');
+const regPassword = document.getElementById('regPassword');
+const regPasswordConfirm = document.getElementById('regPasswordConfirm');
+const regPasswordToggle = document.getElementById('regPasswordToggle');
+const regPasswordGenerator = document.getElementById('regPasswordGenerator');
+const regEmail = document.getElementById('regEmail');
 
-// Session state
+// Mobile nav
+const mobileBtnSidebar = document.getElementById('mobileBtnSidebar');
+const mobileBtnAddPlayer = document.getElementById('mobileBtnAddPlayer');
+const mobileBtnPDF = document.getElementById('mobileBtnPDF');
+const mobileBtnLogout = document.getElementById('mobileBtnLogout');
+const sidebar = document.getElementById('sidebar');
+const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+
+// Sidebar year cap for date input
+const todayISO = new Date().toISOString().split('T')[0];
+if (regFechaNac) regFechaNac.max = todayISO;
+
+// ==========================================
+// STATE
+// ==========================================
 let registeredCount = 0;
-
-// Current state
 let currentProfessor = null;
 let currentPlayerId = null;
 let allPlayers = [];
 let dashboardInitialized = false;
-let currentEditEvalId = null; // ID of evaluation being edited (null = new)
-let currentEditSubEvalId = null; // subcollection eval ID
-let activeWeekFilter = ''; // Semana seleccionada para filtrar calificaciones
+let currentEditEvalId = null;
+let activeWeekFilter = '';
+let evalFormSnapshot = null; // Snapshot of last loaded evaluation (for dirty check)
+let playerToDelete = null;
 
 // Map old category names in Firebase → new display names
 const CATEGORY_ALIAS = {
@@ -59,6 +81,285 @@ const CATEGORY_ALIAS = {
 
 function normalizeCategoria(cat) {
     return CATEGORY_ALIAS[cat] || cat;
+}
+
+// ==========================================
+// ISO WEEK 8601 HELPERS
+// ==========================================
+
+function getCurrentIsoWeek() {
+    const now = new Date();
+    const target = new Date(now.valueOf());
+    const dayNr = (now.getDay() + 6) % 7; // Mon = 0
+    target.setDate(target.getDate() - dayNr + 3); // Thursday of current week
+    const firstThursday = new Date(target.valueOf());
+    target.setMonth(0, 1);
+    if (target.getDay() !== 4) {
+        target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7);
+    }
+    const week = 1 + Math.ceil((firstThursday - target) / 604800000);
+    const year = now.getFullYear();
+    return `${year}-W${String(week).padStart(2, '0')}`;
+}
+
+function isoWeekDateRange(weekStr) {
+    if (!weekStr || !/^\d{4}-W\d{2}$/.test(weekStr)) return '';
+    const [yearStr, wPart] = weekStr.split('-W');
+    const year = parseInt(yearStr, 10);
+    const week = parseInt(wPart, 10);
+    const jan4 = new Date(year, 0, 4);
+    const jan4Weekday = (jan4.getDay() + 6) % 7;
+    const weekStart = new Date(jan4);
+    weekStart.setDate(jan4.getDate() - jan4Weekday + (week - 1) * 7);
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
+    const fmt = (d) => d.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
+    return `${fmt(weekStart)} – ${fmt(weekEnd)}, ${year}`;
+}
+
+function getWeekDateRange(semana) {
+    if (!semana || !/^\d{4}-W\d{2}$/.test(semana)) return { fechaInicio: null, fechaFin: null };
+    const [yearStr, wPart] = semana.split('-W');
+    const year = parseInt(yearStr, 10);
+    const week = parseInt(wPart, 10);
+    const jan4 = new Date(year, 0, 4);
+    const jan4Weekday = (jan4.getDay() + 6) % 7;
+    const fechaInicio = new Date(jan4);
+    fechaInicio.setDate(jan4.getDate() - jan4Weekday + (week - 1) * 7);
+    const fechaFin = new Date(fechaInicio);
+    fechaFin.setDate(fechaInicio.getDate() + 6);
+    return { fechaInicio, fechaFin };
+}
+
+// ==========================================
+// MODAL HELPER (ARIA + focus trap)
+// ==========================================
+
+const openModal = (modalEl) => {
+    if (!modalEl) return;
+    const prev = document.activeElement;
+    modalEl.dataset.prevFocusId = prev && prev.id ? prev.id : '';
+
+    modalEl.classList.add('active');
+    modalEl.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+
+    const focusable = Array.from(modalEl.querySelectorAll(
+        'input:not([disabled]):not([tabindex="-1"]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]):not(.modal-close), a[href]'
+    ));
+    setTimeout(() => {
+        if (focusable.length > 0) focusable[0].focus();
+    }, 60);
+
+    const trap = (e) => {
+        if (e.key !== 'Tab' || focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+        }
+    };
+    modalEl._focusTrap = trap;
+    modalEl.addEventListener('keydown', trap);
+};
+
+const closeModal = (modalEl) => {
+    if (!modalEl) return;
+    modalEl.classList.remove('active');
+    modalEl.setAttribute('aria-hidden', 'true');
+    if (modalEl._focusTrap) {
+        modalEl.removeEventListener('keydown', modalEl._focusTrap);
+        modalEl._focusTrap = null;
+    }
+    const prevId = modalEl.dataset.prevFocusId;
+    if (prevId) {
+        const el = document.getElementById(prevId);
+        if (el && typeof el.focus === 'function') el.focus();
+    }
+    if (!document.querySelector('.modal-overlay.active')) {
+        document.body.style.overflow = '';
+    }
+};
+
+const closeAllModals = () => {
+    document.querySelectorAll('.modal-overlay.active').forEach(closeModal);
+};
+
+// ==========================================
+// TOAST HELPER
+// ==========================================
+
+const TOAST_SVG = {
+    success: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>',
+    error:   '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>',
+    info:    '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>',
+};
+
+function showToast(message, type = 'success') {
+    if (!successToast || !toastMessage) return;
+    toastMessage.textContent = message;
+    successToast.className = `toast show toast-${type}`;
+    if (toastIcon) toastIcon.innerHTML = TOAST_SVG[type] || TOAST_SVG.success;
+    if (successToast._toastTimer) clearTimeout(successToast._toastTimer);
+    successToast._toastTimer = setTimeout(() => {
+        successToast.classList.remove('show');
+    }, 3200);
+}
+
+// ==========================================
+// PASSWORD HELPERS
+// ==========================================
+
+function passwordStrength(pwd) {
+    if (!pwd) return { score: 0, label: '—' };
+    let score = 0;
+    if (pwd.length >= 8) score++;
+    if (pwd.length >= 12) score++;
+    if (/[A-Z]/.test(pwd) && /[a-z]/.test(pwd)) score++;
+    if (/\d/.test(pwd)) score++;
+    if (/[^A-Za-z0-9]/.test(pwd)) score++;
+    if (score >= 4) return { score: 4, label: 'Fuerte' };
+    if (score === 3) return { score: 3, label: 'Buena' };
+    if (score === 2) return { score: 2, label: 'Media' };
+    return { score: 1, label: 'Débil' };
+}
+
+function generateSecurePassword(length = 14) {
+    const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+    const lower = 'abcdefghjkmnpqrstuvwxyz';
+    const digits = '23456789';
+    const special = '!@#$%&*?+-';
+    let pwd = '';
+    pwd += upper[Math.floor(Math.random() * upper.length)];
+    pwd += lower[Math.floor(Math.random() * lower.length)];
+    pwd += digits[Math.floor(Math.random() * digits.length)];
+    pwd += special[Math.floor(Math.random() * special.length)];
+    const all = upper + lower + digits + special;
+    while (pwd.length < length) {
+        pwd += all[Math.floor(Math.random() * all.length)];
+    }
+    return pwd.split('').sort(() => Math.random() - 0.5).join('');
+}
+
+function updatePasswordStrength() {
+    const wrap = document.getElementById('passwordStrength');
+    if (!wrap || !regPassword) return;
+    const val = regPassword.value;
+    if (!val) {
+        wrap.hidden = true;
+        return;
+    }
+    wrap.hidden = false;
+    const { score, label } = passwordStrength(val);
+    const segments = wrap.querySelectorAll('.password-strength-segment');
+    const labelEl = wrap.querySelector('.password-strength-label');
+    segments.forEach((seg, i) => {
+        seg.classList.toggle('active', i < score);
+        seg.classList.remove('weak', 'medium', 'strong');
+        if (i < score) {
+            if (score <= 1) seg.classList.add('weak');
+            else if (score <= 3) seg.classList.add('medium');
+            else seg.classList.add('strong');
+        }
+    });
+    if (labelEl) {
+        labelEl.textContent = label;
+        labelEl.classList.remove('weak', 'medium', 'strong');
+        if (score <= 1) labelEl.classList.add('weak');
+        else if (score <= 3) labelEl.classList.add('medium');
+        else labelEl.classList.add('strong');
+    }
+}
+
+// ==========================================
+// FIELD VALIDATION HELPERS
+// ==========================================
+
+function setFieldError(fieldId, hasError) {
+    const el = fieldId ? document.getElementById(fieldId) : null;
+    const field = el ? el.closest('.register-field') : null;
+    if (!field) return;
+    field.classList.toggle('has-error', !!hasError);
+}
+
+function clearAllFieldErrors() {
+    document.querySelectorAll('.register-field.has-error').forEach(f => f.classList.remove('has-error'));
+}
+
+function validateRegistrationForm() {
+    clearAllFieldErrors();
+    let ok = true;
+    if (!regNombre.value.trim()) { setFieldError('regNombre', true); ok = false; }
+    if (!regApellido.value.trim()) { setFieldError('regApellido', true); ok = false; }
+    const emailVal = regEmail.value.trim().toLowerCase();
+    if (!emailVal || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
+        setFieldError('regEmail', true); ok = false;
+    }
+    if (!regPassword.value || regPassword.value.length < 8) {
+        setFieldError('regPassword', true); ok = false;
+    }
+    if (regPassword.value !== regPasswordConfirm.value) {
+        setFieldError('regPasswordConfirm', true); ok = false;
+    }
+    if (!regFechaNac.value || regFechaNac.value > todayISO) {
+        setFieldError('regFechaNac', true); ok = false;
+    }
+    if (!document.getElementById('regPosicion').value) {
+        setFieldError('regPosicion', true); ok = false;
+    }
+    return ok;
+}
+
+// ==========================================
+// DEBOUNCE
+// ==========================================
+
+function debounce(fn, wait = 150) {
+    let t;
+    return function (...args) {
+        clearTimeout(t);
+        t = setTimeout(() => fn.apply(this, args), wait);
+    };
+}
+
+// ==========================================
+// STRING HELPERS
+// ==========================================
+
+function toTitleCase(str) {
+    if (!str) return '';
+    return str.trim().toLowerCase()
+        .split(' ')
+        .filter(w => w.length > 0)
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(' ');
+}
+
+function getShortName(nombre, apellido) {
+    const first = toTitleCase((nombre || '').split(' ')[0]);
+    const last = toTitleCase((apellido || '').split(' ')[0]);
+    return `${first} ${last}`.trim() || 'Sin nombre';
+}
+
+function getInitials(nombre, apellido) {
+    const first = nombre ? nombre.charAt(0).toUpperCase() : '';
+    const last = apellido ? apellido.charAt(0).toUpperCase() : '';
+    return first + last || '?';
+}
+
+function normalizeStr(s) {
+    return (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+}
+
+function formatWeekLabel(weekStr) {
+    if (!weekStr) return weekStr;
+    const [year, wPart] = weekStr.split('-W');
+    if (!wPart) return weekStr;
+    return `Semana ${wPart}, ${year}`;
 }
 
 // Check authentication
@@ -133,6 +434,8 @@ async function initDashboard() {
 
 // Load players registered by current professor (+ players from allowed categories)
 async function loadPlayers(category = '') {
+    if (isLoadingPlayers) return;
+    isLoadingPlayers = true;
     try {
         // Admin sees ALL players, regular professors see only their own + allowed categories
         let ownPlayers = [];
@@ -229,6 +532,7 @@ async function loadPlayers(category = '') {
 
         renderPlayers(allPlayers);
         totalJugadores.textContent = allPlayers.length;
+        if (playersCountBadge) playersCountBadge.textContent = allPlayers.length;
     } catch (error) {
         console.error('Error loading players:', error);
         playersGrid.innerHTML = `
@@ -243,6 +547,8 @@ async function loadPlayers(category = '') {
                 <button class="retry-btn" onclick="location.reload()">Reintentar</button>
             </div>
         `;
+    } finally {
+        isLoadingPlayers = false;
     }
 }
 
@@ -284,10 +590,6 @@ const PLAYER_IMAGES = [
     'Oscar_Gabriel_Ortega_Ramos_Delantero_29.jpg',
     'Iker_Castillo_Tede_Delantero_32.jpg'
 ];
-
-function normalizeStr(s) {
-    return (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
-}
 
     const PLAYER_IMAGES_SOLES = [
         'Adbeel_Jehiel_Ramirez_Juarez.jpg', 'Alexander_Villanueva_Huerta.jpg', 'Alfonso_Isaac_Jimenez_Calero.jpg', 'Angel_Gabriel_Barboza_Muñiz.jpg',
@@ -359,21 +661,6 @@ function findPlayerImageInfo(nombre, apellido) {
         }
     }
     return null;
-}
-
-function toTitleCase(str) {
-    if (!str) return '';
-    return str.trim().toLowerCase()
-        .split(' ')
-        .filter(w => w.length > 0)
-        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-        .join(' ');
-}
-
-function getShortName(nombre, apellido) {
-    const first = toTitleCase((nombre || '').split(' ')[0]);
-    const last = toTitleCase((apellido || '').split(' ')[0]);
-    return `${first} ${last}`.trim() || 'Sin nombre';
 }
 
 // Render players
@@ -475,22 +762,23 @@ function renderPlayers(players) {
                 </div>
                 ${avgBadgeHTML}
                 <div class="player-actions">
-                    <button class="cred-btn" data-player="${player.id}" title="Ver credenciales">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <button class="cred-btn" data-player="${player.id}" title="Ver credenciales" aria-label="Ver credenciales de ${shortName}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                             <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                         </svg>
                     </button>
-                    <button class="eval-btn" data-id="${player.id}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <button class="eval-btn" data-id="${player.id}" aria-label="Evaluar a ${shortName}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                         </svg>
-                        Evaluar
+                        <span class="eval-btn-label-full">Evaluar</span>
+                        <span class="eval-btn-label-short">Evaluar</span>
                     </button>
                     ${currentProfessor.rol === 'admin' || currentProfessor.id === player.registrado_por ? `
-                    <button class="delete-btn" data-id="${player.id}" title="Eliminar jugador">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <button class="delete-btn" data-id="${player.id}" title="Eliminar jugador" aria-label="Eliminar a ${shortName}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <path d="M3 6h18"></path>
                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                             <line x1="10" y1="11" x2="10" y2="17"></line>
@@ -503,12 +791,14 @@ function renderPlayers(players) {
         `;
     }).join('');
 
+    if (playersCountBadge) playersCountBadge.textContent = players.length;
+
     // Banner de semana activa
     if (activeWeekFilter) {
         const banner = document.createElement('div');
         banner.className = 'week-filter-banner';
         banner.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                 <line x1="16" y1="2" x2="16" y2="6"></line>
                 <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -552,14 +842,14 @@ function renderPlayers(players) {
     });
 }
 
+let credsRevealed = false;
+
 function openCredsModal(player) {
     const credsModal = document.getElementById('credsModal');
-    if(!credsModal) return;
+    if (!credsModal) return;
 
-    const shortName = getShortName(player.nombre, player.apellido);
     const initials = getInitials(player.nombre, player.apellido);
 
-    // UI elements
     const avatarEl = document.getElementById('credsPlayerAvatar');
     const nameEl = document.getElementById('credsPlayerName');
     const emailEl = document.getElementById('credsPlayerEmail');
@@ -567,171 +857,185 @@ function openCredsModal(player) {
 
     nameEl.textContent = `${toTitleCase(player.nombre || '')} ${toTitleCase(player.apellido || '')}`.trim() || 'Sin nombre';
     emailEl.textContent = player.email || 'Sin correo asignado';
-    passEl.textContent = player.password || 'No almacenada';
-    passEl.title = player.password
-        ? 'Contraseña definida al registrar al jugador'
-        : 'No hay contraseña almacenada (registros antiguos)';
 
-    // Wire up the copy button for this open
-    const copyBtn = document.getElementById('credsCopyPass');
-    if (copyBtn) {
-        copyBtn.onclick = async () => {
-            const text = player.password || '';
-            if (!text) return;
-            try {
-                await navigator.clipboard.writeText(text);
-                const original = copyBtn.textContent;
-                copyBtn.textContent = '¡Copiado!';
-                copyBtn.style.background = '#5a67d8';
-                copyBtn.style.color = '#fff';
-                setTimeout(() => {
-                    copyBtn.textContent = original;
-                    copyBtn.style.background = '';
-                    copyBtn.style.color = '';
-                }, 1500);
-            } catch (err) {
-                // Fallback: select the text in the pass element
-                const range = document.createRange();
-                range.selectNode(passEl);
-                window.getSelection().removeAllRanges();
-                window.getSelection().addRange(range);
-            }
-        };
-    }
+    credsRevealed = false;
+    const storedPass = player.password || '';
+    renderCredsPassword(passEl, storedPass, credsRevealed);
 
     // Avatar
     const imgInfo = findPlayerImageInfo(player.nombre, player.apellido);
     const imgSrc = imgInfo ? `../assets/${imgInfo.folder}/${encodeURIComponent(imgInfo.file)}` : null;
     if (imgSrc) {
         avatarEl.style.background = '#e2e8f0';
-        avatarEl.innerHTML = `<img src="${imgSrc}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+        avatarEl.innerHTML = `<img src="${imgSrc}" alt="" style="width:100%; height:100%; object-fit:cover;">`;
     } else {
         avatarEl.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
         avatarEl.innerHTML = initials;
     }
 
-    credsModal.classList.add('active');
+    // Wire up the reveal button
+    const revealBtn = document.getElementById('credsRevealPass');
+    if (revealBtn) {
+        const newReveal = revealBtn.cloneNode(true);
+        revealBtn.parentNode.replaceChild(newReveal, revealBtn);
+        newReveal.addEventListener('click', () => {
+            credsRevealed = !credsRevealed;
+            renderCredsPassword(passEl, storedPass, credsRevealed);
+            newReveal.setAttribute('aria-label', credsRevealed ? 'Ocultar contraseña' : 'Mostrar contraseña');
+        });
+    }
 
-    const closeModalBtn = document.getElementById('credsModalClose');
-    const closeHandler = () => {
-        credsModal.classList.remove('active');
-        closeModalBtn.removeEventListener('click', closeHandler);
-    };
-    closeModalBtn.addEventListener('click', closeHandler);
-    
-    // Click outside
-    const outsideHandler = (e) => {
-        if(e.target === credsModal) {
-            credsModal.classList.remove('active');
-            credsModal.removeEventListener('click', outsideHandler);
-        }
-    };
-    credsModal.addEventListener('click', outsideHandler);
+    // Wire up the copy button
+    const copyBtn = document.getElementById('credsCopyPass');
+    if (copyBtn) {
+        const newCopy = copyBtn.cloneNode(true);
+        copyBtn.parentNode.replaceChild(newCopy, copyBtn);
+        newCopy.addEventListener('click', async () => {
+            if (!storedPass) {
+                showToast('No hay contraseña almacenada para este jugador', 'info');
+                return;
+            }
+            try {
+                await navigator.clipboard.writeText(storedPass);
+                showToast('Contraseña copiada al portapapeles', 'success');
+            } catch (err) {
+                const range = document.createRange();
+                range.selectNode(passEl);
+                window.getSelection().removeAllRanges();
+                window.getSelection().addRange(range);
+                showToast('Selecciona el texto y cópialo manualmente', 'info');
+            }
+        });
+    }
+
+    openModal(credsModal);
+}
+
+function renderCredsPassword(el, pass, revealed) {
+    if (!pass) {
+        el.textContent = 'No almacenada';
+        el.classList.add('masked');
+        return;
+    }
+    if (revealed) {
+        el.textContent = pass;
+        el.classList.remove('masked');
+    } else {
+        el.textContent = '••••••••••••';
+        el.classList.add('masked');
+    }
+}
 }
 
 // ==========================================
 // DELETE PLAYER LOGIC
 // ==========================================
 
-let playerToDelete = null;
+let deleteRequestInFlight = false;
 
 function openDeleteModal(player) {
     const deleteModal = document.getElementById('deleteModal');
-    if(!deleteModal) return;
+    if (!deleteModal) return;
 
     playerToDelete = player;
-    
-    // UI elements
-    const nameEl = document.getElementById('deletePlayerName');
-    nameEl.textContent = `${toTitleCase(player.nombre || '')} ${toTitleCase(player.apellido || '')}`.trim() || 'Sin nombre';
+
+    const fullName = `${toTitleCase(player.nombre || '')} ${toTitleCase(player.apellido || '')}`.trim() || 'Sin nombre';
+    document.getElementById('deletePlayerName').textContent = fullName;
+    document.getElementById('deleteConfirmTarget').textContent = fullName;
+
+    // Reset confirm input + button
+    const input = document.getElementById('deleteConfirmInput');
+    if (input) input.value = '';
+    const wrapper = document.getElementById('deleteConfirmWrapper');
+    if (wrapper) wrapper.classList.remove('has-match');
+    const confirmBtn = document.getElementById('deleteBtnConfirm');
+    if (confirmBtn) confirmBtn.disabled = true;
 
     // Reset overlay
     const overlay = document.getElementById('deleteLoadingOverlay');
     if (overlay) overlay.classList.remove('active');
 
-    deleteModal.classList.add('active');
-    document.body.style.overflow = 'hidden';
+    deleteRequestInFlight = false;
 
-    // Event listeners for close
-    const closeModalBtn = document.getElementById('deleteModalClose');
-    const cancelBtn = document.getElementById('deleteBtnCancel');
-    const confirmBtn = document.getElementById('deleteBtnConfirm');
+    openModal(deleteModal);
 
-    const closeHandler = () => {
-        closeDeleteModal();
-    };
+    // Wire up typed-confirm input
+    if (input) {
+        const newInput = input.cloneNode(true);
+        input.parentNode.replaceChild(newInput, input);
+        newInput.addEventListener('input', () => {
+            const typed = (newInput.value || '').trim().toLowerCase();
+            const target = fullName.toLowerCase();
+            const matches = typed === target;
+            const wrapper = document.getElementById('deleteConfirmWrapper');
+            if (wrapper) wrapper.classList.toggle('has-match', matches);
+            if (confirmBtn) confirmBtn.disabled = !matches;
+        });
+    }
 
-    closeModalBtn.addEventListener('click', closeHandler, { once: true });
-    cancelBtn.addEventListener('click', closeHandler, { once: true });
-    
-    // Remove previous event listener and add new one
-    const newConfirmBtn = confirmBtn.cloneNode(true);
-    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-    
-    newConfirmBtn.addEventListener('click', async () => {
-        await executeDeletePlayer(newConfirmBtn);
-    });
-
-    // Click outside
-    const outsideHandler = (e) => {
-        if(e.target === deleteModal) {
-            closeDeleteModal();
-            deleteModal.removeEventListener('click', outsideHandler);
-        }
-    };
-    deleteModal.addEventListener('click', outsideHandler);
+    // Focus the input after the modal opens
+    setTimeout(() => {
+        const focusedInput = document.getElementById('deleteConfirmInput');
+        if (focusedInput) focusedInput.focus();
+    }, 100);
 }
 
 function closeDeleteModal() {
     const deleteModal = document.getElementById('deleteModal');
-    if(deleteModal) {
-        deleteModal.classList.remove('active');
-    }
-    document.body.style.overflow = '';
+    if (deleteModal) closeModal(deleteModal);
     playerToDelete = null;
-
     const overlay = document.getElementById('deleteLoadingOverlay');
     if (overlay) overlay.classList.remove('active');
+    const input = document.getElementById('deleteConfirmInput');
+    if (input) input.value = '';
+    const wrapper = document.getElementById('deleteConfirmWrapper');
+    if (wrapper) wrapper.classList.remove('has-match');
+    const confirmBtn = document.getElementById('deleteBtnConfirm');
+    if (confirmBtn) confirmBtn.disabled = true;
 }
 
-async function executeDeletePlayer(confirmBtn) {
-    if (!playerToDelete) return;
-    
+async function executeDeletePlayer() {
+    if (!playerToDelete || deleteRequestInFlight) return;
+    deleteRequestInFlight = true;
+
     const overlay = document.getElementById('deleteLoadingOverlay');
     if (overlay) overlay.classList.add('active');
-    
-    confirmBtn.disabled = true;
+    const confirmBtn = document.getElementById('deleteBtnConfirm');
+    if (confirmBtn) confirmBtn.disabled = true;
 
     try {
-        // Delete from supabase
         await supabase.from('jugadores').delete().eq('id', playerToDelete.id);
-        // Also remove the player's evaluaciones (foreign-key style cleanup)
         await supabase.from('evaluaciones').delete().eq('jugador_id', playerToDelete.id);
 
-        // Note: Ideally, a Cloud Function should handle deleting subcollections (evaluations)
-        // and images to ensure atomicity, but for frontend-only, this deletes the main document.
-
-        showToast('Jugador eliminado correctamente');
+        showToast('Jugador eliminado correctamente', 'success');
         closeDeleteModal();
-        
-        // Refresh dashboard
         await loadPlayers();
         await loadStats();
-
     } catch (error) {
         console.error('Error deleting player:', error);
-        showToast('Error al eliminar el jugador: ' + error.message, 'error');
+        showToast('Error al eliminar el jugador: ' + (error.message || 'desconocido'), 'error');
         if (overlay) overlay.classList.remove('active');
-    } finally {
-        confirmBtn.disabled = false;
+        if (confirmBtn) confirmBtn.disabled = false;
+        deleteRequestInFlight = false;
     }
 }
 
-// Get initials
-function getInitials(nombre, apellido) {
-    const first = nombre ? nombre.charAt(0).toUpperCase() : '';
-    const last = apellido ? apellido.charAt(0).toUpperCase() : '';
-    return first + last || '?';
+// Wire up delete modal buttons (one-time)
+const _deleteBtnConfirmEl = document.getElementById('deleteBtnConfirm');
+if (_deleteBtnConfirmEl) {
+    _deleteBtnConfirmEl.addEventListener('click', executeDeletePlayer);
+}
+const _deleteBtnCancelEl = document.getElementById('deleteBtnCancel');
+if (_deleteBtnCancelEl) {
+    _deleteBtnCancelEl.addEventListener('click', () => {
+        if (!deleteRequestInFlight) closeDeleteModal();
+    });
+}
+const _deleteModalCloseEl = document.getElementById('deleteModalClose');
+if (_deleteModalCloseEl) {
+    _deleteModalCloseEl.addEventListener('click', () => {
+        if (!deleteRequestInFlight) closeDeleteModal();
+    });
 }
 
 // Load stats
@@ -765,42 +1069,35 @@ async function openEvalModal(playerId) {
 
     currentPlayerId = playerId;
     currentEditEvalId = null;
-    currentEditSubEvalId = null;
 
     const initials = getInitials(player.nombre, player.apellido);
     const fullName = `${toTitleCase(player.nombre || '')} ${toTitleCase(player.apellido || '')}`.trim() || 'Sin nombre';
 
     const imgInfo = findPlayerImageInfo(player.nombre, player.apellido);
     const imgSrc = imgInfo ? `../assets/${imgInfo.folder}/${encodeURIComponent(imgInfo.file)}` : null;
-    
+
     const avatarHTML = imgSrc
-        ? `<div class="avatar" style="background: transparent; padding: 0;"><img src="${imgSrc}" alt="${fullName}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" onerror="this.parentElement.style.background='var(--primary)';this.parentElement.style.padding='0';this.parentElement.innerHTML='${initials}'"></div>`
-        : `<div class="avatar">${initials}</div>`;
+        ? `<img src="${imgSrc}" alt="${fullName}" onerror="this.parentElement.innerHTML='${initials}';this.parentElement.style.background='linear-gradient(135deg,#F36A21 0%,#FF8C42 100%)';">`
+        : `${initials}`;
 
     playerEvalInfo.innerHTML = `
-        ${avatarHTML}
+        <div class="avatar">${avatarHTML}</div>
         <div class="info">
             <h4>${fullName}</h4>
-            <p>${player.posicion || 'Sin posición'} • ${player.categoria || 'Sin categoría'}</p>
+            <p>${player.posicion || 'Sin posición'} · ${player.categoria || 'Sin categoría'}</p>
         </div>
     `;
 
     // Reset form
     evalForm.reset();
 
-    // Set current week as default
+    // Set current week as default (ISO 8601)
     const evalSemana = document.getElementById('evalSemana');
     if (evalSemana) {
-        const now = new Date();
-        const year = now.getFullYear();
-        const oneJan = new Date(year, 0, 1);
-        const numberOfDays = Math.floor((now - oneJan) / (24 * 60 * 60 * 1000));
-        const weekNumber = Math.ceil((now.getDay() + 1 + numberOfDays) / 7);
-        evalSemana.value = `${year}-W${String(weekNumber).padStart(2, '0')}`;
+        evalSemana.value = getCurrentIsoWeek();
     }
 
-    evalModal.classList.add('active');
-    document.body.style.overflow = 'hidden';
+    openModal(evalModal);
 
     // Check if evaluation already exists for this week
     await checkExistingEval();
@@ -810,10 +1107,15 @@ async function openEvalModal(playerId) {
 async function checkExistingEval() {
     const evalSemana = document.getElementById('evalSemana');
     const submitBtn = document.getElementById('btnSubmit');
+    const weekRangeEl = document.getElementById('evalWeekRange');
     if (!evalSemana || !evalSemana.value || !currentPlayerId) return;
 
+    // Update visible date range for the selected week
+    if (weekRangeEl) {
+        weekRangeEl.textContent = isoWeekDateRange(evalSemana.value) || '—';
+    }
+
     try {
-        // Query root evaluaciones collection
         const { data: evalsRows } = await supabase
             .from('evaluaciones')
             .select('*')
@@ -822,13 +1124,9 @@ async function checkExistingEval() {
             .limit(1);
 
         if (evalsRows && evalsRows.length > 0) {
-            // Existing evaluation found - populate form for editing
             const ev = evalsRows[0];
             currentEditEvalId = ev.id;
-            // Subcollection concept doesn't exist in Supabase; everything lives in evaluaciones table.
-            currentEditSubEvalId = null;
 
-            // Populate form fields
             document.getElementById('tecnico').value = ev.tecnico ?? '';
             document.getElementById('tactico').value = ev.tactico ?? '';
             document.getElementById('fisico').value = ev.fisico ?? '';
@@ -840,94 +1138,135 @@ async function checkExistingEval() {
             document.getElementById('minutosJugados').value = ev.minutos_jugados ?? '';
             document.getElementById('observaciones').value = ev.observaciones || '';
 
-            // Update button text to indicate editing
-            submitBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Actualizar Evaluación';
+            if (submitBtn) {
+                submitBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Actualizar Evaluación';
+            }
             showToast('Evaluación existente cargada para editar', 'info');
         } else {
             currentEditEvalId = null;
-            currentEditSubEvalId = null;
-            // Clear form fields (keep week)
             const weekVal = evalSemana.value;
             evalForm.reset();
             evalSemana.value = weekVal;
-            submitBtn.textContent = 'Guardar Evaluación';
+            if (submitBtn) {
+                submitBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Guardar Evaluación';
+            }
         }
+        updateEvalCharCounter();
+        captureEvalSnapshot();
     } catch (error) {
         console.error('Error checking existing evaluation:', error);
     }
 }
 
-// Close modal
-function closeModal() {
-    evalModal.classList.remove('active');
+function captureEvalSnapshot() {
+    const fields = ['tecnico','tactico','fisico','mental','disciplinaCancha','disciplinaCasaClub','inasistencias','rendimientoCancha','minutosJugados','observaciones'];
+    evalFormSnapshot = {};
+    fields.forEach(id => {
+        const el = document.getElementById(id);
+        evalFormSnapshot[id] = el ? el.value : '';
+    });
+}
+
+function isEvalFormDirty() {
+    if (!evalFormSnapshot) return false;
+    const fields = ['tecnico','tactico','fisico','mental','disciplinaCancha','disciplinaCasaClub','inasistencias','rendimientoCancha','minutosJugados','observaciones'];
+    return fields.some(id => {
+        const el = document.getElementById(id);
+        return el && el.value !== evalFormSnapshot[id];
+    });
+}
+
+function updateEvalCharCounter() {
+    const obs = document.getElementById('observaciones');
+    const counter = document.getElementById('obsCharCounter');
+    if (!obs || !counter) return;
+    const len = (obs.value || '').length;
+    counter.textContent = `${len} / 500`;
+    counter.classList.toggle('warn', len >= 450);
+}
+
+function closeEvalModalLocal() {
+    closeModal(evalModal);
     currentPlayerId = null;
     currentEditEvalId = null;
-    currentEditSubEvalId = null;
-    document.body.style.overflow = '';
-    evalForm.reset();
+    if (evalForm) evalForm.reset();
     const submitBtn = document.getElementById('btnSubmit');
-    if (submitBtn) submitBtn.textContent = 'Guardar Evaluación';
+    if (submitBtn) {
+        submitBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Guardar Evaluación';
+    }
+    evalFormSnapshot = null;
 }
 
-// Show toast
-function showToast(message, type = 'success') {
-    toastMessage.textContent = message;
-    successToast.className = 'toast show';
-    if (type === 'error') {
-        successToast.style.background = '#ef4444';
-    } else if (type === 'info') {
-        successToast.style.background = '#3b82f6';
-    } else {
-        successToast.style.background = '#10b981';
-    }
-    setTimeout(() => {
-        successToast.classList.remove('show');
-    }, 3000);
+// Event Listeners — eval modal
+if (modalClose) modalClose.addEventListener('click', closeEvalModalLocal);
+if (btnCancel) btnCancel.addEventListener('click', closeEvalModalLocal);
+
+if (evalModal) {
+    evalModal.addEventListener('click', (e) => {
+        if (e.target === evalModal) closeEvalModalLocal();
+    });
 }
-
-// Event Listeners
-modalClose.addEventListener('click', closeModal);
-btnCancel.addEventListener('click', closeModal);
-
-evalModal.addEventListener('click', (e) => {
-    if (e.target === evalModal) {
-        closeModal();
-    }
-});
 
 // Eval tab switching
 document.querySelectorAll('.eval-tab').forEach(tab => {
     tab.addEventListener('click', () => {
-        document.querySelectorAll('.eval-tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.eval-tab-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.eval-tab').forEach(t => {
+            t.classList.remove('active');
+            t.setAttribute('aria-selected', 'false');
+        });
+        document.querySelectorAll('.eval-tab-content').forEach(c => {
+            c.classList.remove('active');
+            c.setAttribute('hidden', '');
+        });
         tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
         const target = document.getElementById(tab.dataset.tab);
-        if (target) target.classList.add('active');
+        if (target) {
+            target.classList.add('active');
+            target.removeAttribute('hidden');
+        }
     });
 });
 
-// Week selector change - check for existing evaluation
+// Week selector change — confirm before overwriting dirty form
 const evalSemanaInput = document.getElementById('evalSemana');
 if (evalSemanaInput) {
     evalSemanaInput.addEventListener('change', async () => {
-        if (currentPlayerId) {
-            await checkExistingEval();
+        if (!currentPlayerId) return;
+        if (isEvalFormDirty()) {
+            const proceed = confirm(
+                'Tienes datos sin guardar en esta evaluación.\n\n' +
+                'Cambiar de semana reemplazará los valores actuales.\n\n' +
+                '¿Continuar de todas formas?'
+            );
+            if (!proceed) {
+                // Revert: keep old snapshot value
+                return;
+            }
         }
+        await checkExistingEval();
     });
 }
 
-// Category filter removed: Arturo is DT of a single team (Alebrijes TDP), so the
-// categoria filter is no longer shown in the dashboard.
+// Observations char counter
+const obsInput = document.getElementById('observaciones');
+if (obsInput) {
+    obsInput.addEventListener('input', updateEvalCharCounter);
+}
 
-// Search input
+// Search input — debounced
 if (searchInput) {
-    searchInput.addEventListener('input', (e) => {
-        const searchTerm = e.target.value.toLowerCase();
+    const onSearch = debounce((value) => {
+        const searchTerm = value.toLowerCase();
         const filtered = allPlayers.filter(player => {
             const fullName = `${player.nombre || ''} ${player.apellido || ''}`.toLowerCase();
             return fullName.includes(searchTerm);
         });
         renderPlayers(filtered);
+    }, 180);
+
+    searchInput.addEventListener('input', (e) => {
+        onSearch(e.target.value);
     });
 }
 
@@ -997,14 +1336,6 @@ async function loadWeekEvaluations(semana) {
     }
 }
 
-// Format week label for display: "2026-W15" → "Semana 15, 2026"
-function formatWeekLabel(weekStr) {
-    if (!weekStr) return weekStr;
-    const [year, wPart] = weekStr.split('-W');
-    if (!wPart) return weekStr;
-    return `Semana ${wPart}, ${year}`;
-}
-
 // Logout
 logoutBtn.addEventListener('click', async () => {
     try {
@@ -1022,56 +1353,73 @@ evalForm.addEventListener('submit', async (e) => {
     if (!currentPlayerId) return;
 
     const submitBtn = document.getElementById('btnSubmit');
+    const originalBtnHTML = submitBtn ? submitBtn.innerHTML : '';
 
     try {
         const formData = new FormData(evalForm);
 
         // Required fields validation
-        const observaciones = formData.get('observaciones');
-        if (!observaciones || observaciones.trim() === '') {
+        const observaciones = (formData.get('observaciones') || '').toString().trim();
+        if (!observaciones) {
             showToast('El campo de observaciones es obligatorio', 'error');
+            document.getElementById('observaciones').focus();
             return;
         }
 
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Guardando...';
-
-        // Get week value
-        const semana = formData.get('semana') || '';
-
-        // Calculate week dates
-        let fechaInicio = null;
-        let fechaFin = null;
-        if (semana) {
-            const [year, week] = semana.split('-W');
-            const firstDayOfYear = new Date(year, 0, 1);
-            const daysOffset = (week - 1) * 7;
-            fechaInicio = new Date(firstDayOfYear.getTime() + daysOffset * 24 * 60 * 60 * 1000);
-            // Adjust to Monday
-            const day = fechaInicio.getDay();
-            const diff = fechaInicio.getDate() - day + (day === 0 ? -6 : 1);
-            fechaInicio = new Date(fechaInicio.setDate(diff));
-            fechaFin = new Date(fechaInicio.getTime() + 6 * 24 * 60 * 60 * 1000);
+        // Validate numeric ranges
+        const numericFields = [
+            ['tecnico', 1, 10],
+            ['tactico', 1, 10],
+            ['fisico', 1, 10],
+            ['mental', 1, 10],
+            ['disciplinaCancha', 1, 10],
+            ['disciplinaCasaClub', 1, 10],
+            ['inasistencias', 0, 10],
+            ['minutosJugados', 0, 120]
+        ];
+        for (const [field, min, max] of numericFields) {
+            const raw = formData.get(field);
+            const v = raw === null || raw === '' ? NaN : parseFloat(raw);
+            if (Number.isFinite(v) && (v < min || v > max)) {
+                showToast(`El campo "${field}" debe estar entre ${min} y ${max}`, 'error');
+                document.getElementById(field).focus();
+                return;
+            }
         }
 
-        const tecnico = parseFloat(formData.get('tecnico'));
-        const tactico = parseFloat(formData.get('tactico'));
-        const fisico = parseFloat(formData.get('fisico'));
-        const mental = parseFloat(formData.get('mental'));
-        const disciplinaCancha = parseFloat(formData.get('disciplinaCancha'));
-        const disciplinaCasaClub = parseFloat(formData.get('disciplinaCasaClub'));
-        
-        // Inasistencias field
-        let inasistencias = parseInt(formData.get('inasistencias'), 10);
-        if (isNaN(inasistencias)) inasistencias = 0;
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-inline"></span> Guardando...';
+        }
 
-        // New fields
+        const semana = formData.get('semana') || '';
+        const { fechaInicio, fechaFin } = getWeekDateRange(semana);
+
+        // Parse with NaN guards
+        const parseField = (id) => {
+            const v = parseFloat(formData.get(id));
+            return Number.isFinite(v) ? v : null;
+        };
+        const tecnico = parseField('tecnico');
+        const tactico = parseField('tactico');
+        const fisico = parseField('fisico');
+        const mental = parseField('mental');
+        const disciplinaCancha = parseField('disciplinaCancha');
+        const disciplinaCasaClub = parseField('disciplinaCasaClub');
+
+        let inasistencias = parseInt(formData.get('inasistencias'), 10);
+        if (!Number.isFinite(inasistencias)) inasistencias = 0;
+
         const rendimientoCanchaRaw = formData.get('rendimientoCancha') || '';
         const rendimientoCancha = rendimientoCanchaRaw === 'RP' ? 'RP' : (rendimientoCanchaRaw ? parseFloat(rendimientoCanchaRaw) : null);
-        const minutosJugados = parseInt(formData.get('minutosJugados')) || 0;
+        const minutosJugados = parseInt(formData.get('minutosJugados'), 10);
+        const minutosFinal = Number.isFinite(minutosJugados) ? minutosJugados : 0;
 
-        // Calculate average (original 6 metrics only, rendimientoCancha is separate)
-        const promedioGeneral = ((tecnico + tactico + fisico + mental + disciplinaCancha + disciplinaCasaClub) / 6).toFixed(1);
+        // Average (only if all 6 metrics present)
+        const validMetrics = [tecnico, tactico, fisico, mental, disciplinaCancha, disciplinaCasaClub].every(v => Number.isFinite(v));
+        const promedioGeneral = validMetrics
+            ? ((tecnico + tactico + fisico + mental + disciplinaCancha + disciplinaCasaClub) / 6).toFixed(1)
+            : null;
 
         const evaluationData = {
             jugador_id: currentPlayerId,
@@ -1089,33 +1437,33 @@ evalForm.addEventListener('submit', async (e) => {
             disciplina_casa_club: disciplinaCasaClub,
             inasistencias,
             rendimiento_cancha: rendimientoCancha,
-            minutos_jugados: minutosJugados,
-            promedio_general: parseFloat(promedioGeneral),
-            observaciones: formData.get('observaciones') || '',
+            minutos_jugados: minutosFinal,
+            promedio_general: promedioGeneral !== null ? parseFloat(promedioGeneral) : null,
+            observaciones: observaciones,
             tipo: 'Evaluación Semanal'
         };
 
         if (currentEditEvalId) {
-            // UPDATE existing evaluation
             await supabase.from('evaluaciones').update(evaluationData).eq('id', currentEditEvalId);
-            closeModal();
-            showToast('Evaluación actualizada correctamente');
+            closeEvalModalLocal();
+            showToast('Evaluación actualizada correctamente', 'success');
         } else {
-            // CREATE new evaluation
             await supabase.from('evaluaciones').insert(evaluationData);
-            closeModal();
-            showToast('Evaluación guardada correctamente');
+            closeEvalModalLocal();
+            showToast('Evaluación guardada correctamente', 'success');
         }
 
-        // Reload stats
         await loadStats();
+        await loadPlayers();
 
     } catch (error) {
         console.error('Error saving evaluation:', error);
         showToast('Error al guardar la evaluación', 'error');
     } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Guardar Evaluación';
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnHTML;
+        }
     }
 });
 
@@ -1126,49 +1474,79 @@ evalForm.addEventListener('submit', async (e) => {
 // Open Registration Modal
 if (btnAddPlayer) {
     btnAddPlayer.addEventListener('click', () => {
-        registerModal.classList.add('active');
-        // Reset form if it's a fresh start (optional, maybe keep previous category)
         if (registeredCount === 0) {
             registerForm.reset();
+            clearAllFieldErrors();
+            const wrap = document.getElementById('passwordStrength');
+            if (wrap) wrap.hidden = true;
         }
+        openModal(registerModal);
     });
 }
 
 // Close Registration Modal
 function closeRegisterModal() {
-    registerModal.classList.remove('active');
+    closeModal(registerModal);
 }
 
 if (registerModalClose) registerModalClose.addEventListener('click', closeRegisterModal);
 if (registerBtnCancel) registerBtnCancel.addEventListener('click', closeRegisterModal);
+
+// Click outside registration modal closes it
+if (registerModal) {
+    registerModal.addEventListener('click', (e) => {
+        if (e.target === registerModal) closeRegisterModal();
+    });
+}
+
+// Password toggle show/hide
+if (regPasswordToggle && regPassword) {
+    regPasswordToggle.addEventListener('click', () => {
+        const isPassword = regPassword.type === 'password';
+        regPassword.type = isPassword ? 'text' : 'password';
+        regPasswordToggle.setAttribute('aria-label', isPassword ? 'Ocultar contraseña' : 'Mostrar contraseña');
+    });
+}
+
+// Password strength on input
+if (regPassword) {
+    regPassword.addEventListener('input', updatePasswordStrength);
+}
+
+// Password generator
+if (regPasswordGenerator) {
+    regPasswordGenerator.addEventListener('click', () => {
+        const newPwd = generateSecurePassword(14);
+        regPassword.value = newPwd;
+        if (regPasswordConfirm) regPasswordConfirm.value = newPwd;
+        updatePasswordStrength();
+        showToast('Contraseña segura generada', 'info');
+    });
+}
 
 // Handle Registration Submit
 if (registerForm) {
     registerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
+        if (!validateRegistrationForm()) {
+            showToast('Revisa los campos marcados en rojo', 'error');
+            return;
+        }
+
         const submitBtn = document.getElementById('registerBtnSubmit');
-        const originalBtnText = submitBtn.innerHTML;
+        const originalBtnHTML = submitBtn.innerHTML;
 
         const formData = new FormData(registerForm);
-        const email = (formData.get('email') || '').toString().trim();
+        const email = (formData.get('email') || '').toString().trim().toLowerCase();
         const password = (formData.get('password') || '').toString();
 
-        if (!email || !password) {
-            showToast('Por favor completa email y contraseña', 'error');
-            return;
-        }
-        if (password.length < 6) {
-            showToast('La contraseña debe tener al menos 6 caracteres', 'error');
-            return;
-        }
-
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<span>Registrando...</span>';
+        submitBtn.innerHTML = '<span class="spinner-inline"></span> Registrando...';
 
         try {
-            // 1. Save the current (profesor's) session so we can restore it
-            //    after signUp, which auto-logs in as the new jugador.
+            // 1. Save the current (profesor's) session so we can restore it after
+            //    signUp, which auto-logs in as the new jugador.
             const { data: sessionData } = await supabase.auth.getSession();
             const oldSession = sessionData?.session;
 
@@ -1182,26 +1560,47 @@ if (registerForm) {
             const newUserUid = signUpData.user?.id;
             if (!newUserUid) throw new Error('No se pudo obtener el ID del nuevo jugador.');
 
-            // 3. Restore the profesor's session (signUp auto-logs in as the new user)
+            // 3. CRITICAL: Restore the profesor's session. signUp auto-logs in as
+            //    the new user, so the next supabase queries would run as the new
+            //    jugador unless we setSession back to the original session. If
+            //    this fails, abort — otherwise we'd silently corrupt the
+            //    profesor's view.
             if (oldSession?.access_token && oldSession?.refresh_token) {
                 const { error: setSessionErr } = await supabase.auth.setSession({
                     access_token: oldSession.access_token,
                     refresh_token: oldSession.refresh_token
                 });
-                if (setSessionErr) console.warn('No se pudo restaurar la sesión del profesor:', setSessionErr);
+                if (setSessionErr) {
+                    console.error('No se pudo restaurar la sesión del profesor:', setSessionErr);
+                    // Bail out: log out and redirect so we never run queries as the new jugador
+                    await supabase.auth.signOut();
+                    showToast('Tu sesión se cerró por seguridad. Inicia sesión de nuevo.', 'error');
+                    setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+                    return;
+                }
+            } else {
+                // No previous session — we cannot continue safely
+                await supabase.auth.signOut();
+                showToast('Tu sesión expiró. Inicia sesión de nuevo.', 'error');
+                setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+                return;
             }
 
-            // 4. Insert the jugador row using the auth user's UUID as id
+            // 4. Insert the jugador row using the auth user's UUID as id.
+            //    We're now running as the profesor again.
             const playerData = {
                 id: newUserUid,
-                nombre: formData.get('nombre'),
-                apellido: formData.get('apellido'),
+                nombre: (formData.get('nombre') || '').toString().trim(),
+                apellido: (formData.get('apellido') || '').toString().trim(),
                 email: email,
                 password: password,
                 fecha_nacimiento: formData.get('fechaNacimiento') || null,
                 equipo: currentProfessor.equipo_restringido || null,
                 posicion: formData.get('posicion'),
-                numero_camiseta: parseInt(formData.get('numeroCamiseta')) || null,
+                numero_camiseta: (() => {
+                    const v = parseInt(formData.get('numeroCamiseta'), 10);
+                    return Number.isFinite(v) ? v : null;
+                })(),
                 registrado_por: currentProfessor.id,
                 fecha_registro: new Date().toISOString(),
                 rol: 'jugador'
@@ -1210,28 +1609,20 @@ if (registerForm) {
             const { error: insertErr } = await supabase.from('jugadores').insert(playerData);
             if (insertErr) throw insertErr;
 
-            // Success
-            showToast(`Jugador ${playerData.nombre} registrado. Email: ${email}`);
+            showToast(`${playerData.nombre} registrado correctamente`, 'success');
 
-            // Update session counter
             registeredCount++;
-            sessionCounter.textContent = registeredCount;
-            registrationCounter.style.display = 'block';
+            if (sessionCounter) sessionCounter.textContent = registeredCount;
+            if (registrationCounter) registrationCounter.hidden = false;
 
-            // Reset form but keep Date for speed
             const lastDate = formData.get('fechaNacimiento');
-
             registerForm.reset();
+            if (lastDate) document.getElementById('regFechaNac').value = lastDate;
+            clearAllFieldErrors();
+            updatePasswordStrength();
 
-            // Restore context for next entry
-            document.getElementById('regFechaNac').value = lastDate;
-
-            // Focus on first field
             regNombre.focus();
-
-            // Refresh players list in background
-            loadPlayers();
-
+            await loadPlayers();
         } catch (error) {
             console.error('Error registering player:', error);
             let errorMsg = 'Error al registrar jugador';
@@ -1242,26 +1633,33 @@ if (registerForm) {
                 errorMsg = 'El correo no es válido o el dominio no está permitido';
             } else if (msg.includes('rate limit') || msg.includes('too many')) {
                 errorMsg = 'Demasiados intentos. Espera unos minutos.';
-            } else if (msg.includes('password') && msg.includes('short')) {
-                errorMsg = 'La contraseña es muy corta (mínimo 6 caracteres)';
+            } else if (msg.includes('password') && (msg.includes('short') || msg.includes('length'))) {
+                errorMsg = 'La contraseña debe tener al menos 8 caracteres';
             } else if (error.message) {
                 errorMsg = `Error: ${error.message}`;
             }
             showToast(errorMsg, 'error');
         } finally {
             submitBtn.disabled = false;
-            submitBtn.innerHTML = originalBtnText;
+            submitBtn.innerHTML = originalBtnHTML;
         }
     });
 }
 
-// Keyboard navigation
+// ==========================================
+// GLOBAL EVENT LISTENERS
+// ==========================================
+
+// Keyboard navigation — Esc closes any open modal
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-        if (evalModal.classList.contains('active')) closeModal();
-        if (registerModal && registerModal.classList.contains('active')) closeRegisterModal();
-        const pdfModalEl = document.getElementById('pdfModal');
-        if (pdfModalEl && pdfModalEl.classList.contains('active')) pdfModalEl.classList.remove('active');
+        // Handle delete confirm modal specially because it might require typed confirmation
+        const deleteModalEl = document.getElementById('deleteModal');
+        if (deleteModalEl && deleteModalEl.classList.contains('active')) {
+            if (!deleteRequestInFlight) closeDeleteModal();
+            return;
+        }
+        closeAllModals();
     }
 });
 
@@ -1276,27 +1674,28 @@ const pdfBtnCancel = document.getElementById('pdfBtnCancel');
 const pdfBtnExport = document.getElementById('pdfBtnExport');
 const pdfWeekPicker = document.getElementById('pdfWeekPicker');
 
-// Set default week to current week
+// Set default week to current ISO week
 if (pdfWeekPicker) {
-    const now = new Date();
-    const year = now.getFullYear();
-    const oneJan = new Date(year, 0, 1);
-    const numberOfDays = Math.floor((now - oneJan) / (24 * 60 * 60 * 1000));
-    const weekNumber = Math.ceil((now.getDay() + 1 + numberOfDays) / 7);
-    pdfWeekPicker.value = `${year}-W${String(weekNumber).padStart(2, '0')}`;
+    pdfWeekPicker.value = getCurrentIsoWeek();
 }
 
 function openPdfModal() {
-    if (pdfModal) pdfModal.classList.add('active');
+    if (pdfModal) openModal(pdfModal);
 }
 
 function closePdfModal() {
-    if (pdfModal) pdfModal.classList.remove('active');
+    if (pdfModal) closeModal(pdfModal);
 }
 
 if (btnExportPDF) btnExportPDF.addEventListener('click', openPdfModal);
 if (pdfModalClose) pdfModalClose.addEventListener('click', closePdfModal);
 if (pdfBtnCancel) pdfBtnCancel.addEventListener('click', closePdfModal);
+
+if (pdfModal) {
+    pdfModal.addEventListener('click', (e) => {
+        if (e.target === pdfModal) closePdfModal();
+    });
+}
 
 if (pdfBtnExport) {
     pdfBtnExport.addEventListener('click', async () => {
@@ -1307,42 +1706,50 @@ if (pdfBtnExport) {
         }
 
         pdfBtnExport.disabled = true;
-        pdfBtnExport.textContent = 'Generando...';
+        const origHTML = pdfBtnExport.innerHTML;
+        pdfBtnExport.innerHTML = '<span class="spinner-inline"></span> Generando...';
 
         try {
             await generateWeeklyPDF(selectedWeek);
             closePdfModal();
-            showToast('PDF generado correctamente');
+            showToast('PDF generado correctamente', 'success');
         } catch (error) {
             console.error('Error generating PDF:', error);
             showToast('Error al generar el PDF', 'error');
         } finally {
             pdfBtnExport.disabled = false;
-            pdfBtnExport.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> Generar PDF`;
+            pdfBtnExport.innerHTML = origHTML;
         }
     });
 }
 
-// Utility: load image as base64 data URL
-function loadImageAsBase64(url) {
+// Utility: load image as base64 data URL with timeout
+function loadImageAsBase64(url, timeoutMs = 5000) {
     return new Promise((resolve) => {
         const img = new Image();
         img.crossOrigin = 'anonymous';
+        let done = false;
+        const finish = (val) => { if (!done) { done = true; resolve(val); } };
+        const timer = setTimeout(() => finish(null), timeoutMs);
         img.onload = () => {
-            const canvas = document.createElement('canvas');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0);
-            resolve(canvas.toDataURL('image/png'));
+            clearTimeout(timer);
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                finish(canvas.toDataURL('image/png'));
+            } catch (e) {
+                finish(null);
+            }
         };
-        img.onerror = () => resolve(null);
+        img.onerror = () => { clearTimeout(timer); finish(null); };
         img.src = url;
     });
 }
 
 async function generateWeeklyPDF(weekValue) {
-    // Query evaluations for this week by this professor
     const { data: evalsRows, error: evalsErr } = await supabase
         .from('evaluaciones')
         .select('*')
@@ -1356,34 +1763,26 @@ async function generateWeeklyPDF(weekValue) {
         throw new Error('No evaluations found');
     }
 
-    // Collect evaluation data
-    const evaluations = [...evalsRows];
+    // Batch-fetch all player names/details in ONE query instead of N+1
+    const jugadorIds = [...new Set(evalsRows.map(ev => ev.jugador_id).filter(Boolean))];
+    const playersMap = {};
+    if (jugadorIds.length > 0) {
+        const { data: playerRows } = await supabase
+            .from('jugadores')
+            .select('id, nombre, apellido, categoria, posicion')
+            .in('id', jugadorIds);
+        (playerRows || []).forEach(p => { playersMap[p.id] = p; });
+    }
 
-    // Get player names + details for each evaluation
-    const evalRows = [];
-    for (const ev of evaluations) {
-        let playerName = 'Jugador';
-        let playerCat = '';
-        let playerPos = '';
-        try {
-            const { data: playerRow } = await supabase
-                .from('jugadores')
-                .select('*')
-                .eq('id', ev.jugador_id)
-                .maybeSingle();
-            if (playerRow) {
-                playerName = `${playerRow.nombre || ''} ${playerRow.apellido || ''}`.trim();
-                playerCat = playerRow.categoria || '';
-                playerPos = playerRow.posicion || '';
-            }
-        } catch (e) {
-            playerName = ev.jugador_id;
-        }
-
-        evalRows.push({
+    const evalRows = evalsRows.map(ev => {
+        const player = playersMap[ev.jugador_id];
+        const playerName = player
+            ? `${player.nombre || ''} ${player.apellido || ''}`.trim()
+            : (ev.jugador_id || 'Jugador');
+        return {
             nombre: playerName,
-            categoria: playerCat,
-            posicion: playerPos,
+            categoria: player ? (player.categoria || '') : '',
+            posicion: player ? (player.posicion || '') : '',
             tecnico: ev.tecnico ?? '--',
             tactico: ev.tactico ?? '--',
             fisico: ev.fisico ?? '--',
@@ -1392,8 +1791,8 @@ async function generateWeeklyPDF(weekValue) {
             disciplinaCasaClub: ev.disciplina_casa_club ?? '--',
             promedio: ev.promedio_general ?? '--',
             observaciones: ev.observaciones || ''
-        });
-    }
+        };
+    });
 
     // Sort by name
     evalRows.sort((a, b) => a.nombre.localeCompare(b.nombre));
@@ -1403,15 +1802,12 @@ async function generateWeeklyPDF(weekValue) {
     const weekNum = parseInt(weekStr);
     const weekLabel = `Semana ${weekNum}, ${yearStr}`;
 
-    // Calculate week date range for display
-    const firstDay = new Date(parseInt(yearStr), 0, 1);
-    const daysOffset = (weekNum - 1) * 7;
-    const weekStart = new Date(firstDay.getTime() + daysOffset * 86400000);
-    const dayAdj = weekStart.getDay();
-    weekStart.setDate(weekStart.getDate() - dayAdj + (dayAdj === 0 ? -6 : 1));
-    const weekEnd = new Date(weekStart.getTime() + 6 * 86400000);
+    // Calculate week date range for display (ISO 8601)
+    const { fechaInicio, fechaFin } = getWeekDateRange(weekValue);
     const dateOpts = { day: '2-digit', month: 'short', year: 'numeric' };
-    const dateRange = `${weekStart.toLocaleDateString('es-MX', dateOpts)} — ${weekEnd.toLocaleDateString('es-MX', dateOpts)}`;
+    const dateRange = fechaInicio && fechaFin
+        ? `${fechaInicio.toLocaleDateString('es-MX', dateOpts)} — ${fechaFin.toLocaleDateString('es-MX', dateOpts)}`
+        : '';
 
     // Load logos
     const [logoTeoti, logoAlebrijes] = await Promise.all([
@@ -1573,7 +1969,63 @@ async function generateWeeklyPDF(weekValue) {
     });
 
     // Download
-    const fileName = `Evaluaciones_${weekValue}_${currentProfessor.nombre || 'Profesor'}.pdf`;
-    pdf.save(fileName.replace(/\s+/g, '_'));
+    const rawName = `Evaluaciones_${weekValue}_${currentProfessor.nombre || 'Profesor'}.pdf`;
+    const fileName = rawName.replace(/[^a-zA-Z0-9._-]/g, '_');
+    pdf.save(fileName);
+}
+
+// ==========================================
+// MOBILE SIDEBAR & BOTTOM NAV
+// ==========================================
+
+function openSidebar() {
+    if (!sidebar || !sidebarBackdrop) return;
+    sidebar.classList.add('is-open');
+    sidebarBackdrop.classList.add('is-visible');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeSidebar() {
+    if (!sidebar || !sidebarBackdrop) return;
+    sidebar.classList.remove('is-open');
+    sidebarBackdrop.classList.remove('is-visible');
+    document.body.style.overflow = '';
+}
+
+if (mobileBtnSidebar) mobileBtnSidebar.addEventListener('click', openSidebar);
+if (sidebarBackdrop) sidebarBackdrop.addEventListener('click', closeSidebar);
+
+if (mobileBtnAddPlayer) {
+    mobileBtnAddPlayer.addEventListener('click', () => {
+        closeSidebar();
+        if (btnAddPlayer) btnAddPlayer.click();
+    });
+}
+
+if (mobileBtnPDF) {
+    mobileBtnPDF.addEventListener('click', () => {
+        closeSidebar();
+        if (btnExportPDF) btnExportPDF.click();
+    });
+}
+
+if (mobileBtnLogout) {
+    mobileBtnLogout.addEventListener('click', async () => {
+        closeSidebar();
+        if (logoutBtn) logoutBtn.click();
+    });
+}
+
+// ==========================================
+// LOGOUT (kept as a function in case called from elsewhere)
+// ==========================================
+
+async function handleLogout() {
+    try {
+        await supabase.auth.signOut();
+        window.location.href = 'login.html';
+    } catch (error) {
+        console.error('Error logging out:', error);
+    }
 }
 

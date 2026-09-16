@@ -3,7 +3,7 @@
     Professor Panel Script (Supabase)
 */
 
-import { supabase } from './supabase-client.js';
+import { supabase, SUPABASE_URL } from './supabase-client.js';
 
 // ==========================================
 // DOM ELEMENTS
@@ -364,11 +364,16 @@ function formatWeekLabel(weekStr) {
 
 // Check authentication
 //
-// Use getSession() for the initial load (waits for the session to be restored
-// from localStorage), then subscribe to onAuthStateChange ONLY for future
-// sign-out events. Using onAuthStateChange as the initial-check mechanism is
-// racy: Supabase may fire INITIAL_SESSION with a null session before the
-// persisted session is restored, causing a redirect loop with login.html.
+// Three-stage session check (defense in depth against the race condition
+// where Supabase's INITIAL_SESSION fires with null before localStorage is
+// fully restored):
+//   1. getSession() — reads from localStorage (preferred, no network)
+//   2. getUser() — verifies token with Supabase server (handles expired tokens)
+//   3. refreshSession() — tries to recover a stale token
+//
+// Only redirect to login after all three return null. This eliminates the
+// redirect loop where the session IS in localStorage but Supabase briefly
+// reports it as null.
 async function loadProfessorForUser(user) {
     if (!user) return;
     if (dashboardInitialized && currentProfessor && currentProfessor.id === user.id) return;
@@ -406,34 +411,76 @@ async function loadProfessorForUser(user) {
     }
 }
 
-(async function initAuth() {
-    // 1. Get the current session synchronously from localStorage
-    let session = null;
+async function resolveInitialSession() {
+    // Stage 1: getSession() — local read
     try {
         const { data } = await supabase.auth.getSession();
-        session = data?.session || null;
+        if (data?.session?.user) return data.session;
     } catch (err) {
-        console.error('Error getting session:', err);
+        console.warn('[panel-profesor] getSession failed:', err);
     }
 
+    // Stage 1b: direct localStorage read as a fallback. The Supabase storage
+    // key format is `sb-<project-ref>-auth-token`. If the client API misses
+    // the session but it's actually persisted, this catches it.
+    try {
+        const projectRef = SUPABASE_URL.match(/https:\/\/([^.]+)\.supabase\.co/)?.[1];
+        const storageKey = `sb-${projectRef}-auth-token`;
+        const raw = localStorage.getItem(storageKey);
+        if (raw) {
+            const parsed = JSON.parse(raw);
+            // Session keys: access_token, refresh_token, expires_at, user
+            if (parsed?.user) return parsed;
+        }
+    } catch (err) {
+        console.warn('[panel-profesor] direct localStorage read failed:', err);
+    }
+
+    // Stage 2: getUser() — server verification (handles expired tokens gracefully)
+    try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+            try {
+                const { data: refreshData } = await supabase.auth.refreshSession();
+                if (refreshData?.session?.user) return refreshData.session;
+            } catch (refreshErr) {
+                console.warn('[panel-profesor] refreshSession failed:', refreshErr);
+            }
+            return {
+                user,
+                access_token: 'recovered',
+                refresh_token: null,
+                expires_at: 0
+            };
+        }
+    } catch (err) {
+        console.warn('[panel-profesor] getUser failed:', err);
+    }
+
+    return null;
+}
+
+(async function initAuth() {
+    const session = await resolveInitialSession();
+
     if (!session?.user) {
-        // No session: redirect to login (and DON'T subscribe — would re-trigger redirect)
+        // No session anywhere — redirect to login (and don't subscribe to avoid loop)
+        console.info('[panel-profesor] No session found, redirecting to login');
         window.location.href = 'login.html';
         return;
     }
 
-    // 2. Session found — load professor and initialize dashboard
+    // Session found — load professor and initialize dashboard
     await loadProfessorForUser(session.user);
 
-    // 3. Subscribe to FUTURE auth state changes (only sign-out)
+    // Subscribe to FUTURE auth state changes (only sign-out)
     supabase.auth.onAuthStateChange((event, sess) => {
         if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
             window.location.href = 'login.html';
             return;
         }
-        // Handle sign-in / token refresh silently — session is still valid
+        // Handle sign-in in another tab — reload to pick up new identity
         if (event === 'SIGNED_IN' && sess?.user && sess.user.id !== currentProfessor?.id) {
-            // User switched accounts in another tab — reload to pick up new identity
             window.location.reload();
         }
     });

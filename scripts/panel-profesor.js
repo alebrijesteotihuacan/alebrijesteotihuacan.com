@@ -925,7 +925,6 @@ function renderCredsPassword(el, pass, revealed) {
         el.classList.add('masked');
     }
 }
-}
 
 // ==========================================
 // DELETE PLAYER LOGIC

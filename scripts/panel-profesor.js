@@ -363,21 +363,18 @@ function formatWeekLabel(weekStr) {
 }
 
 // Check authentication
-supabase.auth.onAuthStateChange(async (_event, session) => {
-    const user = session?.user || null;
-    if (!user) {
-        window.location.href = 'login.html';
-        return;
-    }
+//
+// Use getSession() for the initial load (waits for the session to be restored
+// from localStorage), then subscribe to onAuthStateChange ONLY for future
+// sign-out events. Using onAuthStateChange as the initial-check mechanism is
+// racy: Supabase may fire INITIAL_SESSION with a null session before the
+// persisted session is restored, causing a redirect loop with login.html.
+async function loadProfessorForUser(user) {
+    if (!user) return;
+    if (dashboardInitialized && currentProfessor && currentProfessor.id === user.id) return;
 
-    // Prevent re-initialization if already loaded
-    if (dashboardInitialized && currentProfessor && currentProfessor.id === user.id) {
-        return;
-    }
-
-    // Load professor profile or use default from auth
     try {
-        const { data: profData, error: profError } = await supabase
+        const { data: profData } = await supabase
             .from('profesores')
             .select('*')
             .eq('id', user.id)
@@ -386,7 +383,6 @@ supabase.auth.onAuthStateChange(async (_event, session) => {
         if (profData) {
             currentProfessor = { id: user.id, email: user.email, ...profData };
         } else {
-            // Use auth user data as fallback (no write required)
             currentProfessor = {
                 id: user.id,
                 email: user.email,
@@ -399,7 +395,6 @@ supabase.auth.onAuthStateChange(async (_event, session) => {
         dashboardInitialized = true;
     } catch (error) {
         console.error('Error loading professor:', error);
-        // Still allow access with basic user data
         currentProfessor = {
             id: user.id,
             email: user.email,
@@ -409,7 +404,40 @@ supabase.auth.onAuthStateChange(async (_event, session) => {
         await initDashboard();
         dashboardInitialized = true;
     }
-});
+}
+
+(async function initAuth() {
+    // 1. Get the current session synchronously from localStorage
+    let session = null;
+    try {
+        const { data } = await supabase.auth.getSession();
+        session = data?.session || null;
+    } catch (err) {
+        console.error('Error getting session:', err);
+    }
+
+    if (!session?.user) {
+        // No session: redirect to login (and DON'T subscribe — would re-trigger redirect)
+        window.location.href = 'login.html';
+        return;
+    }
+
+    // 2. Session found — load professor and initialize dashboard
+    await loadProfessorForUser(session.user);
+
+    // 3. Subscribe to FUTURE auth state changes (only sign-out)
+    supabase.auth.onAuthStateChange((event, sess) => {
+        if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
+            window.location.href = 'login.html';
+            return;
+        }
+        // Handle sign-in / token refresh silently — session is still valid
+        if (event === 'SIGNED_IN' && sess?.user && sess.user.id !== currentProfessor?.id) {
+            // User switched accounts in another tab — reload to pick up new identity
+            window.location.reload();
+        }
+    });
+})();
 
 // Initialize dashboard
 async function initDashboard() {

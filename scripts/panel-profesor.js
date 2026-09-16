@@ -70,6 +70,7 @@ let currentEditEvalId = null;
 let activeWeekFilter = '';
 let evalFormSnapshot = null; // Snapshot of last loaded evaluation (for dirty check)
 let playerToDelete = null;
+let isLoadingPlayers = false; // Guard against overlapping loadPlayers() calls
 
 // Map old category names in Firebase → new display names
 const CATEGORY_ALIAS = {

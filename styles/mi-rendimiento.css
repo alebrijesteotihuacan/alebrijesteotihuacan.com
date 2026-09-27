@@ -1068,39 +1068,66 @@
 }
 
 .timeline-date {
-    width: 92px;
+    width: 78px;
     flex-shrink: 0;
     font-variant-numeric: tabular-nums;
     font-weight: 700;
-    font-size: 0.82rem;
+    font-size: 0.84rem;
     color: var(--al-ink);
+    line-height: 1.2;
+}
+
+.timeline-date-day {
+    display: block;
+    white-space: nowrap;
 }
 
 .timeline-date-meta {
-    font-size: 0.66rem;
-    font-weight: 500;
+    font-size: 0.64rem;
+    font-weight: 600;
     color: var(--al-muted-soft);
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    margin-top: 2px;
+    margin-top: 4px;
+    display: block;
 }
 
 .timeline-body {
-    flex: 1;
+    flex: 1 1 0;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
 .timeline-title {
-    font-size: 0.88rem;
+    font-size: 0.92rem;
     font-weight: 700;
     color: var(--al-ink);
-    margin-bottom: 2px;
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
 }
 
 .timeline-evaluator {
-    font-size: 0.74rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.76rem;
     color: var(--al-muted);
     font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.timeline-evaluator svg {
+    width: 13px;
+    height: 13px;
+    color: var(--al-brand);
+    flex-shrink: 0;
 }
 
 .timeline-evaluator strong {
@@ -1108,31 +1135,64 @@
     font-weight: 700;
 }
 
-.timeline-score {
+/* New: meta row with date-range tag (separate from evaluator) */
+.timeline-meta-row {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 6px 12px;
-    background: var(--al-brand-softer);
-    border-radius: 18px;
-    border: 1px solid var(--al-brand-soft);
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 1px;
+}
+
+.timeline-meta-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.66rem;
+    font-weight: 600;
+    color: var(--al-muted);
+    background: var(--al-canvas);
+    border: 1px solid var(--al-rule);
+    padding: 3px 8px;
+    border-radius: 12px;
+    white-space: nowrap;
+}
+
+.timeline-meta-tag svg {
+    width: 11px;
+    height: 11px;
+    color: var(--al-brand);
     flex-shrink: 0;
 }
 
-.timeline-score-value {
-    font-size: 1rem;
-    font-weight: 800;
-    color: var(--al-brand-deep);
-    font-variant-numeric: tabular-nums;
+.timeline-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 8px 14px;
+    min-width: 64px;
+    background: var(--al-brand-softer);
+    border-radius: 14px;
+    border: 1px solid var(--al-brand-soft);
+    flex-shrink: 0;
     line-height: 1;
 }
 
+.timeline-score-value {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--al-brand-deep);
+    font-variant-numeric: tabular-nums;
+}
+
 .timeline-score-label {
-    font-size: 0.6rem;
+    font-size: 0.58rem;
     font-weight: 700;
     color: var(--al-muted);
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
 }
 
 /* ================================
@@ -1644,12 +1704,16 @@
 
     .rendimiento-card .rendimiento-badge { margin: 0 auto; }
 
-    .timeline-item { flex-wrap: wrap; }
+    .timeline-item {
+        flex-wrap: wrap;
+        row-gap: 12px;
+    }
+    .timeline-date { width: 78px; }
+    .timeline-body { flex: 1 1 auto; min-width: 0; }
     .timeline-score { margin-left: auto; }
-    .timeline-evaluator { width: 100%; padding-left: 4px; }
+    .timeline-detail-toggle { margin-left: auto; }
 
     .timeline-detail { padding: 0 0 0 18px; }
-    .timeline-detail-toggle { margin-left: auto; }
 
     .scoreboard-value { font-size: 2.4rem; }
 

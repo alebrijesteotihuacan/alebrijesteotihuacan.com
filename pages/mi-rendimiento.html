@@ -40,7 +40,7 @@
     <!-- Main Styles -->
     <link rel="stylesheet" href="../styles/styles.css">
     <link rel="stylesheet" href="../styles/login.css">
-    <link rel="stylesheet" href="../styles/mi-rendimiento.css?v=4">
+    <link rel="stylesheet" href="../styles/mi-rendimiento.css?v=5">
 </head>
 
 <body>
@@ -1381,16 +1381,24 @@
                     <div class="timeline-item is-expandable" data-eval-id="${escapeText(ev.id || '')}">
                         <div class="timeline-dot"></div>
                         <div class="timeline-date">
-                            <div>${dayLabel} ${monthLabel || ''}</div>
+                            <div class="timeline-date-day">${dayLabel} ${monthLabel || ''}</div>
                             <div class="timeline-date-meta">${escapeText(ev.semana || '')}</div>
                         </div>
                         <div class="timeline-body">
                             <div class="timeline-title">${escapeText(ev.tipo ? ev.tipo.charAt(0).toUpperCase() + ev.tipo.slice(1) : 'Evaluacion Semanal')}</div>
-                            <div class="timeline-evaluator">Por: <strong>${escapeText(ev.evaluador_nombre || 'Cuerpo Tecnico')}</strong> · ${escapeText(rangeLabel || '')}</div>
+                            <div class="timeline-evaluator">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                Por: <strong>${escapeText(ev.evaluador_nombre || 'Cuerpo Tecnico')}</strong>
+                            </div>
+                            ${(rangeLabel || ev.semana) ? `
+                                <div class="timeline-meta-row">
+                                    ${rangeLabel ? `<span class="timeline-meta-tag"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${escapeText(rangeLabel)}</span>` : ''}
+                                </div>
+                            ` : ''}
                         </div>
                         <div class="timeline-score">
                             <span class="timeline-score-value">${scoreStr}</span>
-                            <span class="timeline-score-label">Prom.</span>
+                            <span class="timeline-score-label">Prom</span>
                         </div>
                         <div class="timeline-detail-toggle" aria-hidden="true"></div>
                         <div class="timeline-detail">

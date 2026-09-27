@@ -40,7 +40,7 @@
     <!-- Main Styles -->
     <link rel="stylesheet" href="../styles/styles.css">
     <link rel="stylesheet" href="../styles/login.css">
-    <link rel="stylesheet" href="../styles/mi-rendimiento.css?v=1">
+    <link rel="stylesheet" href="../styles/mi-rendimiento.css?v=2">
 </head>
 
 <body>
@@ -352,15 +352,56 @@
                     </div>
                 </div>
 
-                <!-- Timeline: historial -->
-                <div class="eval-card">
+                <!-- Historial completo (aggregates + trend + timeline expandible) -->
+                <div class="eval-card" id="historyCard">
                     <div class="eval-card-head">
                         <div class="section-title">
-                            <span class="section-eyebrow">Historial</span>
-                            <span class="section-title-text">Evaluaciones Registradas</span>
+                            <span class="section-eyebrow">Historial Completo</span>
+                            <span class="section-title-text">Mi evolucion por periodo</span>
                         </div>
-                        <span class="section-title-meta" id="historyMeta"></span>
+                        <span class="section-title-meta" id="historyMeta">Sin registros</span>
                     </div>
+
+                    <!-- Aggregates strip -->
+                    <div class="history-aggregates" id="historyAggregates">
+                        <div class="history-agg is-best">
+                            <div class="history-agg-eyebrow">Mejor Semana</div>
+                            <div class="history-agg-value" id="histBest">--</div>
+                            <div class="history-agg-foot" id="histBestFoot">Sin registros</div>
+                        </div>
+                        <div class="history-agg">
+                            <div class="history-agg-eyebrow">Promedio Acumulado</div>
+                            <div class="history-agg-value" id="histAverage">--</div>
+                            <div class="history-agg-foot">Sobre 10 puntos</div>
+                        </div>
+                        <div class="history-agg">
+                            <div class="history-agg-eyebrow">Periodos Evaluados</div>
+                            <div class="history-agg-value" id="histCount">0</div>
+                            <div class="history-agg-foot">Semanas registradas</div>
+                        </div>
+                        <div class="history-agg">
+                            <div class="history-agg-eyebrow">Tendencia</div>
+                            <div class="history-agg-value" id="histTrendValue">—</div>
+                            <div class="trend-pill flat" id="histTrendPill">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                <span id="histTrendLabel">Sin datos</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trend chart -->
+                    <div class="history-trend" id="historyTrend">
+                        <div class="history-trend-head">
+                            <span class="history-trend-eyebrow">Progresion del Promedio General</span>
+                            <span class="history-trend-legend">
+                                <span class="history-trend-legend-dot"></span>
+                                Promedio semanal
+                            </span>
+                        </div>
+                        <svg class="trend-svg" id="trendChart" viewBox="0 0 600 96" preserveAspectRatio="none"></svg>
+                    </div>
+
+                    <!-- Timeline expandible -->
                     <div class="timeline" id="evaluationsList">
                         <!-- renderHistory -->
                     </div>
@@ -484,6 +525,17 @@
         const pieMeta = document.getElementById('pieMeta');
         const evaluationsList = document.getElementById('evaluationsList');
         const historyMeta = document.getElementById('historyMeta');
+        const historyCard = document.getElementById('historyCard');
+        const historyAggregates = document.getElementById('historyAggregates');
+        const historyTrend = document.getElementById('historyTrend');
+        const trendChart = document.getElementById('trendChart');
+        const histBest = document.getElementById('histBest');
+        const histBestFoot = document.getElementById('histBestFoot');
+        const histAverage = document.getElementById('histAverage');
+        const histCount = document.getElementById('histCount');
+        const histTrendValue = document.getElementById('histTrendValue');
+        const histTrendPill = document.getElementById('histTrendPill');
+        const histTrendLabel = document.getElementById('histTrendLabel');
         const observacionesCard = document.getElementById('observacionesCard');
         const observacionesText = document.getElementById('observacionesText');
         const observacionesMeta = document.getElementById('observacionesMeta');
@@ -731,11 +783,27 @@
                 // History
                 const historyResult = await getPlayerEvaluations(userId, 10);
                 if (historyResult.success && historyResult.data.length > 0) {
+                    renderHistoryAggregates(historyResult.data);
+                    renderTrendChart(historyResult.data);
                     renderHistory(historyResult.data);
                     if (historyMeta) historyMeta.textContent = `${historyResult.data.length} evaluaciones registradas`;
+                    if (historyTrend) historyTrend.style.display = '';
+                    if (historyAggregates) historyAggregates.style.display = '';
                 } else {
-                    evaluationsList.innerHTML = '<p style="text-align:center; padding:30px; color: var(--al-muted); font-size: 0.86rem;">No hay registros en el historial.</p>';
                     if (historyMeta) historyMeta.textContent = 'Sin registros';
+                    if (historyAggregates) historyAggregates.style.display = 'none';
+                    if (historyTrend) historyTrend.style.display = 'none';
+                    evaluationsList.innerHTML = '<p style="text-align:center; padding:30px; color: var(--al-muted); font-size: 0.86rem;">No hay registros en el historial. Tu cuerpo tecnico publicara aqui cada evaluacion semanal.</p>';
+                    if (histBest) histBest.textContent = '--';
+                    if (histBestFoot) histBestFoot.textContent = 'Sin registros';
+                    if (histAverage) histAverage.textContent = '--';
+                    if (histCount) histCount.textContent = '0';
+                    if (histTrendValue) histTrendValue.textContent = '—';
+                    if (histTrendPill) {
+                        histTrendPill.className = 'trend-pill flat';
+                        histTrendPill.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Sin datos</span>';
+                    }
+                    if (trendChart) trendChart.innerHTML = '';
                 }
 
                 loadingState.style.display = 'none';
@@ -1062,12 +1130,190 @@
                     : 'Sin calificacion registrada.');
         }
 
-        // ====== TIMELINE (historial) ======
+        // ====== HISTORY AGGREGATES ======
+        function renderHistoryAggregates(evaluations) {
+            const numericEvaluations = evaluations
+                .map(ev => ({ ev, score: Number(ev.promedio_general) }))
+                .filter(x => Number.isFinite(x.score));
+
+            if (numericEvaluations.length === 0) {
+                histBest.textContent = '--';
+                histBestFoot.textContent = 'Sin registros';
+                histAverage.textContent = '--';
+                histCount.textContent = '0';
+                histTrendValue.textContent = '—';
+                return;
+            }
+
+            const best = numericEvaluations.reduce((a, b) => (b.score > a.score ? b : a));
+            const sum = numericEvaluations.reduce((acc, x) => acc + x.score, 0);
+            const avg = sum / numericEvaluations.length;
+
+            histBest.textContent = best.score.toFixed(1);
+            if (best.ev.semana) {
+                histBestFoot.textContent = `${best.ev.semana} · ${formatWeekRange(best.ev) || ''}`.trim(' ·');
+            } else {
+                histBestFoot.textContent = 'Promedio mas alto';
+            }
+
+            histAverage.textContent = avg.toFixed(2);
+            histCount.textContent = String(numericEvaluations.length);
+
+            // Tendencia: comparar las últimas 3 con las primeras 3
+            const n = numericEvaluations.length;
+            let trendValue = 0;
+            let trendLabel = 'Estable';
+            let trendClass = 'flat';
+            let trendIcon = 'flat';
+
+            if (n >= 2) {
+                const sorted = numericEvaluations.slice().sort((a, b) => {
+                    const sa = new Date(a.ev.fecha_inicio || a.ev.fecha || 0).getTime();
+                    const sb = new Date(b.ev.fecha_inicio || b.ev.fecha || 0).getTime();
+                    return sa - sb;
+                });
+
+                const window = Math.min(3, Math.floor(n / 2));
+                const head = sorted.slice(0, window);
+                const tail = sorted.slice(-window);
+                const headAvg = head.reduce((acc, x) => acc + x.score, 0) / head.length;
+                const tailAvg = tail.reduce((acc, x) => acc + x.score, 0) / tail.length;
+                const delta = tailAvg - headAvg;
+
+                trendValue = delta;
+                const pct = (delta / 10) * 100;
+                const formatted = `${delta >= 0 ? '+' : ''}${delta.toFixed(2)}`;
+                histTrendValue.textContent = formatted;
+
+                if (delta > 0.3) { trendLabel = 'En mejora'; trendClass = 'up'; trendIcon = 'up'; }
+                else if (delta < -0.3) { trendLabel = 'En descenso'; trendClass = 'down'; trendIcon = 'down'; }
+                else { trendLabel = 'Estable'; trendClass = 'flat'; trendIcon = 'flat'; }
+            } else {
+                histTrendValue.textContent = '—';
+            }
+
+            // Trend pill
+            histTrendPill.className = `trend-pill ${trendClass}`;
+            const icons = {
+                up: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 15 12 9 18 15"/></svg>',
+                down: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
+                flat: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>'
+            };
+            histTrendPill.innerHTML = `${icons[trendIcon]}<span>${trendLabel}</span>`;
+        }
+
+        // ====== HISTORY TREND CHART ======
+        function renderTrendChart(evaluations) {
+            const series = evaluations
+                .map(ev => ({
+                    ev,
+                    score: Number(ev.promedio_general),
+                    date: ev.fecha_inicio || ev.fecha || '',
+                    label: ev.semana || ''
+                }))
+                .filter(x => Number.isFinite(x.score))
+                .sort((a, b) => new Date(a.date || 0) - new Date(b.date || 0));
+
+            if (series.length === 0) {
+                trendChart.innerHTML = '';
+                return;
+            }
+
+            const W = 600, H = 96;
+            const PAD_L = 28, PAD_R = 14, PAD_T = 18, PAD_B = 22;
+            const innerW = W - PAD_L - PAD_R;
+            const innerH = H - PAD_T - PAD_B;
+            const yMin = 0;
+            const yMax = 10;
+
+            const xOf = (i) => {
+                if (series.length === 1) return PAD_L + innerW / 2;
+                return PAD_L + (i / (series.length - 1)) * innerW;
+            };
+            const yOf = (v) => PAD_T + (1 - (v - yMin) / (yMax - yMin)) * innerH;
+
+            // Build path
+            const pts = series.map((d, i) => ({ x: xOf(i), y: yOf(d.score), score: d.score, label: d.label, ev: d.ev }));
+            const linePath = pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
+
+            const first = pts[0];
+            const last = pts[pts.length - 1];
+            const areaPath = `${linePath} L ${last.x.toFixed(1)} ${(H - PAD_B).toFixed(1)} L ${first.x.toFixed(1)} ${(H - PAD_B).toFixed(1)} Z`;
+
+            // Y axis labels (0, 5, 10 + 7 reference)
+            const yLabels = [10, 7, 0].map(v => {
+                const y = yOf(v);
+                return `<text x="${PAD_L - 6}" y="${y + 2}" text-anchor="end" class="trend-axis-label">${v}</text>`;
+            }).join('');
+
+            // Reference lines
+            const refLines = [7, 10].map(v => {
+                const y = yOf(v);
+                const dash = v === 7 ? '4 3' : '0';
+                const op = v === 7 ? '0.5' : '0.7';
+                return `<line x1="${PAD_L}" y1="${y}" x2="${W - PAD_R}" y2="${y}" class="trend-axis-line" stroke-dasharray="${dash}" opacity="${op}"/>`;
+            }).join('');
+
+            // X axis labels (first, last, middle)
+            let xLabels = '';
+            if (series.length === 1) {
+                xLabels = `<text x="${first.x}" y="${H - 6}" text-anchor="middle" class="trend-axis-label">${escapeText(first.label)}</text>`;
+            } else {
+                const indices = [];
+                if (pts[0]) indices.push(0);
+                if (Math.floor((pts.length - 1) / 2) !== 0 && Math.floor((pts.length - 1) / 2) !== pts.length - 1) {
+                    indices.push(Math.floor((pts.length - 1) / 2));
+                }
+                if (pts.length > 1) indices.push(pts.length - 1);
+                indices.forEach(i => {
+                    const p = pts[i];
+                    xLabels += `<text x="${p.x}" y="${H - 6}" text-anchor="middle" class="trend-axis-label">${escapeText(p.label)}</text>`;
+                });
+            }
+
+            // Dots + value labels
+            const dots = pts.map((p, i) => {
+                const isBest = p.score === Math.max(...pts.map(x => x.score));
+                const cls = isBest ? 'trend-dot trend-dot-is-best' : 'trend-dot';
+                return `
+                    <g class="trend-point-group">
+                        <circle class="${cls}" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4" data-idx="${i}">
+                            <title>${escapeText(p.label || '')}: ${p.score.toFixed(1)}</title>
+                        </circle>
+                        <text class="trend-value-label" x="${p.x.toFixed(1)}" y="${(p.y - 10).toFixed(1)}">${p.score.toFixed(1)}</text>
+                    </g>
+                `;
+            }).join('');
+
+            trendChart.innerHTML = `
+                ${refLines}
+                ${yLabels}
+                <path class="trend-area" d="${areaPath}"/>
+                <path class="trend-line" d="${linePath}"/>
+                ${dots}
+                ${xLabels}
+            `;
+
+            // Hover handlers — show label
+            const groups = trendChart.querySelectorAll('.trend-point-group');
+            groups.forEach(g => {
+                g.addEventListener('mouseenter', () => {
+                    const label = g.querySelector('.trend-value-label');
+                    if (label) label.style.opacity = '1';
+                });
+                g.addEventListener('mouseleave', () => {
+                    const label = g.querySelector('.trend-value-label');
+                    if (label) label.style.opacity = '';
+                });
+            });
+        }
+
+        // ====== TIMELINE (expandible) ======
         function renderHistory(evaluations) {
             const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
             let html = '';
 
-            evaluations.forEach((ev, idx) => {
+            evaluations.forEach((ev) => {
                 let dayLabel = '--';
                 let monthLabel = '';
                 let rangeLabel = '';
@@ -1086,32 +1332,91 @@
                 const score = Number(ev.promedio_general);
                 const scoreStr = Number.isFinite(score) ? score.toFixed(1) : '--';
 
-                let tier = 'Por mejorar';
-                if (Number.isFinite(score)) {
-                    if (score >= 8) tier = 'Sobresaliente';
-                    else if (score >= 7) tier = 'Aceptable';
+                // Detail cells (6 criterios)
+                const detailCells = metrics.map(m => {
+                    const v = Number(ev[m.key]);
+                    const has = Number.isFinite(v);
+                    return `
+                        <div class="timeline-detail-cell">
+                            <div class="timeline-detail-cell-label">${m.label}</div>
+                            <div class="timeline-detail-cell-value">${has ? v.toFixed(1) : '--'}</div>
+                            <div class="timeline-detail-cell-foot">${has ? `de 10 pts` : 'Sin registro'}</div>
+                        </div>
+                    `;
+                }).join('');
+
+                // Detail stats row (rendimiento, minutos, inasistencias)
+                let detailStats = '';
+                const rc = ev.rendimiento_cancha;
+                if (rc !== undefined && rc !== null) {
+                    const isRP = (typeof rc === 'string' && rc.toUpperCase() === 'RP') || rc === 'RP';
+                    const rcDisplay = isRP ? 'RP' : Number(rc).toFixed(1);
+                    detailStats += `
+                        <span class="timeline-detail-stat">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                            Rendimiento en cancha <strong>${rcDisplay}</strong>
+                        </span>
+                    `;
+                }
+                const minutos = Number(ev.minutos_jugados);
+                if (Number.isFinite(minutos) && minutos > 0) {
+                    detailStats += `
+                        <span class="timeline-detail-stat">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            <strong>${minutos}</strong> min jugados
+                        </span>
+                    `;
+                }
+                const inasistencias = Number(ev.inasistencias);
+                if (Number.isFinite(inasistencias) && inasistencias > 0) {
+                    detailStats += `
+                        <span class="timeline-detail-stat" style="color: #b5403a;">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            <strong>${inasistencias}</strong> inasistencia${inasistencias !== 1 ? 's' : ''}
+                        </span>
+                    `;
                 }
 
+                // Observaciones (si existen)
+                const observacionesHtml = (ev.observaciones && ev.observaciones.trim())
+                    ? `<blockquote class="timeline-detail-obs">${escapeText(ev.observaciones.trim())}</blockquote>`
+                    : '';
+
                 html += `
-                    <div class="timeline-item">
+                    <div class="timeline-item is-expandable" data-eval-id="${escapeText(ev.id || '')}">
                         <div class="timeline-dot"></div>
                         <div class="timeline-date">
                             <div>${dayLabel} ${monthLabel || ''}</div>
-                            <div class="timeline-date-meta">${ev.semana || ''}</div>
+                            <div class="timeline-date-meta">${escapeText(ev.semana || '')}</div>
                         </div>
                         <div class="timeline-body">
-                            <div class="timeline-title">${ev.tipo ? ev.tipo.charAt(0).toUpperCase() + ev.tipo.slice(1) : 'Evaluacion Semanal'}</div>
+                            <div class="timeline-title">${escapeText(ev.tipo ? ev.tipo.charAt(0).toUpperCase() + ev.tipo.slice(1) : 'Evaluacion Semanal')}</div>
                             <div class="timeline-evaluator">Por: <strong>${escapeText(ev.evaluador_nombre || 'Cuerpo Tecnico')}</strong> · ${escapeText(rangeLabel || '')}</div>
                         </div>
                         <div class="timeline-score">
                             <span class="timeline-score-value">${scoreStr}</span>
                             <span class="timeline-score-label">Prom.</span>
                         </div>
+                        <div class="timeline-detail-toggle" aria-hidden="true"></div>
+                        <div class="timeline-detail">
+                            <div class="timeline-detail-grid">${detailCells}</div>
+                            ${detailStats ? `<div class="timeline-detail-row">${detailStats}</div>` : ''}
+                            ${observacionesHtml}
+                        </div>
                     </div>
                 `;
             });
 
             evaluationsList.innerHTML = html;
+
+            // Bind toggle handlers
+            evaluationsList.querySelectorAll('.timeline-item.is-expandable').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    // Don't toggle if clicking inside detail body (e.g. on a link)
+                    if (e.target.closest('.timeline-detail-cell') && e.target.tagName === 'A') return;
+                    item.classList.toggle('is-expanded');
+                });
+            });
         }
 
         // Helper to escape user-supplied strings (defense-in-depth)

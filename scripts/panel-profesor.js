@@ -3,7 +3,7 @@
     Professor Panel Script (Supabase)
 */
 
-import { supabase, SUPABASE_URL } from './supabase-client.js';
+import { supabase, SUPABASE_URL, makeTransientClient } from './supabase-client.js';
 
 // ==========================================
 // DOM ELEMENTS
@@ -1861,13 +1861,25 @@ if (registerForm) {
         submitBtn.innerHTML = '<span class="spinner-inline"></span> Registrando...';
 
         try {
-            // 1. Save the current (profesor's) session so we can restore it after
-            //    signUp, which auto-logs in as the new jugador.
+            // 1. Capturar la sesión actual del profesor ANTES de cualquier
+            //    mutación de auth. Se usará como credenciales del cliente
+            //    transitorio para hacer el INSERT con la sesión correcta
+            //    (evita el race condition donde setSession parece OK pero la
+            //    siguiente request viaja con el JWT del jugador recién creado).
             const { data: sessionData } = await supabase.auth.getSession();
             const oldSession = sessionData?.session;
+            if (!oldSession?.access_token || !oldSession?.refresh_token || !oldSession?.user?.id) {
+                await supabase.auth.signOut();
+                showToast('Tu sesión expiró. Inicia sesión de nuevo.', 'error');
+                setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+                return;
+            }
 
-            // 2. Create the auth account for the jugador
-            const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+            // 2. Cliente transitorio #1 — crea la cuenta auth del jugador.
+            //    Como NO persiste sesión, el cliente principal sigue con la
+            //    sesión del profesor intacta.
+            const signUpClient = makeTransientClient();
+            const { data: signUpData, error: signUpError } = await signUpClient.auth.signUp({
                 email,
                 password,
                 options: { data: { rol: 'jugador' } }
@@ -1876,34 +1888,21 @@ if (registerForm) {
             const newUserUid = signUpData.user?.id;
             if (!newUserUid) throw new Error('No se pudo obtener el ID del nuevo jugador.');
 
-            // 3. CRITICAL: Restore the profesor's session. signUp auto-logs in as
-            //    the new user, so the next supabase queries would run as the new
-            //    jugador unless we setSession back to the original session. If
-            //    this fails, abort — otherwise we'd silently corrupt the
-            //    profesor's view.
-            if (oldSession?.access_token && oldSession?.refresh_token) {
-                const { error: setSessionErr } = await supabase.auth.setSession({
-                    access_token: oldSession.access_token,
-                    refresh_token: oldSession.refresh_token
-                });
-                if (setSessionErr) {
-                    console.error('No se pudo restaurar la sesión del profesor:', setSessionErr);
-                    // Bail out: log out and redirect so we never run queries as the new jugador
-                    await supabase.auth.signOut();
-                    showToast('Tu sesión se cerró por seguridad. Inicia sesión de nuevo.', 'error');
-                    setTimeout(() => { window.location.href = 'login.html'; }, 1500);
-                    return;
-                }
-            } else {
-                // No previous session — we cannot continue safely
-                await supabase.auth.signOut();
-                showToast('Tu sesión expiró. Inicia sesión de nuevo.', 'error');
-                setTimeout(() => { window.location.href = 'login.html'; }, 1500);
-                return;
+            // 3. Cliente transitorio #2 — autenticado explícitamente con la
+            //    sesión del profesor, hace el INSERT. auth.uid() en la
+            //    request = profesor.id, por lo que la policy RLS
+            //    `exists (select 1 from profesores p where p.id = auth.uid())`
+            //    pasa sin ambigüedad.
+            const insertClient = makeTransientClient();
+            const { error: setSessionErr } = await insertClient.auth.setSession({
+                access_token: oldSession.access_token,
+                refresh_token: oldSession.refresh_token
+            });
+            if (setSessionErr) {
+                throw new Error('No se pudo preparar la sesión para registrar al jugador. Reabre sesión e inténtalo de nuevo.');
             }
 
-            // 4. Insert the jugador row using the auth user's UUID as id.
-            //    We're now running as the profesor again.
+            // 4. Insert con la sesión del profesor (cliente independiente).
             const playerData = {
                 id: newUserUid,
                 nombre: (formData.get('nombre') || '').toString().trim(),
@@ -1922,8 +1921,25 @@ if (registerForm) {
                 rol: 'jugador'
             };
 
-            const { error: insertErr } = await supabase.from('jugadores').insert(playerData);
+            const { error: insertErr } = await insertClient.from('jugadores').insert(playerData);
             if (insertErr) throw insertErr;
+
+            // 5. Defensa en profundidad: si por algún motivo el cliente
+            //    principal se quedó con la sesión del jugador (p.ej. listeners
+            //    onAuthStateChange), la restauramos explícitamente. Tras un
+            //    signUp en un cliente transitorio, el cliente principal
+            //    normalmente NO cambia — pero cubrimos el caso.
+            try {
+                const verify = await supabase.auth.getSession();
+                if (verify.data?.session?.user?.id !== currentProfessor.id) {
+                    await supabase.auth.setSession({
+                        access_token: oldSession.access_token,
+                        refresh_token: oldSession.refresh_token
+                    });
+                }
+            } catch (_) {
+                // Ignorar — el siguiente loadPlayers() revelará cualquier desajuste.
+            }
 
             showToast(`${playerData.nombre} registrado correctamente`, 'success');
 
@@ -1943,14 +1959,17 @@ if (registerForm) {
             console.error('Error registering player:', error);
             let errorMsg = 'Error al registrar jugador';
             const msg = (error.message || '').toLowerCase();
-            if (error.code === 'user_already_exists' || msg.includes('already') || msg.includes('registered')) {
+            const code = error.code || '';
+            if (code === 'user_already_exists' || msg.includes('already') || msg.includes('registered')) {
                 errorMsg = 'Ya existe una cuenta con ese correo';
-            } else if (msg.includes('invalid') || msg.includes('email')) {
+            } else if (msg.includes('invalid') && msg.includes('email')) {
                 errorMsg = 'El correo no es válido o el dominio no está permitido';
             } else if (msg.includes('rate limit') || msg.includes('too many')) {
                 errorMsg = 'Demasiados intentos. Espera unos minutos.';
             } else if (msg.includes('password') && (msg.includes('short') || msg.includes('length'))) {
                 errorMsg = 'La contraseña debe tener al menos 8 caracteres';
+            } else if (code === '42501' || msg.includes('row-level security') || msg.includes('rls')) {
+                errorMsg = 'Sin permisos para registrar el jugador. Cierra sesión y vuelve a iniciar.';
             } else if (error.message) {
                 errorMsg = `Error: ${error.message}`;
             }

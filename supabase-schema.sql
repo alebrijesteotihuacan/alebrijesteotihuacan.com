@@ -405,5 +405,25 @@ create policy "iafe_mensajes_insert" on iafe.mensajes
     with check (usuario_id = auth.uid());
 
 -- =========================================================================
+-- NOTAS HISTÓRICAS (no se ejecutan — referencia)
+-- =========================================================================
+
+-- 2026-09-27: aplicada vía supabase_apply_migration
+--   align_jugadores_id_to_auth_users_with_cascade
+--     * evaluaciones_jugador_id_fkey reescrita con ON UPDATE CASCADE
+--       (necesario para que cambiar jugadores.id propague a
+--        evaluaciones.jugador_id)
+--     * UPDATE public.jugadores SET id = auth.users.id WHERE email match
+--       (afectó 3 filas: Axel René, Iker, Jesús Miguel)
+--
+-- 2026-09-27: aplicada vía supabase_apply_migration
+--   add_jugadores_id_fk_to_auth_users
+--     * Restauró la FK public.jugadores(id) → auth.users(id) ON DELETE CASCADE
+--       que este schema declaraba pero nunca había sido aplicada.
+--       Defensa futura: protege contra el bug "jugador creado con uuid
+--       sin auth.user" que causaba que la policy evaluaciones_jugador_read
+--       (USING jugador_id = auth.uid()) devolviera 0 filas.
+
+-- =========================================================================
 -- FIN DE LA MIGRACIÓN
 -- =========================================================================

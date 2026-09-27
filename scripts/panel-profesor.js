@@ -14,15 +14,26 @@ const profName = document.getElementById('profName');
 const profEmail = document.getElementById('profEmail');
 const logoutBtn = document.getElementById('logoutBtn');
 const totalJugadores = document.getElementById('totalJugadores');
-const totalEvaluaciones = document.getElementById('totalEvaluaciones');
+const totalJugadoresMeta = document.getElementById('totalJugadoresMeta');
+const promedioSemanal = document.getElementById('promedioSemanal');
+const promedioSemanalMeta = document.getElementById('promedioSemanalMeta');
+const calificacionMax = document.getElementById('calificacionMax');
+const calificacionMaxBy = document.getElementById('calificacionMaxBy');
+const calificacionMin = document.getElementById('calificacionMin');
+const calificacionMinBy = document.getElementById('calificacionMinBy');
 const playersCountBadge = document.getElementById('playersCount');
 const playersGrid = document.getElementById('playersGrid');
 const searchInput = document.getElementById('searchInput');
-const evalModal = document.getElementById('evalModal');
-const modalClose = document.getElementById('modalClose');
-const btnCancel = document.getElementById('btnCancel');
+const evalDrawer = document.getElementById('evalDrawer');
+const drawerBackdrop = document.getElementById('drawerBackdrop');
+const drawerClose = document.getElementById('drawerClose');
+const drawerCancel = document.getElementById('drawerCancel');
+const drawerSubmit = document.getElementById('drawerSubmit');
+const drawerSubmitLabel = document.getElementById('drawerSubmitLabel');
+const drawerHistoryList = document.getElementById('drawerHistoryList');
 const evalForm = document.getElementById('evalForm');
-const playerEvalInfo = document.getElementById('playerEvalInfo');
+const evalSemanaInput = document.getElementById('evalSemana');
+const evalWeekRange = document.getElementById('evalWeekRange');
 const successToast = document.getElementById('successToast');
 const toastMessage = document.getElementById('toastMessage');
 const toastIcon = document.getElementById('toastIcon');
@@ -361,6 +372,52 @@ function formatWeekLabel(weekStr) {
     const [year, wPart] = weekStr.split('-W');
     if (!wPart) return weekStr;
     return `Semana ${wPart}, ${year}`;
+}
+
+function escapeText(value) {
+    const div = document.createElement('div');
+    div.textContent = value == null ? '' : String(value);
+    return div.innerHTML;
+}
+
+function escapeAttr(value) {
+    return escapeText(value).replace(/"/g, '&quot;');
+}
+
+function computeAge(birthDateStr) {
+    if (!birthDateStr) return null;
+    const birth = new Date(birthDateStr + (birthDateStr.includes('T') ? '' : 'T00:00:00'));
+    if (Number.isNaN(birth.getTime())) return null;
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+    return age;
+}
+
+function formatLongDate(dateStr) {
+    if (!dateStr) return '—';
+    const d = new Date(dateStr.includes('T') ? dateStr : dateStr + 'T00:00:00');
+    if (Number.isNaN(d.getTime())) return '—';
+    return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric' });
+}
+
+function formatShortDate(dateStr) {
+    if (!dateStr) return '';
+    const d = new Date(dateStr.includes('T') ? dateStr : dateStr + 'T00:00:00');
+    if (Number.isNaN(d.getTime())) return '';
+    return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+function getRendimientoLabel(avg) {
+    if (avg === null || avg === undefined) return { label: 'Sin promedio', cls: 'tag-muted' };
+    const v = parseFloat(avg);
+    if (Number.isNaN(v)) return { label: 'Sin promedio', cls: 'tag-muted' };
+    if (v >= 8) return { label: 'Excelente', cls: 'tag-success' };
+    if (v >= 7) return { label: 'Bueno', cls: 'tag-success' };
+    if (v >= 6) return { label: 'Normal', cls: 'tag-warning' };
+    if (v >= 5) return { label: 'Bajo', cls: 'tag-warning' };
+    return { label: 'Reprobatorio', cls: 'tag-danger' };
 }
 
 // Check authentication
@@ -758,112 +815,111 @@ function renderPlayers(players) {
         return;
     }
 
-    const gradients = [
-        'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-        'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-        'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-        'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-        'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)'
-    ];
-
-    playersGrid.innerHTML = players.map((player, index) => {
+    playersGrid.innerHTML = players.map((player) => {
         const initials = getInitials(player.nombre, player.apellido);
         const shortName = getShortName(player.nombre, player.apellido);
         const fullName = `${toTitleCase(player.nombre || '')} ${toTitleCase(player.apellido || '')}`.trim() || 'Sin nombre';
-        const gradient = gradients[index % gradients.length];
+        const jerseyNumber = player.numero_camiseta;
+        const jerseyLabel = jerseyNumber !== null && jerseyNumber !== undefined && jerseyNumber !== ''
+            ? `#${jerseyNumber}`
+            : '#—';
+        const posicion = player.posicion || 'Sin posición';
+        const categoria = player.categoria || '';
+        const isAdmin = currentProfessor.rol === 'admin';
+        const isOwner = currentProfessor.id === player.registrado_por;
+        const canDelete = isAdmin || isOwner;
 
-        // Player photo
+        // Photo or fallback
         const imgInfo = findPlayerImageInfo(player.nombre, player.apellido);
         const imgSrc = imgInfo ? `../assets/${imgInfo.folder}/${encodeURIComponent(imgInfo.file)}` : null;
-        const avatarHTML = imgSrc
-            ? `<div class="player-avatar player-avatar-photo"><img src="${imgSrc}" alt="${shortName}" onerror="this.parentElement.style.background='${gradient}';this.parentElement.innerHTML='${initials}'"></div>`
-            : `<div class="player-avatar" style="background: ${gradient}">${initials}</div>`;
+        const mediaHTML = imgSrc
+            ? `<img class="player-card-img" src="${imgSrc}" alt="${escapeAttr(shortName)}" onerror="this.outerHTML='<div class=&quot;player-card-fallback&quot;>${escapeText(initials)}</div>'">`
+            : `<div class="player-card-fallback">${escapeText(initials)}</div>`;
 
-        // Build average/week badge
-        let avgBadgeHTML = '';
+        // Stats — choose source based on week filter
+        let promedioValue = null;
+        let promedioLabel = 'Promedio';
         if (activeWeekFilter) {
-            // Show score for the selected week
-            const weekEval = player.weekEval;
-            if (weekEval !== undefined && weekEval !== null) {
-                const avgNum = parseFloat(weekEval);
-                let avgColor = '#ef4444';
-                let avgBg = '#fee2e2';
-                if (avgNum >= 7) { avgColor = '#10b981'; avgBg = '#d1fae5'; }
-                else if (avgNum >= 5) { avgColor = '#f59e0b'; avgBg = '#fef3c7'; }
-                avgBadgeHTML = `
-                    <div class="player-week-badge" style="background: ${avgBg}; color: ${avgColor};" title="Promedio semana ${activeWeekFilter}">
-                        <span class="player-avg-value">${avgNum.toFixed(1)}</span>
-                        <span class="player-avg-label">Sem.</span>
-                    </div>
-                `;
-            } else {
-                avgBadgeHTML = `
-                    <div class="player-week-badge player-avg-empty" title="Sin evaluación en semana ${activeWeekFilter}">
-                        <span class="player-avg-value">--</span>
-                        <span class="player-avg-label">Sem.</span>
-                    </div>
-                `;
+            if (player.weekEval !== undefined && player.weekEval !== null) {
+                promedioValue = parseFloat(player.weekEval);
+                promedioLabel = 'Esta Semana';
             }
-        } else {
-            // Show latest overall average
-            const avgValue = player.latestPromedio;
-            if (avgValue !== undefined && avgValue !== null) {
-                const avgNum = parseFloat(avgValue);
-                let avgColor = '#ef4444';
-                let avgBg = '#fee2e2';
-                if (avgNum >= 7) { avgColor = '#10b981'; avgBg = '#d1fae5'; }
-                else if (avgNum >= 5) { avgColor = '#f59e0b'; avgBg = '#fef3c7'; }
-                avgBadgeHTML = `
-                    <div class="player-avg" style="background: ${avgBg}; color: ${avgColor};">
-                        <span class="player-avg-value">${avgNum.toFixed(1)}</span>
-                        <span class="player-avg-label">Prom.</span>
-                    </div>
-                `;
-            } else {
-                avgBadgeHTML = `
-                    <div class="player-avg player-avg-empty">
-                        <span class="player-avg-value">--</span>
-                        <span class="player-avg-label">Prom.</span>
-                    </div>
-                `;
-            }
+        } else if (player.latestPromedio !== undefined && player.latestPromedio !== null) {
+            promedioValue = parseFloat(player.latestPromedio);
+            promedioLabel = 'Promedio';
         }
 
+        let ultimaLabel = 'Última';
+        let ultimaValue = null;
+        if (player.latestSemana) {
+            const parts = player.latestSemana.split('-W');
+            if (parts.length === 2) {
+                ultimaValue = `S${parts[1]}`;
+            }
+        }
+        if (activeWeekFilter) {
+            ultimaLabel = 'Filtro';
+            ultimaValue = activeWeekFilter.split('-W')[1] ? `S${activeWeekFilter.split('-W')[1]}` : '—';
+        }
+
+        const promedioHTML = promedioValue !== null && !Number.isNaN(promedioValue)
+            ? `<span class="player-card-stat-value">${promedioValue.toFixed(1)}</span>`
+            : `<span class="player-card-stat-value is-empty">—</span>`;
+        const ultimaHTML = ultimaValue
+            ? `<span class="player-card-stat-value">${escapeText(ultimaValue)}</span>`
+            : `<span class="player-card-stat-value is-empty">—</span>`;
+
+        const catTagHTML = categoria
+            ? `<span class="player-card-cat-tag">${escapeText(categoria)}</span>`
+            : '';
+
         return `
-            <div class="player-card" data-id="${player.id}">
-                ${avatarHTML}
-                <div class="player-details">
-                    <div class="player-name" title="${fullName}">${shortName}</div>
+            <article class="player-card" data-id="${player.id}" tabindex="0" role="button" aria-label="Ver detalles de ${escapeAttr(shortName)}">
+                <div class="player-card-media">
+                    ${mediaHTML}
+                    ${catTagHTML}
                 </div>
-                ${avgBadgeHTML}
-                <div class="player-actions">
-                    <button class="cred-btn" data-player="${player.id}" title="Ver credenciales" aria-label="Ver credenciales de ${shortName}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                        </svg>
-                    </button>
-                    <button class="eval-btn" data-id="${player.id}" aria-label="Evaluar a ${shortName}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                        </svg>
-                        <span class="eval-btn-label-full">Evaluar</span>
-                        <span class="eval-btn-label-short">Evaluar</span>
-                    </button>
-                    ${currentProfessor.rol === 'admin' || currentProfessor.id === player.registrado_por ? `
-                    <button class="delete-btn" data-id="${player.id}" title="Eliminar jugador" aria-label="Eliminar a ${shortName}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <path d="M3 6h18"></path>
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                            <line x1="10" y1="11" x2="10" y2="17"></line>
-                            <line x1="14" y1="11" x2="14" y2="17"></line>
-                        </svg>
-                    </button>
-                    ` : ''}
+                <div class="player-card-body">
+                    <div class="player-card-id">
+                        <span class="player-card-jersey">${escapeText(jerseyLabel)}</span>
+                        <div class="player-card-name-wrap">
+                            <h3 class="player-card-name" title="${escapeAttr(fullName)}">${escapeText(shortName)}</h3>
+                            <p class="player-card-pos">${escapeText(posicion)}</p>
+                        </div>
+                    </div>
+                    <div class="player-card-stats">
+                        <div class="player-card-stat">
+                            ${promedioHTML}
+                            <span class="player-card-stat-label">${escapeText(promedioLabel)}</span>
+                        </div>
+                        <div class="player-card-stat">
+                            ${ultimaHTML}
+                            <span class="player-card-stat-label">${escapeText(ultimaLabel)}</span>
+                        </div>
+                    </div>
+                    <div class="player-card-actions">
+                        <button class="player-card-eval" data-id="${player.id}" type="button" aria-label="Evaluar a ${escapeAttr(shortName)}">Evaluar</button>
+                        <div class="player-card-secondary-actions">
+                            <button class="cred-btn" data-player="${player.id}" type="button" title="Ver credenciales" aria-label="Ver credenciales de ${escapeAttr(shortName)}">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                            </button>
+                            ${canDelete ? `
+                            <button class="delete-btn" data-id="${player.id}" type="button" title="Eliminar jugador" aria-label="Eliminar a ${escapeAttr(shortName)}">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M3 6h18"></path>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                                </svg>
+                            </button>
+                            ` : ''}
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </article>
         `;
     }).join('');
 
@@ -880,40 +936,47 @@ function renderPlayers(players) {
                 <line x1="8" y1="2" x2="8" y2="6"></line>
                 <line x1="3" y1="10" x2="21" y2="10"></line>
             </svg>
-            Mostrando calificaciones de la semana: <strong>${formatWeekLabel(activeWeekFilter)}</strong>
+            Mostrando calificaciones de la semana: <strong>${escapeText(formatWeekLabel(activeWeekFilter))}</strong>
         `;
         playersGrid.insertBefore(banner, playersGrid.firstChild);
     }
 
-    // Add event listeners to eval buttons
-    document.querySelectorAll('.eval-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            openEvalModal(btn.dataset.id);
+    // Click handlers — entire card opens drawer, action buttons stop propagation
+    document.querySelectorAll('.player-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            if (e.target.closest('button')) return; // let buttons handle their own clicks
+            openEvalDrawer(card.dataset.id);
+        });
+        card.addEventListener('keydown', (e) => {
+            if ((e.key === 'Enter' || e.key === ' ') && !e.target.closest('button')) {
+                e.preventDefault();
+                openEvalDrawer(card.dataset.id);
+            }
         });
     });
 
-    // Add event listeners to credential buttons
+    document.querySelectorAll('.player-card-eval').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openEvalDrawer(btn.dataset.id);
+        });
+    });
+
     document.querySelectorAll('.cred-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
             const playerId = btn.dataset.player;
             const player = players.find(p => p.id === playerId);
-            if(player) {
-                openCredsModal(player);
-            }
+            if (player) openCredsModal(player);
         });
     });
 
-    // Add event listeners to delete buttons
     document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
             const playerId = btn.dataset.id;
             const player = players.find(p => p.id === playerId);
-            if(player) {
-                openDeleteModal(player);
-            }
+            if (player) openDeleteModal(player);
         });
     });
 }
@@ -999,6 +1062,76 @@ function renderCredsPassword(el, pass, revealed) {
     } else {
         el.textContent = '••••••••••••';
         el.classList.add('masked');
+    }
+}
+
+// ==========================================
+// PLAYER HISTORY (drawer tab)
+// ==========================================
+
+async function loadPlayerHistory(playerId) {
+    if (!drawerHistoryList) return;
+    if (!playerId) {
+        drawerHistoryList.innerHTML = '<div class="drawer-history-empty">Selecciona un jugador para ver su historial.</div>';
+        return;
+    }
+
+    drawerHistoryList.innerHTML = '<div class="drawer-history-loading">Cargando historial...</div>';
+
+    try {
+        const { data: rows, error } = await supabase
+            .from('evaluaciones')
+            .select('id, semana, fecha_inicio, fecha_fin, promedio_general, observaciones, fecha')
+            .eq('jugador_id', playerId)
+            .order('fecha', { ascending: false })
+            .limit(20);
+
+        if (error) throw error;
+
+        if (!rows || rows.length === 0) {
+            drawerHistoryList.innerHTML = '<div class="drawer-history-empty">Sin evaluaciones registradas aún.</div>';
+            return;
+        }
+
+        drawerHistoryList.innerHTML = rows.map(row => {
+            const avg = row.promedio_general !== null && row.promedio_general !== undefined
+                ? parseFloat(row.promedio_general)
+                : null;
+            const validAvg = avg !== null && !Number.isNaN(avg);
+            const { label, cls } = getRendimientoLabel(avg);
+            const weekParts = (row.semana || '').split('-W');
+            const weekLabel = weekParts.length === 2 ? `S${weekParts[1]}` : '—';
+            const weekYear = weekParts[0] || '';
+            const dateRange = row.fecha_inicio && row.fecha_fin
+                ? `${formatShortDate(row.fecha_inicio)} — ${formatShortDate(row.fecha_fin)}`
+                : '';
+            const avgClass = validAvg ? '' : 'is-empty';
+            const avgDisplay = validAvg ? avg.toFixed(1) : '—';
+            const itemCls = validAvg
+                ? (avg >= 7 ? 'is-success' : (avg < 6 ? 'is-danger' : 'is-warning'))
+                : 'is-empty';
+            const obs = row.observaciones || 'Sin observaciones registradas.';
+
+            return `
+                <article class="drawer-history-item ${itemCls}">
+                    <div class="drawer-history-week">
+                        <span class="drawer-history-week-label">${escapeText(weekLabel)}</span>
+                        <span class="drawer-history-week-week">${escapeText(weekYear)}</span>
+                        <span class="drawer-history-week-avg ${avgClass}">${escapeText(avgDisplay)}</span>
+                    </div>
+                    <div class="drawer-history-body">
+                        <div class="drawer-history-meta">
+                            <span class="drawer-history-tag ${cls}">${escapeText(label)}</span>
+                            ${dateRange ? `<span class="drawer-history-date">${escapeText(dateRange)}</span>` : ''}
+                        </div>
+                        <p class="drawer-history-obs">${escapeText(obs)}</p>
+                    </div>
+                </article>
+            `;
+        }).join('');
+    } catch (error) {
+        console.error('Error loading player history:', error);
+        drawerHistoryList.innerHTML = '<div class="drawer-history-empty">No se pudo cargar el historial.</div>';
     }
 }
 
@@ -1113,81 +1246,218 @@ if (_deleteModalCloseEl) {
     });
 }
 
-// Load stats
+// Load stats (4 KPIs) — one roundtrip for all evaluations, computed in JS
 async function loadStats() {
     try {
-        let count = 0;
-        if (currentProfessor.rol === 'admin') {
-            // Admin sees all evaluations
-            const { count: c } = await supabase
-                .from('evaluaciones')
-                .select('id', { count: 'exact', head: true });
-            count = c || 0;
-        } else {
-            const { count: c } = await supabase
-                .from('evaluaciones')
-                .select('id', { count: 'exact', head: true })
-                .eq('evaluador_id', currentProfessor.id);
-            count = c || 0;
+        // 1. Jugadores Registrados (driven by already-loaded allPlayers)
+        const playerCount = allPlayers.length;
+        if (totalJugadores) totalJugadores.textContent = playerCount;
+        if (totalJugadoresMeta) {
+            totalJugadoresMeta.textContent = playerCount === 0
+                ? 'Sin jugadores en plantilla'
+                : (playerCount === 1 ? '1 jugador en plantilla' : `${playerCount} jugadores en plantilla`);
         }
-        totalEvaluaciones.textContent = count;
+        if (playersCountBadge) playersCountBadge.textContent = playerCount;
+
+        // 2-4. Single query for all relevant evaluations
+        let query = supabase
+            .from('evaluaciones')
+            .select('promedio_general, jugador_id, semana');
+
+        if (currentProfessor.rol !== 'admin') {
+            query = query.eq('evaluador_id', currentProfessor.id);
+        }
+
+        const { data: rows, error } = await query;
+        if (error) throw error;
+
+        const currentWeek = getCurrentIsoWeek();
+        const weekRows = (rows || []).filter(r => r.semana === currentWeek);
+        const weekPromedios = weekRows
+            .map(r => r.promedio_general)
+            .filter(v => v !== null && v !== undefined && !Number.isNaN(parseFloat(v)))
+            .map(v => parseFloat(v));
+
+        // 2. Promedio Semanal (current ISO week)
+        if (promedioSemanal) {
+            if (weekPromedios.length > 0) {
+                const sum = weekPromedios.reduce((a, b) => a + b, 0);
+                const avg = sum / weekPromedios.length;
+                promedioSemanal.textContent = avg.toFixed(1);
+            } else {
+                promedioSemanal.textContent = '—';
+            }
+        }
+        if (promedioSemanalMeta) {
+            if (weekPromedios.length === 0) {
+                promedioSemanalMeta.textContent = 'Sin evaluaciones esta semana';
+            } else {
+                const label = weekPromedios.length === 1 ? '1 evaluación' : `${weekPromedios.length} evaluaciones`;
+                promedioSemanalMeta.innerHTML = `<strong>${label}</strong> · semana ${formatWeekLabel(currentWeek).toLowerCase()}`;
+            }
+        }
+
+        // Player lookup for context
+        const playerMap = {};
+        allPlayers.forEach(p => { playerMap[p.id] = p; });
+
+        // 3. Calificación Más Alta
+        if (calificacionMax) {
+            if (weekPromedios.length > 0) {
+                const maxVal = Math.max(...weekPromedios);
+                const maxRow = weekRows
+                    .filter(r => parseFloat(r.promedio_general) === maxVal)
+                    .sort((a, b) => new Date(b.fecha || 0) - new Date(a.fecha || 0))[0];
+                calificacionMax.textContent = maxVal.toFixed(1);
+                if (calificacionMaxBy) {
+                    const jugador = maxRow && playerMap[maxRow.jugador_id];
+                    calificacionMaxBy.textContent = jugador
+                        ? getShortName(jugador.nombre, jugador.apellido)
+                        : 'Sin asignar';
+                }
+            } else {
+                calificacionMax.textContent = '—';
+                if (calificacionMaxBy) calificacionMaxBy.textContent = 'Sin datos esta semana';
+            }
+        }
+
+        // 4. Calificación Más Baja
+        if (calificacionMin) {
+            if (weekPromedios.length > 0) {
+                const minVal = Math.min(...weekPromedios);
+                const minRow = weekRows
+                    .filter(r => parseFloat(r.promedio_general) === minVal)
+                    .sort((a, b) => new Date(b.fecha || 0) - new Date(a.fecha || 0))[0];
+                calificacionMin.textContent = minVal.toFixed(1);
+                if (calificacionMinBy) {
+                    const jugador = minRow && playerMap[minRow.jugador_id];
+                    calificacionMinBy.textContent = jugador
+                        ? getShortName(jugador.nombre, jugador.apellido)
+                        : 'Sin asignar';
+                }
+            } else {
+                calificacionMin.textContent = '—';
+                if (calificacionMinBy) calificacionMinBy.textContent = 'Sin datos esta semana';
+            }
+        }
     } catch (error) {
         console.error('Error loading stats:', error);
-        totalEvaluaciones.textContent = '0';
+        if (promedioSemanal) promedioSemanal.textContent = '—';
+        if (calificacionMax) calificacionMax.textContent = '—';
+        if (calificacionMin) calificacionMin.textContent = '—';
     }
 }
 
-// Open evaluation modal
-async function openEvalModal(playerId) {
+// Open evaluation drawer (right-side panel)
+async function openEvalDrawer(playerId) {
     const player = allPlayers.find(p => p.id === playerId);
-    if (!player) return;
+    if (!player || !evalDrawer) return;
 
     currentPlayerId = playerId;
     currentEditEvalId = null;
 
     const initials = getInitials(player.nombre, player.apellido);
     const fullName = `${toTitleCase(player.nombre || '')} ${toTitleCase(player.apellido || '')}`.trim() || 'Sin nombre';
+    const jersey = player.numero_camiseta;
+    const jerseyText = jersey !== null && jersey !== undefined && jersey !== '' ? `#${jersey}` : '#—';
 
-    const imgInfo = findPlayerImageInfo(player.nombre, player.apellido);
-    const imgSrc = imgInfo ? `../assets/${imgInfo.folder}/${encodeURIComponent(imgInfo.file)}` : null;
+    // Photo + meta into drawer header
+    const photoEl = document.getElementById('drawerPhoto');
+    if (photoEl) {
+        const imgInfo = findPlayerImageInfo(player.nombre, player.apellido);
+        const imgSrc = imgInfo ? `../assets/${imgInfo.folder}/${encodeURIComponent(imgInfo.file)}` : null;
+        if (imgSrc) {
+            photoEl.innerHTML = `<img src="${imgSrc}" alt="${escapeAttr(fullName)}" onerror="this.outerHTML='${escapeText(initials)}'">`;
+        } else {
+            photoEl.textContent = initials;
+        }
+    }
 
-    const avatarHTML = imgSrc
-        ? `<img src="${imgSrc}" alt="${fullName}" onerror="this.parentElement.innerHTML='${initials}';this.parentElement.style.background='linear-gradient(135deg,#F36A21 0%,#FF8C42 100%)';">`
-        : `${initials}`;
+    const titleEl = document.getElementById('drawerTitle');
+    if (titleEl) titleEl.textContent = fullName;
+    const jerseyEl = document.getElementById('drawerJersey');
+    if (jerseyEl) jerseyEl.textContent = jerseyText;
+    const subEl = document.getElementById('drawerSub');
+    if (subEl) subEl.textContent = `${player.posicion || 'Sin posición'} · ${player.categoria || 'Sin categoría'}`;
 
-    playerEvalInfo.innerHTML = `
-        <div class="avatar">${avatarHTML}</div>
-        <div class="info">
-            <h4>${fullName}</h4>
-            <p>${player.posicion || 'Sin posición'} · ${player.categoria || 'Sin categoría'}</p>
-        </div>
-    `;
+    const posTag = document.getElementById('drawerPositionTag');
+    if (posTag) posTag.textContent = player.posicion || 'Sin posición';
+    const catTag = document.getElementById('drawerCategoryTag');
+    if (catTag) catTag.textContent = player.categoria || 'Sin categoría';
+
+    // Meta grid
+    const setMeta = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value || '—';
+    };
+    setMeta('drawerEmail', player.email || '—');
+    setMeta('drawerBirth', formatLongDate(player.fecha_nacimiento));
+    setMeta('drawerAge', (() => {
+        const age = computeAge(player.fecha_nacimiento);
+        return age !== null ? `${age} años` : '—';
+    })());
+    setMeta('drawerRegDate', formatLongDate(player.fecha_registro));
+
+    const hiddenId = document.getElementById('hiddenJugadorId');
+    if (hiddenId) hiddenId.value = player.id;
+
+    // History tab — lazy load after opening
+    if (drawerHistoryList) drawerHistoryList.innerHTML = '<div class="drawer-history-loading">Cargando historial...</div>';
 
     // Reset form
     evalForm.reset();
 
     // Set current week as default (ISO 8601)
-    const evalSemana = document.getElementById('evalSemana');
-    if (evalSemana) {
-        evalSemana.value = getCurrentIsoWeek();
+    if (evalSemanaInput) {
+        evalSemanaInput.value = getCurrentIsoWeek();
     }
 
-    openModal(evalModal);
+    // Reset submit label
+    if (drawerSubmitLabel) drawerSubmitLabel.textContent = 'Guardar Evaluación';
 
-    // Check if evaluation already exists for this week
-    await checkExistingEval();
+    // Switch to first tab
+    document.querySelectorAll('.drawer-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.tab === 'drawer-eval');
+        t.setAttribute('aria-selected', t.dataset.tab === 'drawer-eval' ? 'true' : 'false');
+    });
+    document.querySelectorAll('.drawer-tab-content').forEach(c => {
+        const isActive = c.id === 'drawer-eval';
+        c.classList.toggle('active', isActive);
+        if (isActive) c.removeAttribute('hidden'); else c.setAttribute('hidden', '');
+    });
+
+    // Open drawer
+    evalDrawer.classList.add('is-open');
+    evalDrawer.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+
+    // Load history + check existing eval in parallel
+    await Promise.all([
+        checkExistingEval(),
+        loadPlayerHistory(playerId)
+    ]);
+}
+
+// Close drawer
+function closeEvalDrawer() {
+    if (!evalDrawer) return;
+    evalDrawer.classList.remove('is-open');
+    evalDrawer.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    currentPlayerId = null;
+    currentEditEvalId = null;
+    if (evalForm) evalForm.reset();
+    if (drawerSubmitLabel) drawerSubmitLabel.textContent = 'Guardar Evaluación';
+    if (evalSemanaInput) evalSemanaInput.value = getCurrentIsoWeek();
+    evalFormSnapshot = null;
 }
 
 // Check for existing evaluation for current player + selected week
 async function checkExistingEval() {
-    const evalSemana = document.getElementById('evalSemana');
-    const submitBtn = document.getElementById('btnSubmit');
-    const weekRangeEl = document.getElementById('evalWeekRange');
-    if (!evalSemana || !evalSemana.value || !currentPlayerId) return;
+    if (!evalSemanaInput || !evalSemanaInput.value || !currentPlayerId) return;
 
-    // Update visible date range for the selected week
-    if (weekRangeEl) {
-        weekRangeEl.textContent = isoWeekDateRange(evalSemana.value) || '—';
+    if (evalWeekRange) {
+        evalWeekRange.textContent = isoWeekDateRange(evalSemanaInput.value) || '—';
     }
 
     try {
@@ -1195,7 +1465,7 @@ async function checkExistingEval() {
             .from('evaluaciones')
             .select('*')
             .eq('jugador_id', currentPlayerId)
-            .eq('semana', evalSemana.value)
+            .eq('semana', evalSemanaInput.value)
             .limit(1);
 
         if (evalsRows && evalsRows.length > 0) {
@@ -1213,18 +1483,14 @@ async function checkExistingEval() {
             document.getElementById('minutosJugados').value = ev.minutos_jugados ?? '';
             document.getElementById('observaciones').value = ev.observaciones || '';
 
-            if (submitBtn) {
-                submitBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Actualizar Evaluación';
-            }
+            if (drawerSubmitLabel) drawerSubmitLabel.textContent = 'Actualizar Evaluación';
             showToast('Evaluación existente cargada para editar', 'info');
         } else {
             currentEditEvalId = null;
-            const weekVal = evalSemana.value;
+            const weekVal = evalSemanaInput.value;
             evalForm.reset();
-            evalSemana.value = weekVal;
-            if (submitBtn) {
-                submitBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Guardar Evaluación';
-            }
+            evalSemanaInput.value = weekVal;
+            if (drawerSubmitLabel) drawerSubmitLabel.textContent = 'Guardar Evaluación';
         }
         updateEvalCharCounter();
         captureEvalSnapshot();
@@ -1260,36 +1526,19 @@ function updateEvalCharCounter() {
     counter.classList.toggle('warn', len >= 450);
 }
 
-function closeEvalModalLocal() {
-    closeModal(evalModal);
-    currentPlayerId = null;
-    currentEditEvalId = null;
-    if (evalForm) evalForm.reset();
-    const submitBtn = document.getElementById('btnSubmit');
-    if (submitBtn) {
-        submitBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Guardar Evaluación';
-    }
-    evalFormSnapshot = null;
-}
+// Drawer close handlers
+if (drawerClose) drawerClose.addEventListener('click', closeEvalDrawer);
+if (drawerCancel) drawerCancel.addEventListener('click', closeEvalDrawer);
+if (drawerBackdrop) drawerBackdrop.addEventListener('click', closeEvalDrawer);
 
-// Event Listeners — eval modal
-if (modalClose) modalClose.addEventListener('click', closeEvalModalLocal);
-if (btnCancel) btnCancel.addEventListener('click', closeEvalModalLocal);
-
-if (evalModal) {
-    evalModal.addEventListener('click', (e) => {
-        if (e.target === evalModal) closeEvalModalLocal();
-    });
-}
-
-// Eval tab switching
-document.querySelectorAll('.eval-tab').forEach(tab => {
+// Drawer tab switching
+document.querySelectorAll('.drawer-tab').forEach(tab => {
     tab.addEventListener('click', () => {
-        document.querySelectorAll('.eval-tab').forEach(t => {
+        document.querySelectorAll('.drawer-tab').forEach(t => {
             t.classList.remove('active');
             t.setAttribute('aria-selected', 'false');
         });
-        document.querySelectorAll('.eval-tab-content').forEach(c => {
+        document.querySelectorAll('.drawer-tab-content').forEach(c => {
             c.classList.remove('active');
             c.setAttribute('hidden', '');
         });
@@ -1304,7 +1553,6 @@ document.querySelectorAll('.eval-tab').forEach(tab => {
 });
 
 // Week selector change — confirm before overwriting dirty form
-const evalSemanaInput = document.getElementById('evalSemana');
 if (evalSemanaInput) {
     evalSemanaInput.addEventListener('change', async () => {
         if (!currentPlayerId) return;
@@ -1314,10 +1562,7 @@ if (evalSemanaInput) {
                 'Cambiar de semana reemplazará los valores actuales.\n\n' +
                 '¿Continuar de todas formas?'
             );
-            if (!proceed) {
-                // Revert: keep old snapshot value
-                return;
-            }
+            if (!proceed) return;
         }
         await checkExistingEval();
     });
@@ -1427,8 +1672,7 @@ evalForm.addEventListener('submit', async (e) => {
 
     if (!currentPlayerId) return;
 
-    const submitBtn = document.getElementById('btnSubmit');
-    const originalBtnHTML = submitBtn ? submitBtn.innerHTML : '';
+    const originalLabel = drawerSubmitLabel ? drawerSubmitLabel.textContent : 'Guardar Evaluación';
 
     try {
         const formData = new FormData(evalForm);
@@ -1462,15 +1706,12 @@ evalForm.addEventListener('submit', async (e) => {
             }
         }
 
-        if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="spinner-inline"></span> Guardando...';
-        }
+        if (drawerSubmit) drawerSubmit.disabled = true;
+        if (drawerSubmitLabel) drawerSubmitLabel.textContent = 'Guardando...';
 
         const semana = formData.get('semana') || '';
         const { fechaInicio, fechaFin } = getWeekDateRange(semana);
 
-        // Parse with NaN guards
         const parseField = (id) => {
             const v = parseFloat(formData.get(id));
             return Number.isFinite(v) ? v : null;
@@ -1490,7 +1731,6 @@ evalForm.addEventListener('submit', async (e) => {
         const minutosJugados = parseInt(formData.get('minutosJugados'), 10);
         const minutosFinal = Number.isFinite(minutosJugados) ? minutosJugados : 0;
 
-        // Average (only if all 6 metrics present)
         const validMetrics = [tecnico, tactico, fisico, mental, disciplinaCancha, disciplinaCasaClub].every(v => Number.isFinite(v));
         const promedioGeneral = validMetrics
             ? ((tecnico + tactico + fisico + mental + disciplinaCancha + disciplinaCasaClub) / 6).toFixed(1)
@@ -1520,25 +1760,26 @@ evalForm.addEventListener('submit', async (e) => {
 
         if (currentEditEvalId) {
             await supabase.from('evaluaciones').update(evaluationData).eq('id', currentEditEvalId);
-            closeEvalModalLocal();
             showToast('Evaluación actualizada correctamente', 'success');
         } else {
             await supabase.from('evaluaciones').insert(evaluationData);
-            closeEvalModalLocal();
             showToast('Evaluación guardada correctamente', 'success');
         }
 
-        await loadStats();
-        await loadPlayers();
+        closeEvalDrawer();
+
+        await Promise.all([
+            loadStats(),
+            loadPlayers(),
+            currentPlayerId ? loadPlayerHistory(currentPlayerId) : Promise.resolve()
+        ]);
 
     } catch (error) {
         console.error('Error saving evaluation:', error);
         showToast('Error al guardar la evaluación', 'error');
     } finally {
-        if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalBtnHTML;
-        }
+        if (drawerSubmit) drawerSubmit.disabled = false;
+        if (drawerSubmitLabel) drawerSubmitLabel.textContent = originalLabel;
     }
 });
 
@@ -1725,17 +1966,29 @@ if (registerForm) {
 // GLOBAL EVENT LISTENERS
 // ==========================================
 
-// Keyboard navigation — Esc closes any open modal
+// Keyboard navigation — Esc closes any open modal/drawer
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        // Handle delete confirm modal specially because it might require typed confirmation
-        const deleteModalEl = document.getElementById('deleteModal');
-        if (deleteModalEl && deleteModalEl.classList.contains('active')) {
-            if (!deleteRequestInFlight) closeDeleteModal();
-            return;
+    if (e.key !== 'Escape') return;
+
+    // 1. Drawer has highest priority (it's the new flow)
+    if (evalDrawer && evalDrawer.classList.contains('is-open')) {
+        if (isEvalFormDirty()) {
+            const proceed = confirm('Tienes datos sin guardar. ¿Cerrar de todas formas?');
+            if (!proceed) return;
         }
-        closeAllModals();
+        closeEvalDrawer();
+        return;
     }
+
+    // 2. Delete confirm modal — typed confirmation may be in flight
+    const deleteModalEl = document.getElementById('deleteModal');
+    if (deleteModalEl && deleteModalEl.classList.contains('active')) {
+        if (!deleteRequestInFlight) closeDeleteModal();
+        return;
+    }
+
+    // 3. Any other open modal
+    closeAllModals();
 });
 
 // ==========================================

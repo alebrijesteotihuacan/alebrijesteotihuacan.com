@@ -983,6 +983,17 @@ function renderPlayers(players) {
 
 let credsRevealed = false;
 
+// Wire up the credentials modal close button once at module init.
+const _credsModalEl = document.getElementById('credsModal');
+const _credsModalCloseEl = document.getElementById('credsModalClose');
+if (_credsModalEl && _credsModalCloseEl) {
+    _credsModalCloseEl.addEventListener('click', () => closeModal(_credsModalEl));
+    // Click on the overlay backdrop (but not the modal body itself) also closes.
+    _credsModalEl.addEventListener('click', (e) => {
+        if (e.target === _credsModalEl) closeModal(_credsModalEl);
+    });
+}
+
 function openCredsModal(player) {
     const credsModal = document.getElementById('credsModal');
     if (!credsModal) return;

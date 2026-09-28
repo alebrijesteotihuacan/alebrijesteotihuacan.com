@@ -13,6 +13,12 @@ const dashboardContent = document.getElementById('dashboardContent');
 const profName = document.getElementById('profName');
 const profEmail = document.getElementById('profEmail');
 const profBadge = document.getElementById('profBadge');
+const profRole = document.getElementById('profRole');
+const profCardPhoto = document.getElementById('profCardPhoto');
+const profCardInitials = document.getElementById('profCardInitials');
+const profCardChip = document.getElementById('profCardChip');
+const profCardTeam = document.getElementById('profCardTeam');
+const profCard = document.getElementById('profCard');
 const logoutBtn = document.getElementById('logoutBtn');
 const totalJugadores = document.getElementById('totalJugadores');
 const totalJugadoresMeta = document.getElementById('totalJugadoresMeta');
@@ -621,6 +627,83 @@ function isArturoTDP(prof) {
     return norm.includes('arturo') && norm.includes('tejada');
 }
 
+// ==========================================
+// PROFESOR IDENTITY
+// ==========================================
+// Mapeo de nombre-normalizado -> ruta de la foto de dashboard.
+// Cualquier profesor sin entrada queda en fallback de iniciales.
+// Las claves se comparan con normalize() para tolerar acentos y
+// mayusculas (ej. "Arturo Tejada" == "ARTURO TEJADA").
+const PROF_PHOTO_LOOKUP = {
+    'arturo tejeda': '../assets/PlantillaAlebrijesTeotihuacanLigaTDP/Arturo_Tejeda(Dashboard).jpg',
+};
+
+function normName(s) {
+    return (s || '').toString().toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+}
+
+function initialsFromName(s) {
+    const parts = normName(s).split(/\s+/).filter(Boolean);
+    if (!parts.length) return 'DT';
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+// Configura la "prof-card" del sidebar con datos del profesor logueado.
+// Si tiene foto mapeada, la pone; si no, deja las iniciales.
+// Tambien ajusta chip ("Director Tecnico"/"Profesor"/"Administrador"),
+// team (desde equipo_restringido) y el subtitulo de rol.
+function setProfIdentity(prof) {
+    if (!prof) return;
+
+    profName.textContent = prof.nombre || 'Profesor';
+
+    const photo = PROF_PHOTO_LOOKUP[normName(prof.nombre)];
+    if (photo && profCardPhoto) {
+        profCardPhoto.classList.remove('is-missing');
+        profCardPhoto.src = photo;
+        profCardPhoto.addEventListener('load', () => {
+            if (profCard) profCard.classList.add('has-photo');
+        }, { once: true });
+    } else {
+        if (profCardPhoto) {
+            profCardPhoto.removeAttribute('src');
+            profCardPhoto.classList.add('is-missing');
+        }
+        if (profCard) profCard.classList.remove('has-photo');
+    }
+
+    if (profCardInitials) {
+        profCardInitials.textContent = initialsFromName(prof.nombre);
+    }
+
+    if (profCardChip) {
+        const chipText = prof.rol === 'admin'
+            ? 'Administrador'
+            : (isArturoTDP(prof) ? 'Director Técnico' : 'Cuerpo Técnico');
+        profCardChip.textContent = chipText;
+    }
+
+    if (profCardTeam) {
+        const team = (prof.equipo_restringido || '').toString().trim();
+        profCardTeam.textContent = team || '—';
+    }
+
+    if (profRole) {
+        const isArturo = isArturoTDP(prof);
+        if (prof.rol === 'admin') {
+            profRole.textContent = 'Acceso global al sistema';
+        } else if (isArturo) {
+            profRole.textContent = 'Director Técnico · Temporada 2026–2027';
+        } else if (prof.equipo_restringido) {
+            profRole.textContent = `Cuerpo Técnico · ${prof.equipo_restringido}`;
+        } else {
+            profRole.textContent = 'Cuerpo Técnico';
+        }
+    }
+}
+
 // Initialize dashboard
 async function initDashboard() {
     profName.textContent = currentProfessor.nombre || 'Profesor';
@@ -633,6 +716,10 @@ async function initDashboard() {
         if (profEmail) profEmail.style.display = '';
         if (profBadge) profBadge.style.display = '';
     }
+
+    // Header de la tarjeta estilo featured-player-card:
+    // foto + chip + team + nombre + rol.
+    setProfIdentity(currentProfessor);
 
     // Show admin badge if applicable
     if (currentProfessor.rol === 'admin') {

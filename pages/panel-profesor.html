@@ -39,7 +39,7 @@
 
     <!-- Main Styles -->
     <link rel="stylesheet" href="../styles/styles.css">
-    <link rel="stylesheet" href="../styles/panel-profesor.css?v=2">
+    <link rel="stylesheet" href="../styles/panel-profesor.css?v=3">
 </head>
 
 <body class="prof-body">
@@ -147,13 +147,21 @@
 
             <!-- Sidebar -->
             <aside class="sidebar" id="sidebar" aria-label="Navegación del panel">
-                <div class="sidebar-header">
-                    <div class="prof-avatar-large">
-                        <img src="../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png" alt="Perfil Profesor">
+                <div class="sidebar-header prof-header">
+                    <div class="prof-card" id="profCard" style="--slot-accent: linear-gradient(90deg, #F36A21 0%, #C7490E 100%);">
+                        <img class="prof-card-photo" id="profCardPhoto"
+                            alt="Foto del profesor"
+                            onerror="this.classList.add('is-missing'); this.removeAttribute('src');">
+                        <span class="prof-card-initials" id="profCardInitials" aria-hidden="true">AT</span>
+                        <span class="prof-card-chip" id="profCardChip">Director Técnico</span>
+                        <span class="prof-card-team" id="profCardTeam">Alebrijes TDP</span>
                     </div>
-                    <h2 class="prof-name" id="profName">Cargando...</h2>
-                    <p class="prof-email" id="profEmail"></p>
-                    <span class="prof-badge" id="profBadge">Cuerpo Técnico</span>
+                    <div class="prof-meta">
+                        <h2 class="prof-name" id="profName">Cargando...</h2>
+                        <p class="prof-role" id="profRole"></p>
+                        <p class="prof-email" id="profEmail"></p>
+                        <span class="prof-badge" id="profBadge">Cuerpo Técnico</span>
+                    </div>
                 </div>
 
                 <nav class="sidebar-nav" aria-label="Secciones">
@@ -875,7 +883,7 @@
     <script src="https://unpkg.com/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
     <script src="../scripts/script.js"></script>
     <script type="module" src="../scripts/nav-auth.js"></script>
-    <script type="module" src="../scripts/panel-profesor.js?v=15"></script>
+    <script type="module" src="../scripts/panel-profesor.js?v=16"></script>
     <script>
         // Set current date
         const dateEl = document.getElementById('currentDate');

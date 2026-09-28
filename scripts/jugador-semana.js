@@ -209,7 +209,7 @@ function formatDate(date) {
     return date.toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
-// ── Card markup: horizontal compact, 3 elementos (foto, meta, score) ────
+// ── Card markup: vertical photo-dominant, categoria como chip sutil ────
 function renderCard({ cat, winner }) {
     const accent = CATEGORY_COLORS[cat.key] || FALLBACK_COLOR;
     const ink = CATEGORY_INK[cat.key] || FALLBACK_INK;
@@ -220,13 +220,11 @@ function renderCard({ cat, winner }) {
                 <div class="fpc-photo">
                     <div class="fpc-initials">--</div>
                 </div>
-                <div class="fpc-meta">
-                    <span class="fpc-cat">${escapeHtml(cat.label)}${cat.sub ? ` · <span class="fpc-cat-sub">${escapeHtml(cat.sub)}</span>` : ''}</span>
-                    <span class="fpc-name">Sin evaluacion esta semana</span>
-                </div>
+                <span class="fpc-chip">${escapeHtml(cat.label)}${cat.sub ? `<span class="fpc-chip-sub"> · ${escapeHtml(cat.sub)}</span>` : ''}</span>
                 <div class="fpc-score fpc-tone-na">
-                    <span class="fpc-num">--</span><i>/10</i>
+                    <span class="fpc-num">--</span><span class="fpc-cap">/10</span>
                 </div>
+                <div class="fpc-name">Sin evaluacion esta semana</div>
             </article>
         `;
     }
@@ -251,14 +249,12 @@ function renderCard({ cat, winner }) {
             <div class="fpc-photo">
                 ${photoHTML}
                 ${initialsHTML}
+                <span class="fpc-chip">${escapeHtml(cat.label)}${cat.sub ? `<span class="fpc-chip-sub"> · ${escapeHtml(cat.sub)}</span>` : ''}</span>
+                <div class="fpc-score ${tone}">
+                    <span class="fpc-num">${escapeHtml(scoreStr)}</span><span class="fpc-cap">/10</span>
+                </div>
             </div>
-            <div class="fpc-meta">
-                <span class="fpc-cat">${escapeHtml(cat.label)}${cat.sub ? ` · <span class="fpc-cat-sub">${escapeHtml(cat.sub)}</span>` : ''}</span>
-                <span class="fpc-name">${escapeHtml(fullName)}</span>
-            </div>
-            <div class="fpc-score ${tone}">
-                <span class="fpc-num">${escapeHtml(scoreStr)}</span><i>/10</i>
-            </div>
+            <div class="fpc-name">${escapeHtml(fullName)}</div>
         </article>
     `;
 }

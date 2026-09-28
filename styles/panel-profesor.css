@@ -716,29 +716,6 @@ body.prof-body {
     outline: none;
 }
 
-.week-filter-field {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    flex: 1;
-    min-width: 0;
-}
-
-.week-filter-range {
-    display: block;
-    margin-top: -8px;
-    margin-bottom: 6px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    color: var(--prof-primary);
-    letter-spacing: 0.01em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.2;
-    min-height: 0.85rem;
-}
-
 .week-filter-clear {
     display: flex;
     align-items: center;
@@ -1784,20 +1761,6 @@ body.prof-body {
     font-weight: 700;
     color: var(--prof-n-700);
     margin-bottom: 4px;
-}
-
-.drawer-history-week-range {
-    display: block;
-    font-size: 0.56rem;
-    font-weight: 600;
-    color: var(--prof-primary);
-    letter-spacing: 0.01em;
-    line-height: 1.15;
-    margin-bottom: 3px;
-    max-width: 56px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 .drawer-history-week-avg {
@@ -2849,15 +2812,6 @@ body.prof-body {
     color: var(--prof-text-dark);
     font-family: "Courier New", monospace;
     font-size: 0.82rem;
-}
-
-.delete-confirm-hint {
-    display: inline-block;
-    margin-left: 6px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--prof-primary);
-}
     letter-spacing: 0.5px;
     border: 1px solid var(--prof-border);
 }

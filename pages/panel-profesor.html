@@ -39,7 +39,7 @@
 
     <!-- Main Styles -->
     <link rel="stylesheet" href="../styles/styles.css">
-    <link rel="stylesheet" href="../styles/panel-profesor.css?v=10">
+    <link rel="stylesheet" href="../styles/panel-profesor.css?v=9">
 </head>
 
 <body class="prof-body">
@@ -290,10 +290,7 @@
                                     <line x1="8" y1="2" x2="8" y2="6"></line>
                                     <line x1="3" y1="10" x2="21" y2="10"></line>
                                 </svg>
-                                <div class="week-filter-field">
-                                    <input type="week" id="weekFilter" title="Filtrar calificaciones por semana (ej. S40 = 28 sep — 4 oct)" aria-label="Filtrar por semana">
-                                    <small class="week-filter-range" id="weekFilterRange"></small>
-                                </div>
+                                <input type="week" id="weekFilter" title="Filtrar calificaciones por semana" aria-label="Filtrar por semana">
                                 <button class="week-filter-clear" id="weekFilterClear" title="Limpiar filtro de semana" aria-label="Limpiar filtro" hidden>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
                                         <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -473,7 +470,7 @@
                                     Semana de Evaluación
                                     <span class="drawer-week-range" id="evalWeekRange">—</span>
                                 </label>
-                                <input type="week" id="evalSemana" name="semana" required title="Selecciona la semana ISO (ej. S40 = 28 sep — 4 oct)">
+                                <input type="week" id="evalSemana" name="semana" required>
                             </div>
 
                             <section class="drawer-section">
@@ -812,8 +809,7 @@
 
                     <div class="delete-confirm-input">
                         <label for="deleteEvalConfirmInput">
-                            Para confirmar, escribe el codigo de la semana a eliminar: <code id="deleteEvalConfirmTarget"></code>
-                            <span class="delete-confirm-hint" id="deleteEvalConfirmHint"></span>
+                            Para confirmar, escribe la semana a eliminar: <code id="deleteEvalConfirmTarget"></code>
                         </label>
                         <input type="text" id="deleteEvalConfirmInput" autocomplete="off" placeholder="Escribe la semana a eliminar">
                     </div>
@@ -928,7 +924,7 @@
     <script src="https://unpkg.com/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
     <script src="../scripts/script.js"></script>
     <script type="module" src="../scripts/nav-auth.js"></script>
-    <script type="module" src="../scripts/panel-profesor.js?v=30"></script>
+    <script type="module" src="../scripts/panel-profesor.js?v=29"></script>
     <script>
         // Set current date
         const dateEl = document.getElementById('currentDate');
@@ -940,8 +936,6 @@
 </body>
 
 </html>
-
-
 
 
 

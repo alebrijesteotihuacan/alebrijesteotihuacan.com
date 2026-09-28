@@ -826,19 +826,6 @@ const PLAYER_IMAGES = [
     'Iker_Castillo_Tede_Delantero_32.jpg'
 ];
 
-    const PLAYER_IMAGES_SOLES = [
-        'Adbeel_Jehiel_Ramirez_Juarez.jpg', 'Alexander_Villanueva_Huerta.jpg', 'Alfonso_Isaac_Jimenez_Calero.jpg', 'Angel_Gabriel_Barboza_Muñiz.jpg',
-        'Angel_Uriel_Castillo_Ramirez.jpg', 'Armando_Perez_Campos.jpg', 'Byron_Mishell_Mateos_Martinez.jpg', 'Carlos_Enrique_Landa_Landa.jpg',
-        'Cesar_Yovanni_Gomez_Anzastiga.jpg', 'Christopher_Armani_Camacho_Ibarguen.jpg', 'Cristian_Aldair_Marin_Ramirez.jpg', 'Diego_Ivan_Ramirez_Gonzalez.jpg',
-        'Edgar_Emanuel_Flores_Veliz.jpg', 'Elian_Fabian_Naranjo.jpg', 'Emilio_Andres_Cornelio_Lopez.jpg', 'Erick_Klebeer_Alanis_Guerrero.jpg',
-        'Felix_Eduardo_Martinez_Contreras.jpg', 'Franklin_Misael_Hernandez_Pablo.jpg', 'Hector_Gabriel_Castillo_Elizondo.jpg', 'Ibrahim_Rafael_Lopez_Zaragoza.jpg',
-        'Ignacio_Hazzam_Dominguez_Cruz.jpg', 'Irving_Daniel_Lopez_Luna.jpg', 'Jesus_Manuel_Nuñez_Gutierrez.jpg', 'Jesus_Manuel_Tarango_Maldonado.jpg',
-        'Jesus_Miguel_Xolio_Ortiz.jpg', 'Jesus_Rodrigo_Vela_Ramos.jpg', 'Jorge_Eduardo_Santiago_Reyes.jpg', 'Josaphat_Tapia_Vazquez.jpg',
-        'Jose_Enmanuel_Sanchez_Gonzalez.jpg', 'Juan_Carlos_Gonzalez_Ceniceros.jpg', 'Juan_Enrique_Rojas_Vargas.jpg', 'Juan_Uziel_Zarate_Navarrete.jpg',
-        'Kevin_Abel_Leon_Sanchez.jpg', 'Luciano_Ortiz_Melendez.jpg', 'Luis_Jareth_Dominguez_Meza.jpg', 'Miguel_David_Duran_Leon.jpg',
-        'Ricardo_Gael_Cruz_Santos.jpg', 'Richard_Aguilar_Perez.jpg', 'Roberto_Alcantar_Piña.jpg', 'Sebastian_Segundo_Becerril.jpg'
-    ];
-
     const PLAYER_IMAGES_SOLES_SUB16 = [
         // Director Técnico (no se usa como foto de jugador; la usa PROF_PHOTO_LOOKUP).
         // Porteros
@@ -872,27 +859,6 @@ const PLAYER_IMAGES = [
         'Carlos_Ruben_Gamez_Lazcano_Portero_829.jpg'
     ];
 
-    const PLAYER_IMAGES_FUERZAS = [
-        'Abdiel_Monroy_García.jpeg', 'Aldo_Emmanuel_Cortes_Santiago.jpeg', 'Alejandro_Aguilar_Reyes.jpeg',
-        'Alexander_Martínez_Domínguez.jpeg', 'Angel_David_Mendez_Hernandez.jpeg', 'Asiel_Zaid_Montoya_Rojas.jpeg',
-        'Axel_Antonio_Vázquez_Estrada.jpeg', 'Brandon_Uziel_Moya_Marquez.jpeg', 'Bruno_Arroyo_Sánchez.jpeg',
-        'Cesar_Alexis_Varela_Castillo.jpeg', 'David_Salvador_Téllez.jpeg', 'Dejan_Kaled_Ramírez_Guijano.jpeg',
-        'Demian_Marcus_Arregui_Nava.jpeg', 'Derek_Jesús_Hernández_Licea.jpeg', 'Diego_Aaron_Alonso_Garcia.jpeg',
-        'Diego_Joel_Miros_García.jpeg', 'Dylan_Quijano_Xolo.jpeg', 'Emiliano_Rodríguez_Hernández.jpeg',
-        'Iker_Damián_Ortega_Villegas.jpeg', 'Iram_Habid_Barrientos_García.jpeg', 'Irving_Nuñez_Fuentes.jpeg',
-        'Isaí_Daniel_Gómez_García.jpeg', 'Isaías_Adrian_Alvarado_Hernández.jpeg', 'Israel_Rivera_Hernández.jpeg',
-        'Jimenez_Carbajal_Johan_Eduardo.jpeg', 'Joel_Martinez_Cruz.jpeg', 'Johan_Miguel_Patricio_Casales.jpeg',
-        'Jose_Emiliano_Sánchez_Gaspar.jpeg', 'Joshua_Dominguez_Acosta.jpeg', 'Josue_Alfredo_Vázquez_Valadez.jpeg',
-        'José_Asael_Rascon_Gurrola.jpeg', 'José_Carlos_Rivaldo_Silva_Baez.jpeg', 'José_Eduardo_Islas_Hernandez.jpeg',
-        'José_Francisco_González_Ceniceros.jpeg', 'Juan_Carlos_Maravilla_Maldonado.jpeg', 'Kevin_Damian_Alvarado_Montiel.jpeg',
-        'Kevin_Isael_Visoso_Lázaro.jpeg', 'Leonardo_Briones_Duran.jpeg', 'Leonardo_Madrigal_Velázquez.jpeg',
-        'Luis_Daniel_Martinez_Avedaño.jpeg', 'Luis_David_Olvera_Huerta.jpeg', 'Luis_Yael_Rodriguez_Muñoz.jpeg',
-        'Matteo_Cardona_Miranda.jpeg', 'Matteo_González_Rodríguez.jpeg', 'Mauricio_Fuentes_Ramos.jpeg',
-        'Mauricio_Mendoza_Montoya.jpeg', 'Miguel_Gutierrez_Cervantes.jpeg', 'Nicolas_Oliva_Pérez.jpeg',
-        'Ricardo_Rodriguez_Montiel.jpeg', 'Uriel_Urieta_Robles.jpeg', 'Victor_Javier_Bautista_Avendaño.jpeg',
-        'William_Alfredo_Turrubiates_Camacho.jpeg', 'Ángel_David_Sanchez_Jimenez.jpeg'
-    ];
-
 function findPlayerImageInfo(nombre, apellido) {
     const fullName = normalizeStr(`${nombre || ''} ${apellido || ''}`);
     const firstName = normalizeStr(nombre || '');
@@ -908,24 +874,6 @@ function findPlayerImageInfo(nombre, apellido) {
         if (fullName && imgName.includes(firstName) && firstName.length > 2) {
             const apellidoNorm = normalizeStr(apellido || '');
             if (apellidoNorm && imgName.includes(apellidoNorm.split(' ')[0])) return { file: img, folder: 'PlantillaAlebrijesTeotihuacanLigaTDP' };
-        }
-    }
-    
-    for (const img of PLAYER_IMAGES_SOLES) {
-        const imgName = normalizeStr(img.split('.')[0].split('_').join(' '));
-        if (imgName === fullName) return { file: img, folder: 'JugadoresSoles' };
-        if (fullName && imgName.includes(firstName) && firstName.length > 2) {
-            const apellidoNorm = normalizeStr(apellido || '');
-            if (apellidoNorm && imgName.includes(apellidoNorm.split(' ')[0])) return { file: img, folder: 'JugadoresSoles' };
-        }
-    }
-
-    for (const img of PLAYER_IMAGES_FUERZAS) {
-        const imgName = normalizeStr(img.split('.')[0].split('_').join(' '));
-        if (imgName === fullName) return { file: img, folder: 'JugadoresFuerzasBasicas' };
-        if (fullName && imgName.includes(firstName) && firstName.length > 2) {
-            const apellidoNorm = normalizeStr(apellido || '');
-            if (apellidoNorm && imgName.includes(apellidoNorm.split(' ')[0])) return { file: img, folder: 'JugadoresFuerzasBasicas' };
         }
     }
 

@@ -1400,12 +1400,17 @@ async function executeDeleteEvaluation() {
     if (input) input.disabled = true;
 
     try {
-        const { error } = await supabase
+        const { data: deleted, error, count } = await supabase
             .from('evaluaciones')
-            .delete()
-            .eq('id', evalToDelete.evalId);
+            .delete({ count: 'exact' })
+            .eq('id', evalToDelete.evalId)
+            .select('id');
 
         if (error) throw error;
+
+        if (!count || count === 0) {
+            throw new Error('No se pudo eliminar la evaluación (RLS bloqueó el borrado). Contacta al administrador.');
+        }
 
         closeDeleteEvalModal();
         showToast('Evaluación eliminada correctamente', 'success');

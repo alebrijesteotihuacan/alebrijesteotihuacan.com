@@ -276,6 +276,13 @@ create policy "evaluaciones_prof_update" on public.evaluaciones
         or exists (select 1 from public.profesores p where p.id = auth.uid() and p.rol = 'admin')
     );
 
+create policy "evaluaciones_prof_delete" on public.evaluaciones
+    for delete to authenticated
+    using (
+        evaluador_id = auth.uid()
+        or exists (select 1 from public.profesores p where p.id = auth.uid() and p.rol = 'admin')
+    );
+
 create policy "evaluaciones_jugador_read" on public.evaluaciones
     for select to authenticated
     using (jugador_id = auth.uid());

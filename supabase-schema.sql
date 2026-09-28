@@ -445,6 +445,12 @@ create policy "iafe_mensajes_insert" on iafe.mensajes
 --         lower(identity_data ->> 'email')
 --       asi que el INSERT no debe incluir esa columna (causa 428C9).
 --
+--   2026-09-28  fix_profesor_nombre_arturo_tejeda
+--       Corrige el nombre del DT: era "Arturo Tejada" (con 'd' doble),
+--       la convencion del repo (y los archivos de imagen) usan
+--       "Tejeda" (un solo 'd'). UPDATE directo en public.profesores
+--       para el id del entrenador.
+--
 -- =========================================================================
 -- FIN DE LA MIGRACIÓN
 -- =========================================================================

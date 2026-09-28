@@ -638,7 +638,7 @@ function initialsFromName(s) {
 // Prof. Arturo: mapeo nombre-normalizado -> src de foto.
 // La foto se inyecta en HTML para evitar race conditions de load.
 const PROF_PHOTO_LOOKUP = {
-    'arturo tejada': '../assets/PlantillaAlebrijesTeotihuacanLigaTDP/Arturo_Tejeda(Dashboard).jpg',
+    'arturo tejeda': '../assets/PlantillaAlebrijesTeotihuacanLigaTDP/Arturo_Tejeda(Dashboard).jpg',
 };
 
 // Cablea la foto del profesor logueado. La visibilidad foto/iniciales

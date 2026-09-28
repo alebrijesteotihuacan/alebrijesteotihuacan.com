@@ -69,16 +69,31 @@ const sidebarBackdrop = document.getElementById('sidebarBackdrop');
 const todayISO = new Date().toISOString().split('T')[0];
 if (regFechaNac) regFechaNac.max = todayISO;
 
+// ==========================================
+// STATE
+// ==========================================
+let registeredCount = 0;
+let currentProfessor = null;
+let currentPlayerId = null;
+let allPlayers = [];
+let dashboardInitialized = false;
+let currentEditEvalId = null;
+let activeWeekFilter = '';
+let evalFormSnapshot = null; // Snapshot of last loaded evaluation (for dirty check)
+let playerToDelete = null;
+let isLoadingPlayers = false; // Guard against overlapping loadPlayers() calls
+
 /*
     Live duplicate-email check del formulario de registro.
     ------------------------------------------------------------------
-    Cuando el usuario sale del campo email, lo cruzamos contra la lista
-    de jugadores ya cargados (allPlayers, populated en loadPlayers).
-    Si hay match, marcamos el campo en rojo y mostramos un hint con el
-    nombre del jugador que ya tiene ese correo. Asi el usuario sabe
-    INMEDIATAMENTE que ese email esta tomado, sin esperar al submit
-    (y sin gastar una llamada RPC).
+    IMPORTANTE: este bloque va AQUI (despues de la declaracion let
+    allPlayers = []). Si se pone antes, el `let` aun no existe y JS
+    lanza ReferenceError: 'Cannot access allPlayers before initialization'
+    (el typeof check NO salva del TDZ para let/const).
     ------------------------------------------------------------------
+    Cuando el usuario sale del campo email (blur), lo cruzamos contra
+    allPlayers. Si hay match, marcamos el campo en rojo y mostramos un
+    hint con el nombre del jugador que ya tiene ese correo.
 */
 function ensureRegisterHint(regEmail) {
     const fieldWrap = regEmail.closest('.register-field');
@@ -94,7 +109,7 @@ function ensureRegisterHint(regEmail) {
     return hint;
 }
 
-if (regEmail && typeof allPlayers !== 'undefined') {
+if (regEmail) {
     const checkEmailDuplicate = () => {
         const val = regEmail.value.trim().toLowerCase();
         setFieldError('regEmail', false);
@@ -114,8 +129,7 @@ if (regEmail && typeof allPlayers !== 'undefined') {
             }
         }
     };
-    // Llamable desde el handler del RPC cuando vuelve un email_exists,
-    // asi el formulario ya marca el campo sin esperar al blur.
+    // Llamable desde el handler del RPC cuando vuelve un email_exists
     window.__markEmailDuplicate = (ex) => {
         setFieldError('regEmail', true);
         const hint = ensureRegisterHint(regEmail);
@@ -133,20 +147,6 @@ if (regEmail && typeof allPlayers !== 'undefined') {
         setFieldError('regEmail', false);
     });
 }
-
-// ==========================================
-// STATE
-// ==========================================
-let registeredCount = 0;
-let currentProfessor = null;
-let currentPlayerId = null;
-let allPlayers = [];
-let dashboardInitialized = false;
-let currentEditEvalId = null;
-let activeWeekFilter = '';
-let evalFormSnapshot = null; // Snapshot of last loaded evaluation (for dirty check)
-let playerToDelete = null;
-let isLoadingPlayers = false; // Guard against overlapping loadPlayers() calls
 
 // Map old category names in Firebase → new display names
 const CATEGORY_ALIAS = {

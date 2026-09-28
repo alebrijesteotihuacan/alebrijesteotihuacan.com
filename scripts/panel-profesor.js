@@ -605,11 +605,12 @@ function initialsFromName(s) {
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-// Prof. Arturo / Prof. César: mapeo nombre-normalizado -> src de foto.
+// Prof. Arturo / Prof. César / Prof. Ignacio: mapeo nombre-normalizado -> src de foto.
 // La foto se inyecta en HTML para evitar race conditions de load.
 const PROF_PHOTO_LOOKUP = {
     'arturo tejeda': '../assets/PlantillaAlebrijesTeotihuacanLigaTDP/Arturo_Tejeda(Dashboard).jpg',
     'cesar benitez chaparro': '../assets/PlantillaSolesTeotihuacanSub16_TDP/César_Benítez_Chaparro_DirectorTecnico.jpg',
+    'ignacio morales': '../assets/PlantillaSolesTeotihuacanLigaTDP/Ignacio_Morales_Campos_DirectorTecnico.jpg',
 };
 
 // Cablea la foto del profesor logueado. La visibilidad foto/iniciales

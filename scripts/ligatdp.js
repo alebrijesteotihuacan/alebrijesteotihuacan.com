@@ -554,6 +554,54 @@ document.addEventListener('DOMContentLoaded', () => {
         // Últimos resultados (más reciente primero)
         const results = [
             {
+                jornada: 'Jornada 4',
+                eyebrow: 'Liga TDP · Grupo 9 · Temporada 2026–2027',
+                title: 'Último resultado',
+                meta: [
+                    { icon: 'calendar', label: 'Fecha y hora', value: 'Viernes 25 de septiembre · 12:00 hrs' },
+                    { icon: 'location', label: 'Sede',         value: 'ND' }
+                ],
+                homeTeam: {
+                    name: 'Alebrijes Teotihuacán',
+                    tag: 'Local',
+                    logo: '../assets/EquiposGrupo9_LigaTDP/AlebrijesTeotihuacán.png',
+                    id: 12621
+                },
+                awayTeam: {
+                    name: 'Héroes de Zaci Hidalgo',
+                    tag: 'Visitante',
+                    logo: '../assets/EquiposGrupo9_LigaTDP/HeroesDeZaciFC.png',
+                    id: 13868
+                },
+                scoreValue: '0 – 3',
+                scoreStatus: 'Finalizado',
+                result: 'loss'
+            },
+            {
+                jornada: 'Jornada 3',
+                eyebrow: 'Liga TDP · Grupo 9 · Temporada 2026–2027',
+                title: 'Último resultado',
+                meta: [
+                    { icon: 'calendar', label: 'Fecha y hora', value: 'Domingo 20 de septiembre · 17:00 hrs' },
+                    { icon: 'location', label: 'Sede',         value: 'Estadio Tamaulipas' }
+                ],
+                homeTeam: {
+                    name: 'Jaiba Brava',
+                    tag: 'Local',
+                    logo: '../assets/EquiposGrupo9_LigaTDP/JaibaBrava.png',
+                    id: 14366
+                },
+                awayTeam: {
+                    name: 'Alebrijes Teotihuacán',
+                    tag: 'Visitante',
+                    logo: '../assets/EquiposGrupo9_LigaTDP/AlebrijesTeotihuacán.png',
+                    id: 12621
+                },
+                scoreValue: '4 – 0',
+                scoreStatus: 'Finalizado',
+                result: 'loss'
+            },
+            {
                 jornada: 'Jornada 2',
                 eyebrow: 'Liga TDP · Grupo 9 · Temporada 2026–2027',
                 title: 'Último resultado',

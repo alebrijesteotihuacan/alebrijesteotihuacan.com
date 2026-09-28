@@ -1248,12 +1248,6 @@ body.prof-body {
     word-break: break-word;
 }
 
-.drawer-sub {
-    font-size: 0.85rem;
-    color: var(--prof-n-500);
-    font-weight: 500;
-}
-
 .drawer-tags {
     display: flex;
     gap: 6px;

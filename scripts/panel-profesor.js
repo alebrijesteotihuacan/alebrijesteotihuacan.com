@@ -1466,8 +1466,6 @@ async function openEvalDrawer(playerId) {
     if (titleEl) titleEl.textContent = fullName;
     const jerseyEl = document.getElementById('drawerJersey');
     if (jerseyEl) jerseyEl.textContent = jerseyText;
-    const subEl = document.getElementById('drawerSub');
-    if (subEl) subEl.textContent = player.posicion || 'Sin posición';
 
     const posTag = document.getElementById('drawerPositionTag');
     if (posTag) posTag.textContent = player.posicion || 'Sin posición';

@@ -69,6 +69,71 @@ const sidebarBackdrop = document.getElementById('sidebarBackdrop');
 const todayISO = new Date().toISOString().split('T')[0];
 if (regFechaNac) regFechaNac.max = todayISO;
 
+/*
+    Live duplicate-email check del formulario de registro.
+    ------------------------------------------------------------------
+    Cuando el usuario sale del campo email, lo cruzamos contra la lista
+    de jugadores ya cargados (allPlayers, populated en loadPlayers).
+    Si hay match, marcamos el campo en rojo y mostramos un hint con el
+    nombre del jugador que ya tiene ese correo. Asi el usuario sabe
+    INMEDIATAMENTE que ese email esta tomado, sin esperar al submit
+    (y sin gastar una llamada RPC).
+    ------------------------------------------------------------------
+*/
+function ensureRegisterHint(regEmail) {
+    const fieldWrap = regEmail.closest('.register-field');
+    if (!fieldWrap) return null;
+    let hint = fieldWrap.querySelector('.register-hint');
+    if (!hint) {
+        hint = document.createElement('small');
+        hint.className = 'register-hint';
+        hint.setAttribute('role', 'alert');
+        hint.style.cssText = 'display:block;margin-top:6px;font-size:0.78rem;color:#dc2626;font-weight:500;';
+        fieldWrap.appendChild(hint);
+    }
+    return hint;
+}
+
+if (regEmail && typeof allPlayers !== 'undefined') {
+    const checkEmailDuplicate = () => {
+        const val = regEmail.value.trim().toLowerCase();
+        setFieldError('regEmail', false);
+        const hint = ensureRegisterHint(regEmail);
+        if (hint) hint.textContent = '';
+        if (!val || val.length < 5 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) return;
+        const clash = allPlayers.find(
+            p => (p.email || '').toString().trim().toLowerCase() === val
+        );
+        if (clash) {
+            setFieldError('regEmail', true);
+            if (hint) {
+                hint.textContent =
+                    `Este correo pertenece a ${clash.nombre} ${clash.apellido}` +
+                    (clash.numero_camiseta ? ` (#${clash.numero_camiseta})` : '') +
+                    '. Usa uno diferente.';
+            }
+        }
+    };
+    // Llamable desde el handler del RPC cuando vuelve un email_exists,
+    // asi el formulario ya marca el campo sin esperar al blur.
+    window.__markEmailDuplicate = (ex) => {
+        setFieldError('regEmail', true);
+        const hint = ensureRegisterHint(regEmail);
+        if (hint && ex) {
+            const dorsal = ex.numero_camiseta ? ` (#${ex.numero_camiseta})` : '';
+            hint.textContent =
+                `Este correo pertenece a ${ex.nombre} ${ex.apellido}${dorsal}. ` +
+                'Usa uno diferente.';
+        }
+    };
+    regEmail.addEventListener('blur', checkEmailDuplicate);
+    regEmail.addEventListener('input', () => {
+        const hint = ensureRegisterHint(regEmail);
+        if (hint) hint.textContent = '';
+        setFieldError('regEmail', false);
+    });
+}
+
 // ==========================================
 // STATE
 // ==========================================
@@ -1909,13 +1974,22 @@ if (registerForm) {
             if (!rpcData || rpcData.success !== true) {
                 const code = rpcData?.error || 'unknown';
                 const friendly = {
-                    email_exists: 'Ya existe una cuenta con ese correo electrónico.',
                     invalid_email: 'El correo electrónico no tiene un formato válido.',
                     weak_password: 'La contraseña debe tener al menos 8 caracteres.',
                     missing_name: 'Nombre y apellido son obligatorios.',
                     not_authorized: 'Solo los profesores pueden registrar jugadores.',
                     not_authenticated: 'Tu sesión expiró. Inicia sesión de nuevo.'
                 }[code];
+                // Para email_exists, el RPC ya devuelve un message rico con el
+                // nombre + dorsal del jugador que tiene ese correo. Lo usamos
+                // directamente y dejamos rastro para la UI.
+                if (code === 'email_exists') {
+                    const ex = rpcData.existing || {};
+                    if (ex.jugador_id && typeof window.__markEmailDuplicate === 'function') {
+                        window.__markEmailDuplicate(ex);
+                    }
+                    throw new Error(rpcData.message || 'Ya existe una cuenta con ese correo electrónico.');
+                }
                 throw new Error(friendly || rpcData?.message || 'Error al registrar al jugador');
             }
 
@@ -1932,6 +2006,12 @@ if (registerForm) {
             registerForm.reset();
             if (lastDate) document.getElementById('regFechaNac').value = lastDate;
             clearAllFieldErrors();
+            // Limpiar hint de email duplicado
+            if (regEmail) {
+                const hint = regEmail.closest('.register-field')?.querySelector('.register-hint');
+                if (hint) hint.textContent = '';
+                setFieldError('regEmail', false);
+            }
             updatePasswordStrength();
 
             regNombre.focus();

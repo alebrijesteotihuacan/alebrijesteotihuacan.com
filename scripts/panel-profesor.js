@@ -1872,87 +1872,57 @@ if (registerForm) {
         submitBtn.innerHTML = '<span class="spinner-inline"></span> Registrando...';
 
         try {
-            // 1. Capturar la sesión actual del profesor ANTES de cualquier
-            //    mutación de auth. Se usará como credenciales del cliente
-            //    transitorio para hacer el INSERT con la sesión correcta
-            //    (evita el race condition donde setSession parece OK pero la
-            //    siguiente request viaja con el JWT del jugador recién creado).
-            const { data: sessionData } = await supabase.auth.getSession();
-            const oldSession = sessionData?.session;
-            if (!oldSession?.access_token || !oldSession?.refresh_token || !oldSession?.user?.id) {
-                await supabase.auth.signOut();
-                showToast('Tu sesión expiró. Inicia sesión de nuevo.', 'error');
-                setTimeout(() => { window.location.href = 'login.html'; }, 1500);
-                return;
-            }
+            // ------------------------------------------------------------------
+            // FIX 23503 / RACE CONDITION: el flujo anterior haca
+            // signUp + INSERT en dos requests HTTP separados. El cliente anon
+            // de supabase-js respondía a signUp con un user.id antes de que
+            // auth.users fuera visible para el FK check del INSERT, lo que
+            // producía "violates foreign key constraint jugadores_id_fkey".
+            //
+            // Ahora una sola llamada RPC ejecuta INSERT en auth.users +
+            // auth.identities + public.jugadores dentro de UNA transacción
+            // Postgres. SECURITY DEFINER le permite escribir en auth.* pese a
+            // su RLS; SECURITY INVOKER garantiza que solo profesores
+            // autenticados lleguen a invocarla.
+            // ------------------------------------------------------------------
 
-            // 2. Cliente transitorio #1 — crea la cuenta auth del jugador.
-            //    Como NO persiste sesión, el cliente principal sigue con la
-            //    sesión del profesor intacta.
-            const signUpClient = makeTransientClient();
-            const { data: signUpData, error: signUpError } = await signUpClient.auth.signUp({
-                email,
-                password,
-                options: { data: { rol: 'jugador' } }
-            });
-            if (signUpError) throw signUpError;
-            const newUserUid = signUpData.user?.id;
-            if (!newUserUid) throw new Error('No se pudo obtener el ID del nuevo jugador.');
+            const numeroRaw = formData.get('numeroCamiseta');
+            const numeroParsed = numeroRaw != null && String(numeroRaw).trim() !== ''
+                ? parseInt(numeroRaw, 10)
+                : null;
 
-            // 3. Cliente transitorio #2 — autenticado explícitamente con la
-            //    sesión del profesor, hace el INSERT. auth.uid() en la
-            //    request = profesor.id, por lo que la policy RLS
-            //    `exists (select 1 from profesores p where p.id = auth.uid())`
-            //    pasa sin ambigüedad.
-            const insertClient = makeTransientClient();
-            const { error: setSessionErr } = await insertClient.auth.setSession({
-                access_token: oldSession.access_token,
-                refresh_token: oldSession.refresh_token
-            });
-            if (setSessionErr) {
-                throw new Error('No se pudo preparar la sesión para registrar al jugador. Reabre sesión e inténtalo de nuevo.');
-            }
-
-            // 4. Insert con la sesión del profesor (cliente independiente).
-            const playerData = {
-                id: newUserUid,
-                nombre: (formData.get('nombre') || '').toString().trim(),
-                apellido: (formData.get('apellido') || '').toString().trim(),
-                email: email,
-                password: password,
-                fecha_nacimiento: formData.get('fechaNacimiento') || null,
-                equipo: currentProfessor.equipo_restringido || null,
-                posicion: formData.get('posicion'),
-                numero_camiseta: (() => {
-                    const v = parseInt(formData.get('numeroCamiseta'), 10);
-                    return Number.isFinite(v) ? v : null;
-                })(),
-                registrado_por: currentProfessor.id,
-                fecha_registro: new Date().toISOString(),
-                rol: 'jugador'
-            };
-
-            const { error: insertErr } = await insertClient.from('jugadores').insert(playerData);
-            if (insertErr) throw insertErr;
-
-            // 5. Defensa en profundidad: si por algún motivo el cliente
-            //    principal se quedó con la sesión del jugador (p.ej. listeners
-            //    onAuthStateChange), la restauramos explícitamente. Tras un
-            //    signUp en un cliente transitorio, el cliente principal
-            //    normalmente NO cambia — pero cubrimos el caso.
-            try {
-                const verify = await supabase.auth.getSession();
-                if (verify.data?.session?.user?.id !== currentProfessor.id) {
-                    await supabase.auth.setSession({
-                        access_token: oldSession.access_token,
-                        refresh_token: oldSession.refresh_token
-                    });
+            const { data: rpcData, error: rpcError } = await supabase.rpc(
+                'register_player_atomic',
+                {
+                    p_email: email,
+                    p_password: password,
+                    p_nombre: (formData.get('nombre') || '').toString().trim(),
+                    p_apellido: (formData.get('apellido') || '').toString().trim(),
+                    p_fecha_nacimiento: formData.get('fechaNacimiento') || null,
+                    p_posicion: (formData.get('posicion') || '').toString() || null,
+                    p_numero_camiseta: Number.isFinite(numeroParsed) ? numeroParsed : null,
+                    p_equipo: currentProfessor.equipo_restringido || null
                 }
-            } catch (_) {
-                // Ignorar — el siguiente loadPlayers() revelará cualquier desajuste.
+            );
+
+            if (rpcError) throw rpcError;
+            if (!rpcData || rpcData.success !== true) {
+                const code = rpcData?.error || 'unknown';
+                const friendly = {
+                    email_exists: 'Ya existe una cuenta con ese correo electrónico.',
+                    invalid_email: 'El correo electrónico no tiene un formato válido.',
+                    weak_password: 'La contraseña debe tener al menos 8 caracteres.',
+                    missing_name: 'Nombre y apellido son obligatorios.',
+                    not_authorized: 'Solo los profesores pueden registrar jugadores.',
+                    not_authenticated: 'Tu sesión expiró. Inicia sesión de nuevo.'
+                }[code];
+                throw new Error(friendly || rpcData?.message || 'Error al registrar al jugador');
             }
 
-            showToast(`${playerData.nombre} registrado correctamente`, 'success');
+            const created = rpcData.jugador || {};
+            const okName = created.nombre || formData.get('nombre') || 'Jugador';
+
+            showToast(`${okName} registrado correctamente`, 'success');
 
             registeredCount++;
             if (sessionCounter) sessionCounter.textContent = registeredCount;

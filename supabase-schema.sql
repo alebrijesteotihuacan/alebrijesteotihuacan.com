@@ -423,7 +423,28 @@ create policy "iafe_mensajes_insert" on iafe.mensajes
 --       Defensa futura: protege contra el bug "jugador creado con uuid
 --       sin auth.user" que causaba que la policy evaluaciones_jugador_read
 --       (USING jugador_id = auth.uid()) devolviera 0 filas.
-
+--
+--   2026-09-28  create_featured_players_public_view
+--       Crea vista anon-readable public.featured_players_v con LEFT JOIN
+--       jugadores + evaluaciones para que index.html pueda mostrar la
+--       seccion "Mejores Jugadores de la Semana" sin autenticacion.
+--
+--   2026-09-28  atomic_register_player_rpc
+--       Crea SECURITY DEFINER register_player_atomic(...) que ejecuta
+--       INSERT en auth.users + auth.identities + public.jugadores en
+--       UNA sola transaccion, eliminando la race condition que producia
+--       23503 foreign_key_violation en el flujo signUp + INSERT previo.
+--
+--   2026-09-28  fix_register_player_search_path_for_extensions
+--       search_path del RPC ahora incluye `extensions` (schema donde
+--       Supabase instala pgcrypto). Sin esto, gen_salt() era
+--       "function gen_salt(unknown) does not exist".
+--
+--   2026-09-28  fix_register_player_remove_identities_email_and_user_confirmed
+--       auth.identities.email es GENERATED ALWAYS AS
+--         lower(identity_data ->> 'email')
+--       asi que el INSERT no debe incluir esa columna (causa 428C9).
+--
 -- =========================================================================
 -- FIN DE LA MIGRACIÓN
 -- =========================================================================

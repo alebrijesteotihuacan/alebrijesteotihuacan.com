@@ -3114,99 +3114,46 @@ footer {
 /* Grid of featured player cards */
 .featured-players-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 22px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 28px;
     margin-top: 40px;
 }
 
-/* Individual featured player card — Diseño: card institucional con
-   foto vertical 4:5, score-badge prominente con anillo SVG y watermark
-   de dorsal. Mantiene el dark-bg del sitio pero la card eleva el score
-   como elemento estrella. */
+.fpc-slot { display: contents; }
+
+/* Featured player card — versión mínima: foto vertical + nombre +
+   score overlay. Sin extras. Mantiene el dark-bg del sitio y permite
+   derivar el color de acento por categoría vía variable CSS. */
 .featured-player-card {
-    background: #141414;
-    border-radius: 18px;
-    overflow: hidden;
     position: relative;
-    border: 1px solid rgba(255,255,255,0.06);
-    box-shadow: 0 12px 36px rgba(0,0,0,0.45);
+    width: 100%;
+    border-radius: 22px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.07);
+    background: #141414;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
     transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
-    display: flex;
-    flex-direction: column;
     isolation: isolate;
 }
 
-.featured-player-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--card-gradient, linear-gradient(135deg,#F36A21,#C7490E));
-    opacity: 0;
-    transition: opacity 0.35s ease;
-    z-index: -1;
-}
-
 .featured-player-card:hover {
-    transform: translateY(-6px);
-    border-color: rgba(255,255,255,0.12);
-    box-shadow: 0 20px 48px rgba(0,0,0,0.55), 0 0 0 1px rgba(243,106,33,0.25);
+    transform: translateY(-4px);
+    border-color: rgba(243,106,33,0.4);
+    box-shadow: 0 20px 48px rgba(0,0,0,0.55), 0 0 0 1px rgba(243,106,33,0.18);
 }
 
-/* Slim strip at top: thin accent line + category + sub label */
-.fpc-strip {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 12px 16px 10px;
-    background: var(--card-gradient, linear-gradient(135deg,#F36A21,#C7490E));
-    color: #fff;
-    position: relative;
-}
-
-.fpc-strip::after {
-    content: '';
-    position: absolute;
-    left: 16px;
-    right: 16px;
-    bottom: -2px;
-    height: 2px;
-    background: var(--card-gradient, linear-gradient(135deg,#F36A21,#C7490E));
-    opacity: 0.4;
-    filter: blur(4px);
-}
-
-.fpc-cat {
-    font-size: 0.7rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 1.4px;
-}
-
-.fpc-sub {
-    font-size: 0.66rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    padding: 3px 8px;
-    background: rgba(0,0,0,0.22);
-    border-radius: 8px;
-    backdrop-filter: blur(4px);
-}
-
-/* Photo wrap — aspect 4:5 (vertical) */
-.fpc-photo-wrap {
+/* Foto vertical 4:5 - elemento dominante */
+.fpc-photo {
     position: relative;
     width: 100%;
-    padding-top: 125%; /* 4:5 portrait */
+    padding-top: 125%;
     background:
-        radial-gradient(circle at 50% 30%, rgba(255,255,255,0.04) 0%, transparent 70%),
+        radial-gradient(circle at 50% 30%, rgba(243,106,33,0.10) 0%, transparent 70%),
         #1d1d1d;
-    flex-shrink: 0;
     overflow: hidden;
 }
 
-.fpc-photo-wrap img {
+.fpc-photo img {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -3222,206 +3169,76 @@ footer {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 4rem;
+    font-size: 4.5rem;
     font-weight: 900;
-    color: rgba(255,255,255,0.10);
+    color: rgba(255,255,255,0.12);
     background:
-        radial-gradient(circle at 50% 30%, rgba(243,106,33,0.12) 0%, transparent 70%),
+        radial-gradient(circle at 50% 30%, rgba(243,106,33,0.16) 0%, transparent 70%),
         #1e1e1e;
     letter-spacing: -0.04em;
-}
-
-.fpc-photo-empty { background: radial-gradient(circle at 50% 30%, rgba(255,255,255,0.03) 0%, transparent 70%), #1c1c1c; }
-
-/* Jersey number watermark — large faded number top-right */
-.fpc-jersey-watermark {
-    position: absolute;
-    top: -12px;
-    right: -8px;
-    font-size: clamp(60px, 9vw, 96px);
-    font-weight: 900;
     line-height: 1;
-    background: var(--card-gradient, linear-gradient(135deg,#F36A21,#C7490E));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    opacity: 0.32;
-    pointer-events: none;
-    user-select: none;
-    letter-spacing: -0.06em;
-    z-index: 1;
 }
 
-/* Score circle — SVG ring + center content */
-.fpc-score-circle {
+/* Score grande en esquina inferior-izquierda, sobre la foto */
+.fpc-corner {
     position: absolute;
-    bottom: -28px;
-    left: 18px;
-    width: clamp(80px, 10vw, 92px);
-    height: clamp(80px, 10vw, 92px);
-    border-radius: 50%;
-    background: #141414;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow:
-        0 0 0 4px #141414,
-        0 0 0 5px rgba(255,255,255,0.18),
-        0 10px 24px rgba(0,0,0,0.5);
+    bottom: 14px;
+    left: 14px;
     z-index: 2;
 }
 
-.fpc-score-ring {
-    position: absolute;
-    inset: 6px;
-    width: calc(100% - 12px);
-    height: calc(100% - 12px);
-    transform: rotate(-90deg);
-}
-
-.fpc-score-ring-track {
-    fill: none;
-    stroke: rgba(255,255,255,0.10);
-    stroke-width: 3;
-}
-
-.fpc-score-ring-fill {
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 3;
-    stroke-linecap: round;
-    transition: stroke-dashoffset 600ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.fpc-score-circle.fpc-score-high { color: #10b981; }
-.fpc-score-circle.fpc-score-mid  { color: #f59e0b; }
-.fpc-score-circle.fpc-score-low  { color: #ef4444; }
-.fpc-score-circle.fpc-score-na   { color: rgba(255,255,255,0.25); }
-.fpc-score-circle.fpc-score-empty-state { bottom: 50%; left: 50%; transform: translate(-50%, 50%); }
-
-.fpc-score-num {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    line-height: 1;
-    color: #fff;
-}
-
-.fpc-score-value {
-    font-size: 1.5rem;
+.fpc-score {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 2px;
+    padding: 10px 16px;
+    border-radius: 14px;
+    background: rgba(15,15,15,0.78);
+    backdrop-filter: blur(12px);
+    font-size: 2.2rem;
     font-weight: 900;
+    color: #fff;
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.04em;
+    line-height: 1;
+    border: 2px solid rgba(255,255,255,0.18);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.55);
 }
 
-.fpc-score-cap {
-    font-size: 0.62rem;
+.fpc-score i {
+    font-style: normal;
+    font-size: 0.7rem;
     font-weight: 700;
     color: rgba(255,255,255,0.55);
-    margin-top: 2px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-}
-
-/* Card body — name, posición, divider, specs grid, evaluador */
-.fpc-body {
-    padding: 40px 18px 18px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.fpc-name {
-    color: #fff;
-    font-size: 1.05rem;
-    font-weight: 700;
-    line-height: 1.25;
-    margin: 0;
-    letter-spacing: -0.01em;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.fpc-pos {
-    color: rgba(255,255,255,0.45);
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-    margin: 0;
-    font-weight: 600;
-}
-
-.fpc-divider {
-    height: 1px;
-    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.12) 50%, transparent 100%);
-    margin: 6px 0 2px;
-}
-
-/* Specs: 3 columns */
-.fpc-specs {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-top: 4px;
-}
-
-.fpc-spec {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    text-align: center;
-    background: rgba(255,255,255,0.03);
-    padding: 8px 4px;
-    border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.04);
-}
-
-.fpc-spec-label {
-    font-size: 0.6rem;
-    color: rgba(255,255,255,0.45);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    font-weight: 700;
-    line-height: 1;
-}
-
-.fpc-spec-value {
-    font-size: 0.92rem;
-    color: #fff;
-    font-weight: 800;
-    font-variant-numeric: tabular-nums;
-    line-height: 1.1;
-}
-
-.fpc-evaluador {
-    font-size: 0.66rem;
-    color: rgba(255,255,255,0.4);
-    font-weight: 500;
+    margin-left: 4px;
     letter-spacing: 0.04em;
-    margin-top: 6px;
-    padding-top: 8px;
-    border-top: 1px dashed rgba(255,255,255,0.06);
+    text-transform: uppercase;
+}
+
+/* Tonos del score (alto / medio / bajo) */
+.fpc-tone-high { color: #10b981; }
+.fpc-tone-mid  { color: #f59e0b; }
+.fpc-tone-low  { color: #ef4444; }
+.fpc-tone-na   { color: rgba(255,255,255,0.4); }
+
+/* Nombre debajo de la foto */
+.fpc-name {
+    padding: 16px 16px 18px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
     text-align: center;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    background: linear-gradient(180deg, #1a1a1a 0%, #141414 100%);
 }
 
-/* Empty / no data */
-.fpc-no-data-text {
-    color: rgba(255,255,255,0.4);
-    font-size: 0.78rem;
-    line-height: 1.4;
-    margin: 0;
+/* Empty state */
+.featured-player-card.fpc-empty .fpc-photo {
+    background: radial-gradient(circle at 50% 30%, rgba(255,255,255,0.03) 0%, transparent 70%), #1c1c1c;
 }
-
-/* Bottom color bar */
-.fpc-footer-bar {
-    height: 4px;
-    background: var(--card-gradient, linear-gradient(135deg,#F36A21,#C7490E));
-}
+.featured-player-card.fpc-empty .fpc-score { opacity: 0.45; }
+.featured-player-card.fpc-empty .fpc-name { color: rgba(255,255,255,0.45); font-weight: 600; font-style: italic; }
 
 /* Loading spinner */
 .featured-loading {
@@ -3457,14 +3274,14 @@ footer {
 @media (max-width: 1100px) {
     .featured-players-grid {
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 18px;
+        gap: 22px;
     }
 }
 
 @media (max-width: 900px) {
     .featured-players-grid {
         grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 16px;
+        gap: 18px;
     }
 }
 
@@ -3473,8 +3290,8 @@ footer {
         grid-template-columns: repeat(2, 1fr);
         gap: 14px;
     }
-    .fpc-name { font-size: 0.92rem; }
-    .fpc-spec-value { font-size: 0.82rem; }
+    .fpc-score { font-size: 1.8rem; padding: 8px 12px; }
+    .fpc-name { font-size: 0.92rem; padding: 14px 12px 16px; }
 }
 
 @media (max-width: 420px) {
@@ -3482,11 +3299,7 @@ footer {
         grid-template-columns: 1fr;
         gap: 14px;
     }
-    .fpc-name { font-size: 1rem; }
-    .fpc-score-circle { width: 78px; height: 78px; bottom: -22px; left: 16px; }
-    .fpc-score-value { font-size: 1.3rem; }
-    .fpc-body { padding: 32px 16px 16px; }
-    .fpc-strip { padding: 10px 14px 8px; }
+    .fpc-score { font-size: 1.6rem; }
 }
 
 /* ============================================================

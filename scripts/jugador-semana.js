@@ -1,14 +1,14 @@
 /*
     jugador-semana.js
     ------------------------------------------------------------------------
-    "Mejores Jugadores de la Semana"
+    "Mejores Jugadores de la Semana" — vista pública del home.
     ------------------------------------------------------------------------
-    Carga para cada categoría (key) al jugador con mayor promedio_general en
-    la última semana con evaluaciones registradas. La categoría se resuelve
-    desde jugadores.categoria y, si está vacía, se deriva de jugadores.equipo.
+    Lee de public.featured_players_v (vista anon-readable). Para cada
+    categoría (key) muestra al jugador con mayor promedio_general en la
+    última semana con evaluaciones. La categoría se infiere desde
+    categoria o, si está vacía, desde equipo.
 
-    Diseño: card institucional con foto vertical, score-badge prominente y
-    grid de criterios. Estética dark-bg institucional coherente con el sitio.
+    Card minimal: FOTO vertical + SCORE grande + NOMBRE. Nada más.
 */
 
 import { supabase } from './supabase-client.js';
@@ -24,7 +24,6 @@ const CATEGORIES_ORDER = [
     'Sub-14',
 ];
 
-// Colores por key (algunos derivados comparten gradiente similar)
 const CATEGORY_COLORS = {
     'Alebrijes TDP':      'linear-gradient(135deg, #F36A21 0%, #C7490E 100%)',
     'Soles TDP':          'linear-gradient(135deg, #FF8C42 0%, #E85D26 100%)',
@@ -34,49 +33,32 @@ const CATEGORY_COLORS = {
     'Sub-16':             'linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%)',
     'Sub-14':             'linear-gradient(135deg, #f59e0b 0%, #b45309 100%)',
 };
-
 const FALLBACK_COLOR = 'linear-gradient(135deg, #F36A21 0%, #C7490E 100%)';
 
-// ── Resolver la categoría display de un jugador ─────────────────────────
-// Devuelve { key, sub, label }
-//   key     = identificador del grupo (se usa para agrupar)
-//   sub     = subetiqueta (e.g. "Sub-16" si el equipo es "Soles TDP Sub-16")
-//   label   = etiqueta a mostrar en el chip grande
+// ── Resolver la categoría display ────────────────────────────────────────
 function categoryFromPlayer(player) {
-    // 1. categoria directa tiene prioridad si está en la lista canónica
     const directCat = (player.categoria || '').trim();
     if (directCat && CATEGORIES_ORDER.includes(directCat)) {
         return { key: directCat, sub: '', label: directCat };
     }
 
-    // 2. derivar desde equipo
     const eq = (player.equipo || '').trim();
     if (!eq) {
         return { key: directCat || 'Otros', sub: '', label: directCat || 'Otros' };
     }
-
-    if (eq === 'Alebrijes TDP') {
-        return { key: 'Alebrijes TDP', sub: '', label: 'Alebrijes TDP' };
-    }
+    if (eq === 'Alebrijes TDP') return { key: 'Alebrijes TDP', sub: '', label: 'Alebrijes TDP' };
 
     const solesMatch = eq.match(/^Soles TDP(?:\s+(Sub-\d+))?$/i);
     if (solesMatch) {
         const sub = solesMatch[1] || '';
         return { key: 'Soles TDP', sub, label: 'Soles TDP' };
     }
-
     const subMatch = eq.match(/^(Sub-\d+)$/);
-    if (subMatch) {
-        return { key: subMatch[1], sub: '', label: subMatch[1] };
-    }
+    if (subMatch) return { key: subMatch[1], sub: '', label: subMatch[1] };
 
     const expansion = /Ligas?\s+de\s+Expansi(o|ó)n/i;
-    if (expansion.test(eq)) {
-        return { key: 'Liga de Expansión', sub: '', label: 'Liga de Expansión' };
-    }
-    if (/Liga\s+Premier/i.test(eq)) {
-        return { key: 'Liga Premier', sub: '', label: 'Liga Premier' };
-    }
+    if (expansion.test(eq)) return { key: 'Liga de Expansión', sub: '', label: 'Liga de Expansión' };
+    if (/Liga\s+Premier/i.test(eq)) return { key: 'Liga Premier', sub: '', label: 'Liga Premier' };
 
     return { key: eq || 'Otros', sub: '', label: eq || 'Otros' };
 }
@@ -85,7 +67,6 @@ function categoryFromPlayer(player) {
 function normalizeStr(s) {
     return (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
 }
-
 function toTitleCase(str) {
     if (!str) return '';
     return str.trim().toLowerCase()
@@ -94,23 +75,24 @@ function toTitleCase(str) {
         .map(w => w.charAt(0).toUpperCase() + w.slice(1))
         .join(' ');
 }
+function escapeHtml(s) {
+    return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+function escapeAttr(s) { return escapeHtml(s); }
 
-// Score tono (alto / medio / bajo)
+// Tonos del score (alto / medio / bajo)
 function scoreClass(score) {
     const n = Number(score);
-    if (!Number.isFinite(n)) return 'fpc-score-low';
-    if (n >= 8) return 'fpc-score-high';
-    if (n >= 6.5) return 'fpc-score-mid';
-    return 'fpc-score-low';
+    if (!Number.isFinite(n)) return 'fpc-tone-low';
+    if (n >= 8)   return 'fpc-tone-high';
+    if (n >= 6.5) return 'fpc-tone-mid';
+    return 'fpc-tone-low';
 }
 
-function scoreClassNumeric(score) {
-    const n = Number(score);
-    if (!Number.isFinite(n)) return 0;
-    return Math.max(0, Math.min(100, (n / 10) * 100));
-}
-
-// ── Image helpers (panel-profesor style) ────────────────────────────────
+// ── Image helpers (mismo set que panel-profesor) ──────────────────────────
 const PLAYER_IMAGES = [
     'Rafael_Arturo_Tejeda_Arellano_DirectorTecnico.jpg',
     'Roberto_Alcantar_Piña_Portero_1.jpg',
@@ -146,7 +128,6 @@ const PLAYER_IMAGES = [
     'Oscar_Gabriel_Ortega_Ramos_Delantero_29.jpg',
     'Iker_Castillo_Tede_Delantero_32.jpg'
 ];
-
 const PLAYER_IMAGES_SOLES = [
     'Adbeel_Jehiel_Ramirez_Juarez.jpg','Alexander_Villanueva_Huerta.jpg',
     'Alfonso_Isaac_Jimenez_Calero.jpg','Angel_Gabriel_Barboza_Muñiz.jpg',
@@ -169,7 +150,6 @@ const PLAYER_IMAGES_SOLES = [
     'Ricardo_Gael_Cruz_Santos.jpg','Richard_Aguilar_Perez.jpg',
     'Roberto_Alcantar_Piña.jpg','Sebastian_Segundo_Becerril.jpg'
 ];
-
 const PLAYER_IMAGES_FUERZAS = [
     'Abdiel_Monroy_García.jpeg', 'Aldo_Emmanuel_Cortes_Santiago.jpeg', 'Alejandro_Aguilar_Reyes.jpeg',
     'Alexander_Martínez_Domínguez.jpeg', 'Angel_David_Mendez_Hernandez.jpeg', 'Asiel_Zaid_Montoya_Rojas.jpeg',
@@ -223,153 +203,54 @@ function getWeekSunday(isoWeek) {
     const monday = new Date(jan4.getTime() - (day - 1) * 86400000 + (w - 1) * 7 * 86400000);
     return new Date(monday.getTime() + 6 * 86400000);
 }
-
 function formatDate(date) {
     if (!date) return '';
     return date.toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
-// ── Render helpers ──────────────────────────────────────────────────────
-function renderScoreCircle(score) {
-    const s = Number(score);
-    const pct = scoreClassNumeric(s);
-    const r = 28;
-    const c = 2 * Math.PI * r;
-    const dashOffset = c * (1 - pct / 100);
-    return `
-        <div class="fpc-score-circle ${scoreClass(s)}">
-            <svg class="fpc-score-ring" viewBox="0 0 64 64" aria-hidden="true">
-                <circle class="fpc-score-ring-track" cx="32" cy="32" r="${r}" />
-                <circle class="fpc-score-ring-fill" cx="32" cy="32" r="${r}"
-                    style="stroke-dasharray: ${c.toFixed(2)}; stroke-dashoffset: ${dashOffset.toFixed(2)};" />
-            </svg>
-            <div class="fpc-score-num">
-                <span class="fpc-score-value">${Number.isFinite(s) ? s.toFixed(1) : '--'}</span>
-                <span class="fpc-score-cap">/ 10</span>
-            </div>
-        </div>
-    `;
-}
-
-function renderSpecs(ev) {
-    const rc = ev.rendimiento_cancha;
-    const isRP = (typeof rc === 'string' && rc.toUpperCase() === 'RP') || rc === 'RP';
-    const rcDisplay = rc === undefined || rc === null
-        ? '—'
-        : (isRP ? 'RP' : Number(rc).toFixed(1));
-
-    const min = Number(ev.minutos_jugados);
-    const minutosDisplay = Number.isFinite(min) && min > 0 ? `${min}'` : '—';
-
-    const semana = ev.semana || '—';
-
-    return [
-        { label: 'Rend. Cancha', value: rcDisplay },
-        { label: 'Minutos', value: minutosDisplay },
-        { label: 'Semana', value: semana },
-    ];
-}
-
-function renderCard({ key, sub, label, color, winner }) {
-    const catLabel = escapeHtml(label);
-    const subLabel = sub ? `<span class="fpc-sub">${escapeHtml(sub)}</span>` : '';
-
+// ── Card markup: solo foto + nombre + score ─────────────────────────────
+function renderCard({ winner }) {
     if (!winner) {
         return `
-            <article class="featured-player-card" style="--card-gradient:${color}">
-                <div class="fpc-strip">
-                    <span class="fpc-cat">${catLabel}</span>
-                    ${subLabel}
+            <article class="featured-player-card fpc-empty">
+                <div class="fpc-photo">
+                    <div class="fpc-initials">--</div>
                 </div>
-                <div class="fpc-photo-wrap fpc-photo-empty">
-                    <div class="fpc-jersey-watermark">--</div>
-                    <div class="fpc-score-circle fpc-score-na fpc-score-empty-state">
-                        <svg class="fpc-score-ring" viewBox="0 0 64 64" aria-hidden="true">
-                            <circle class="fpc-score-ring-track" cx="32" cy="32" r="28" />
-                        </svg>
-                        <div class="fpc-score-num">
-                            <span class="fpc-score-value">--</span>
-                            <span class="fpc-score-cap">N/D</span>
-                        </div>
-                    </div>
+                <div class="fpc-corner">
+                    <span class="fpc-score fpc-tone-na">--<i>/10</i></span>
                 </div>
-                <div class="fpc-body">
-                    <h3 class="fpc-name">Sin evaluacion esta semana</h3>
-                    <p class="fpc-pos">Aun no hay registros para esta categoria</p>
-                    <div class="fpc-divider"></div>
-                    <p class="fpc-no-data-text">Volveremos a publicar al jugador destacado cuando el cuerpo tecnico registre una nueva evaluacion.</p>
-                </div>
-                <div class="fpc-footer-bar"></div>
+                <div class="fpc-name">Sin evaluacion esta semana</div>
             </article>
         `;
     }
 
-    const { player, stats, ev } = winner;
+    const { player, score } = winner;
     const nombre = toTitleCase(player.nombre || '');
     const apellido = toTitleCase(player.apellido || '');
     const fullName = `${nombre} ${apellido}`.trim() || 'Jugador';
-    const dorsal = player.numero_camiseta;
-    const dorsalText = dorsal !== null && dorsal !== undefined && dorsal !== '' ? `#${dorsal}` : '';
 
     const initials = ((nombre.charAt(0) || '') + (apellido.charAt(0) || '')).toUpperCase() || '?';
     const imgSrc = findPlayerImage(nombre, apellido);
-
-    const posicion = player.posicion || 'Sin posicion definida';
-    const equipoShow = player.equipo && player.equipo !== label
-        ? player.equipo
-        : '';
-
-    const specs = renderSpecs(ev);
-    const specsHTML = specs.map(s => `
-        <div class="fpc-spec">
-            <span class="fpc-spec-label">${escapeHtml(s.label)}</span>
-            <span class="fpc-spec-value">${escapeHtml(String(s.value))}</span>
-        </div>
-    `).join('');
+    const scoreStr = Number.isFinite(Number(score)) ? Number(score).toFixed(1) : '--';
+    const tone = scoreClass(score);
 
     const photoHTML = imgSrc
         ? `<img src="${escapeAttr(imgSrc)}" alt="${escapeAttr(fullName)}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling && (this.nextElementSibling.style.display='flex');">`
         : '';
     const initialsHTML = `<div class="fpc-initials" ${imgSrc ? 'style="display:none;"' : ''}>${escapeHtml(initials)}</div>`;
 
-    const evaluador = ev.evaluador_nombre ? `Evaluo: ${escapeHtml(ev.evaluador_nombre)}` : 'Evaluo: Cuerpo Tecnico';
-
     return `
-        <article class="featured-player-card" style="--card-gradient:${color}">
-            <div class="fpc-strip">
-                <span class="fpc-cat">${catLabel}</span>
-                ${subLabel}
-            </div>
-            <div class="fpc-photo-wrap">
+        <article class="featured-player-card">
+            <div class="fpc-photo">
                 ${photoHTML}
                 ${initialsHTML}
-                <div class="fpc-jersey-watermark" aria-hidden="true">${escapeHtml(dorsalText || initials)}</div>
-                ${renderScoreCircle(stats.promedioGeneral)}
             </div>
-            <div class="fpc-body">
-                <h3 class="fpc-name">${escapeHtml(fullName)}</h3>
-                <p class="fpc-pos">${escapeHtml(posicion)}${equipoShow ? ` · ${escapeHtml(equipoShow)}` : ''}</p>
-                <div class="fpc-divider"></div>
-                <div class="fpc-specs">
-                    ${specsHTML}
-                </div>
-                <div class="fpc-evaluador">${evaluador}</div>
+            <div class="fpc-corner">
+                <span class="fpc-score ${tone}">${escapeHtml(scoreStr)}<i>/10</i></span>
             </div>
-            <div class="fpc-footer-bar"></div>
+            <div class="fpc-name">${escapeHtml(fullName)}</div>
         </article>
     `;
-}
-
-function escapeHtml(s) {
-    return String(s || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-}
-function escapeAttr(s) {
-    return escapeHtml(s);
 }
 
 // ── Main loader ────────────────────────────────────────────────────────
@@ -386,100 +267,72 @@ async function loadJugadoresSemana() {
         </div>`;
 
     try {
-        // 1. Players + evaluations
-        const [{ data: playersRows }, { data: evalsRows }] = await Promise.all([
-            supabase.from('jugadores').select('*'),
-            supabase.from('evaluaciones').select('*'),
-        ]);
-        const players = (playersRows || []).map(r => ({ id: r.id, ...r }));
-        const evals = (evalsRows || []).map(r => ({ id: r.id, ...r }));
+        // Una sola query anon-readable
+        const { data: rows, error } = await supabase
+            .from('featured_players_v')
+            .select('jugador_id, nombre, apellido, posicion, dorsal, equipo, categoria, evaluacion_id, semana, promedio_general, rendimiento_cancha, minutos_jugados, fecha_eval');
 
-        // 2. Latest week with at least one eval
-        const weeks = [...new Set(evals.map(e => e.semana).filter(s => s && s.includes('-W')))].sort();
-        const latestWeek = weeks[weeks.length - 1];
-        if (!latestWeek) {
-            container.innerHTML = '<p class="featured-empty">Aun no hay evaluaciones registradas en el sistema.</p>';
+        if (error) {
+            console.error('Supabase error:', error);
+            container.innerHTML = '<p class="featured-empty">No se pudieron cargar los jugadores destacados.</p>';
+            return;
+        }
+        if (!rows || rows.length === 0) {
+            container.innerHTML = '<p class="featured-empty">Aun no hay jugadores registrados en el sistema.</p>';
             if (weekLabel) weekLabel.textContent = '';
             return;
         }
 
+        // 1. Encontrar la semana más reciente con evaluaciones
+        const weeks = [...new Set(rows.map(r => r.semana).filter(s => s && s.includes('-W')))].sort();
+        const latestWeek = weeks[weeks.length - 1];
+        if (!latestWeek) {
+            container.innerHTML = '<p class="featured-empty">Aun no hay evaluaciones registradas.</p>';
+            if (weekLabel) weekLabel.textContent = '';
+            return;
+        }
         const sunday = getWeekSunday(latestWeek);
         if (weekLabel) weekLabel.textContent = `Semana del ${formatDate(sunday)}`;
         if (sectionDesc) sectionDesc.style.display = '';
 
-        // 3. Aggregate latest-week stats per jugador
-        const evalsByPlayer = {};
-        for (const ev of evals) {
-            if (ev.semana !== latestWeek) continue;
-            if (!ev.jugador_id) continue;
-            if (!evalsByPlayer[ev.jugador_id]) evalsByPlayer[ev.jugador_id] = [];
-            evalsByPlayer[ev.jugador_id].push(ev);
-        }
-
-        const playerStats = {};
-        for (const [pid, list] of Object.entries(evalsByPlayer)) {
-            const numAvg = key => {
-                const vals = list.map(e => parseFloat(e[key])).filter(n => Number.isFinite(n));
-                return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
-            };
-            const numSum = key => list.map(e => parseFloat(e[key]) || 0).reduce((a, b) => a + b, 0);
-
-            const pg = numAvg('promedio_general');
-            if (pg === null) continue;
-
-            playerStats[pid] = {
-                pid,
-                promedioGeneral: pg,
-                rendimientoCancha: numAvg('rendimiento_cancha'),
-                minutosJugados: numSum('minutos_jugados'),
-            };
-        }
-
-        // 4. Best per category
+        // 2. Mejor jugador por categoría en esa semana
         function beats(a, b) {
             if (!a) return true;
             if (!b) return false;
-            if (b.promedioGeneral !== a.promedioGeneral) return b.promedioGeneral > a.promedioGeneral;
-            const ra = a.rendimientoCancha ?? -1;
-            const rb = b.rendimientoCancha ?? -1;
-            if (rb !== ra) return rb > ra;
-            if (b.minutosJugados !== a.minutosJugados) return b.minutosJugados > a.minutosJugados;
-            return a.pid < b.pid; // tiebreak determinista
-        }
-
-        // Agrupa por key
-        const playerById = Object.fromEntries(players.map(p => [p.id, p]));
-        const latestEvalByPlayer = {};
-        for (const ev of evals) {
-            if (ev.semana !== latestWeek) continue;
-            if (!ev.jugador_id) continue;
-            const cur = latestEvalByPlayer[ev.jugador_id];
-            const evDate = new Date(ev.fecha || 0).getTime();
-            if (!cur || evDate > new Date(cur.fecha || 0).getTime()) {
-                latestEvalByPlayer[ev.jugador_id] = ev;
-            }
+            const ap = Number(a.promedio_general), bp = Number(b.promedio_general);
+            if (bp !== ap) return bp > ap;
+            const ar = Number(a.rendimiento_cancha) || -1;
+            const br = Number(b.rendimiento_cancha) || -1;
+            if (br !== ar) return br > ar;
+            const am = Number(a.minutos_jugados) || 0;
+            const bm = Number(b.minutos_jugados) || 0;
+            if (bm !== am) return bm > am;
+            return String(a.jugador_id) < String(b.jugador_id);
         }
 
         const winnersByKey = {};
-        for (const [pid, stats] of Object.entries(playerStats)) {
-            const player = playerById[pid];
-            if (!player) continue;
-            const cat = categoryFromPlayer(player);
+        for (const row of rows) {
+            if (row.semana !== latestWeek) continue;
+            const pg = Number(row.promedio_general);
+            if (!Number.isFinite(pg)) continue;
+            const cat = categoryFromPlayer({
+                categoria: row.categoria,
+                equipo: row.equipo,
+            });
+            const candidate = {
+                jugador_id: row.jugador_id,
+                promedio_general: row.promedio_general,
+                rendimiento_cancha: row.rendimiento_cancha,
+                minutos_jugados: row.minutos_jugados,
+                player: row,
+            };
             const cur = winnersByKey[cat.key];
-            if (!cur || beats(cur.stats, stats)) {
-                winnersByKey[cat.key] = {
-                    player,
-                    stats,
-                    category: cat,
-                    ev: latestEvalByPlayer[pid],
-                };
+            if (!cur || beats(cur, candidate)) {
+                winnersByKey[cat.key] = candidate;
             }
         }
 
-        // 5. Compose visible categories.
-        // Solo se muestran categorías con ganador — la UI ya no muestra
-        // tarjetas vacías. El orden viene del CATEGORIES_ORDER canónico,
-        // seguido de cualquier categoría dinámica nueva (alfabética).
+        // 3. Orden de aparición (canónico + alfabético para dinámicas)
         const winnerKeys = Object.keys(winnersByKey);
         const orderedKeys = [];
         for (const k of CATEGORIES_ORDER) {
@@ -489,22 +342,16 @@ async function loadJugadoresSemana() {
             if (!CATEGORIES_ORDER.includes(k)) orderedKeys.push(k);
         }
 
-        // 6. Render
+        // 4. Render mínimo
         const cards = orderedKeys.map(key => {
             const w = winnersByKey[key];
-            const cat = w ? w.category : { key, sub: '', label: key };
             const color = CATEGORY_COLORS[key] || FALLBACK_COLOR;
-            return renderCard({
-                key,
-                label: cat.label,
-                sub: cat.sub,
-                color,
-                winner: w ? { player: w.player, stats: w.stats, ev: w.ev } : null,
-            });
+            const card = renderCard({ winner: w ? { player: w.player, score: w.promedio_general } : null });
+            // inyectar color de categoría como CSS var en el wrapper
+            return `<div class="fpc-slot" style="--slot-color:${color}">${card}</div>`;
         });
 
         container.innerHTML = cards.join('');
-
     } catch (err) {
         console.error('Error loading jugadores destacados:', err);
         container.innerHTML = '<p class="featured-empty">No se pudieron cargar los jugadores destacados en este momento.</p>';

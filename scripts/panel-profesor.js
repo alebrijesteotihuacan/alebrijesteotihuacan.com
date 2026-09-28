@@ -451,24 +451,6 @@ function escapeAttr(value) {
     return escapeText(value).replace(/"/g, '&quot;');
 }
 
-function computeAge(birthDateStr) {
-    if (!birthDateStr) return null;
-    const birth = new Date(birthDateStr + (birthDateStr.includes('T') ? '' : 'T00:00:00'));
-    if (Number.isNaN(birth.getTime())) return null;
-    const today = new Date();
-    let age = today.getFullYear() - birth.getFullYear();
-    const m = today.getMonth() - birth.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
-    return age;
-}
-
-function formatLongDate(dateStr) {
-    if (!dateStr) return '—';
-    const d = new Date(dateStr.includes('T') ? dateStr : dateStr + 'T00:00:00');
-    if (Number.isNaN(d.getTime())) return '—';
-    return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric' });
-}
-
 function formatShortDate(dateStr) {
     if (!dateStr) return '';
     const d = new Date(dateStr.includes('T') ? dateStr : dateStr + 'T00:00:00');
@@ -1489,19 +1471,6 @@ async function openEvalDrawer(playerId) {
 
     const posTag = document.getElementById('drawerPositionTag');
     if (posTag) posTag.textContent = player.posicion || 'Sin posición';
-
-    // Meta grid
-    const setMeta = (id, value) => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = value || '—';
-    };
-    setMeta('drawerEmail', player.email || '—');
-    setMeta('drawerBirth', formatLongDate(player.fecha_nacimiento));
-    setMeta('drawerAge', (() => {
-        const age = computeAge(player.fecha_nacimiento);
-        return age !== null ? `${age} años` : '—';
-    })());
-    setMeta('drawerRegDate', formatLongDate(player.fecha_registro));
 
     const hiddenId = document.getElementById('hiddenJugadorId');
     if (hiddenId) hiddenId.value = player.id;

@@ -13,12 +13,8 @@ const dashboardContent = document.getElementById('dashboardContent');
 const profName = document.getElementById('profName');
 const profEmail = document.getElementById('profEmail');
 const profBadge = document.getElementById('profBadge');
-const profRole = document.getElementById('profRole');
 const profCardPhoto = document.getElementById('profCardPhoto');
 const profCardInitials = document.getElementById('profCardInitials');
-const profCardChip = document.getElementById('profCardChip');
-const profCardTeam = document.getElementById('profCardTeam');
-const profCard = document.getElementById('profCard');
 const logoutBtn = document.getElementById('logoutBtn');
 const totalJugadores = document.getElementById('totalJugadores');
 const totalJugadoresMeta = document.getElementById('totalJugadoresMeta');
@@ -616,7 +612,7 @@ async function resolveInitialSession() {
     });
 })();
 
-// Prof. Arturo Tejada Arellano (DT Alebrijes TDP) — por peticion explicita,
+// Prof. Arturo Tejada (DT Alebrijes TDP) — por peticion explicita,
 // se omite su correo y la insignia "Cuerpo Tecnico" en el panel izquierdo.
 // Coincidencia robusta: nombre contiene "arturo" + "tejada" en cualquier
 // combinacion (con o sin acento, mayusculas, "Tejeda", etc.).
@@ -626,17 +622,6 @@ function isArturoTDP(prof) {
         .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     return norm.includes('arturo') && norm.includes('tejada');
 }
-
-// ==========================================
-// PROFESOR IDENTITY
-// ==========================================
-// Mapeo de nombre-normalizado -> ruta de la foto de dashboard.
-// Cualquier profesor sin entrada queda en fallback de iniciales.
-// Las claves se comparan con normalize() para tolerar acentos y
-// mayusculas (ej. "Arturo Tejada" == "ARTURO TEJADA").
-const PROF_PHOTO_LOOKUP = {
-    'arturo tejeda': '../assets/PlantillaAlebrijesTeotihuacanLigaTDP/Arturo_Tejeda(Dashboard).jpg',
-};
 
 function normName(s) {
     return (s || '').toString().toLowerCase()
@@ -650,58 +635,24 @@ function initialsFromName(s) {
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-// Configura la "prof-card" del sidebar con datos del profesor logueado.
-// Si tiene foto mapeada, la pone; si no, deja las iniciales.
-// Tambien ajusta chip ("Director Tecnico"/"Profesor"/"Administrador"),
-// team (desde equipo_restringido) y el subtitulo de rol.
-function setProfIdentity(prof) {
-    if (!prof) return;
+// Prof. Arturo: mapeo nombre-normalizado -> src de foto.
+// La foto se inyecta en HTML para evitar race conditions de load.
+const PROF_PHOTO_LOOKUP = {
+    'arturo tejeda': '../assets/PlantillaAlebrijesTeotihuacanLigaTDP/Arturo_Tejeda(Dashboard).jpg',
+};
 
-    profName.textContent = prof.nombre || 'Profesor';
+// Cablea la foto del profesor logueado. La visibilidad foto/iniciales
+// se resuelve 100% via CSS por presencia de src (sin JS race).
+function setProfPhoto(prof) {
+    if (!profCardPhoto) return;
+    const src = PROF_PHOTO_LOOKUP[normName(prof?.nombre)];
+    if (src) profCardPhoto.src = src;
+    else profCardPhoto.removeAttribute('src');
+}
 
-    const photo = PROF_PHOTO_LOOKUP[normName(prof.nombre)];
-    if (photo && profCardPhoto) {
-        profCardPhoto.classList.remove('is-missing');
-        profCardPhoto.src = photo;
-        profCardPhoto.addEventListener('load', () => {
-            if (profCard) profCard.classList.add('has-photo');
-        }, { once: true });
-    } else {
-        if (profCardPhoto) {
-            profCardPhoto.removeAttribute('src');
-            profCardPhoto.classList.add('is-missing');
-        }
-        if (profCard) profCard.classList.remove('has-photo');
-    }
-
-    if (profCardInitials) {
-        profCardInitials.textContent = initialsFromName(prof.nombre);
-    }
-
-    if (profCardChip) {
-        const chipText = prof.rol === 'admin'
-            ? 'Administrador'
-            : (isArturoTDP(prof) ? 'Director Técnico' : 'Cuerpo Técnico');
-        profCardChip.textContent = chipText;
-    }
-
-    if (profCardTeam) {
-        const team = (prof.equipo_restringido || '').toString().trim();
-        profCardTeam.textContent = team || '—';
-    }
-
-    if (profRole) {
-        const isArturo = isArturoTDP(prof);
-        if (prof.rol === 'admin') {
-            profRole.textContent = 'Acceso global al sistema';
-        } else if (isArturo) {
-            profRole.textContent = 'Director Técnico · Temporada 2026–2027';
-        } else if (prof.equipo_restringido) {
-            profRole.textContent = `Cuerpo Técnico · ${prof.equipo_restringido}`;
-        } else {
-            profRole.textContent = 'Cuerpo Técnico';
-        }
-    }
+// Iniciales en el fallback (solo se ven cuando no hay foto).
+function setProfInitials(prof) {
+    if (profCardInitials) profCardInitials.textContent = initialsFromName(prof?.nombre);
 }
 
 // Initialize dashboard
@@ -717,9 +668,8 @@ async function initDashboard() {
         if (profBadge) profBadge.style.display = '';
     }
 
-    // Header de la tarjeta estilo featured-player-card:
-    // foto + chip + team + nombre + rol.
-    setProfIdentity(currentProfessor);
+    setProfPhoto(currentProfessor);
+    setProfInitials(currentProfessor);
 
     // Show admin badge if applicable
     if (currentProfessor.rol === 'admin') {

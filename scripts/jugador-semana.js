@@ -195,9 +195,27 @@ function getWeekSunday(isoWeek) {
     const monday = new Date(jan4.getTime() - (day - 1) * 86400000 + (w - 1) * 7 * 86400000);
     return new Date(monday.getTime() + 6 * 86400000);
 }
+function getWeekMonday(isoWeek) {
+    const sunday = getWeekSunday(isoWeek);
+    if (!sunday) return null;
+    return new Date(sunday.getTime() - 6 * 86400000);
+}
 function formatDate(date) {
     if (!date) return '';
     return date.toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+function formatWeekShort(isoWeek) {
+    if (!isoWeek || !isoWeek.includes('-W')) return '';
+    const parts = isoWeek.split('-W');
+    return `S${parts[1]}/${parts[0].slice(-2)}`;
+}
+function formatWeekRangeCompact(isoWeek) {
+    if (!isoWeek) return '';
+    const monday = getWeekMonday(isoWeek);
+    const sunday = getWeekSunday(isoWeek);
+    if (!monday || !sunday) return '';
+    const fmt = (d) => d.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
+    return `${fmt(monday)} — ${fmt(sunday)}`;
 }
 
 // ── Card markup: vertical photo-dominant, categoria como chip sutil ────
@@ -286,7 +304,13 @@ async function loadJugadoresSemana() {
             return;
         }
         const sunday = getWeekSunday(latestWeek);
-        if (weekLabel) weekLabel.textContent = `Semana del ${formatDate(sunday)}`;
+        if (weekLabel) {
+            const weekCode = formatWeekShort(latestWeek);
+            const range = formatWeekRangeCompact(latestWeek);
+            weekLabel.textContent = range
+                ? `Semana del ${formatDate(sunday)} (${weekCode} · ${range})`
+                : `Semana del ${formatDate(sunday)} (${weekCode})`;
+        }
 
         function beats(a, b) {
             if (!a) return true;

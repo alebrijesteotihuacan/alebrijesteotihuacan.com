@@ -441,6 +441,27 @@ function formatWeekLabel(weekStr) {
     return `Semana ${wPart}, ${year}`;
 }
 
+// Devuelve "S40 / 2026 · 28 sep — 4 oct" para mostrar el rango real
+// junto al identificador de semana, evitando que los profes tengan que
+// adivinar fechas a partir del numero de semana.
+function formatWeekWithRange(weekStr) {
+    if (!weekStr || !/^\d{4}-W\d{2}$/.test(weekStr)) return '';
+    const [year, wPart] = weekStr.split('-W');
+    const { fechaInicio, fechaFin } = getWeekDateRange(weekStr);
+    if (!fechaInicio || !fechaFin) return `S${wPart} / ${year}`;
+    const fmt = (d) => d.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
+    return `S${wPart} / ${year} · ${fmt(fechaInicio)} — ${fmt(fechaFin)}`;
+}
+
+// Solo el rango "28 sep — 4 oct" (sin prefijo S##).
+function formatWeekRangeOnly(weekStr) {
+    if (!weekStr || !/^\d{4}-W\d{2}$/.test(weekStr)) return '';
+    const { fechaInicio, fechaFin } = getWeekDateRange(weekStr);
+    if (!fechaInicio || !fechaFin) return '';
+    const fmt = (d) => d.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
+    return `${fmt(fechaInicio)} — ${fmt(fechaFin)}`;
+}
+
 function escapeText(value) {
     const div = document.createElement('div');
     div.textContent = value == null ? '' : String(value);
@@ -938,7 +959,11 @@ function renderPlayers(players) {
         }
         if (activeWeekFilter) {
             ultimaLabel = 'Filtro';
-            ultimaValue = activeWeekFilter.split('-W')[1] ? `S${activeWeekFilter.split('-W')[1]}` : '—';
+            const rangeOnly = formatWeekRangeOnly(activeWeekFilter);
+            const parts = activeWeekFilter.split('-W');
+            ultimaValue = parts.length === 2
+                ? (rangeOnly ? `S${parts[1]} · ${rangeOnly}` : `S${parts[1]}`)
+                : '—';
         }
 
         const promedioHTML = promedioValue !== null && !Number.isNaN(promedioValue)
@@ -1013,9 +1038,9 @@ function renderPlayers(players) {
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                 <line x1="16" y1="2" x2="16" y2="6"></line>
                 <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
+                <line x1="3" y1="10" x2="18" y2="10"></line>
             </svg>
-            Mostrando calificaciones de la semana: <strong>${escapeText(formatWeekLabel(activeWeekFilter))}</strong>
+            Mostrando calificaciones de la semana: <strong>${escapeText(formatWeekWithRange(activeWeekFilter))}</strong>
         `;
         playersGrid.insertBefore(banner, playersGrid.firstChild);
     }
@@ -1192,19 +1217,21 @@ async function loadPlayerHistory(playerId) {
             const weekParts = (row.semana || '').split('-W');
             const weekLabel = weekParts.length === 2 ? `S${weekParts[1]}` : '—';
             const weekYear = weekParts[0] || '';
+            const computedRange = formatWeekRangeOnly(row.semana || '');
             const dateRange = row.fecha_inicio && row.fecha_fin
                 ? `${formatShortDate(row.fecha_inicio)} — ${formatShortDate(row.fecha_fin)}`
-                : '';
+                : computedRange;
             const avgClass = validAvg ? '' : 'is-empty';
             const avgDisplay = validAvg ? avg.toFixed(1) : '—';
             const itemCls = validAvg
                 ? (avg >= 7 ? 'is-success' : (avg < 6 ? 'is-danger' : 'is-warning'))
                 : 'is-empty';
             const obs = row.observaciones || 'Sin observaciones registradas.';
+            const semanaDisplay = formatWeekWithRange(row.semana || '');
 
             return `
-                <article class="drawer-history-item ${itemCls}" data-eval-id="${escapeAttr(row.id)}" data-semana="${escapeAttr(row.semana || '')}" data-semana-display="${escapeAttr(weekLabel + ' / ' + weekYear)}">
-                    <button class="drawer-history-delete-btn" type="button" title="Eliminar evaluación de ${escapeAttr(weekLabel)} ${escapeText(weekYear)}" aria-label="Eliminar evaluación de ${escapeAttr(weekLabel)} ${escapeText(weekYear)}">
+                <article class="drawer-history-item ${itemCls}" data-eval-id="${escapeAttr(row.id)}" data-semana="${escapeAttr(row.semana || '')}" data-semana-display="${escapeAttr(semanaDisplay)}">
+                    <button class="drawer-history-delete-btn" type="button" title="Eliminar evaluación de ${escapeAttr(semanaDisplay)}" aria-label="Eliminar evaluación de ${escapeAttr(semanaDisplay)}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M3 6h18"></path>
                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -1215,6 +1242,7 @@ async function loadPlayerHistory(playerId) {
                     <div class="drawer-history-week">
                         <span class="drawer-history-week-label">${escapeText(weekLabel)}</span>
                         <span class="drawer-history-week-week">${escapeText(weekYear)}</span>
+                        ${computedRange ? `<span class="drawer-history-week-range" title="${escapeAttr(computedRange)}">${escapeText(computedRange)}</span>` : ''}
                         <span class="drawer-history-week-avg ${avgClass}">${escapeText(avgDisplay)}</span>
                     </div>
                     <div class="drawer-history-body">
@@ -1359,6 +1387,8 @@ function openDeleteEvalModal({ evalId, semana, semanaDisplay, playerName }) {
     document.getElementById('deleteEvalWeekLabel').textContent = semanaDisplay || semana || '—';
     document.getElementById('deleteEvalPlayerName').textContent = playerName || '—';
     document.getElementById('deleteEvalConfirmTarget').textContent = semana || '';
+    const hint = document.getElementById('deleteEvalConfirmHint');
+    if (hint) hint.textContent = formatWeekRangeOnly(semana) ? `(${formatWeekRangeOnly(semana)})` : '';
 
     const input = document.getElementById('deleteEvalConfirmInput');
     const confirmBtn = document.getElementById('deleteEvalBtnConfirm');
@@ -1527,9 +1557,10 @@ async function loadStats(semanaOverride) {
             .map(v => parseFloat(v));
 
         const weekLabelText = formatWeekLabel(targetWeek).toLowerCase();
+        const weekRangeOnly = formatWeekRangeOnly(targetWeek);
         const emptyWeekLabel = isCurrentWeek
             ? 'Sin evaluaciones esta semana'
-            : `Sin evaluaciones en la semana seleccionada (${weekLabelText})`;
+            : `Sin evaluaciones en la semana seleccionada (${weekLabelText}${weekRangeOnly ? ' · ' + weekRangeOnly : ''})`;
         const emptyByLabel = isCurrentWeek
             ? 'Sin datos esta semana'
             : `Sin datos en ${weekLabelText}`;
@@ -1549,7 +1580,8 @@ async function loadStats(semanaOverride) {
                 promedioSemanalMeta.textContent = emptyWeekLabel;
             } else {
                 const label = weekPromedios.length === 1 ? '1 evaluación' : `${weekPromedios.length} evaluaciones`;
-                promedioSemanalMeta.innerHTML = `<strong>${label}</strong> · semana ${weekLabelText}`;
+                const rangeSuffix = weekRangeOnly ? ` · ${weekRangeOnly}` : '';
+                promedioSemanalMeta.innerHTML = `<strong>${label}</strong> · semana ${weekLabelText}${rangeSuffix}`;
             }
         }
 
@@ -1696,7 +1728,8 @@ async function checkExistingEval() {
     if (!evalSemanaInput || !evalSemanaInput.value || !currentPlayerId) return;
 
     if (evalWeekRange) {
-        evalWeekRange.textContent = isoWeekDateRange(evalSemanaInput.value) || '—';
+        const withRange = formatWeekWithRange(evalSemanaInput.value);
+        evalWeekRange.textContent = withRange || isoWeekDateRange(evalSemanaInput.value) || '—';
     }
 
     try {
@@ -1833,11 +1866,19 @@ if (searchInput) {
 const weekFilterInput = document.getElementById('weekFilter');
 const weekFilterClear = document.getElementById('weekFilterClear');
 const weekFilterWrapper = document.getElementById('weekFilterWrapper');
+const weekFilterRange = document.getElementById('weekFilterRange');
+
+function updateWeekFilterRangePreview(semana) {
+    if (!weekFilterRange) return;
+    const range = formatWeekRangeOnly(semana);
+    weekFilterRange.textContent = range ? `(${range})` : '';
+}
 
 if (weekFilterInput) {
-    weekFilterInput.addEventListener('change', async () => {
+    const fireChange = async () => {
         activeWeekFilter = weekFilterInput.value || '';
         updateWeekFilterUI();
+        updateWeekFilterRangePreview(activeWeekFilter);
         // Reload evaluations for the new week (players already loaded)
         if (activeWeekFilter) {
             await loadWeekEvaluations(activeWeekFilter);
@@ -1847,7 +1888,10 @@ if (weekFilterInput) {
         }
         renderPlayers(allPlayers);
         await loadStats();
-    });
+    };
+    weekFilterInput.addEventListener('change', fireChange);
+    weekFilterInput.addEventListener('input', () => updateWeekFilterRangePreview(weekFilterInput.value));
+    updateWeekFilterRangePreview(weekFilterInput.value);
 }
 
 if (weekFilterClear) {
@@ -1855,6 +1899,7 @@ if (weekFilterClear) {
         weekFilterInput.value = '';
         activeWeekFilter = '';
         updateWeekFilterUI();
+        updateWeekFilterRangePreview('');
         allPlayers.forEach(p => { delete p.weekEval; });
         renderPlayers(allPlayers);
         await loadStats();

@@ -451,6 +451,13 @@ create policy "iafe_mensajes_insert" on iafe.mensajes
 --       "Tejeda" (un solo 'd'). UPDATE directo en public.profesores
 --       para el id del entrenador.
 --
+--   2026-09-28  fix_profesor_nombre_cesar_full_name
+--       Cambia el nombre del profesor id 5ce0892b-783d-441a-be61-cf5fcfbcb302
+--       de "Cesar" -> "César Benítez Chaparro". El nuevo nombre coincide con el
+--       archivo assets/PlantillaSolesTeotihuacanSub16_TDP/César_Benítez_Chaparro_DirectorTecnico.jpg
+--       que se usa como foto de su perfil en el dashboard (PROF_PHOTO_LOOKUP
+--       en scripts/panel-profesor.js).
+--
 -- =========================================================================
 -- FIN DE LA MIGRACIÓN
 -- =========================================================================

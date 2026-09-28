@@ -623,10 +623,11 @@ function initialsFromName(s) {
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-// Prof. Arturo: mapeo nombre-normalizado -> src de foto.
+// Prof. Arturo / Prof. César: mapeo nombre-normalizado -> src de foto.
 // La foto se inyecta en HTML para evitar race conditions de load.
 const PROF_PHOTO_LOOKUP = {
     'arturo tejeda': '../assets/PlantillaAlebrijesTeotihuacanLigaTDP/Arturo_Tejeda(Dashboard).jpg',
+    'cesar benitez chaparro': '../assets/PlantillaSolesTeotihuacanSub16_TDP/César_Benítez_Chaparro_DirectorTecnico.jpg',
 };
 
 // Cablea la foto del profesor logueado. La visibilidad foto/iniciales
@@ -838,6 +839,39 @@ const PLAYER_IMAGES = [
         'Ricardo_Gael_Cruz_Santos.jpg', 'Richard_Aguilar_Perez.jpg', 'Roberto_Alcantar_Piña.jpg', 'Sebastian_Segundo_Becerril.jpg'
     ];
 
+    const PLAYER_IMAGES_SOLES_SUB16 = [
+        // Director Técnico (no se usa como foto de jugador; la usa PROF_PHOTO_LOOKUP).
+        // Porteros
+        'Iker_Alejandro_Lopez_Maldonado_Portero_801.jpg',
+        'Maximiliano_Ordoñez_Mejia_Defensa_802.jpg',
+        'Axel_Francisco_Ramos_Defensa_803.jpg',
+        'Alejandro_Valentin_Muñoz_Alarcon_Defensa_804.jpg',
+        'Jose_Rodrigo_Lopez_Gonzalez_Defensa_805.jpg',
+        'Nicolas_Oliva_Perez_Defensa_806.jpg',
+        'David_Salvador_Tellez_Medio_807.jpg',
+        'Alan_David_Lopez_Coronel_Medio_808.jpg',
+        'Andre_Gomez_Valverde_Delantero_809.jpg',
+        'Angel_Gabriel_Lopez_Ventura_Medio_810.jpg',
+        'Santiago_Villatoro_Garcia_Medio_811.jpg',
+        'Pedro_Fabian_Flores_Madrigal_Defensa_812.jpg',
+        'Ricardo_Emanuel_Oran_Garcia_Defensa_813.jpg',
+        'Arturo_Harem_Enriquez_Cano_Delantero_814.jpg',
+        'Iker_Garcia_Ramos_Defensa_815.jpg',
+        'Helios_Arias_Martinez_Medio_816.jpg',
+        'Ivan_Alonso_Moreno_Lopez_Medio_817.jpg',
+        'Gael_Antonio_Villegas_Garcia_Defensa_818.jpg',
+        'Victor_Javier_Bautista_Avendaño_Medio_819.jpg',
+        'Santiago_Emanuel_Gomez_Tamayo_Medio_820.jpg',
+        'Axel_Rene_Hernandez_Dominguez_Delantero_821.jpg',
+        'Leonardo_Madrigal_Velazquez_Defensa_822.jpg',
+        'Javier_Guadalupe_Mijangos_Cruz_Medio_823.jpg',
+        'Braulio_Mijares_Ruiz_Portero_824.jpg',
+        'Diego_Aaron_Alonso_Garcia_Portero_825.jpg',
+        'Eduardo_Barros_Armas_Portero_826.jpg',
+        'Mauricio_Mendoza_Montoya_Portero_827.jpg',
+        'Carlos_Ruben_Gamez_Lazcano_Portero_829.jpg'
+    ];
+
     const PLAYER_IMAGES_FUERZAS = [
         'Abdiel_Monroy_García.jpeg', 'Aldo_Emmanuel_Cortes_Santiago.jpeg', 'Alejandro_Aguilar_Reyes.jpeg',
         'Alexander_Martínez_Domínguez.jpeg', 'Angel_David_Mendez_Hernandez.jpeg', 'Asiel_Zaid_Montoya_Rojas.jpeg',
@@ -892,6 +926,19 @@ function findPlayerImageInfo(nombre, apellido) {
         if (fullName && imgName.includes(firstName) && firstName.length > 2) {
             const apellidoNorm = normalizeStr(apellido || '');
             if (apellidoNorm && imgName.includes(apellidoNorm.split(' ')[0])) return { file: img, folder: 'JugadoresFuerzasBasicas' };
+        }
+    }
+
+    for (const img of PLAYER_IMAGES_SOLES_SUB16) {
+        const parts = img.split('.')[0].split('_');
+        const lastPart = parts[parts.length - 1];
+        if (/^\d+$/.test(lastPart)) parts.pop();
+        parts.pop();
+        const imgName = normalizeStr(parts.join(' '));
+        if (imgName === fullName) return { file: img, folder: 'PlantillaSolesTeotihuacanSub16_TDP' };
+        if (fullName && imgName.includes(firstName) && firstName.length > 2) {
+            const apellidoNorm = normalizeStr(apellido || '');
+            if (apellidoNorm && imgName.includes(apellidoNorm.split(' ')[0])) return { file: img, folder: 'PlantillaSolesTeotihuacanSub16_TDP' };
         }
     }
     return null;

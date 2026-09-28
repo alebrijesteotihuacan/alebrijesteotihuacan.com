@@ -1202,7 +1202,15 @@ async function loadPlayerHistory(playerId) {
             const obs = row.observaciones || 'Sin observaciones registradas.';
 
             return `
-                <article class="drawer-history-item ${itemCls}">
+                <article class="drawer-history-item ${itemCls}" data-eval-id="${escapeAttr(row.id)}" data-semana="${escapeAttr(row.semana || '')}" data-semana-display="${escapeAttr(weekLabel + ' / ' + weekYear)}">
+                    <button class="drawer-history-delete-btn" type="button" title="Eliminar evaluación de ${escapeAttr(weekLabel)} ${escapeText(weekYear)}" aria-label="Eliminar evaluación de ${escapeAttr(weekLabel)} ${escapeText(weekYear)}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M3 6h18"></path>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                        </svg>
+                    </button>
                     <div class="drawer-history-week">
                         <span class="drawer-history-week-label">${escapeText(weekLabel)}</span>
                         <span class="drawer-history-week-week">${escapeText(weekYear)}</span>
@@ -1332,6 +1340,150 @@ const _deleteModalCloseEl = document.getElementById('deleteModalClose');
 if (_deleteModalCloseEl) {
     _deleteModalCloseEl.addEventListener('click', () => {
         if (!deleteRequestInFlight) closeDeleteModal();
+    });
+}
+
+// ==========================================
+// DELETE EVALUATION (drawer history)
+// ==========================================
+
+let evalToDelete = null;
+let deleteEvalRequestInFlight = false;
+
+function openDeleteEvalModal({ evalId, semana, semanaDisplay, playerName }) {
+    const modal = document.getElementById('deleteEvalModal');
+    if (!modal) return;
+    evalToDelete = { evalId, semana, semanaDisplay, playerName };
+
+    document.getElementById('deleteEvalWeekLabel').textContent = semanaDisplay || semana || '—';
+    document.getElementById('deleteEvalPlayerName').textContent = playerName || '—';
+    document.getElementById('deleteEvalConfirmTarget').textContent = semana || '';
+
+    const input = document.getElementById('deleteEvalConfirmInput');
+    const confirmBtn = document.getElementById('deleteEvalBtnConfirm');
+    if (input) {
+        input.value = '';
+        input.disabled = false;
+        input.placeholder = semana || 'Escribe la semana a eliminar';
+    }
+    if (confirmBtn) confirmBtn.disabled = true;
+
+    deleteEvalRequestInFlight = false;
+    openModal(modal);
+    setTimeout(() => input && input.focus(), 80);
+}
+
+function closeDeleteEvalModal() {
+    const modal = document.getElementById('deleteEvalModal');
+    if (modal) closeModal(modal);
+    evalToDelete = null;
+}
+
+async function executeDeleteEvaluation() {
+    if (!evalToDelete || deleteEvalRequestInFlight) return;
+    deleteEvalRequestInFlight = true;
+
+    const overlay = document.getElementById('deleteEvalLoadingOverlay');
+    const confirmBtn = document.getElementById('deleteEvalBtnConfirm');
+    const cancelBtn = document.getElementById('deleteEvalBtnCancel');
+    const closeBtn = document.getElementById('deleteEvalModalClose');
+    const input = document.getElementById('deleteEvalConfirmInput');
+    const originalLabel = confirmBtn ? confirmBtn.innerHTML : '';
+
+    if (overlay) overlay.classList.add('active');
+    if (confirmBtn) {
+        confirmBtn.disabled = true;
+        confirmBtn.innerHTML = 'Eliminando...';
+    }
+    if (cancelBtn) cancelBtn.disabled = true;
+    if (closeBtn) closeBtn.disabled = true;
+    if (input) input.disabled = true;
+
+    try {
+        const { error } = await supabase
+            .from('evaluaciones')
+            .delete()
+            .eq('id', evalToDelete.evalId);
+
+        if (error) throw error;
+
+        closeDeleteEvalModal();
+        showToast('Evaluación eliminada correctamente', 'success');
+
+        await Promise.all([
+            loadStats(),
+            loadPlayers(),
+            currentPlayerId ? loadPlayerHistory(currentPlayerId) : Promise.resolve()
+        ]);
+    } catch (error) {
+        console.error('Error deleting evaluation:', error);
+        showToast('Error al eliminar la evaluación: ' + (error.message || 'desconocido'), 'error');
+    } finally {
+        deleteEvalRequestInFlight = false;
+        if (overlay) overlay.classList.remove('active');
+        if (confirmBtn) {
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = originalLabel;
+        }
+        if (cancelBtn) cancelBtn.disabled = false;
+        if (closeBtn) closeBtn.disabled = false;
+        if (input) input.disabled = false;
+    }
+}
+
+// Event delegation: history list delete button
+if (drawerHistoryList) {
+    drawerHistoryList.addEventListener('click', (e) => {
+        const btn = e.target.closest('.drawer-history-delete-btn');
+        if (!btn) return;
+        const item = btn.closest('.drawer-history-item');
+        if (!item) return;
+        const evalId = item.dataset.evalId;
+        const semana = item.dataset.semana;
+        const semanaDisplay = item.dataset.semanaDisplay;
+        const playerName = (document.getElementById('drawerTitle') || {}).textContent || '';
+        if (!evalId) return;
+        openDeleteEvalModal({ evalId, semana, semanaDisplay, playerName });
+    });
+}
+
+// Confirm input typing → enable confirm button
+const _deleteEvalConfirmInputEl = document.getElementById('deleteEvalConfirmInput');
+if (_deleteEvalConfirmInputEl) {
+    _deleteEvalConfirmInputEl.addEventListener('input', () => {
+        const confirmBtn = document.getElementById('deleteEvalBtnConfirm');
+        if (!confirmBtn || !evalToDelete) return;
+        const target = (evalToDelete.semana || '').trim();
+        const typed = _deleteEvalConfirmInputEl.value.trim();
+        confirmBtn.disabled = typed !== target;
+    });
+}
+
+// Wire up delete-eval modal buttons
+const _deleteEvalBtnConfirmEl = document.getElementById('deleteEvalBtnConfirm');
+if (_deleteEvalBtnConfirmEl) {
+    _deleteEvalBtnConfirmEl.addEventListener('click', executeDeleteEvaluation);
+}
+const _deleteEvalBtnCancelEl = document.getElementById('deleteEvalBtnCancel');
+if (_deleteEvalBtnCancelEl) {
+    _deleteEvalBtnCancelEl.addEventListener('click', () => {
+        if (!deleteEvalRequestInFlight) closeDeleteEvalModal();
+    });
+}
+const _deleteEvalModalCloseEl = document.getElementById('deleteEvalModalClose');
+if (_deleteEvalModalCloseEl) {
+    _deleteEvalModalCloseEl.addEventListener('click', () => {
+        if (!deleteEvalRequestInFlight) closeDeleteEvalModal();
+    });
+}
+if (drawerHistoryList) {
+    drawerHistoryList.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('deleteEvalModal');
+            if (modal && modal.classList.contains('active') && !deleteEvalRequestInFlight) {
+                closeDeleteEvalModal();
+            }
+        }
     });
 }
 
@@ -2060,6 +2212,13 @@ document.addEventListener('keydown', (e) => {
     const deleteModalEl = document.getElementById('deleteModal');
     if (deleteModalEl && deleteModalEl.classList.contains('active')) {
         if (!deleteRequestInFlight) closeDeleteModal();
+        return;
+    }
+
+    // 2b. Delete evaluation modal — typed confirmation may be in flight
+    const deleteEvalModalEl = document.getElementById('deleteEvalModal');
+    if (deleteEvalModalEl && deleteEvalModalEl.classList.contains('active')) {
+        if (!deleteEvalRequestInFlight) closeDeleteEvalModal();
         return;
     }
 

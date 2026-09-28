@@ -1671,14 +1671,62 @@ body.prof-body {
 }
 
 .drawer-history-item {
+    position: relative;
     display: flex;
     gap: 14px;
-    padding: 14px;
+    padding: 14px 14px 14px 14px;
     background: var(--prof-n-50);
     border: 1px solid var(--prof-border);
     border-left: 3px solid var(--prof-n-200);
     border-radius: var(--prof-radius-sm);
-    transition: border-left-color 0.15s var(--prof-ease);
+    transition: border-left-color 0.15s var(--prof-ease), background 0.15s var(--prof-ease);
+}
+
+.drawer-history-item:hover {
+    background: var(--prof-n-100);
+}
+
+.drawer-history-delete-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: var(--prof-n-500);
+    border: 1px solid transparent;
+    border-radius: var(--prof-radius-sm);
+    cursor: pointer;
+    transition: background 0.15s var(--prof-ease), color 0.15s var(--prof-ease), border-color 0.15s var(--prof-ease);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.drawer-history-item:hover .drawer-history-delete-btn,
+.drawer-history-delete-btn:focus-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.drawer-history-delete-btn:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--prof-danger);
+    border-color: rgba(239, 68, 68, 0.25);
+}
+
+.drawer-history-delete-btn:focus-visible {
+    outline: 2px solid var(--prof-danger);
+    outline-offset: 1px;
+}
+
+@media (max-width: 600px) {
+    .drawer-history-delete-btn {
+        opacity: 1;
+        pointer-events: auto;
+    }
 }
 
 .drawer-history-item.is-success { border-left-color: var(--prof-success); }

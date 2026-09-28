@@ -79,6 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const FOLDER_ALEBRIJES      = 'PlantillaAlebrijesTeotihuacanLigaTDP';
         const FOLDER_SOLES          = 'PlantillaSolesTeotihuacanLigaTDP';
         const FOLDER_ALEBRIJES_SUB16 = 'PlantillaAlebrijesTeotihuacanSub-16_TDP';
+        const FOLDER_SOLES_SUB16     = 'PlantillaSolesTeotihuacanSub16_TDP';
 
         const playerFilesAlebrijes = [
             // Director Técnico
@@ -205,6 +206,47 @@ document.addEventListener('DOMContentLoaded', () => {
             'Gerardo_Daniel_Morales_Vargas_Delantero_820.jpg'
         ];
 
+        const playerFilesSolesSub16 = [
+            // Director Técnico
+            'César_Benítez_Chaparro_DirectorTecnico.jpg',
+
+            // Porteros
+            'Iker_Alejandro_Lopez_Maldonado_Portero_801.jpg',
+            'Braulio_Mijares_Ruiz_Portero_824.jpg',
+            'Diego_Aaron_Alonso_Garcia_Portero_825.jpg',
+            'Eduardo_Barros_Armas_Portero_826.jpg',
+            'Mauricio_Mendoza_Montoya_Portero_827.jpg',
+            'Carlos_Ruben_Gamez_Lazcano_Portero_829.jpg',
+
+            // Defensas
+            'Maximiliano_Ordoñez_Mejia_Defensa_802.jpg',
+            'Axel_Francisco_Ramos_Defensa_803.jpg',
+            'Alejandro_Valentin_Muñoz_Alarcon_Defensa_804.jpg',
+            'Jose_Rodrigo_Lopez_Gonzalez_Defensa_805.jpg',
+            'Nicolas_Oliva_Perez_Defensa_806.jpg',
+            'Pedro_Fabian_Flores_Madrigal_Defensa_812.jpg',
+            'Ricardo_Emanuel_Oran_Garcia_Defensa_813.jpg',
+            'Iker_Garcia_Ramos_Defensa_815.jpg',
+            'Gael_Antonio_Villegas_Garcia_Defensa_818.jpg',
+            'Leonardo_Madrigal_Velazquez_Defensa_822.jpg',
+
+            // Mediocampistas
+            'David_Salvador_Tellez_Medio_807.jpg',
+            'Alan_David_Lopez_Coronel_Medio_808.jpg',
+            'Angel_Gabriel_Lopez_Ventura_Medio_810.jpg',
+            'Santiago_Villatoro_Garcia_Medio_811.jpg',
+            'Helios_Arias_Martinez_Medio_816.jpg',
+            'Ivan_Alonso_Moreno_Lopez_Medio_817.jpg',
+            'Victor_Javier_Bautista_Avendaño_Medio_819.jpg',
+            'Santiago_Emanuel_Gomez_Tamayo_Medio_820.jpg',
+            'Javier_Guadalupe_Mijangos_Cruz_Medio_823.jpg',
+
+            // Delanteros
+            'Andre_Gomez_Valverde_Delantero_809.jpg',
+            'Arturo_Harem_Enriquez_Cano_Delantero_814.jpg',
+            'Axel_Rene_Hernandez_Dominguez_Delantero_821.jpg'
+        ];
+
         // Parser: nombre + posición + número desde el filename.
         // Recibe la carpeta para construir la ruta correcta de la imagen.
         const parsePlayerFromFilename = (filename, folder) => {
@@ -259,8 +301,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const alebrijesTdp      = playerFilesAlebrijes.map(f      => parsePlayerFromFilename(f, FOLDER_ALEBRIJES));
         const solesTdp          = playerFilesSoles.map(f          => parsePlayerFromFilename(f, FOLDER_SOLES));
         const alebrijesSub16    = playerFilesAlebrijesSub16.map(f => parsePlayerFromFilename(f, FOLDER_ALEBRIJES_SUB16));
+        const solesSub16        = playerFilesSolesSub16.map(f     => parsePlayerFromFilename(f, FOLDER_SOLES_SUB16));
 
-        // 4 categorías. Soles Sub-16 se llena cuando se tengan los datos.
+        // 4 categorías del club.
         const teams = {
             'alebrijes-tdp': {
                 name: 'Alebrijes TDP',
@@ -284,7 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 name: 'Soles Sub-16',
                 fullName: 'Soles Teotihuacán · Sub-16',
                 accent: 'purple',
-                players: []
+                players: solesSub16
             }
         };
 

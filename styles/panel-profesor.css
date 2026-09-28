@@ -257,18 +257,9 @@ body.prof-body {
     line-height: 1.2;
 }
 
-.prof-email {
-    font-size: 0.75rem;
-    color: var(--prof-text-muted);
-    margin-bottom: 12px;
-    word-break: break-all;
-    line-height: 1.4;
-}
-
 .prof-badge {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
     padding: 4px 10px;
     background: var(--prof-primary-soft);
     border: 1px solid rgba(243, 106, 33, 0.18);
@@ -278,15 +269,6 @@ body.prof-body {
     color: var(--prof-primary);
     text-transform: uppercase;
     letter-spacing: 0.6px;
-}
-
-.prof-badge::before {
-    content: "";
-    width: 6px;
-    height: 6px;
-    background: var(--prof-primary);
-    border-radius: 50%;
-    box-shadow: 0 0 0 3px rgba(243, 106, 33, 0.25);
 }
 
 /* Sidebar nav */

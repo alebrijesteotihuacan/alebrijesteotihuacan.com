@@ -11,7 +11,6 @@ import { supabase, SUPABASE_URL, makeTransientClient } from './supabase-client.j
 const loadingState = document.getElementById('loadingState');
 const dashboardContent = document.getElementById('dashboardContent');
 const profName = document.getElementById('profName');
-const profEmail = document.getElementById('profEmail');
 const profBadge = document.getElementById('profBadge');
 const profCardPhoto = document.getElementById('profCardPhoto');
 const profCardInitials = document.getElementById('profCardInitials');
@@ -612,17 +611,6 @@ async function resolveInitialSession() {
     });
 })();
 
-// Prof. Arturo Tejada (DT Alebrijes TDP) — por peticion explicita,
-// se omite su correo y la insignia "Cuerpo Tecnico" en el panel izquierdo.
-// Coincidencia robusta: nombre contiene "arturo" + "tejada" en cualquier
-// combinacion (con o sin acento, mayusculas, "Tejeda", etc.).
-function isArturoTDP(prof) {
-    const raw = (prof?.nombre || '').toString();
-    const norm = raw.toLowerCase()
-        .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    return norm.includes('arturo') && norm.includes('tejada');
-}
-
 function normName(s) {
     return (s || '').toString().toLowerCase()
         .normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
@@ -658,15 +646,6 @@ function setProfInitials(prof) {
 // Initialize dashboard
 async function initDashboard() {
     profName.textContent = currentProfessor.nombre || 'Profesor';
-    if (profEmail) profEmail.textContent = currentProfessor.email || '';
-
-    if (isArturoTDP(currentProfessor)) {
-        if (profEmail) profEmail.style.display = 'none';
-        if (profBadge) profBadge.style.display = 'none';
-    } else {
-        if (profEmail) profEmail.style.display = '';
-        if (profBadge) profBadge.style.display = '';
-    }
 
     setProfPhoto(currentProfessor);
     setProfInitials(currentProfessor);

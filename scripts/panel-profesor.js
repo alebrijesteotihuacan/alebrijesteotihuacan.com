@@ -1537,12 +1537,10 @@ async function openEvalDrawer(playerId) {
     const jerseyEl = document.getElementById('drawerJersey');
     if (jerseyEl) jerseyEl.textContent = jerseyText;
     const subEl = document.getElementById('drawerSub');
-    if (subEl) subEl.textContent = `${player.posicion || 'Sin posición'} · ${player.categoria || 'Sin categoría'}`;
+    if (subEl) subEl.textContent = player.posicion || 'Sin posición';
 
     const posTag = document.getElementById('drawerPositionTag');
     if (posTag) posTag.textContent = player.posicion || 'Sin posición';
-    const catTag = document.getElementById('drawerCategoryTag');
-    if (catTag) catTag.textContent = player.categoria || 'Sin categoría';
 
     // Meta grid
     const setMeta = (id, value) => {

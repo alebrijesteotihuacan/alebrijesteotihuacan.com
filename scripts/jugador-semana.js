@@ -4,11 +4,11 @@
     "Mejores Jugadores de la Semana" — vista pública del home.
     ------------------------------------------------------------------------
     Lee de public.featured_players_v (vista anon-readable). Para cada
-    categoría (key) muestra al jugador con mayor promedio_general en la
-    última semana con evaluaciones. La categoría se infiere desde
-    categoria o, si está vacía, desde equipo.
+    categoría muestra al jugador con mayor promedio_general en la última
+    semana con evaluaciones.
 
-    Card minimal: FOTO vertical + SCORE grande + NOMBRE. Nada más.
+    Card horizontal compact: foto cuadrada + (eyebrow categoria) + nombre
+    + score a la derecha. Sin watermarks, sin specs grid, sin descripción.
 */
 
 import { supabase } from './supabase-client.js';
@@ -25,15 +25,25 @@ const CATEGORIES_ORDER = [
 ];
 
 const CATEGORY_COLORS = {
-    'Alebrijes TDP':      'linear-gradient(135deg, #F36A21 0%, #C7490E 100%)',
-    'Soles TDP':          'linear-gradient(135deg, #FF8C42 0%, #E85D26 100%)',
-    'Liga Premier':       'linear-gradient(135deg, #10b981 0%, #047857 100%)',
-    'Liga de Expansión':  'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-    'Sub-18':             'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
-    'Sub-16':             'linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%)',
-    'Sub-14':             'linear-gradient(135deg, #f59e0b 0%, #b45309 100%)',
+    'Alebrijes TDP':      'linear-gradient(90deg, #F36A21 0%, #C7490E 100%)',
+    'Soles TDP':          'linear-gradient(90deg, #FF8C42 0%, #E85D26 100%)',
+    'Liga Premier':       'linear-gradient(90deg, #10b981 0%, #047857 100%)',
+    'Liga de Expansión':  'linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%)',
+    'Sub-18':             'linear-gradient(90deg, #8b5cf6 0%, #6d28d9 100%)',
+    'Sub-16':             'linear-gradient(90deg, #0ea5e9 0%, #0369a1 100%)',
+    'Sub-14':             'linear-gradient(90deg, #f59e0b 0%, #b45309 100%)',
 };
-const FALLBACK_COLOR = 'linear-gradient(135deg, #F36A21 0%, #C7490E 100%)';
+const FALLBACK_COLOR = 'linear-gradient(90deg, #F36A21 0%, #C7490E 100%)';
+const CATEGORY_INK = {
+    'Alebrijes TDP':      '#F36A21',
+    'Soles TDP':          '#FF8C42',
+    'Liga Premier':       '#10b981',
+    'Liga de Expansión':  '#3b82f6',
+    'Sub-18':             '#8b5cf6',
+    'Sub-16':             '#0ea5e9',
+    'Sub-14':             '#f59e0b',
+};
+const FALLBACK_INK = '#F36A21';
 
 // ── Resolver la categoría display ────────────────────────────────────────
 function categoryFromPlayer(player) {
@@ -41,23 +51,17 @@ function categoryFromPlayer(player) {
     if (directCat && CATEGORIES_ORDER.includes(directCat)) {
         return { key: directCat, sub: '', label: directCat };
     }
-
     const eq = (player.equipo || '').trim();
-    if (!eq) {
-        return { key: directCat || 'Otros', sub: '', label: directCat || 'Otros' };
-    }
+    if (!eq) return { key: directCat || 'Otros', sub: '', label: directCat || 'Otros' };
     if (eq === 'Alebrijes TDP') return { key: 'Alebrijes TDP', sub: '', label: 'Alebrijes TDP' };
 
     const solesMatch = eq.match(/^Soles TDP(?:\s+(Sub-\d+))?$/i);
-    if (solesMatch) {
-        const sub = solesMatch[1] || '';
-        return { key: 'Soles TDP', sub, label: 'Soles TDP' };
-    }
+    if (solesMatch) return { key: 'Soles TDP', sub: solesMatch[1] || '', label: 'Soles TDP' };
+
     const subMatch = eq.match(/^(Sub-\d+)$/);
     if (subMatch) return { key: subMatch[1], sub: '', label: subMatch[1] };
 
-    const expansion = /Ligas?\s+de\s+Expansi(o|ó)n/i;
-    if (expansion.test(eq)) return { key: 'Liga de Expansión', sub: '', label: 'Liga de Expansión' };
+    if (/Ligas?\s+de\s+Expansi(o|ó)n/i.test(eq)) return { key: 'Liga de Expansión', sub: '', label: 'Liga de Expansión' };
     if (/Liga\s+Premier/i.test(eq)) return { key: 'Liga Premier', sub: '', label: 'Liga Premier' };
 
     return { key: eq || 'Otros', sub: '', label: eq || 'Otros' };
@@ -92,7 +96,6 @@ function scoreClass(score) {
     return 'fpc-tone-low';
 }
 
-// ── Image helpers (mismo set que panel-profesor) ──────────────────────────
 const PLAYER_IMAGES = [
     'Rafael_Arturo_Tejeda_Arellano_DirectorTecnico.jpg',
     'Roberto_Alcantar_Piña_Portero_1.jpg',
@@ -166,7 +169,7 @@ const PLAYER_IMAGES_FUERZAS = [
     'Kevin_Isael_Visoso_Lázaro.jpeg', 'Leonardo_Briones_Duran.jpeg', 'Leonardo_Madrigal_Velázquez.jpeg',
     'Luis_Daniel_Martinez_Avedaño.jpeg', 'Luis_David_Olvera_Huerta.jpeg', 'Luis_Yael_Rodriguez_Muñoz.jpeg',
     'Matteo_Cardona_Miranda.jpeg', 'Matteo_González_Rodríguez.jpeg', 'Mauricio_Fuentes_Ramos.jpeg',
-    'Mauricio_Mendoza_Montoya.jpeg', 'Miguel_Gutierrez_Cervantes.jpeg', 'Nicolas_Oliva_Pérez.jpeg',
+    'Mauricio_Mendoza_Montoya.jpeg', 'Miguel_Gutierrez_Cervantes.jpeg', 'Nicolas_Olva_Pérez.jpeg',
     'Ricardo_Rodriguez_Montiel.jpeg', 'Uriel_Urieta_Robles.jpeg', 'Victor_Javier_Bautista_Avendaño.jpeg',
     'William_Alfredo_Turrubiates_Camacho.jpeg', 'Ángel_David_Sanchez_Jimenez.jpeg'
 ];
@@ -186,7 +189,6 @@ function findPlayerImage(nombre, apellido) {
         }
         return null;
     }
-
     return (
         search(PLAYER_IMAGES, 'PlantillaAlebrijesTeotihuacanLigaTDP') ||
         search(PLAYER_IMAGES_SOLES, 'JugadoresSoles') ||
@@ -194,7 +196,6 @@ function findPlayerImage(nombre, apellido) {
     );
 }
 
-// ── Week helper ─────────────────────────────────────────────────────────
 function getWeekSunday(isoWeek) {
     if (!isoWeek) return null;
     const [year, w] = isoWeek.split('-W').map(Number);
@@ -208,18 +209,24 @@ function formatDate(date) {
     return date.toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
-// ── Card markup: solo foto + nombre + score ─────────────────────────────
-function renderCard({ winner }) {
+// ── Card markup: horizontal compact, 3 elementos (foto, meta, score) ────
+function renderCard({ cat, winner }) {
+    const accent = CATEGORY_COLORS[cat.key] || FALLBACK_COLOR;
+    const ink = CATEGORY_INK[cat.key] || FALLBACK_INK;
+
     if (!winner) {
         return `
-            <article class="featured-player-card fpc-empty">
+            <article class="featured-player-card fpc-empty" style="--slot-accent:${accent}; --slot-ink:${ink};">
                 <div class="fpc-photo">
                     <div class="fpc-initials">--</div>
                 </div>
-                <div class="fpc-corner">
-                    <span class="fpc-score fpc-tone-na">--<i>/10</i></span>
+                <div class="fpc-meta">
+                    <span class="fpc-cat">${escapeHtml(cat.label)}${cat.sub ? ` · <span class="fpc-cat-sub">${escapeHtml(cat.sub)}</span>` : ''}</span>
+                    <span class="fpc-name">Sin evaluacion esta semana</span>
                 </div>
-                <div class="fpc-name">Sin evaluacion esta semana</div>
+                <div class="fpc-score fpc-tone-na">
+                    <span class="fpc-num">--</span><i>/10</i>
+                </div>
             </article>
         `;
     }
@@ -240,15 +247,18 @@ function renderCard({ winner }) {
     const initialsHTML = `<div class="fpc-initials" ${imgSrc ? 'style="display:none;"' : ''}>${escapeHtml(initials)}</div>`;
 
     return `
-        <article class="featured-player-card">
+        <article class="featured-player-card" style="--slot-accent:${accent}; --slot-ink:${ink};">
             <div class="fpc-photo">
                 ${photoHTML}
                 ${initialsHTML}
             </div>
-            <div class="fpc-corner">
-                <span class="fpc-score ${tone}">${escapeHtml(scoreStr)}<i>/10</i></span>
+            <div class="fpc-meta">
+                <span class="fpc-cat">${escapeHtml(cat.label)}${cat.sub ? ` · <span class="fpc-cat-sub">${escapeHtml(cat.sub)}</span>` : ''}</span>
+                <span class="fpc-name">${escapeHtml(fullName)}</span>
             </div>
-            <div class="fpc-name">${escapeHtml(fullName)}</div>
+            <div class="fpc-score ${tone}">
+                <span class="fpc-num">${escapeHtml(scoreStr)}</span><i>/10</i>
+            </div>
         </article>
     `;
 }
@@ -257,7 +267,6 @@ function renderCard({ winner }) {
 async function loadJugadoresSemana() {
     const container = document.getElementById('featuredPlayersGrid');
     const weekLabel = document.getElementById('featuredWeekLabel');
-    const sectionDesc = document.getElementById('featuredSectionDesc');
     if (!container) return;
 
     container.innerHTML = `
@@ -267,7 +276,6 @@ async function loadJugadoresSemana() {
         </div>`;
 
     try {
-        // Una sola query anon-readable
         const { data: rows, error } = await supabase
             .from('featured_players_v')
             .select('jugador_id, nombre, apellido, posicion, dorsal, equipo, categoria, evaluacion_id, semana, promedio_general, rendimiento_cancha, minutos_jugados, fecha_eval');
@@ -283,7 +291,6 @@ async function loadJugadoresSemana() {
             return;
         }
 
-        // 1. Encontrar la semana más reciente con evaluaciones
         const weeks = [...new Set(rows.map(r => r.semana).filter(s => s && s.includes('-W')))].sort();
         const latestWeek = weeks[weeks.length - 1];
         if (!latestWeek) {
@@ -293,9 +300,7 @@ async function loadJugadoresSemana() {
         }
         const sunday = getWeekSunday(latestWeek);
         if (weekLabel) weekLabel.textContent = `Semana del ${formatDate(sunday)}`;
-        if (sectionDesc) sectionDesc.style.display = '';
 
-        // 2. Mejor jugador por categoría en esa semana
         function beats(a, b) {
             if (!a) return true;
             if (!b) return false;
@@ -315,10 +320,7 @@ async function loadJugadoresSemana() {
             if (row.semana !== latestWeek) continue;
             const pg = Number(row.promedio_general);
             if (!Number.isFinite(pg)) continue;
-            const cat = categoryFromPlayer({
-                categoria: row.categoria,
-                equipo: row.equipo,
-            });
+            const cat = categoryFromPlayer({ categoria: row.categoria, equipo: row.equipo });
             const candidate = {
                 jugador_id: row.jugador_id,
                 promedio_general: row.promedio_general,
@@ -327,28 +329,24 @@ async function loadJugadoresSemana() {
                 player: row,
             };
             const cur = winnersByKey[cat.key];
-            if (!cur || beats(cur, candidate)) {
-                winnersByKey[cat.key] = candidate;
-            }
+            if (!cur || beats(cur, candidate)) winnersByKey[cat.key] = candidate;
         }
 
-        // 3. Orden de aparición (canónico + alfabético para dinámicas)
         const winnerKeys = Object.keys(winnersByKey);
         const orderedKeys = [];
-        for (const k of CATEGORIES_ORDER) {
-            if (winnerKeys.includes(k)) orderedKeys.push(k);
-        }
-        for (const k of winnerKeys.sort()) {
-            if (!CATEGORIES_ORDER.includes(k)) orderedKeys.push(k);
-        }
+        for (const k of CATEGORIES_ORDER) if (winnerKeys.includes(k)) orderedKeys.push(k);
+        for (const k of winnerKeys.sort()) if (!CATEGORIES_ORDER.includes(k)) orderedKeys.push(k);
 
-        // 4. Render mínimo
         const cards = orderedKeys.map(key => {
             const w = winnersByKey[key];
-            const color = CATEGORY_COLORS[key] || FALLBACK_COLOR;
-            const card = renderCard({ winner: w ? { player: w.player, score: w.promedio_general } : null });
-            // inyectar color de categoría como CSS var en el wrapper
-            return `<div class="fpc-slot" style="--slot-color:${color}">${card}</div>`;
+            const cat = categoryFromPlayer({
+                categoria: w?.player?.categoria,
+                equipo: w?.player?.equipo,
+            });
+            return renderCard({
+                cat,
+                winner: w ? { player: w.player, score: w.promedio_general } : null,
+            });
         });
 
         container.innerHTML = cards.join('');

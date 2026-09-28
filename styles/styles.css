@@ -3102,55 +3102,68 @@ footer {
     color: #FF8C42;
 }
 
-.featured-section-desc {
-    color: rgba(255,255,255,0.55);
-    font-size: 0.95rem;
-    line-height: 1.6;
-    max-width: 600px;
-    margin: 14px auto 0;
-    font-weight: 400;
-}
-
-/* Grid of featured player cards */
+/* Grid of featured player cards — horizontal tiles, 2 columnas desktop */
 .featured-players-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 28px;
-    margin-top: 40px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 16px;
+    margin-top: 36px;
+    max-width: 980px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .fpc-slot { display: contents; }
 
-/* Featured player card — versión mínima: foto vertical + nombre +
-   score overlay. Sin extras. Mantiene el dark-bg del sitio y permite
-   derivar el color de acento por categoría vía variable CSS. */
+/* Featured player card — horizontal compact tile.
+   Elementos: foto cuadrada 80x80 + meta (eyebrow categoria + nombre)
+   + bloque de score a la derecha. Banda superior del color del slot. */
 .featured-player-card {
     position: relative;
     width: 100%;
-    border-radius: 22px;
-    overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.07);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: clamp(14px, 2vw, 22px);
+    padding: 16px 20px;
     background: #141414;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
-    transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.06);
+    overflow: hidden;
     isolation: isolate;
+    box-shadow: 0 6px 22px rgba(0,0,0,0.35);
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Banda superior 3px con el color del slot — signature element */
+.featured-player-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--slot-accent, linear-gradient(90deg,#F36A21,#C7490E));
+    z-index: 1;
 }
 
 .featured-player-card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(243,106,33,0.4);
-    box-shadow: 0 20px 48px rgba(0,0,0,0.55), 0 0 0 1px rgba(243,106,33,0.18);
+    transform: translateY(-2px);
+    border-color: rgba(243,106,33,0.30);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.50);
 }
 
-/* Foto vertical 4:5 - elemento dominante */
+/* Foto cuadrada — fija en px para densidad consistente */
 .fpc-photo {
     position: relative;
-    width: 100%;
-    padding-top: 125%;
-    background:
-        radial-gradient(circle at 50% 30%, rgba(243,106,33,0.10) 0%, transparent 70%),
-        #1d1d1d;
+    width: clamp(64px, 7vw, 80px);
+    height: clamp(64px, 7vw, 80px);
+    border-radius: 12px;
     overflow: hidden;
+    flex-shrink: 0;
+    background:
+        radial-gradient(circle at 50% 30%, rgba(243,106,33,0.15) 0%, transparent 70%),
+        #1d1d1d;
 }
 
 .fpc-photo img {
@@ -3169,49 +3182,78 @@ footer {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 4.5rem;
+    font-size: 1.6rem;
     font-weight: 900;
-    color: rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.20);
     background:
-        radial-gradient(circle at 50% 30%, rgba(243,106,33,0.16) 0%, transparent 70%),
+        radial-gradient(circle at 50% 30%, rgba(243,106,33,0.18) 0%, transparent 70%),
         #1e1e1e;
     letter-spacing: -0.04em;
     line-height: 1;
 }
 
-/* Score grande en esquina inferior-izquierda, sobre la foto */
-.fpc-corner {
-    position: absolute;
-    bottom: 14px;
-    left: 14px;
-    z-index: 2;
+/* Meta - columna flex con eyebrow categoria + nombre */
+.fpc-meta {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 }
 
-.fpc-score {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 2px;
-    padding: 10px 16px;
-    border-radius: 14px;
-    background: rgba(15,15,15,0.78);
-    backdrop-filter: blur(12px);
-    font-size: 2.2rem;
-    font-weight: 900;
+.fpc-cat {
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--slot-ink, #F36A21);
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fpc-cat-sub {
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 1px;
+    font-weight: 700;
+}
+
+.fpc-name {
+    font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+    font-weight: 700;
     color: #fff;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Score a la derecha - el dato principal */
+.fpc-score {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    flex-shrink: 0;
+    min-width: 64px;
+    line-height: 1;
+}
+
+.fpc-score .fpc-num {
+    font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+    font-weight: 900;
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.04em;
-    line-height: 1;
-    border: 2px solid rgba(255,255,255,0.18);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.55);
 }
 
 .fpc-score i {
     font-style: normal;
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     font-weight: 700;
-    color: rgba(255,255,255,0.55);
-    margin-left: 4px;
-    letter-spacing: 0.04em;
+    color: rgba(255,255,255,0.45);
+    margin-top: 4px;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
 }
 
@@ -3219,25 +3261,13 @@ footer {
 .fpc-tone-high { color: #10b981; }
 .fpc-tone-mid  { color: #f59e0b; }
 .fpc-tone-low  { color: #ef4444; }
-.fpc-tone-na   { color: rgba(255,255,255,0.4); }
-
-/* Nombre debajo de la foto */
-.fpc-name {
-    padding: 16px 16px 18px;
-    font-size: 1rem;
-    font-weight: 700;
-    color: #fff;
-    text-align: center;
-    line-height: 1.3;
-    letter-spacing: -0.01em;
-    background: linear-gradient(180deg, #1a1a1a 0%, #141414 100%);
-}
+.fpc-tone-na   { color: rgba(255,255,255,0.35); }
 
 /* Empty state */
 .featured-player-card.fpc-empty .fpc-photo {
     background: radial-gradient(circle at 50% 30%, rgba(255,255,255,0.03) 0%, transparent 70%), #1c1c1c;
 }
-.featured-player-card.fpc-empty .fpc-score { opacity: 0.45; }
+.featured-player-card.fpc-empty .fpc-score { opacity: 0.55; }
 .featured-player-card.fpc-empty .fpc-name { color: rgba(255,255,255,0.45); font-weight: 600; font-style: italic; }
 
 /* Loading spinner */
@@ -3271,35 +3301,25 @@ footer {
 }
 
 /* Responsive */
-@media (max-width: 1100px) {
-    .featured-players-grid {
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 22px;
-    }
-}
-
 @media (max-width: 900px) {
     .featured-players-grid {
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 18px;
+        grid-template-columns: 1fr;
+        max-width: 560px;
+        gap: 12px;
     }
 }
 
 @media (max-width: 640px) {
-    .featured-players-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 14px;
+    .featured-player-card {
+        padding: 12px 14px;
+        gap: 12px;
     }
-    .fpc-score { font-size: 1.8rem; padding: 8px 12px; }
-    .fpc-name { font-size: 0.92rem; padding: 14px 12px 16px; }
+    .fpc-photo { width: 60px; height: 60px; }
 }
 
 @media (max-width: 420px) {
-    .featured-players-grid {
-        grid-template-columns: 1fr;
-        gap: 14px;
-    }
-    .fpc-score { font-size: 1.6rem; }
+    .featured-player-card { padding: 10px 12px; }
+    .fpc-score .fpc-num { font-size: 1.4rem; }
 }
 
 /* ============================================================

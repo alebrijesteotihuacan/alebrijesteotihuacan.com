@@ -1493,7 +1493,7 @@ if (drawerHistoryList) {
 }
 
 // Load stats (4 KPIs) — one roundtrip for all evaluations, computed in JS
-async function loadStats() {
+async function loadStats(semanaOverride) {
     try {
         // 1. Jugadores Registrados (driven by already-loaded allPlayers)
         const playerCount = allPlayers.length;
@@ -1508,7 +1508,7 @@ async function loadStats() {
         // 2-4. Single query for all relevant evaluations
         let query = supabase
             .from('evaluaciones')
-            .select('promedio_general, jugador_id, semana');
+            .select('promedio_general, jugador_id, semana, fecha');
 
         if (currentProfessor.rol !== 'admin') {
             query = query.eq('evaluador_id', currentProfessor.id);
@@ -1517,14 +1517,23 @@ async function loadStats() {
         const { data: rows, error } = await query;
         if (error) throw error;
 
-        const currentWeek = getCurrentIsoWeek();
-        const weekRows = (rows || []).filter(r => r.semana === currentWeek);
+        const targetWeek = semanaOverride || activeWeekFilter || getCurrentIsoWeek();
+        const isCurrentWeek = targetWeek === getCurrentIsoWeek();
+        const weekRows = (rows || []).filter(r => r.semana === targetWeek);
         const weekPromedios = weekRows
             .map(r => r.promedio_general)
             .filter(v => v !== null && v !== undefined && !Number.isNaN(parseFloat(v)))
             .map(v => parseFloat(v));
 
-        // 2. Promedio Semanal (current ISO week)
+        const weekLabelText = formatWeekLabel(targetWeek).toLowerCase();
+        const emptyWeekLabel = isCurrentWeek
+            ? 'Sin evaluaciones esta semana'
+            : `Sin evaluaciones en la semana seleccionada (${weekLabelText})`;
+        const emptyByLabel = isCurrentWeek
+            ? 'Sin datos esta semana'
+            : `Sin datos en ${weekLabelText}`;
+
+        // 2. Promedio Semanal (target week)
         if (promedioSemanal) {
             if (weekPromedios.length > 0) {
                 const sum = weekPromedios.reduce((a, b) => a + b, 0);
@@ -1536,10 +1545,10 @@ async function loadStats() {
         }
         if (promedioSemanalMeta) {
             if (weekPromedios.length === 0) {
-                promedioSemanalMeta.textContent = 'Sin evaluaciones esta semana';
+                promedioSemanalMeta.textContent = emptyWeekLabel;
             } else {
                 const label = weekPromedios.length === 1 ? '1 evaluación' : `${weekPromedios.length} evaluaciones`;
-                promedioSemanalMeta.innerHTML = `<strong>${label}</strong> · semana ${formatWeekLabel(currentWeek).toLowerCase()}`;
+                promedioSemanalMeta.innerHTML = `<strong>${label}</strong> · semana ${weekLabelText}`;
             }
         }
 
@@ -1563,7 +1572,7 @@ async function loadStats() {
                 }
             } else {
                 calificacionMax.textContent = '—';
-                if (calificacionMaxBy) calificacionMaxBy.textContent = 'Sin datos esta semana';
+                if (calificacionMaxBy) calificacionMaxBy.textContent = emptyByLabel;
             }
         }
 
@@ -1583,7 +1592,7 @@ async function loadStats() {
                 }
             } else {
                 calificacionMin.textContent = '—';
-                if (calificacionMinBy) calificacionMinBy.textContent = 'Sin datos esta semana';
+                if (calificacionMinBy) calificacionMinBy.textContent = emptyByLabel;
             }
         }
     } catch (error) {
@@ -1836,6 +1845,7 @@ if (weekFilterInput) {
             allPlayers.forEach(p => { delete p.weekEval; });
         }
         renderPlayers(allPlayers);
+        await loadStats();
     });
 }
 
@@ -1846,6 +1856,7 @@ if (weekFilterClear) {
         updateWeekFilterUI();
         allPlayers.forEach(p => { delete p.weekEval; });
         renderPlayers(allPlayers);
+        await loadStats();
     });
 }
 

@@ -770,7 +770,9 @@ async function loadPlayers(category = '') {
         }
 
         renderPlayers(allPlayers);
-        if (jugadoresCombinado) jugadoresCombinado.textContent = `0 / ${allPlayers.length}`;
+        // El KPI combinado lo controla loadStats() — no tocar aqui
+        // para evitar un placeholder "0 / N" visible si loadStats
+        // tarda o falla.
         if (playersCountBadge) playersCountBadge.textContent = allPlayers.length;
     } catch (error) {
         console.error('Error loading players:', error);
@@ -1636,9 +1638,27 @@ async function loadStats(semanaOverride) {
             .filter(s => s && /^\d{4}-W\d{2}$/.test(s))
             .sort()
             .pop() || '';
-        const targetWeek = semanaOverride || activeWeekFilter || latestEvaluatedWeek || getCurrentIsoWeek();
+        // Si no hay filtro ni override, forzar la ultima semana con datos.
+        // Antes caia a getCurrentIsoWeek() y eso dejaba weekRows vacio al
+        // iniciar una semana nueva sin evaluar todavia.
+        const targetWeek = semanaOverride
+            || activeWeekFilter
+            || latestEvaluatedWeek
+            || getCurrentIsoWeek();
+        let weekRows = (rows || []).filter(r => r.semana === targetWeek);
+
+        // Fallback: si la semana resuelta no tiene rows y NO hay filtro
+        // explicito (caso auto-default), usar la ultima con datos de los
+        // rows ya cargados. Esto protege contra:
+        //   - Inicio de una semana nueva sin evaluar (W40 hoy)
+        //   - Prof sin permisos para ver rows (RLS devuelve [])
+        //   - Race entre loadPlayers() y loadStats()
+        // Si el usuario filtra explicitamente una semana sin datos,
+        // se respeta el 0 honesto.
+        if (weekRows.length === 0 && (rows || []).length > 0 && !activeWeekFilter && !semanaOverride) {
+            weekRows = rows.filter(r => r.semana === latestEvaluatedWeek);
+        }
         const isCurrentWeek = targetWeek === getCurrentIsoWeek();
-        const weekRows = (rows || []).filter(r => r.semana === targetWeek);
         const weekPromedios = weekRows
             .map(r => r.promedio_general)
             .filter(v => v !== null && v !== undefined && !Number.isNaN(parseFloat(v)))

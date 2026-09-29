@@ -16,6 +16,7 @@ const profCardPhoto = document.getElementById('profCardPhoto');
 const profCardInitials = document.getElementById('profCardInitials');
 const logoutBtn = document.getElementById('logoutBtn');
 const jugadoresCombinado = document.getElementById('jugadoresCombinado');
+const jugadoresCombinadoMeta = document.getElementById('jugadoresCombinadoMeta');
 const promedioSemanal = document.getElementById('promedioSemanal');
 const promedioSemanalMeta = document.getElementById('promedioSemanalMeta');
 const calificacionMax = document.getElementById('calificacionMax');
@@ -1613,8 +1614,13 @@ if (drawerHistoryList) {
 // Load stats (4 KPIs) — one roundtrip for all evaluations, computed in JS
 async function loadStats(semanaOverride) {
     try {
-        // 1. Jugadores (combinado: calificados / registrados) — valor se actualiza
-        //    mas abajo, despues de cargar las evaluaciones de la semana.
+        // 1. Jugadores (combinado: calificados / total histórico)
+        //    - Numerador (calificados): unique jugador_id con promedio_general
+        //      en weekRows (la semana target).
+        //    - Denominador (total histórico): unique jugador_id en TODAS las
+        //      evaluaciones que el prof ha capturado alguna vez.
+        //      Si rows esta vacio (nunca ha evaluado a nadie), cae a
+        //      allPlayers.length (plantilla actual visible).
         const playerCount = allPlayers.length;
         if (playersCountBadge) playersCountBadge.textContent = playerCount;
 
@@ -1696,14 +1702,23 @@ async function loadStats(semanaOverride) {
         allPlayers.forEach(p => { playerMap[p.id] = p; });
 
         // 2b. Jugadores Calificados en la semana (únicos por jugador_id)
+        //     + Total Histórico (únicos en TODAS las filas del query).
         const uniqueQualifiedPlayers = new Set(
             weekRows
                 .filter(r => Number.isFinite(parseFloat(r.promedio_general)))
                 .map(r => r.jugador_id)
         );
         const qualifiedCount = uniqueQualifiedPlayers.size;
+        const historicalPlayerIds = new Set(
+            (rows || []).map(r => r.jugador_id).filter(Boolean)
+        );
+        const historicalTotal = historicalPlayerIds.size || playerCount;
         if (jugadoresCombinado) {
-            jugadoresCombinado.textContent = `${qualifiedCount} / ${playerCount}`;
+            jugadoresCombinado.textContent = `${qualifiedCount} / ${historicalTotal}`;
+        }
+        if (jugadoresCombinadoMeta) {
+            const label = isAutoDefault && !isCurrentWeek ? 'calificados (última con datos) · total histórico' : 'calificados · total histórico';
+            jugadoresCombinadoMeta.textContent = label;
         }
 
         // 3. Calificación Más Alta
@@ -1749,6 +1764,7 @@ async function loadStats(semanaOverride) {
         console.error('Error loading stats:', error);
         if (promedioSemanal) promedioSemanal.textContent = '—';
         if (jugadoresCombinado) jugadoresCombinado.textContent = '—';
+        if (jugadoresCombinadoMeta) jugadoresCombinadoMeta.textContent = '—';
         if (calificacionMax) calificacionMax.textContent = '—';
         if (calificacionMin) calificacionMin.textContent = '—';
     }

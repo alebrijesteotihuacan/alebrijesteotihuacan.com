@@ -1047,11 +1047,8 @@ function renderPlayers(players) {
         }
         if (activeWeekFilter) {
             ultimaLabel = 'Filtro';
-            const rangeOnly = formatWeekRangeOnly(activeWeekFilter);
             const parts = activeWeekFilter.split('-W');
-            ultimaValue = parts.length === 2
-                ? (rangeOnly ? `S${parts[1]} · ${rangeOnly}` : `S${parts[1]}`)
-                : '—';
+            ultimaValue = parts.length === 2 ? `S${parts[1]}` : '—';
         }
 
         const promedioHTML = promedioValue !== null && !Number.isNaN(promedioValue)

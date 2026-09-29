@@ -15,12 +15,9 @@ const profBadge = document.getElementById('profBadge');
 const profCardPhoto = document.getElementById('profCardPhoto');
 const profCardInitials = document.getElementById('profCardInitials');
 const logoutBtn = document.getElementById('logoutBtn');
-const totalJugadores = document.getElementById('totalJugadores');
-const totalJugadoresMeta = document.getElementById('totalJugadoresMeta');
+const jugadoresCombinado = document.getElementById('jugadoresCombinado');
 const promedioSemanal = document.getElementById('promedioSemanal');
 const promedioSemanalMeta = document.getElementById('promedioSemanalMeta');
-const jugadoresCalificados = document.getElementById('jugadoresCalificados');
-const jugadoresCalificadosMeta = document.getElementById('jugadoresCalificadosMeta');
 const calificacionMax = document.getElementById('calificacionMax');
 const calificacionMaxBy = document.getElementById('calificacionMaxBy');
 const calificacionMin = document.getElementById('calificacionMin');
@@ -773,7 +770,7 @@ async function loadPlayers(category = '') {
         }
 
         renderPlayers(allPlayers);
-        totalJugadores.textContent = allPlayers.length;
+        if (jugadoresCombinado) jugadoresCombinado.textContent = `0 / ${allPlayers.length}`;
         if (playersCountBadge) playersCountBadge.textContent = allPlayers.length;
     } catch (error) {
         console.error('Error loading players:', error);
@@ -1617,14 +1614,9 @@ if (drawerHistoryList) {
 // Load stats (4 KPIs) — one roundtrip for all evaluations, computed in JS
 async function loadStats(semanaOverride) {
     try {
-        // 1. Jugadores Registrados (driven by already-loaded allPlayers)
+        // 1. Jugadores (combinado: calificados / registrados) — valor se actualiza
+        //    mas abajo, despues de cargar las evaluaciones de la semana.
         const playerCount = allPlayers.length;
-        if (totalJugadores) totalJugadores.textContent = playerCount;
-        if (totalJugadoresMeta) {
-            totalJugadoresMeta.textContent = playerCount === 0
-                ? 'Sin jugadores en plantilla'
-                : (playerCount === 1 ? '1 jugador en plantilla' : `${playerCount} jugadores en plantilla`);
-        }
         if (playersCountBadge) playersCountBadge.textContent = playerCount;
 
         // 2-4. Single query for all relevant evaluations
@@ -1693,19 +1685,8 @@ async function loadStats(semanaOverride) {
                 .map(r => r.jugador_id)
         );
         const qualifiedCount = uniqueQualifiedPlayers.size;
-        if (jugadoresCalificados) {
-            jugadoresCalificados.textContent = qualifiedCount > 0 ? String(qualifiedCount) : '0';
-        }
-        if (jugadoresCalificadosMeta) {
-            if (playerCount === 0) {
-                jugadoresCalificadosMeta.textContent = 'Sin plantilla';
-            } else if (qualifiedCount === 0) {
-                jugadoresCalificadosMeta.textContent = isCurrentWeek
-                    ? 'Ninguno esta semana'
-                    : 'Ninguno en la semana seleccionada';
-            } else {
-                jugadoresCalificadosMeta.textContent = `de ${playerCount} registrados`;
-            }
+        if (jugadoresCombinado) {
+            jugadoresCombinado.textContent = `${qualifiedCount} / ${playerCount}`;
         }
 
         // 3. Calificación Más Alta
@@ -1750,7 +1731,7 @@ async function loadStats(semanaOverride) {
     } catch (error) {
         console.error('Error loading stats:', error);
         if (promedioSemanal) promedioSemanal.textContent = '—';
-        if (jugadoresCalificados) jugadoresCalificados.textContent = '0';
+        if (jugadoresCombinado) jugadoresCombinado.textContent = '—';
         if (calificacionMax) calificacionMax.textContent = '—';
         if (calificacionMin) calificacionMin.textContent = '—';
     }

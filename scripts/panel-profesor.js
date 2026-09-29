@@ -863,6 +863,42 @@ const PLAYER_IMAGES = [
         'Carlos_Ruben_Gamez_Lazcano_Portero_829.jpg'
     ];
 
+const PLAYER_IMAGES_SOLES_LIGATDP = [
+    // Director Técnico (Ignacio_Morales_Campos_DirectorTecnico.jpg) — lo usa PROF_PHOTO_LOOKUP
+    'Mauricio_Fuentes_Ramos_Portero_1.jpg',
+    'Jaffet_Sandoval_Martinez_Defensa_2.jpg',
+    'Ian_Alexander_Garcia_Martinez_Defensa_3.jpg',
+    'Farid_Omar_Avendaño_Vazquez_Defensa_4.jpg',
+    'Faviel_Isidro_Morales_Perez_Medio_5.jpg',
+    'Kevin_Alexander_Castro_Aguilar_Medio_6.jpg',
+    'Jose_Luis_Ruiz_Maldonado_Medio_7.jpg',
+    'Oliver_De_Jesus_Morales_Moreno_Medio_8.jpg',
+    'Jesus_Rodrigo_Vela_Ramos_Delantero_9.jpg',
+    'Cristian_Fabian_Ramirez_Martinez_Medio_10.jpg',
+    'Mauricio_Luna_Sanchez_Medio_11.jpg',
+    'Steve_Julian_Serrano_Luevanos_Portero_12.jpg',
+    'Julio_Axel_Delgado_Estrada_Portero_13.jpg',
+    'Ellioth_Omar_Cuevas_Alcala_Medio_14.jpg',
+    'Leandro_Gael_Contreras_Aviles_Delantero_15.jpg',
+    'Jonathan_Darío_Galindo_Guerrero_Medio_16.jpg',
+    'Cristobal_Rosas_Franco_Medio_17.jpg',
+    'Erick_Isaac_Lopez_Borjas_Medio_18.jpg',
+    'Jose_Godofredo_Pedro_Fiscal_Delantero_19.jpg',
+    'Lisandro_Alain_Contreras_Dorantes_Defensa_20.jpg',
+    'Julio_César_Gutiérrez_Díaz_Defensa_21.jpg',
+    'Carlos_Adrian_Suarez_Hernandez_Delantero_22.jpg',
+    'Pablo_Aldahir_Gomez_Archundia_Medio_23.jpg',
+    'Angel_David_Sanchez_Jimenez_Defensa_24.jpg',
+    'Cesar_Alexander_Hernandez_Zacarias_Portero_25.jpg',
+    'Luis_Antonio_Sanchez_Flores_Delantero_26.jpg',
+    'Johan_Ivan_Robles_Cid_Defensa_27.jpg',
+    'Samuel_Alexander_Hernandez_Romero_Portero_28.jpg',
+    'Jesus_Esteban_Ricardez_Zarate_Defensa_29.jpg',
+    'Fabricio_Santiago_Del_Angel_Defensa_30.jpg',
+    'Ricardo_Rodriguez_Montiel_Defensa_31.jpg',
+    'Gerardo_Antonio_Roman_Tellez_Delantero_32.jpg'
+];
+
 function findPlayerImageInfo(nombre, apellido) {
     const fullName = normalizeStr(`${nombre || ''} ${apellido || ''}`);
     const firstName = normalizeStr(nombre || '');
@@ -878,6 +914,19 @@ function findPlayerImageInfo(nombre, apellido) {
         if (fullName && imgName.includes(firstName) && firstName.length > 2) {
             const apellidoNorm = normalizeStr(apellido || '');
             if (apellidoNorm && imgName.includes(apellidoNorm.split(' ')[0])) return { file: img, folder: 'PlantillaAlebrijesTeotihuacanLigaTDP' };
+        }
+    }
+
+    for (const img of PLAYER_IMAGES_SOLES_LIGATDP) {
+        const parts = img.split('.')[0].split('_');
+        const lastPart = parts[parts.length - 1];
+        if (/^\d+$/.test(lastPart)) parts.pop();
+        parts.pop();
+        const imgName = normalizeStr(parts.join(' '));
+        if (imgName === fullName) return { file: img, folder: 'PlantillaSolesTeotihuacanLigaTDP' };
+        if (fullName && imgName.includes(firstName) && firstName.length > 2) {
+            const apellidoNorm = normalizeStr(apellido || '');
+            if (apellidoNorm && imgName.includes(apellidoNorm.split(' ')[0])) return { file: img, folder: 'PlantillaSolesTeotihuacanLigaTDP' };
         }
     }
 

@@ -1597,7 +1597,15 @@ async function loadStats(semanaOverride) {
         const { data: rows, error } = await query;
         if (error) throw error;
 
-        const targetWeek = semanaOverride || activeWeekFilter || getCurrentIsoWeek();
+        // Sin filtro explicito: usar la ULTIMA semana con evaluaciones.
+        // Antes usaba getCurrentIsoWeek() (semana de hoy), lo que dejaba
+        // las KPIs vacias al inicio de una semana nueva sin evaluaciones.
+        const latestEvaluatedWeek = (rows || [])
+            .map(r => r.semana)
+            .filter(s => s && /^\d{4}-W\d{2}$/.test(s))
+            .sort()
+            .pop() || '';
+        const targetWeek = semanaOverride || activeWeekFilter || latestEvaluatedWeek || getCurrentIsoWeek();
         const isCurrentWeek = targetWeek === getCurrentIsoWeek();
         const weekRows = (rows || []).filter(r => r.semana === targetWeek);
         const weekPromedios = weekRows
@@ -1607,9 +1615,12 @@ async function loadStats(semanaOverride) {
 
         const weekLabelText = formatWeekLabel(targetWeek).toLowerCase();
         const weekRangeOnly = formatWeekRangeOnly(targetWeek);
+        const isAutoDefault = !semanaOverride && !activeWeekFilter;
         const emptyWeekLabel = isCurrentWeek
             ? 'Sin evaluaciones esta semana'
-            : `Sin evaluaciones en la semana seleccionada (${weekLabelText}${weekRangeOnly ? ' · ' + weekRangeOnly : ''})`;
+            : (isAutoDefault
+                ? `Sin evaluaciones en la ultima semana con datos (${weekLabelText}${weekRangeOnly ? ' · ' + weekRangeOnly : ''})`
+                : `Sin evaluaciones en la semana seleccionada (${weekLabelText}${weekRangeOnly ? ' · ' + weekRangeOnly : ''})`);
         const emptyByLabel = isCurrentWeek
             ? 'Sin datos esta semana'
             : `Sin datos en ${weekLabelText}`;
@@ -1630,7 +1641,8 @@ async function loadStats(semanaOverride) {
             } else {
                 const label = weekPromedios.length === 1 ? '1 evaluación' : `${weekPromedios.length} evaluaciones`;
                 const rangeSuffix = weekRangeOnly ? ` · ${weekRangeOnly}` : '';
-                promedioSemanalMeta.innerHTML = `<strong>${label}</strong> · semana ${weekLabelText}${rangeSuffix}`;
+                const prefix = isAutoDefault && !isCurrentWeek ? 'Última semana con datos · ' : '';
+                promedioSemanalMeta.innerHTML = `<strong>${label}</strong> · ${prefix}semana ${weekLabelText}${rangeSuffix}`;
             }
         }
 

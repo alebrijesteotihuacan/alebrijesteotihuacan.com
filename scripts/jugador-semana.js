@@ -341,11 +341,7 @@ async function loadJugadoresSemana() {
         }
         const sunday = getWeekSunday(latestWeek);
         if (weekLabel) {
-            const weekCode = formatWeekShort(latestWeek);
-            const range = formatWeekRangeCompact(latestWeek);
-            weekLabel.textContent = range
-                ? `Semana del ${formatDate(sunday)} (${weekCode} · ${range})`
-                : `Semana del ${formatDate(sunday)} (${weekCode})`;
+            weekLabel.textContent = `Semana del ${formatDate(sunday)}`;
         }
 
         function beats(a, b) {

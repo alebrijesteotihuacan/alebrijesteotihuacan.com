@@ -19,6 +19,8 @@ const totalJugadores = document.getElementById('totalJugadores');
 const totalJugadoresMeta = document.getElementById('totalJugadoresMeta');
 const promedioSemanal = document.getElementById('promedioSemanal');
 const promedioSemanalMeta = document.getElementById('promedioSemanalMeta');
+const jugadoresCalificados = document.getElementById('jugadoresCalificados');
+const jugadoresCalificadosMeta = document.getElementById('jugadoresCalificadosMeta');
 const calificacionMax = document.getElementById('calificacionMax');
 const calificacionMaxBy = document.getElementById('calificacionMaxBy');
 const calificacionMin = document.getElementById('calificacionMin');
@@ -1676,19 +1678,35 @@ async function loadStats(semanaOverride) {
             }
         }
         if (promedioSemanalMeta) {
-            if (weekPromedios.length === 0) {
-                promedioSemanalMeta.textContent = emptyWeekLabel;
-            } else {
-                const label = weekPromedios.length === 1 ? '1 evaluación' : `${weekPromedios.length} evaluaciones`;
-                const rangeSuffix = weekRangeOnly ? ` · ${weekRangeOnly}` : '';
-                const prefix = isAutoDefault && !isCurrentWeek ? 'Última semana con datos · ' : '';
-                promedioSemanalMeta.innerHTML = `<strong>${label}</strong> · ${prefix}semana ${weekLabelText}${rangeSuffix}`;
-            }
+            // Solo rango de la semana, sin "evaluaciones · ..." ni "Última semana con datos".
+            promedioSemanalMeta.textContent = weekRangeOnly || (isCurrentWeek ? 'Esta semana' : 'Semana seleccionada');
         }
 
         // Player lookup for context
         const playerMap = {};
         allPlayers.forEach(p => { playerMap[p.id] = p; });
+
+        // 2b. Jugadores Calificados en la semana (únicos por jugador_id)
+        const uniqueQualifiedPlayers = new Set(
+            weekRows
+                .filter(r => Number.isFinite(parseFloat(r.promedio_general)))
+                .map(r => r.jugador_id)
+        );
+        const qualifiedCount = uniqueQualifiedPlayers.size;
+        if (jugadoresCalificados) {
+            jugadoresCalificados.textContent = qualifiedCount > 0 ? String(qualifiedCount) : '0';
+        }
+        if (jugadoresCalificadosMeta) {
+            if (playerCount === 0) {
+                jugadoresCalificadosMeta.textContent = 'Sin plantilla';
+            } else if (qualifiedCount === 0) {
+                jugadoresCalificadosMeta.textContent = isCurrentWeek
+                    ? 'Ninguno esta semana'
+                    : 'Ninguno en la semana seleccionada';
+            } else {
+                jugadoresCalificadosMeta.textContent = `de ${playerCount} registrados`;
+            }
+        }
 
         // 3. Calificación Más Alta
         if (calificacionMax) {
@@ -1732,6 +1750,7 @@ async function loadStats(semanaOverride) {
     } catch (error) {
         console.error('Error loading stats:', error);
         if (promedioSemanal) promedioSemanal.textContent = '—';
+        if (jugadoresCalificados) jugadoresCalificados.textContent = '0';
         if (calificacionMax) calificacionMax.textContent = '—';
         if (calificacionMin) calificacionMin.textContent = '—';
     }

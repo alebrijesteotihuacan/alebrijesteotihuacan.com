@@ -197,6 +197,31 @@ const PLAYER_IMAGES_SOLES_LIGATDP = [
     'Gerardo_Antonio_Roman_Tellez_Delantero_32.jpg'
 ];
 
+const PLAYER_IMAGES_ALEBRIJES_SUB16 = [
+    'Diego_Miguel_Rosas_Romero_Medio_801.jpg',
+    'Marco_Eliel_Arenas_Trejo_Defensa_802.jpg',
+    'Kevin_Damian_Alvarado_Montiel_Medio_803.jpg',
+    'Axel_Antonio_Vazquez_Estrada_Defensa_804.jpg',
+    'Roberto_Adair_Perez_Arana_Defensa_805.jpg',
+    'Derek_Jesus_Hernandez_Licea_Defensa_806.jpg',
+    'Iker_Damian_Ortega_Villegas_Delantero_807.jpg',
+    'Juan_Carlos_Maravilla_Maldonado_Medio_808.jpg',
+    'Ian_Garcia_Ramos_Delantero_809.jpg',
+    'Dejan_Kaled_Ramirez_Quijano_Medio_810.jpg',
+    'Anker_Matias_Paez_Ramirez_Portero_811.jpg',
+    'Adriel_Fernando_Camacho_Ramirez_Portero_812.jpg',
+    'Julio_Antonio_Alonso_Santos_Portero_813.jpg',
+    'Bruno_Arroyo_Sanchez_Defensa_814.jpg',
+    'Emiliano_Rodriguez_Hernandez_Medio_815.jpg',
+    'Javier_Lopez_Balderas_Medio_816.jpg',
+    'Leonardo_Briones_Duran_Defensa_817.jpg',
+    'Sergio_Jatniel_Hernandez_Hernandez_Delantero_818.jpg',
+    'Mateo_Ezequiel_Moreno_Gil_Delantero_819.jpg',
+    'Gerardo_Daniel_Morales_Vargas_Delantero_820.jpg',
+    'Uriel_Urieta_Robles_Portero_821.jpg',
+    'Justin_Anderson_Aguilar_Hernandez_Medio_822.jpg'
+];
+
 function findPlayerImage(nombre, apellido) {
     const fullName = normalizeStr(`${nombre || ''} ${apellido || ''}`);
     const firstName = normalizeStr(nombre || '');
@@ -218,6 +243,7 @@ function findPlayerImage(nombre, apellido) {
     }
     return (
         search(PLAYER_IMAGES, 'PlantillaAlebrijesTeotihuacanLigaTDP') ||
+        search(PLAYER_IMAGES_ALEBRIJES_SUB16, 'PlantillaAlebrijesTeotihuacanSub-16_TDP') ||
         search(PLAYER_IMAGES_SOLES_LIGATDP, 'PlantillaSolesTeotihuacanLigaTDP') ||
         search(PLAYER_IMAGES_SOLES_SUB16, 'PlantillaSolesTeotihuacanSub16_TDP')
     );

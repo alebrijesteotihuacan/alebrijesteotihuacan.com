@@ -440,6 +440,100 @@
                 </div>
             </div>
         </div>
+
+        <!-- Edit Player Modal -->
+        <div class="modal-overlay" id="editPlayerModal" role="dialog" aria-modal="true" aria-labelledby="editPlayerModalTitle" aria-hidden="true">
+            <div class="modal modal-register">
+                <div class="modal-header">
+                    <div class="modal-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                        <h3 id="editPlayerModalTitle">Editar Jugador</h3>
+                    </div>
+                    <button class="modal-close" id="editPlayerModalClose" aria-label="Cerrar">&times;</button>
+                </div>
+
+                <div class="modal-body">
+                    <form id="editPlayerForm" class="register-form" novalidate>
+                        <div class="register-grid">
+                            <div class="register-field">
+                                <label for="editNombre">Nombre(s) <span aria-hidden="true">*</span></label>
+                                <input type="text" id="editNombre" name="nombre" required autocomplete="given-name">
+                                <span class="field-error" id="editNombre-error">Ingresa el nombre del jugador.</span>
+                            </div>
+
+                            <div class="register-field">
+                                <label for="editApellido">Apellido(s) <span aria-hidden="true">*</span></label>
+                                <input type="text" id="editApellido" name="apellido" required autocomplete="family-name">
+                                <span class="field-error" id="editApellido-error">Ingresa los apellidos.</span>
+                            </div>
+
+                            <div class="register-field register-field--full">
+                                <label for="editEmail">Correo Electrónico <span aria-hidden="true">*</span></label>
+                                <input type="email" id="editEmail" name="email" required autocomplete="email">
+                                <span class="field-error" id="editEmail-error">Ingresa un correo electrónico válido.</span>
+                            </div>
+
+                            <div class="register-field register-field--full">
+                                <label for="editPassword">Nueva contraseña</label>
+                                <div class="password-input-wrapper">
+                                    <input type="password" id="editPassword" name="password" minlength="8" autocomplete="new-password" placeholder="Dejar en blanco para no cambiar">
+                                    <button type="button" class="password-toggle" id="editPasswordToggle" aria-label="Mostrar contraseña" tabindex="-1">
+                                        <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg>
+                                        <svg class="eye-closed" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none;">
+                                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <span class="register-hint">Mínimo 8 caracteres. Déjala vacía para conservar la contraseña actual.</span>
+                                <span class="field-error" id="editPassword-error">Mínimo 8 caracteres.</span>
+                            </div>
+
+                            <div class="register-field">
+                                <label for="editFechaNac">Fecha de Nacimiento <span aria-hidden="true">*</span></label>
+                                <input type="date" id="editFechaNac" name="fechaNacimiento" required>
+                                <span class="field-error" id="editFechaNac-error">Selecciona una fecha válida (no futura).</span>
+                            </div>
+
+                            <div class="register-field">
+                                <label for="editPosicion">Posición <span aria-hidden="true">*</span></label>
+                                <select id="editPosicion" name="posicion" required>
+                                    <option value="">Selecciona una posición</option>
+                                    <option value="Portero">Portero</option>
+                                    <option value="Defensa">Defensa</option>
+                                    <option value="Medio">Medio</option>
+                                    <option value="Delantero">Delantero</option>
+                                </select>
+                                <span class="field-error" id="editPosicion-error">Selecciona una posición.</span>
+                            </div>
+
+                            <div class="register-field">
+                                <label for="editNumero">Número de Camiseta</label>
+                                <input type="number" id="editNumero" name="numeroCamiseta" min="1" max="999" placeholder="Opcional">
+                            </div>
+                        </div>
+
+                        <div class="register-form-actions">
+                            <button type="button" class="btn-cancel" id="editPlayerCancel">Cancelar</button>
+                            <button type="submit" class="btn-submit" id="editPlayerSubmit">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                    <polyline points="7 3 7 8 15 8"></polyline>
+                                </svg>
+                                <span id="editPlayerSubmitLabel">Guardar Cambios</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 <!-- Evaluation Drawer -->
         <div class="eval-drawer" id="evalDrawer" aria-hidden="true">
             <div class="eval-drawer-backdrop" id="drawerBackdrop" tabindex="-1"></div>
@@ -928,7 +1022,7 @@
     <script src="https://unpkg.com/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
     <script src="../scripts/script.js"></script>
     <script type="module" src="../scripts/nav-auth.js"></script>
-    <script type="module" src="../scripts/panel-profesor.js?v=41"></script>
+    <script type="module" src="../scripts/panel-profesor.js?v=42"></script>
     <script>
         // Set current date
         const dateEl = document.getElementById('currentDate');
@@ -940,6 +1034,7 @@
 </body>
 
 </html>
+
 
 
 

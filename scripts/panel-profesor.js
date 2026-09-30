@@ -49,6 +49,16 @@ const registerForm = document.getElementById('registerForm');
 const sessionCounter = document.getElementById('sessionCounter');
 const registrationCounter = document.getElementById('registrationCounterBox');
 
+// Edit player modal
+const editPlayerModal = document.getElementById('editPlayerModal');
+const editPlayerModalClose = document.getElementById('editPlayerModalClose');
+const editPlayerCancel = document.getElementById('editPlayerCancel');
+const editPlayerForm = document.getElementById('editPlayerForm');
+const editPlayerSubmit = document.getElementById('editPlayerSubmit');
+const editPlayerSubmitLabel = document.getElementById('editPlayerSubmitLabel');
+const editPasswordToggle = document.getElementById('editPasswordToggle');
+let editSubmitInFlight = false;
+
 // Registration inputs
 const regNombre = document.getElementById('regNombre');
 const regApellido = document.getElementById('regApellido');
@@ -1093,6 +1103,14 @@ function renderPlayers(players) {
                     <div class="player-card-actions">
                         <button class="player-card-eval" data-id="${player.id}" type="button" aria-label="Evaluar a ${escapeAttr(shortName)}">Evaluar</button>
                         <div class="player-card-secondary-actions">
+                            ${canDelete ? `
+                            <button class="edit-btn" data-id="${player.id}" type="button" title="Editar jugador" aria-label="Editar a ${escapeAttr(shortName)}">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                            </button>
+                            ` : ''}
                             <button class="cred-btn" data-player="${player.id}" type="button" title="Ver credenciales" aria-label="Ver credenciales de ${escapeAttr(shortName)}">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
@@ -1161,6 +1179,15 @@ function renderPlayers(players) {
             const playerId = btn.dataset.player;
             const player = players.find(p => p.id === playerId);
             if (player) openCredsModal(player);
+        });
+    });
+
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const playerId = btn.dataset.id;
+            const player = players.find(p => p.id === playerId);
+            if (player) openEditPlayerModal(player);
         });
     });
 
@@ -2320,6 +2347,217 @@ evalForm.addEventListener('submit', async (e) => {
         if (drawerSubmitLabel) drawerSubmitLabel.textContent = originalLabel;
     }
 });
+
+// ==========================================
+// EDIT PLAYER LOGIC
+// ==========================================
+
+function clearEditFieldErrors() {
+    const fields = ['editNombre', 'editApellido', 'editEmail', 'editPassword', 'editFechaNac', 'editPosicion'];
+    fields.forEach(id => {
+        const input = document.getElementById(id);
+        const err = document.getElementById(id + '-error');
+        if (input) input.classList.remove('is-invalid');
+        if (err) err.classList.remove('is-visible');
+    });
+}
+
+function setEditFieldError(id, show) {
+    const input = document.getElementById(id);
+    const err = document.getElementById(id + '-error');
+    if (input) input.classList.toggle('is-invalid', !!show);
+    if (err) err.classList.toggle('is-visible', !!show);
+}
+
+function openEditPlayerModal(player) {
+    if (!editPlayerModal || !editPlayerForm) return;
+    editPlayerForm.dataset.playerId = player.id;
+
+    clearEditFieldErrors();
+    const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val ?? ''; };
+    setVal('editNombre', player.nombre);
+    setVal('editApellido', player.apellido);
+    setVal('editEmail', player.email);
+    setVal('editPassword', '');
+    setVal('editFechaNac', player.fecha_nacimiento);
+    setVal('editPosicion', player.posicion);
+    setVal('editNumero', player.numero_camiseta);
+
+    // Reset password toggle visual state
+    const pwd = document.getElementById('editPassword');
+    if (pwd) pwd.type = 'password';
+    if (editPasswordToggle) {
+        const open = editPasswordToggle.querySelector('.eye-open');
+        const closed = editPasswordToggle.querySelector('.eye-closed');
+        if (open) open.style.display = '';
+        if (closed) closed.style.display = 'none';
+    }
+
+    openModal(editPlayerModal);
+    const first = document.getElementById('editNombre');
+    if (first) setTimeout(() => first.focus(), 60);
+}
+
+function closeEditPlayerModal() {
+    if (!editPlayerModal) return;
+    closeModal(editPlayerModal);
+    if (editPlayerForm) {
+        editPlayerForm.dataset.playerId = '';
+        editPlayerForm.reset();
+    }
+    clearEditFieldErrors();
+}
+
+if (editPlayerModalClose) editPlayerModalClose.addEventListener('click', closeEditPlayerModal);
+if (editPlayerCancel) editPlayerCancel.addEventListener('click', closeEditPlayerModal);
+if (editPlayerModal) {
+    editPlayerModal.addEventListener('click', (e) => {
+        if (e.target === editPlayerModal) closeEditPlayerModal();
+    });
+}
+
+// Toggle visibilidad de la nueva password
+if (editPasswordToggle) {
+    editPasswordToggle.addEventListener('click', () => {
+        const pwd = document.getElementById('editPassword');
+        const open = editPasswordToggle.querySelector('.eye-open');
+        const closed = editPasswordToggle.querySelector('.eye-closed');
+        if (!pwd) return;
+        if (pwd.type === 'password') {
+            pwd.type = 'text';
+            if (open) open.style.display = 'none';
+            if (closed) closed.style.display = '';
+        } else {
+            pwd.type = 'password';
+            if (open) open.style.display = '';
+            if (closed) closed.style.display = 'none';
+        }
+    });
+}
+
+// Escape para cerrar
+document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (!editPlayerModal) return;
+    if (editPlayerModal.classList.contains('is-open') && !editSubmitInFlight) {
+        closeEditPlayerModal();
+    }
+});
+
+if (editPlayerForm) {
+    editPlayerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (editSubmitInFlight) return;
+        editSubmitInFlight = true;
+
+        const playerId = editPlayerForm.dataset.playerId;
+        if (!playerId) {
+            showToast('No se ha seleccionado un jugador.', 'error');
+            editSubmitInFlight = false;
+            return;
+        }
+
+        if (editPlayerSubmit) editPlayerSubmit.disabled = true;
+        const originalLabel = editPlayerSubmitLabel ? editPlayerSubmitLabel.textContent : 'Guardar Cambios';
+        if (editPlayerSubmitLabel) editPlayerSubmitLabel.textContent = 'Guardando...';
+
+        clearEditFieldErrors();
+
+        try {
+            // 1. Sesion valida
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                showToast('Tu sesion expiro. Vuelve a iniciar sesion.', 'error');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const formData = new FormData(editPlayerForm);
+            const nombre = (formData.get('nombre') || '').toString().trim();
+            const apellido = (formData.get('apellido') || '').toString().trim();
+            const email = (formData.get('email') || '').toString().trim().toLowerCase();
+            const password = (formData.get('password') || '').toString();
+            const fechaNacimiento = (formData.get('fechaNacimiento') || '').toString().trim() || null;
+            const posicion = (formData.get('posicion') || '').toString() || null;
+            const numeroRaw = formData.get('numeroCamiseta');
+            const numeroParsed = numeroRaw != null && String(numeroRaw).trim() !== ''
+                ? parseInt(numeroRaw, 10)
+                : null;
+
+            // 2. Validaciones client-side (basicas; el server hace las fuertes)
+            let hasError = false;
+            if (!nombre) { setEditFieldError('editNombre', true); hasError = true; }
+            if (!apellido) { setEditFieldError('editApellido', true); hasError = true; }
+            if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+                setEditFieldError('editEmail', true); hasError = true;
+            }
+            if (password && password.length > 0 && password.length < 8) {
+                setEditFieldError('editPassword', true); hasError = true;
+            }
+            if (!fechaNacimiento) { setEditFieldError('editFechaNac', true); hasError = true; }
+            if (!posicion) { setEditFieldError('editPosicion', true); hasError = true; }
+            if (hasError) {
+                showToast('Revisa los campos marcados en rojo.', 'error');
+                return;
+            }
+
+            // 3. Llamada a la RPC
+            const { data, error } = await supabase.rpc('update_player_atomic', {
+                p_jugador_id: playerId,
+                p_nombre: nombre,
+                p_apellido: apellido,
+                p_email: email,
+                p_password: password || null,
+                p_fecha_nacimiento: fechaNacimiento,
+                p_posicion: posicion,
+                p_numero_camiseta: Number.isFinite(numeroParsed) ? numeroParsed : null
+            });
+
+            if (error) {
+                console.error('update_player_atomic RPC error:', error);
+                showToast(`Error al actualizar: ${error.message}`, 'error');
+                return;
+            }
+
+            if (!data || data.success !== true) {
+                const code = data?.error || 'unknown';
+                const friendly = {
+                    invalid_email: 'El correo electrónico no tiene un formato válido.',
+                    email_exists: 'Ya existe otro jugador con ese correo electrónico.',
+                    weak_password: 'La contraseña debe tener al menos 8 caracteres.',
+                    missing_name: 'Nombre y apellido son obligatorios.',
+                    not_owner: 'Solo puedes editar jugadores que tú registraste.',
+                    not_authorized: 'Solo los profesores pueden editar jugadores.',
+                    jugador_not_found: 'El jugador ya no existe.'
+                }[code] || data?.message || 'No se pudo actualizar el jugador.';
+                if (code === 'email_exists') setEditFieldError('editEmail', true);
+                else if (code === 'weak_password') setEditFieldError('editPassword', true);
+                else if (code === 'missing_name') {
+                    setEditFieldError('editNombre', true);
+                    setEditFieldError('editApellido', true);
+                } else if (code === 'invalid_email') setEditFieldError('editEmail', true);
+                showToast(friendly, 'error');
+                return;
+            }
+
+            // 4. Exito: refrescar jugadores y, si el drawer estaba abierto, re-cargar info
+            const updatedName = `${nombre} ${apellido}`.trim();
+            showToast(`${updatedName} actualizado correctamente`, 'success');
+            closeEditPlayerModal();
+            await loadPlayers();
+            if (currentPlayerId === playerId && typeof loadPlayerHistory === 'function') {
+                await loadPlayerHistory(playerId);
+            }
+        } catch (err) {
+            console.error('Edit player unexpected error:', err);
+            showToast('Error al guardar los cambios: ' + (err?.message || ''), 'error');
+        } finally {
+            editSubmitInFlight = false;
+            if (editPlayerSubmit) editPlayerSubmit.disabled = false;
+            if (editPlayerSubmitLabel) editPlayerSubmitLabel.textContent = originalLabel;
+        }
+    });
+}
 
 // ==========================================
 // REGISTRATION LOGIC

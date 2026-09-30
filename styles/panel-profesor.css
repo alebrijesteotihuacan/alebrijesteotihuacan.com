@@ -1009,7 +1009,8 @@ body.prof-body {
 }
 
 .cred-btn,
-.delete-btn {
+.delete-btn,
+.edit-btn {
     width: 38px;
     height: 38px;
     display: inline-flex;
@@ -1026,7 +1027,8 @@ body.prof-body {
 }
 
 .cred-btn svg,
-.delete-btn svg {
+.delete-btn svg,
+.edit-btn svg {
     width: 15px;
     height: 15px;
 }
@@ -1035,6 +1037,16 @@ body.prof-body {
     background: var(--prof-n-100);
     border-color: var(--prof-n-300);
     color: var(--prof-n-900);
+}
+
+.edit-btn {
+    color: var(--prof-primary, #F36A21);
+}
+
+.edit-btn:hover {
+    background: rgba(243, 106, 33, 0.10);
+    border-color: rgba(243, 106, 33, 0.30);
+    color: var(--prof-primary, #F36A21);
 }
 
 .delete-btn {
@@ -3454,7 +3466,8 @@ body.prof-body {
     }
 
     .cred-btn,
-    .delete-btn {
+    .delete-btn,
+    .edit-btn {
         width: 36px;
         height: 36px;
     }
@@ -3696,7 +3709,8 @@ body.prof-body {
     }
 
     .cred-btn,
-    .delete-btn {
+    .delete-btn,
+    .edit-btn {
         width: 32px;
         height: 32px;
     }

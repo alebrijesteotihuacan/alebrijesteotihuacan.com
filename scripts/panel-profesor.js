@@ -1703,10 +1703,9 @@ async function loadStats(semanaOverride) {
         allPlayers.forEach(p => { playerMap[p.id] = p; });
 
         // 2b. Jugadores Calificados en la semana (únicos por jugador_id)
-        //     + Total Histórico: TODOS los jugadores registrados en el sistema,
-        //     independientemente del prof que los haya registrado.
-        //     La RLS jugadores_admin_prof_read permite a cualquier profesor
-        //     ver todos los jugadores, asi que un count(*) directo funciona.
+        //     + Total del equipo: jugadores del equipo del prof actual
+        //     (columna `equipo` de la tabla jugadores, coincide con
+        //     `equipo_restringido` del profesor).
         const uniqueQualifiedPlayers = new Set(
             weekRows
                 .filter(r => Number.isFinite(parseFloat(r.promedio_general)))
@@ -1714,33 +1713,43 @@ async function loadStats(semanaOverride) {
         );
         const qualifiedCount = uniqueQualifiedPlayers.size;
 
-        // Total global de jugadores registrados en el sistema (no del prof actual).
-        let historicalTotal = qualifiedCount; // fallback optimista
+        // Total del equipo: jugadores cuyo campo `equipo` coincide con
+        // el equipo_restringido del prof. Ignacio -> Soles TDP (32),
+        // Arturo -> Alebrijes TDP (32), Cesar -> Soles TDP Sub-16 (28),
+        // Derk -> Alebrijes TDP Sub-16 (22). Admin -> sin filtro, todos.
+        let teamTotal = qualifiedCount;
+        const teamFilter = (currentProfessor.rol === 'admin')
+            ? null
+            : (currentProfessor.equipo_restringido || null);
+
         try {
-            const { count: globalCount, error: countErr } = await supabase
+            let countQuery = supabase
                 .from('jugadores')
                 .select('id', { count: 'exact', head: true });
+            if (teamFilter) {
+                countQuery = countQuery.eq('equipo', teamFilter);
+            }
+            const { count: equipoCount, error: countErr } = await countQuery;
             if (countErr) throw countErr;
-            if (typeof globalCount === 'number' && globalCount >= 0) {
-                historicalTotal = globalCount;
+            if (typeof equipoCount === 'number' && equipoCount >= 0) {
+                teamTotal = equipoCount;
             }
         } catch (err) {
-            // Si falla el conteo global (RLS inesperada, network), cae al
-            // universo del query del prof (distintos jugador_id en rows).
-            console.warn('No se pudo obtener el total global de jugadores, usando fallback:', err);
-            const historicalPlayerIds = new Set(
+            console.warn('No se pudo obtener el total del equipo, usando fallback:', err);
+            const fallbackIds = new Set(
                 (rows || []).map(r => r.jugador_id).filter(Boolean)
             );
-            historicalTotal = historicalPlayerIds.size || playerCount || qualifiedCount;
+            teamTotal = fallbackIds.size || playerCount || qualifiedCount;
         }
 
         if (jugadoresCombinado) {
-            jugadoresCombinado.textContent = `${qualifiedCount} / ${historicalTotal}`;
+            jugadoresCombinado.textContent = `${qualifiedCount} / ${teamTotal}`;
         }
         if (jugadoresCombinadoMeta) {
+            const equipoLabel = teamFilter ? teamFilter : 'general';
             const label = isAutoDefault && !isCurrentWeek
-                ? 'calificados (última con datos) · total histórico'
-                : 'calificados · total histórico';
+                ? `calificados (última con datos) · total ${equipoLabel}`
+                : `calificados · total ${equipoLabel}`;
             jugadoresCombinadoMeta.textContent = label;
         }
 

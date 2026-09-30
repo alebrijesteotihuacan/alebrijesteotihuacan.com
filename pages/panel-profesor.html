@@ -39,7 +39,7 @@
 
     <!-- Main Styles -->
     <link rel="stylesheet" href="../styles/styles.css">
-    <link rel="stylesheet" href="../styles/panel-profesor.css?v=10">
+    <link rel="stylesheet" href="../styles/panel-profesor.css?v=11">
 </head>
 
 <body class="prof-body">
@@ -456,31 +456,61 @@
                 </div>
 
                 <div class="modal-body">
+                    <!-- Identidad del jugador que se esta editando -->
+                    <div class="edit-player-identity" aria-live="polite">
+                        <div class="edit-player-avatar" id="editPlayerAvatar" aria-hidden="true">?</div>
+                        <div class="edit-player-meta">
+                            <h4 id="editPlayerName">—</h4>
+                            <p>
+                                <span id="editPlayerJersey">#—</span>
+                                <span class="edit-player-meta-sep" aria-hidden="true">·</span>
+                                <span id="editPlayerEquipo">—</span>
+                            </p>
+                        </div>
+                    </div>
+
                     <form id="editPlayerForm" class="register-form" novalidate>
-                        <div class="register-grid">
-                            <div class="register-field">
-                                <label for="editNombre">Nombre(s) <span aria-hidden="true">*</span></label>
-                                <input type="text" id="editNombre" name="nombre" required autocomplete="given-name">
-                                <span class="field-error" id="editNombre-error">Ingresa el nombre del jugador.</span>
+                        <!-- Seccion 1: Datos personales -->
+                        <div class="form-section">
+                            <span class="form-section-label">Datos personales</span>
+                            <div class="register-row">
+                                <div class="register-field">
+                                    <label for="editNombre">Nombre(s) <span class="req-mark" aria-hidden="true">*</span></label>
+                                    <input type="text" id="editNombre" name="nombre" required autocomplete="given-name">
+                                    <span class="field-error" id="editNombre-error">Ingresa el nombre del jugador.</span>
+                                </div>
+
+                                <div class="register-field">
+                                    <label for="editApellido">Apellido(s) <span class="req-mark" aria-hidden="true">*</span></label>
+                                    <input type="text" id="editApellido" name="apellido" required autocomplete="family-name">
+                                    <span class="field-error" id="editApellido-error">Ingresa los apellidos.</span>
+                                </div>
                             </div>
 
-                            <div class="register-field">
-                                <label for="editApellido">Apellido(s) <span aria-hidden="true">*</span></label>
-                                <input type="text" id="editApellido" name="apellido" required autocomplete="family-name">
-                                <span class="field-error" id="editApellido-error">Ingresa los apellidos.</span>
+                            <div class="register-row">
+                                <div class="register-field full">
+                                    <label for="editFechaNac">Fecha de nacimiento <span class="req-mark" aria-hidden="true">*</span></label>
+                                    <input type="date" id="editFechaNac" name="fechaNacimiento" required>
+                                    <span class="field-error" id="editFechaNac-error">Selecciona una fecha válida (no futura).</span>
+                                </div>
                             </div>
+                        </div>
 
-                            <div class="register-field register-field--full">
-                                <label for="editEmail">Correo Electrónico <span aria-hidden="true">*</span></label>
-                                <input type="email" id="editEmail" name="email" required autocomplete="email">
+                        <!-- Seccion 2: Credenciales -->
+                        <div class="form-section">
+                            <span class="form-section-label">Credenciales</span>
+
+                            <div class="register-field full">
+                                <label for="editEmail">Correo electrónico <span class="req-mark" aria-hidden="true">*</span></label>
+                                <input type="email" id="editEmail" name="email" required autocomplete="email" spellcheck="false">
                                 <span class="field-error" id="editEmail-error">Ingresa un correo electrónico válido.</span>
                             </div>
 
-                            <div class="register-field register-field--full">
+                            <div class="register-field full">
                                 <label for="editPassword">Nueva contraseña</label>
                                 <div class="password-input-wrapper">
-                                    <input type="password" id="editPassword" name="password" minlength="8" autocomplete="new-password" placeholder="Dejar en blanco para no cambiar">
-                                    <button type="button" class="password-toggle" id="editPasswordToggle" aria-label="Mostrar contraseña" tabindex="-1">
+                                    <input type="password" id="editPassword" name="password" minlength="8" autocomplete="new-password" placeholder="Dejar en blanco para no cambiar" aria-describedby="editPassword-hint">
+                                    <button type="button" class="password-toggle" id="editPasswordToggle" aria-label="Mostrar contraseña" aria-pressed="false" tabindex="-1">
                                         <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                             <circle cx="12" cy="12" r="3"></circle>
@@ -491,31 +521,31 @@
                                         </svg>
                                     </button>
                                 </div>
-                                <span class="register-hint">Mínimo 8 caracteres. Déjala vacía para conservar la contraseña actual.</span>
+                                <span class="field-hint" id="editPassword-hint">Mínimo 8 caracteres. Déjala vacía para conservar la contraseña actual.</span>
                                 <span class="field-error" id="editPassword-error">Mínimo 8 caracteres.</span>
                             </div>
+                        </div>
 
-                            <div class="register-field">
-                                <label for="editFechaNac">Fecha de Nacimiento <span aria-hidden="true">*</span></label>
-                                <input type="date" id="editFechaNac" name="fechaNacimiento" required>
-                                <span class="field-error" id="editFechaNac-error">Selecciona una fecha válida (no futura).</span>
-                            </div>
+                        <!-- Seccion 3: Datos deportivos -->
+                        <div class="form-section form-section--last">
+                            <span class="form-section-label">Datos deportivos</span>
+                            <div class="register-row">
+                                <div class="register-field">
+                                    <label for="editPosicion">Posición <span class="req-mark" aria-hidden="true">*</span></label>
+                                    <select id="editPosicion" name="posicion" required>
+                                        <option value="">Selecciona una posición</option>
+                                        <option value="Portero">Portero</option>
+                                        <option value="Defensa">Defensa</option>
+                                        <option value="Medio">Medio</option>
+                                        <option value="Delantero">Delantero</option>
+                                    </select>
+                                    <span class="field-error" id="editPosicion-error">Selecciona una posición.</span>
+                                </div>
 
-                            <div class="register-field">
-                                <label for="editPosicion">Posición <span aria-hidden="true">*</span></label>
-                                <select id="editPosicion" name="posicion" required>
-                                    <option value="">Selecciona una posición</option>
-                                    <option value="Portero">Portero</option>
-                                    <option value="Defensa">Defensa</option>
-                                    <option value="Medio">Medio</option>
-                                    <option value="Delantero">Delantero</option>
-                                </select>
-                                <span class="field-error" id="editPosicion-error">Selecciona una posición.</span>
-                            </div>
-
-                            <div class="register-field">
-                                <label for="editNumero">Número de Camiseta</label>
-                                <input type="number" id="editNumero" name="numeroCamiseta" min="1" max="999" placeholder="Opcional">
+                                <div class="register-field">
+                                    <label for="editNumero">Número de camiseta</label>
+                                    <input type="number" id="editNumero" name="numeroCamiseta" min="1" max="999" placeholder="Opcional" inputmode="numeric" autocomplete="off">
+                                </div>
                             </div>
                         </div>
 
@@ -1022,7 +1052,7 @@
     <script src="https://unpkg.com/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
     <script src="../scripts/script.js"></script>
     <script type="module" src="../scripts/nav-auth.js"></script>
-    <script type="module" src="../scripts/panel-profesor.js?v=42"></script>
+    <script type="module" src="../scripts/panel-profesor.js?v=43"></script>
     <script>
         // Set current date
         const dateEl = document.getElementById('currentDate');
@@ -1034,6 +1064,8 @@
 </body>
 
 </html>
+
+
 
 
 

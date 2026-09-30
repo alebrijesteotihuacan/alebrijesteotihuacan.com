@@ -2383,7 +2383,40 @@ function openEditPlayerModal(player) {
     setVal('editPosicion', player.posicion);
     setVal('editNumero', player.numero_camiseta);
 
-    // Reset password toggle visual state
+    // Tarjeta de identidad
+    const fullName = [player.nombre, player.apellido]
+        .filter(Boolean)
+        .map(w => w.trim())
+        .join(' ')
+        .replace(/\w\S*/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+    const nameEl = document.getElementById('editPlayerName');
+    const jerseyEl = document.getElementById('editPlayerJersey');
+    const equipoEl = document.getElementById('editPlayerEquipo');
+    const avatarEl = document.getElementById('editPlayerAvatar');
+    if (nameEl) nameEl.textContent = fullName || '—';
+    if (jerseyEl) {
+        const jersey = player.numero_camiseta;
+        jerseyEl.textContent = (jersey !== null && jersey !== undefined && jersey !== '') ? `#${jersey}` : '#—';
+    }
+    if (equipoEl) equipoEl.textContent = player.equipo || 'Sin equipo';
+    if (avatarEl) {
+        const initials = getInitials(player.nombre, player.apellido);
+        // Intentar cargar la foto del jugador (mismo lookup que la tarjeta)
+        let imgSrc = null;
+        try {
+            if (typeof findPlayerImageInfo === 'function') {
+                const info = findPlayerImageInfo(player.nombre, player.apellido);
+                if (info) imgSrc = `../assets/${info.folder}/${encodeURIComponent(info.file)}`;
+            }
+        } catch (_) { /* noop */ }
+        if (imgSrc) {
+            avatarEl.innerHTML = `<img src="${imgSrc}" alt="">`;
+        } else {
+            avatarEl.textContent = initials || '?';
+        }
+    }
+
+    // Reset password toggle visual state + aria-pressed
     const pwd = document.getElementById('editPassword');
     if (pwd) pwd.type = 'password';
     if (editPasswordToggle) {
@@ -2391,6 +2424,8 @@ function openEditPlayerModal(player) {
         const closed = editPasswordToggle.querySelector('.eye-closed');
         if (open) open.style.display = '';
         if (closed) closed.style.display = 'none';
+        editPasswordToggle.setAttribute('aria-pressed', 'false');
+        editPasswordToggle.setAttribute('aria-label', 'Mostrar contraseña');
     }
 
     openModal(editPlayerModal);
@@ -2423,14 +2458,19 @@ if (editPasswordToggle) {
         const open = editPasswordToggle.querySelector('.eye-open');
         const closed = editPasswordToggle.querySelector('.eye-closed');
         if (!pwd) return;
-        if (pwd.type === 'password') {
-            pwd.type = 'text';
-            if (open) open.style.display = 'none';
-            if (closed) closed.style.display = '';
-        } else {
+        const showing = pwd.type === 'text';
+        if (showing) {
             pwd.type = 'password';
             if (open) open.style.display = '';
             if (closed) closed.style.display = 'none';
+            editPasswordToggle.setAttribute('aria-pressed', 'false');
+            editPasswordToggle.setAttribute('aria-label', 'Mostrar contraseña');
+        } else {
+            pwd.type = 'text';
+            if (open) open.style.display = 'none';
+            if (closed) closed.style.display = '';
+            editPasswordToggle.setAttribute('aria-pressed', 'true');
+            editPasswordToggle.setAttribute('aria-label', 'Ocultar contraseña');
         }
     });
 }

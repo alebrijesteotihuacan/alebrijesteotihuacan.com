@@ -2085,7 +2085,9 @@ body.prof-body {
     color: var(--prof-text-dark);
     font-family: "Montserrat", sans-serif;
     font-size: 0.9rem;
-    transition: all 0.2s var(--prof-ease);
+    transition: border-color 0.18s var(--prof-ease),
+                background-color 0.18s var(--prof-ease),
+                box-shadow 0.18s var(--prof-ease);
 }
 
 .register-field input:hover,
@@ -2257,6 +2259,183 @@ body.prof-body {
 
 .register-field.has-error .field-error {
     display: block;
+}
+
+/* Variante para que los field-error/hint funcionen en el edit modal
+   sin necesidad de marcar el contenedor con .has-error — el JS del
+   edit usa .is-invalid en el input directamente. */
+.register-field input.is-invalid,
+.register-field select.is-invalid {
+    border-color: var(--prof-danger);
+    background: rgba(239, 68, 68, 0.04);
+}
+
+.register-field .field-error.is-visible {
+    display: block;
+    animation: shake 0.32s var(--prof-ease);
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-3px); }
+    40%, 80% { transform: translateX(3px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .register-field .field-error.is-visible {
+        animation: none;
+    }
+    .modal-overlay, .modal,
+    .register-field input, .register-field select {
+        transition: none !important;
+    }
+}
+
+/* ============================================================
+   FORM SECTIONS + IDENTITY CARD (edit player modal)
+   ============================================================ */
+
+.form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-bottom: 20px;
+    border-bottom: 1px dashed var(--prof-border);
+}
+
+.form-section--last {
+    border-bottom: none;
+    padding-bottom: 4px;
+}
+
+.form-section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: "Montserrat", sans-serif;
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+    color: var(--prof-primary);
+    margin-bottom: 2px;
+}
+
+.form-section-label::before {
+    content: '';
+    width: 3px;
+    height: 12px;
+    background: var(--prof-primary);
+    border-radius: 2px;
+    display: inline-block;
+}
+
+/* Marca de requerido */
+.req-mark {
+    color: var(--prof-primary);
+    margin-left: 2px;
+    font-weight: 800;
+}
+
+/* Tarjeta de identidad al abrir el edit modal */
+.edit-player-identity {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: var(--prof-bg);
+    border: 1px solid var(--prof-border);
+    border-radius: var(--prof-radius-md);
+    margin-bottom: 18px;
+}
+
+.edit-player-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--prof-primary) 0%, var(--prof-primary-light) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--prof-text-inverse);
+    font-family: "Montserrat", sans-serif;
+    font-weight: 800;
+    font-size: 1.05rem;
+    overflow: hidden;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.edit-player-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 22%;
+    display: block;
+}
+
+.edit-player-meta {
+    min-width: 0;
+    flex: 1;
+}
+
+.edit-player-meta h4 {
+    margin: 0;
+    font-family: "Montserrat", sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--prof-text-dark);
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.edit-player-meta p {
+    margin: 2px 0 0;
+    font-size: 0.78rem;
+    color: var(--prof-text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+
+.edit-player-meta p > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.edit-player-meta-sep {
+    color: var(--prof-border-strong);
+    font-weight: 700;
+}
+
+/* Hint visible bajo inputs (mejor que .register-hint oculto) */
+.field-hint {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.72rem;
+    color: var(--prof-text-muted);
+    margin-top: 6px;
+    line-height: 1.4;
+}
+
+.field-hint::before {
+    content: 'ⓘ';
+    font-size: 0.85rem;
+    color: var(--prof-text-light);
+    flex-shrink: 0;
+}
+
+/* Transicion suave al invalidar */
+.register-field input,
+.register-field select {
+    transition: border-color 0.18s var(--prof-ease),
+                background-color 0.18s var(--prof-ease),
+                box-shadow 0.18s var(--prof-ease);
 }
 
 /* ============================================================

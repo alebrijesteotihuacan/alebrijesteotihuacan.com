@@ -1703,22 +1703,44 @@ async function loadStats(semanaOverride) {
         allPlayers.forEach(p => { playerMap[p.id] = p; });
 
         // 2b. Jugadores Calificados en la semana (únicos por jugador_id)
-        //     + Total Histórico (únicos en TODAS las filas del query).
+        //     + Total Histórico: TODOS los jugadores registrados en el sistema,
+        //     independientemente del prof que los haya registrado.
+        //     La RLS jugadores_admin_prof_read permite a cualquier profesor
+        //     ver todos los jugadores, asi que un count(*) directo funciona.
         const uniqueQualifiedPlayers = new Set(
             weekRows
                 .filter(r => Number.isFinite(parseFloat(r.promedio_general)))
                 .map(r => r.jugador_id)
         );
         const qualifiedCount = uniqueQualifiedPlayers.size;
-        const historicalPlayerIds = new Set(
-            (rows || []).map(r => r.jugador_id).filter(Boolean)
-        );
-        const historicalTotal = historicalPlayerIds.size || playerCount;
+
+        // Total global de jugadores registrados en el sistema (no del prof actual).
+        let historicalTotal = qualifiedCount; // fallback optimista
+        try {
+            const { count: globalCount, error: countErr } = await supabase
+                .from('jugadores')
+                .select('id', { count: 'exact', head: true });
+            if (countErr) throw countErr;
+            if (typeof globalCount === 'number' && globalCount >= 0) {
+                historicalTotal = globalCount;
+            }
+        } catch (err) {
+            // Si falla el conteo global (RLS inesperada, network), cae al
+            // universo del query del prof (distintos jugador_id en rows).
+            console.warn('No se pudo obtener el total global de jugadores, usando fallback:', err);
+            const historicalPlayerIds = new Set(
+                (rows || []).map(r => r.jugador_id).filter(Boolean)
+            );
+            historicalTotal = historicalPlayerIds.size || playerCount || qualifiedCount;
+        }
+
         if (jugadoresCombinado) {
             jugadoresCombinado.textContent = `${qualifiedCount} / ${historicalTotal}`;
         }
         if (jugadoresCombinadoMeta) {
-            const label = isAutoDefault && !isCurrentWeek ? 'calificados (última con datos) · total histórico' : 'calificados · total histórico';
+            const label = isAutoDefault && !isCurrentWeek
+                ? 'calificados (última con datos) · total histórico'
+                : 'calificados · total histórico';
             jugadoresCombinadoMeta.textContent = label;
         }
 

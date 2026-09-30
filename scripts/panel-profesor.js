@@ -82,6 +82,7 @@ let dashboardInitialized = false;
 let currentEditEvalId = null;
 let activeWeekFilter = '';
 let evalFormSnapshot = null; // Snapshot of last loaded evaluation (for dirty check)
+let evalSubmitInFlight = false; // Guard contra double-submit en el form de evaluacion
 let playerToDelete = null;
 let isLoadingPlayers = false; // Guard against overlapping loadPlayers() calls
 
@@ -2091,10 +2092,46 @@ evalForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     if (!currentPlayerId) return;
+    if (evalSubmitInFlight) return; // Guard sincrónico contra double-submit (Enter doble, doble-click)
+    evalSubmitInFlight = true;
 
     const originalLabel = drawerSubmitLabel ? drawerSubmitLabel.textContent : 'Guardar Evaluación';
 
+    // Deshabilitar el boton ANTES de cualquier validacion para evitar
+    // que un segundo submit se cuele antes de llegar al try.
+    if (drawerSubmit) drawerSubmit.disabled = true;
+    if (drawerSubmitLabel) drawerSubmitLabel.textContent = 'Guardando...';
+
+    let savedSuccessfully = false;
+
     try {
+        // 1. Sesion valida
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+            showToast('Tu sesion expiro. Vuelve a iniciar sesion.', 'error');
+            window.location.href = 'login.html';
+            return;
+        }
+
+        // 2. UUIDs validos
+        const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        if (!uuidRe.test(currentPlayerId) || !uuidRe.test(currentProfessor.id)) {
+            showToast('IDs invalidos. Recarga la pagina.', 'error');
+            return;
+        }
+
+        // 3. Jugador todavia existe (no fue borrado por otro prof)
+        const { data: playerCheck, error: playerErr } = await supabase
+            .from('jugadores')
+            .select('id')
+            .eq('id', currentPlayerId)
+            .maybeSingle();
+        if (playerErr) throw playerErr;
+        if (!playerCheck) {
+            showToast('El jugador ya no existe. Recarga la lista.', 'error');
+            return;
+        }
+
         const formData = new FormData(evalForm);
 
         // Required fields validation
@@ -2125,9 +2162,6 @@ evalForm.addEventListener('submit', async (e) => {
                 return;
             }
         }
-
-        if (drawerSubmit) drawerSubmit.disabled = true;
-        if (drawerSubmitLabel) drawerSubmitLabel.textContent = 'Guardando...';
 
         const semana = formData.get('semana') || '';
         const { fechaInicio, fechaFin } = getWeekDateRange(semana);
@@ -2178,26 +2212,79 @@ evalForm.addEventListener('submit', async (e) => {
             tipo: 'Evaluación Semanal'
         };
 
+        // Decodificar mensaje de error de Postgres a algo legible
+        const decodeError = (err) => {
+            if (!err) return 'Error desconocido';
+            if (err.code === '42501') return 'Sin permisos para guardar (RLS). Verifica tu sesion.';
+            if (err.code === '23503') return 'Referencia invalida (FK): ' + (err.details || '');
+            if (err.code === '23502') return 'Falta campo obligatorio: ' + (err.details || err.message || '');
+            if (err.code === '23514') return 'Valor fuera de rango: ' + (err.details || err.message || '');
+            if (err.code === 'PGRST116') return 'Politica RLS rechazo la operacion.';
+            return err.message || String(err);
+        };
+
         if (currentEditEvalId) {
-            await supabase.from('evaluaciones').update(evaluationData).eq('id', currentEditEvalId);
-            showToast('Evaluación actualizada correctamente', 'success');
+            // UPDATE con ownership check: solo el evaluador original puede actualizar.
+            const { data: updated, error: updErr } = await supabase
+                .from('evaluaciones')
+                .update(evaluationData)
+                .eq('id', currentEditEvalId)
+                .eq('evaluador_id', currentProfessor.id)
+                .select('id')
+                .maybeSingle();
+
+            if (updErr) {
+                console.error('Update failed:', updErr);
+                showToast(`Error al actualizar: ${decodeError(updErr)}`, 'error');
+                return;
+            }
+            if (!updated) {
+                // No se actualizo ninguna fila: la eval no existe o no pertenece al prof.
+                console.warn('Update returned no rows for eval', currentEditEvalId);
+                showToast('No se pudo actualizar (la evaluacion ya no te pertenece).', 'error');
+                return;
+            }
+            showToast('Evaluacion actualizada correctamente', 'success');
+            savedSuccessfully = true;
         } else {
-            await supabase.from('evaluaciones').insert(evaluationData);
-            showToast('Evaluación guardada correctamente', 'success');
+            // INSERT con select('id') para confirmar que el row se creo.
+            const { data: inserted, error: insErr } = await supabase
+                .from('evaluaciones')
+                .insert(evaluationData)
+                .select('id')
+                .maybeSingle();
+
+            if (insErr) {
+                console.error('Insert failed:', insErr);
+                showToast(`Error al guardar: ${decodeError(insErr)}`, 'error');
+                return;
+            }
+            if (!inserted) {
+                console.warn('Insert returned no row. Payload:', evaluationData);
+                showToast('La evaluacion no se guardo (sin datos devueltos). Reintenta.', 'error');
+                return;
+            }
+            showToast('Evaluacion guardada correctamente', 'success');
+            savedSuccessfully = true;
         }
 
-        closeEvalDrawer();
+        // Solo cerrar el drawer si el guardado fue exitoso.
+        // En caso de fallo, el drawer queda abierto con los datos intactos.
+        if (savedSuccessfully) {
+            closeEvalDrawer();
 
-        await Promise.all([
-            loadStats(),
-            loadPlayers(),
-            currentPlayerId ? loadPlayerHistory(currentPlayerId) : Promise.resolve()
-        ]);
+            await Promise.all([
+                loadStats(),
+                loadPlayers(),
+                currentPlayerId ? loadPlayerHistory(currentPlayerId) : Promise.resolve()
+            ]);
+        }
 
     } catch (error) {
         console.error('Error saving evaluation:', error);
-        showToast('Error al guardar la evaluación', 'error');
+        showToast('Error al guardar la evaluacion: ' + (error?.message || ''), 'error');
     } finally {
+        evalSubmitInFlight = false;
         if (drawerSubmit) drawerSubmit.disabled = false;
         if (drawerSubmitLabel) drawerSubmitLabel.textContent = originalLabel;
     }

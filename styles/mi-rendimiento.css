@@ -967,41 +967,34 @@
 
 .scoreboard-main {
     text-align: center;
-    padding: var(--al-space-6) var(--al-space-4);
+    padding: var(--al-space-7) var(--al-space-5);
     background: linear-gradient(180deg, var(--al-canvas) 0%, var(--al-brand-softer) 100%);
     border-radius: var(--al-radius);
     border: 1px solid var(--al-rule);
     position: relative;
+    overflow: hidden;
 }
 
 .scoreboard-main::before {
     content: '';
     position: absolute;
-    top: 14px;
-    left: 14px;
-    right: 14px;
-    height: 1px;
-    background: linear-gradient(90deg, transparent 0%, var(--al-rule) 50%, transparent 100%);
-}
-
-.scoreboard-main::after {
-    content: '';
-    position: absolute;
-    bottom: 14px;
-    left: 14px;
-    right: 14px;
-    height: 1px;
-    background: linear-gradient(90deg, transparent 0%, var(--al-rule) 50%, transparent 100%);
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--al-brand) 0%, var(--al-brand-darker) 100%);
+    border-radius: var(--al-radius) 0 0 var(--al-radius);
 }
 
 .scoreboard-value {
     font-size: clamp(3.2rem, 5vw + 1rem, 4.5rem);
     font-weight: 800;
     color: var(--al-brand-darker);
-    line-height: 0.95;
+    line-height: 1;
     font-variant-numeric: tabular-nums;
     letter-spacing: -2px;
     font-feature-settings: "tnum" 1;
+    margin-bottom: var(--al-space-3);
 }
 
 .scoreboard-value.is-empty { color: var(--al-rule); }
@@ -1010,7 +1003,7 @@
     width: 36px;
     height: 2px;
     background: var(--al-brand);
-    margin: 12px auto;
+    margin: 0 auto var(--al-space-3);
 }
 
 .scoreboard-label {
@@ -1019,13 +1012,16 @@
     color: var(--al-muted);
     text-transform: uppercase;
     letter-spacing: var(--al-eyebrow-spacing);
+    margin-bottom: 6px;
+    line-height: 1.3;
 }
 
 .scoreboard-range {
-    font-size: 0.76rem;
+    font-size: 0.78rem;
     color: var(--al-muted-soft);
-    margin-top: 6px;
+    margin-top: 4px;
     font-weight: 500;
+    line-height: 1.4;
 }
 
 .scoreboard-bar {
@@ -1067,7 +1063,9 @@
     display: flex;
     align-items: center;
     gap: var(--al-space-5);
-    margin-bottom: var(--al-space-5);
+    margin-bottom: var(--al-space-6);
+    padding-bottom: var(--al-space-5);
+    border-bottom: 1px dashed var(--al-rule);
 }
 
 .rendimiento-card .rendimiento-badge {
@@ -1114,13 +1112,13 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 6px 12px;
+    padding: 7px 14px;
     border-radius: 20px;
     font-size: 0.72rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     border: 1px solid transparent;
 }
 
@@ -1157,17 +1155,17 @@
     font-size: 1.25rem;
     font-weight: 800;
     color: var(--al-ink);
-    margin: 0;
+    margin: 0 0 8px;
     letter-spacing: -0.3px;
-    line-height: 1.2;
+    line-height: 1.3;
 }
 
 .rendimiento-card .rendimiento-meta {
     font-size: 0.82rem;
     color: var(--al-muted-soft);
-    margin-top: 8px;
+    margin-top: 4px;
     font-weight: 500;
-    line-height: 1.5;
+    line-height: 1.55;
 }
 
 .minutos-card {
@@ -1971,16 +1969,32 @@
 }
 
 /* ================================
-   DASHBOARD FOOTER (firma institucional)
+   DASHBOARD FOOTER (firma institucional, navy + blanco)
    ================================ */
 .dashboard-footer {
     margin-top: var(--al-space-7);
-    padding-top: var(--al-space-5);
+    background: var(--al-ink);
+    border-radius: var(--al-radius-lg);
+    padding: var(--al-space-6) var(--al-space-6);
+    border: 1px solid var(--al-ink);
+    box-shadow: var(--al-shadow-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--al-brand) 0%, var(--al-brand-darker) 100%);
 }
 
 .dashboard-footer-rule {
     height: 1px;
-    background: linear-gradient(90deg, transparent 0%, var(--al-rule) 30%, var(--al-rule) 70%, transparent 100%);
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.18) 30%, rgba(255, 255, 255, 0.18) 70%, transparent 100%);
     margin-bottom: var(--al-space-6);
     position: relative;
 }
@@ -1995,7 +2009,7 @@
     height: 6px;
     background: var(--al-brand);
     border-radius: 50%;
-    box-shadow: 0 0 0 4px var(--al-canvas), 0 0 0 5px var(--al-brand-soft);
+    box-shadow: 0 0 0 4px var(--al-ink), 0 0 0 6px rgba(243, 106, 33, 0.25);
 }
 
 .dashboard-footer-grid {
@@ -2010,7 +2024,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     text-align: center;
     min-width: 0;
 }
@@ -2018,18 +2032,18 @@
 .dashboard-footer-label {
     font-size: 0.64rem;
     font-weight: 700;
-    color: var(--al-muted);
+    color: rgba(255, 255, 255, 0.55);
     text-transform: uppercase;
     letter-spacing: 0.18em;
     line-height: 1;
 }
 
 .dashboard-footer-value {
-    font-size: 0.92rem;
+    font-size: 0.95rem;
     font-weight: 700;
-    color: var(--al-ink);
+    color: #ffffff;
     letter-spacing: -0.2px;
-    line-height: 1.2;
+    line-height: 1.25;
     word-break: break-word;
 }
 

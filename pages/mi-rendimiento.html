@@ -40,7 +40,7 @@
     <!-- Main Styles -->
     <link rel="stylesheet" href="../styles/styles.css">
     <link rel="stylesheet" href="../styles/login.css">
-    <link rel="stylesheet" href="../styles/mi-rendimiento.css?v=5">
+    <link rel="stylesheet" href="../styles/mi-rendimiento.css?v=6">
 </head>
 
 <body>
@@ -140,27 +140,44 @@
             <!-- Dashboard Content -->
             <div id="dashboardContent" style="display: none;">
 
-                <!-- Hero: identidad del jugador -->
-                <div class="player-header">
-                    <div class="player-header-avatar">
-                        <img src="../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png" alt="Foto del jugador"
-                            id="playerPhoto">
+                <!-- Sello institucional -->
+                <div class="dashboard-stamp" aria-hidden="true">
+                    <span class="dashboard-stamp-line"></span>
+                    <span class="dashboard-stamp-text">Alebrijes Teotihuacán · Departamento Deportivo</span>
+                    <span class="dashboard-stamp-line"></span>
+                </div>
+
+                <!-- Player Hero: identidad del jugador -->
+                <div class="player-hero">
+                    <img src="../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png" alt="" class="player-hero-crest" aria-hidden="true">
+
+                    <div class="player-hero-photo">
+                        <img id="playerPhoto" alt="Foto del jugador">
+                        <span class="player-hero-dorsal" id="playerDorsal" aria-label="Dorsal">#--</span>
                     </div>
-                    <div class="player-header-info">
-                        <span class="player-header-eyebrow">Reporte del Jugador</span>
-                        <h1 class="player-header-name" id="playerName">Cargando...</h1>
+
+                    <div class="player-hero-body">
+                        <span class="player-hero-eyebrow">
+                            <span class="player-hero-eyebrow-dot"></span>
+                            Reporte Oficial · Cuerpo Técnico
+                        </span>
+                        <h1 class="player-hero-name" id="playerName">Cargando...</h1>
+                        <div class="player-hero-chips" id="playerChips"></div>
+                        <div class="player-hero-meta">
+                            <span class="player-hero-meta-item" id="playerWeek">Semana --</span>
+                            <span class="player-hero-meta-divider" aria-hidden="true"></span>
+                            <span class="player-hero-meta-item">Temporada 2026 – 2027</span>
+                        </div>
                     </div>
-                    <div class="player-header-actions">
-                        <button class="btn-logout" id="logoutBtn">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                                <polyline points="16 17 21 12 16 7"></polyline>
-                                <line x1="21" y1="12" x2="9" y2="12"></line>
-                            </svg>
-                            Cerrar Sesion
-                        </button>
-                    </div>
+
+                    <button class="icon-btn-logout" id="logoutBtn" aria-label="Cerrar sesión" title="Cerrar sesión">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </button>
                 </div>
 
                 <!-- KPI strip (última evaluación) -->
@@ -384,6 +401,25 @@
                         <!-- renderHistory -->
                     </div>
                 </div>
+
+                <!-- Footer institucional -->
+                <footer class="dashboard-footer">
+                    <div class="dashboard-footer-rule" aria-hidden="true"></div>
+                    <div class="dashboard-footer-grid">
+                        <div class="dashboard-footer-cell">
+                            <span class="dashboard-footer-label">Evaluado por</span>
+                            <span class="dashboard-footer-value" id="footerEvaluator">Cuerpo Técnico</span>
+                        </div>
+                        <div class="dashboard-footer-cell">
+                            <span class="dashboard-footer-label">Período</span>
+                            <span class="dashboard-footer-value" id="footerPeriod">--</span>
+                        </div>
+                        <div class="dashboard-footer-cell">
+                            <span class="dashboard-footer-label">Documento</span>
+                            <span class="dashboard-footer-value">Confidencial · Uso Interno</span>
+                        </div>
+                    </div>
+                </footer>
             </div>
 
             <!-- No Data -->
@@ -685,6 +721,79 @@
             if (target) target.textContent = txt;
         }
 
+        // ====== PLAYER IDENTITY CHIPS (Dorsal / Posición / Categoría / Equipo) ======
+        function renderPlayerChips(profile) {
+            const chips = [];
+            const dorsal = profile.numero_camiseta;
+            const posicion = (profile.posicion || '').trim();
+            const categoria = (profile.categoria || '').trim();
+            const equipo = (profile.equipo || '').trim();
+
+            if (dorsal !== undefined && dorsal !== null && dorsal !== '') {
+                chips.push(
+                    `<div class="chip chip--dorsal">
+                        <span class="chip-eyebrow">Dorsal</span>
+                        <span class="chip-value chip-value--mono">#${dorsal}</span>
+                    </div>`
+                );
+                const dorsalBadge = document.getElementById('playerDorsal');
+                if (dorsalBadge) dorsalBadge.textContent = `#${dorsal}`;
+            } else {
+                const dorsalBadge = document.getElementById('playerDorsal');
+                if (dorsalBadge) dorsalBadge.style.display = 'none';
+            }
+
+            if (posicion) {
+                chips.push(
+                    `<div class="chip">
+                        <span class="chip-eyebrow">Posición</span>
+                        <span class="chip-value">${escapeText(posicion)}</span>
+                    </div>`
+                );
+            }
+            if (categoria) {
+                chips.push(
+                    `<div class="chip">
+                        <span class="chip-eyebrow">Categoría</span>
+                        <span class="chip-value">${escapeText(categoria)}</span>
+                    </div>`
+                );
+            }
+            if (equipo) {
+                chips.push(
+                    `<div class="chip">
+                        <span class="chip-eyebrow">Equipo</span>
+                        <span class="chip-value">${escapeText(equipo)}</span>
+                    </div>`
+                );
+            }
+
+            const chipsEl = document.getElementById('playerChips');
+            if (chipsEl) chipsEl.innerHTML = chips.join('');
+        }
+
+        function setPlayerWeek(ev) {
+            const target = document.getElementById('playerWeek');
+            const footerPeriod = document.getElementById('footerPeriod');
+            if (!ev) {
+                if (target) target.textContent = 'Sin período activo';
+                if (footerPeriod) footerPeriod.textContent = 'Sin período activo';
+                return;
+            }
+            const semana = ev.semana || '';
+            const range = formatWeekRange(ev);
+            const heroTxt = [semana, range].filter(Boolean).join(' · ');
+            if (target) target.textContent = heroTxt ? `Semana · ${heroTxt}` : 'Semana activa';
+            if (footerPeriod) footerPeriod.textContent = [semana, range].filter(Boolean).join(' · ') || 'Período actual';
+        }
+
+        function setFooterEvaluator(ev) {
+            const target = document.getElementById('footerEvaluator');
+            if (!target) return;
+            const name = (ev && (ev.evaluador_nombre || ev.evaluador)) || 'Cuerpo Técnico';
+            target.textContent = name;
+        }
+
         async function loadPlayerData(userId) {
             try {
                 const profileResult = await getPlayerProfile(userId);
@@ -697,12 +806,15 @@
                 playerName.textContent = fullName;
 
                 setPlayerPhoto(profile.nombre, profile.apellido, profile.fotoUrl);
+                renderPlayerChips(profile);
 
                 // Latest evaluation
                 const evalResult = await getLatestEvaluation(userId);
 
                 if (evalResult.success && evalResult.data) {
                     const ev = evalResult.data;
+                    setPlayerWeek(ev);
+                    setFooterEvaluator(ev);
                     renderKpiCards(ev);
                     renderScoreboard(ev);
                     renderDotChart(ev);

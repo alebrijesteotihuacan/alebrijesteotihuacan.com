@@ -247,6 +247,58 @@
     color: #aaa;
 }
 
+/* Password wrapper + eye toggle */
+.password-wrapper {
+    position: relative;
+    display: block;
+}
+
+.password-wrapper input {
+    width: 100%;
+    padding-right: 48px;
+}
+
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: #888;
+    cursor: pointer;
+    transition: all 0.18s ease;
+}
+
+.password-toggle:hover {
+    color: #F26522;
+    background: rgba(242, 101, 34, 0.08);
+    border-color: rgba(242, 101, 34, 0.2);
+}
+
+.password-toggle:focus-visible {
+    outline: none;
+    border-color: #F26522;
+    box-shadow: 0 0 0 3px rgba(242, 101, 34, 0.15);
+}
+
+.password-toggle svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 1.75;
+}
+
+.password-toggle .eye-closed { display: none; }
+.password-toggle .eye-open { display: block; }
+.password-toggle.is-revealed .eye-open { display: none; }
+.password-toggle.is-revealed .eye-closed { display: block; }
+
 .login-options {
     display: flex;
     justify-content: space-between;

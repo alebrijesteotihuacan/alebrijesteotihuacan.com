@@ -16,25 +16,20 @@ export async function handleLogin(email, password) {
         if (error) throw error;
         return { success: true, user: data.user };
     } catch (error) {
-        let errorMessage = 'Error al iniciar sesión. Verifica tus credenciales.';
+        const raw = (error && error.message) ? String(error.message) : '';
 
-        switch (error.message) {
+        switch (raw) {
             case 'Invalid login credentials':
-                errorMessage = 'Credenciales inválidas. Verifica tu correo y contraseña.';
-                break;
+                return { success: false, error: 'Correo o contraseña incorrectos. Verifica tus credenciales.' };
             case 'Email not confirmed':
-                errorMessage = 'Debes confirmar tu correo electrónico antes de iniciar sesión.';
-                break;
+                return { success: false, error: 'Debes confirmar tu correo electrónico antes de iniciar sesión.' };
             case 'Too many requests':
-                errorMessage = 'Demasiados intentos fallidos. Intenta más tarde.';
-                break;
+                return { success: false, error: 'Demasiados intentos fallidos. Intenta más tarde.' };
+            case 'User not found':
+                return { success: false, error: 'No existe una cuenta con este correo.' };
+            default:
+                return { success: false, error: 'No se pudo iniciar sesión. Verifica tu correo y contraseña.' };
         }
-
-        if (error.message && error.message.toLowerCase().includes('email')) {
-            errorMessage = 'El correo electrónico no es válido.';
-        }
-
-        return { success: false, error: errorMessage };
     }
 }
 
@@ -139,7 +134,7 @@ export async function getPlayerProfile(userId) {
                 .limit(1)
                 .maybeSingle();
 
-            if (byEmail) {
+if (byEmail) {
                 return { success: true, data: { id: byEmail.id, ...byEmail } };
             }
         }

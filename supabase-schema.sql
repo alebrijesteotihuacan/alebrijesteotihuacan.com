@@ -465,6 +465,16 @@ create policy "iafe_mensajes_insert" on iafe.mensajes
 --       que se usa como foto de su perfil en el dashboard (PROF_PHOTO_LOOKUP
 --       en scripts/panel-profesor.js).
 --
+--   2026-10-02  fix_register_player_atomic_no_plaintext_password
+--       Reescribe el RPC register_player_atomic para NO escribir la columna
+--       jugadores.password en texto plano. Antes insertaba p_password (texto
+--       plano) como espejo inseguro de la contraseña; el hash real siempre
+--       vivio en auth.users.encrypted_password (bcrypt), por lo que esta columna
+--       era inutil para autenticacion pero visible para cualquier profesor
+--       con acceso de lectura a public.jugadores. Ahora el RPC omite esa
+--       columna (queda NULL por default) y sanea los 114 registros existentes
+--       poniendo password = null. Riesgo de seguridad eliminado.
+--
 -- =========================================================================
 -- FIN DE LA MIGRACIÓN
 -- =========================================================================

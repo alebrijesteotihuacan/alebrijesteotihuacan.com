@@ -475,6 +475,19 @@ create policy "iafe_mensajes_insert" on iafe.mensajes
 --       columna (queda NULL por default) y sanea los 114 registros existentes
 --       poniendo password = null. Riesgo de seguridad eliminado.
 --
--- =========================================================================
--- FIN DE LA MIGRACIÓN
+--   2026-10-02  restore_password_storage_in_jugadores
+--       Revierte parcialmente la migracion anterior. Vuelve a guardar el
+--       password en texto plano en jugadores.password para que el panel del
+--       profesor pueda mostrarlo en el modal de credenciales (candado) y
+--       copiarlo. El hash real sigue viviendo en auth.users.encrypted_password.
+--       Trade-off de seguridad aceptado por requisito de UX.
+--
+--   2026-10-02  fix_email_verified_consistency_for_jugadores
+--       Corrige inconsistencia entre auth.users.email_confirmed_at (poblado por
+--       el trigger auto_confirm_new_user) y auth.identities.identity_data->
+--       >'email_verified' (que quedaba en false porque register_player_atomic
+--       lo hardcodeaba asi). Sanear los 119 registros existentes poniendolos
+--       en true. Reescribe ambos RPC para usar el mismo valor que el trigger.
+--       Esta inconsistencia era la causa mas probable del 500 "Database error
+--       querying schema" intermitente en /auth/v1/token para jugadores.
 -- =========================================================================

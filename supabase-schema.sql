@@ -490,4 +490,14 @@ create policy "iafe_mensajes_insert" on iafe.mensajes
 --       en true. Reescribe ambos RPC para usar el mismo valor que el trigger.
 --       Esta inconsistencia era la causa mas probable del 500 "Database error
 --       querying schema" intermitente en /auth/v1/token para jugadores.
+--
+--   2026-10-02  manual_reset_espiritu_password
+--       Reset manual de la contrasena de Alejandro Yoed Espiritu Hernandez
+--       (alejandroespiritu@alebrijes.club). Nueva contrasena: "Esp2026Fut"
+--       (10 chars). El intento previo desde el dashboard fallo silenciosamente
+--       y la columna jugadores.password estaba sin poblar.
+--       Comandos aplicados:
+--         UPDATE auth.users SET encrypted_password = crypt('Esp2026Fut', gen_salt('bf')),
+--                              updated_at = now() WHERE id = ...;
+--         UPDATE public.jugadores SET password = 'Esp2026Fut' WHERE id = ...;
 -- =========================================================================

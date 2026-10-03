@@ -509,4 +509,28 @@ create policy "iafe_mensajes_insert" on iafe.mensajes
 --       el hash coincide, garantizando que auth.users sigue siendo valido
 --       para login. Total final: 113/114 passwords visibles en el candado
 --       (112 originales + 1 'Esp2026Fut' de Espiritu).
+--
+--   2026-10-03  sync_auth_users_columns_format_with_profesor
+--       Intento parcial de fix del 500: sincroniza email_change, phone_change,
+--       phone_change_token, reauthentication_token, etc. con formato
+--       string vacia (no NULL). No fue suficiente por si solo.
+--
+--   2026-10-03  soft_reset_auth_identities_for_500_fix
+--       Borra y recrea las identities de los 119 jugadores. No fue
+--       suficiente para arreglar el 500 (las identities estaban bien).
+--
+--   2026-10-03  sync_confirmation_and_recovery_tokens
+--       FIX DEFINITIVO del 500 "Database error querying schema" en GoTrue.
+--       El bug era que confirmation_token y recovery_token quedaban NULL
+--       en jugadores (porque register_player_atomic solo pasaba las columnas
+--       minimas necesarias al INSERT). GoTrue falla con 500 cuando estos
+--       campos son NULL; espera string vacia como el profesor Arturo.
+--       UPDATE masivos ponen confirmation_token = '' y recovery_token = ''
+--       para todos los 119 jugadores con email @alebrijes.club. Despues
+--       de esta migration, TODOS los logins funcionan con 200 + JWT.
+--
+--   2026-10-03  fix_register_player_atomic_token_defaults
+--       Reescribe register_player_atomic especificando TODOS los campos
+--       opcionales de auth.users como string vacia ('') en lugar de NULL,
+--       para que el bug 500 no vuelva a ocurrir para jugadores futuros.
 -- =========================================================================

@@ -311,7 +311,7 @@
                         <span class="section-title-meta" id="radarMeta"></span>
                     </div>
                     <div class="radar-wrapper">
-                        <svg class="radar-svg" id="radarChart" viewBox="-160 -50 780 740" preserveAspectRatio="xMidYMid meet"></svg>
+                        <svg class="radar-svg" id="radarChart" viewBox="-150 -50 800 740" preserveAspectRatio="xMidYMid meet"></svg>
                     </div>
                     <div class="radar-legend" id="radarLegend"></div>
                 </div>
@@ -1035,7 +1035,7 @@
 
         // ====== RADAR ======
         function renderRadarChart(ev) {
-            const cx = 260, cy = 310, maxR = 200;
+            const cx = 310, cy = 300, maxR = 240;
             const n = metrics.length;
             const angleStep = (2 * Math.PI) / n;
             const startAngle = -Math.PI / 2;
@@ -1092,7 +1092,7 @@
                 else if (cosA < -0.3) labelAnchor = 'end';
                 svgContent += `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" class="radar-label" text-anchor="${labelAnchor}" dominant-baseline="central">${metrics[i].label}</text>`;
 
-                const valR = maxR + 78;
+                const valR = maxR + 80;
                 const vx = cx + valR * cosA;
                 const vy = cy + valR * sinA;
                 svgContent += `<text x="${vx.toFixed(1)}" y="${vy.toFixed(1)}" class="radar-value-label" text-anchor="${labelAnchor}" dominant-baseline="central">${values[i].toFixed(1)}</text>`;

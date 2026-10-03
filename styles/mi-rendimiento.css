@@ -850,7 +850,7 @@
 
 .radar-svg {
     width: 100%;
-    height: 620px;
+    height: 680px;
     display: block;
 }
 
@@ -2274,7 +2274,7 @@
     .pie-legend { grid-template-columns: 1fr; }
     .timeline-detail-grid { grid-template-columns: 1fr; }
     .radar-wrapper { padding: 0; }
-    .radar-svg { width: 100%; height: 480px; }
+    .radar-svg { width: 100%; height: 460px; }
     .empty-state-cta { width: 100%; justify-content: center; }
 
     .dot-chart-row { grid-template-columns: 1fr; }
@@ -2291,7 +2291,7 @@
     .history-aggregates { grid-template-columns: 1fr; }
     .timeline-item { gap: 10px; }
 
-    .radar-svg { height: 380px; }
+    .radar-svg { height: 360px; }
 }
 
 /* ================================

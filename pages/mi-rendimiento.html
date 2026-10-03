@@ -908,8 +908,11 @@
                             <span class="kpi-head-meta">Semana actual</span>
                         </div>
                         <div class="kpi-body">
-                            <div class="kpi-value ${has ? '' : 'is-empty'}">${has ? v.toFixed(1) : '--'}</div>
-                            <div class="kpi-value-suffix">/ 10.0</div>
+                            <div class="kpi-value-group">
+                                <div class="kpi-value ${has ? '' : 'is-empty'}">${has ? v.toFixed(1) : '--'}</div>
+                                <div class="kpi-value-suffix">/ 10.0</div>
+                            </div>
+                            <span class="kpi-body-meta">${escapeText(m.group === 'disciplina' ? 'Conducta' : 'Desempeno')}</span>
                         </div>
                         <div class="kpi-progress">
                             <div class="kpi-progress-track">
@@ -936,8 +939,11 @@
                             <span class="kpi-head-meta">Sin datos</span>
                         </div>
                         <div class="kpi-body">
-                            <div class="kpi-value is-empty">--</div>
-                            <div class="kpi-value-suffix">/ 10.0</div>
+                            <div class="kpi-value-group">
+                                <div class="kpi-value is-empty">--</div>
+                                <div class="kpi-value-suffix">/ 10.0</div>
+                            </div>
+                            <span class="kpi-body-meta">${escapeText(m.group === 'disciplina' ? 'Conducta' : 'Desempeno')}</span>
                         </div>
                         <div class="kpi-progress">
                             <div class="kpi-progress-track">

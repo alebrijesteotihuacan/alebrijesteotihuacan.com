@@ -607,6 +607,13 @@
     padding: 18px 16px 12px;
     display: flex;
     align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.kpi-value-group {
+    display: flex;
+    align-items: baseline;
     gap: 6px;
 }
 
@@ -628,6 +635,20 @@
     color: var(--al-muted-soft);
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.01em;
+}
+
+.kpi-body-meta {
+    font-size: 0.66rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    padding: 4px 10px;
+    background: var(--kpi-tone-soft);
+    color: var(--kpi-tone-darker);
+    border-radius: 999px;
+    white-space: nowrap;
+    align-self: center;
 }
 
 /* Footer con barra de progreso + meta */

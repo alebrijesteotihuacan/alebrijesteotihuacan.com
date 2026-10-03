@@ -878,7 +878,7 @@
 
 .radar-label {
     font-family: 'Montserrat', sans-serif;
-    font-size: 11px;
+    font-size: 14px;
     font-weight: 700;
     fill: var(--al-ink-soft);
     text-anchor: middle;
@@ -886,7 +886,7 @@
 
 .radar-value-label {
     font-family: 'Montserrat', sans-serif;
-    font-size: 10px;
+    font-size: 13px;
     font-weight: 800;
     fill: var(--al-brand-darker);
     text-anchor: middle;

@@ -219,7 +219,7 @@
                                 <div class="scoreboard-value" id="scoreboardValue">--</div>
                                 <div class="scoreboard-divider"></div>
                                 <div class="scoreboard-label">Promedio Semanal</div>
-                                <div class="scoreboard-range" id="scoreboardRange">Escala 0 a 10</div>
+                                <div class="scoreboard-range" id="scoreboardRange"></div>
                             </div>
                             <div class="scoreboard-bar">
                                 <div class="scoreboard-bar-fill" id="scoreboardBarFill" style="width: 0%"></div>
@@ -302,10 +302,10 @@
                             <span class="section-eyebrow">Perfil Integral</span>
                             <span class="section-title-text">Mapa de Competencias</span>
                         </div>
-                        <span class="section-title-meta">Escala 0 — 10</span>
+                        <span class="section-title-meta" id="radarMeta"></span>
                     </div>
                     <div class="radar-wrapper">
-                        <svg class="radar-svg" id="radarChart" viewBox="0 0 400 400"></svg>
+                        <svg class="radar-svg" id="radarChart" viewBox="-40 -20 480 460" preserveAspectRatio="xMidYMid meet"></svg>
                     </div>
                     <div class="radar-legend" id="radarLegend"></div>
                 </div>
@@ -360,7 +360,6 @@
                         <div class="history-agg">
                             <div class="history-agg-eyebrow">Promedio Acumulado</div>
                             <div class="history-agg-value" id="histAverage">--</div>
-                            <div class="history-agg-foot">Sobre 10 puntos</div>
                         </div>
                         <div class="history-agg">
                             <div class="history-agg-eyebrow">Periodos Evaluados</div>
@@ -879,13 +878,12 @@
                 const v = ev[m.key];
                 const has = v !== undefined && v !== null;
                 html += `
-                    <div class="kpi-card">
+                    <div class="kpi-card" data-key="${m.key}">
                         <div class="kpi-head">
                             <span class="kpi-label">${m.label}</span>
                             <span class="kpi-icon">${KPI_ICONS[m.key] || ''}</span>
                         </div>
                         <div class="kpi-value ${has ? '' : 'is-empty'}">${has ? v.toFixed(1) : '--'}</div>
-                        <div class="kpi-foot">Escala 0 — 10</div>
                     </div>
                 `;
             });
@@ -908,13 +906,12 @@
             let html = '';
             metrics.forEach(m => {
                 html += `
-                    <div class="kpi-card">
+                    <div class="kpi-card" data-key="${m.key}">
                         <div class="kpi-head">
                             <span class="kpi-label">${m.label}</span>
                             <span class="kpi-icon">${KPI_ICONS[m.key] || ''}</span>
                         </div>
                         <div class="kpi-value is-empty">--</div>
-                        <div class="kpi-foot">Sin datos</div>
                     </div>
                 `;
             });
@@ -943,7 +940,7 @@
 
             scoreboardRange.textContent = has
                 ? `Semana ${ev.semana || ''} · ${formatWeekRange(ev)}`
-                : 'Escala 0 a 10';
+                : '';
 
             let status = 'Sin datos';
             let statusColor = 'var(--al-muted)';
@@ -959,7 +956,7 @@
             scoreboardValue.textContent = '--';
             scoreboardValue.classList.add('is-empty');
             scoreboardBarFill.style.width = '0%';
-            scoreboardRange.textContent = 'Escala 0 a 10';
+            scoreboardRange.textContent = '';
             scoreboardStatus.innerHTML = 'Estado: <strong>Sin datos</strong>';
         }
 
@@ -1012,7 +1009,7 @@
 
         // ====== RADAR ======
         function renderRadarChart(ev) {
-            const cx = 200, cy = 195, maxR = 140;
+            const cx = 200, cy = 200, maxR = 130;
             const n = metrics.length;
             const angleStep = (2 * Math.PI) / n;
             const startAngle = -Math.PI / 2;
@@ -1059,15 +1056,20 @@
 
             for (let i = 0; i < n; i++) {
                 const angle = startAngle + i * angleStep;
+                const cosA = Math.cos(angle);
+                const sinA = Math.sin(angle);
                 const labelR = maxR + 28;
-                const lx = cx + labelR * Math.cos(angle);
-                const ly = cy + labelR * Math.sin(angle);
-                svgContent += `<text x="${lx}" y="${ly}" class="radar-label" dominant-baseline="central">${metrics[i].label}</text>`;
+                const lx = cx + labelR * cosA;
+                const ly = cy + labelR * sinA;
+                let labelAnchor = 'middle';
+                if (cosA > 0.3) labelAnchor = 'start';
+                else if (cosA < -0.3) labelAnchor = 'end';
+                svgContent += `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" class="radar-label" text-anchor="${labelAnchor}" dominant-baseline="central">${metrics[i].label}</text>`;
 
-                const valR = maxR + 42;
-                const vx = cx + valR * Math.cos(angle);
-                const vy = cy + valR * Math.sin(angle);
-                svgContent += `<text x="${vx}" y="${vy}" class="radar-value-label" dominant-baseline="central">${values[i].toFixed(1)}</text>`;
+                const valR = maxR + 46;
+                const vx = cx + valR * cosA;
+                const vy = cy + valR * sinA;
+                svgContent += `<text x="${vx.toFixed(1)}" y="${vy.toFixed(1)}" class="radar-value-label" text-anchor="${labelAnchor}" dominant-baseline="central">${values[i].toFixed(1)}</text>`;
             }
 
             [2, 4, 6, 8, 10].forEach(level => {

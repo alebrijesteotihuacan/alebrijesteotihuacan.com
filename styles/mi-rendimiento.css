@@ -547,11 +547,19 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 0;
+    width: 100%;
     height: 3px;
-    background: var(--al-brand);
-    transition: width 220ms ease;
+    background: var(--kpi-accent, var(--al-brand));
+    opacity: 0.85;
+    transition: opacity 180ms ease;
 }
+
+.kpi-card[data-key="tecnico"]               { --kpi-accent: #F36A21; }
+.kpi-card[data-key="tactico"]               { --kpi-accent: #D85A18; }
+.kpi-card[data-key="fisico"]                { --kpi-accent: #C7490E; }
+.kpi-card[data-key="mental"]                { --kpi-accent: #9C3808; }
+.kpi-card[data-key="disciplina_cancha"]     { --kpi-accent: #3b82f6; }
+.kpi-card[data-key="disciplina_casa_club"]  { --kpi-accent: #1d4ed8; }
 
 .kpi-card:hover {
     transform: translateY(-2px);
@@ -560,7 +568,7 @@
 }
 
 .kpi-card:hover::after {
-    width: 100%;
+    opacity: 1;
 }
 
 .kpi-card.is-promedio {
@@ -1022,6 +1030,11 @@
     margin-top: 4px;
     font-weight: 500;
     line-height: 1.4;
+    min-height: 0;
+}
+
+.scoreboard-range:empty {
+    display: none;
 }
 
 .scoreboard-bar {
@@ -1924,9 +1937,11 @@
     border-radius: var(--al-radius);
     padding: var(--al-space-5) var(--al-space-5);
     margin-bottom: var(--al-space-7);
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: var(--al-space-4);
+    max-width: 380px;
+    width: auto;
 }
 
 .inasistencias-icon {
@@ -2140,9 +2155,10 @@
     }
     .timeline-date { width: 80px; }
     .timeline-body { flex: 1 1 auto; min-width: 0; }
-    .timeline-score { margin-left: auto; }
-    .timeline-detail-toggle { margin-left: auto; }
-    .timeline-detail { padding: 0 0 0 var(--al-space-5); }
+    .timeline-score { margin-left: auto; order: 2; }
+    .timeline-detail-toggle { order: 3; margin-left: 0; }
+    .timeline-meta-row { order: 4; flex-basis: 100%; }
+    .timeline-detail { padding: 0 0 0 var(--al-space-5); order: 5; }
 
     .scoreboard-value { font-size: clamp(2.8rem, 8vw, 3.5rem); }
 
@@ -2173,6 +2189,22 @@
     .radar-wrapper { padding: 0; }
     .radar-svg { max-width: 100%; }
     .empty-state-cta { width: 100%; justify-content: center; }
+
+    .timeline-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .timeline-date { width: auto; }
+    .timeline-body { width: 100%; }
+    .timeline-score {
+        margin-left: 0;
+        align-self: flex-start;
+        flex-direction: row;
+        gap: 8px;
+        padding: 6px 12px;
+    }
+    .timeline-meta-row { margin-top: 4px; }
+    .timeline-detail-toggle { margin-left: auto; align-self: center; }
 
     .scoreboard-value { font-size: 3rem; }
 }

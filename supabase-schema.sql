@@ -500,4 +500,13 @@ create policy "iafe_mensajes_insert" on iafe.mensajes
 --         UPDATE auth.users SET encrypted_password = crypt('Esp2026Fut', gen_salt('bf')),
 --                              updated_at = now() WHERE id = ...;
 --         UPDATE public.jugadores SET password = 'Esp2026Fut' WHERE id = ...;
+--
+--   2026-10-02  restore_all_jugadores_passwords
+--       RECUPERA los passwords originales de 112 jugadores que fueron
+--       NULLificados por fix_register_player_atomic_no_plaintext_password.
+--       Metodologia: se valida cada password contra auth.users.encrypted_password
+--       (bcrypt) antes de escribirlo a jugadores.password; solo se restaura si
+--       el hash coincide, garantizando que auth.users sigue siendo valido
+--       para login. Total final: 113/114 passwords visibles en el candado
+--       (112 originales + 1 'Esp2026Fut' de Espiritu).
 -- =========================================================================

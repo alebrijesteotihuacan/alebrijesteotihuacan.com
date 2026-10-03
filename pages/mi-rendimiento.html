@@ -178,29 +178,6 @@
                     <!-- renderKpiCards -->
                 </div>
 
-                <!-- Inasistencias (si aplica) -->
-                <div class="inasistencias-card" id="inasistenciasCard" data-tone="danger" style="display: none;">
-                    <div class="inasistencias-head">
-                        <span class="inasistencias-icon-inline">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <line x1="12" y1="8" x2="12" y2="12"></line>
-                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                            </svg>
-                        </span>
-                        <span class="inasistencias-label">Inasistencias</span>
-                        <span class="inasistencias-head-meta">Este periodo</span>
-                    </div>
-                    <div class="inasistencias-body">
-                        <div class="inasistencias-main">
-                            <div class="inasistencias-value" id="inasistenciasValue">0</div>
-                            <div class="inasistencias-suffix">faltas</div>
-                        </div>
-                        <div class="inasistencias-status" id="inasistenciasStatus">Sin penalizacion</div>
-                    </div>
-                </div>
-
                 <!-- Analytics row: dot chart + scoreboard -->
                 <div class="analytics-row">
                     <div class="eval-card">
@@ -232,8 +209,30 @@
                                 <div class="scoreboard-bar-fill" id="scoreboardBarFill" style="width: 0%"></div>
                             </div>
                             <div class="scoreboard-meta">
-                                <span>Minimo aceptable: <strong>7.0</strong></span>
                                 <span id="scoreboardStatus">Sin datos</span>
+                            </div>
+                        </div>
+
+                        <!-- Inasistencias (anidada dentro del card de Promedio General) -->
+                        <div class="inasistencias-card" id="inasistenciasCard" data-tone="danger" style="display: none;">
+                            <div class="inasistencias-head">
+                                <span class="inasistencias-icon-inline">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                    </svg>
+                                </span>
+                                <span class="inasistencias-label">Inasistencias</span>
+                                <span class="inasistencias-head-meta">Este periodo</span>
+                            </div>
+                            <div class="inasistencias-body">
+                                <div class="inasistencias-main">
+                                    <div class="inasistencias-value" id="inasistenciasValue">0</div>
+                                    <div class="inasistencias-suffix">faltas</div>
+                                </div>
+                                <div class="inasistencias-status" id="inasistenciasStatus">Sin penalizacion</div>
                             </div>
                         </div>
                     </div>

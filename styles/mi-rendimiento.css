@@ -1966,6 +1966,19 @@
     transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
 
+/* Cuando esta anidada dentro del eval-card del Promedio General */
+.eval-card .inasistencias-card {
+    margin-top: var(--al-space-5);
+    margin-bottom: 0;
+    max-width: 100%;
+    width: 100%;
+}
+
+.eval-card .inasistencias-card:hover {
+    transform: none;
+    box-shadow: none;
+}
+
 .inasistencias-card:hover {
     transform: translateY(-1px);
     box-shadow: 0 6px 18px -10px var(--ina-tone, var(--al-danger));

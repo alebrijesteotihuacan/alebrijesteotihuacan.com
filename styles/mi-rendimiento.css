@@ -1999,11 +1999,19 @@
 }
 
 .inasistencias-body {
-    padding: 12px 16px;
+    padding: 12px 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    justify-content: center;
+    background: var(--al-card);
+}
+
+.inasistencias-main {
     display: flex;
     align-items: baseline;
     gap: 6px;
-    background: var(--al-card);
 }
 
 .inasistencias-value {
@@ -2021,6 +2029,15 @@
     font-weight: 700;
     color: var(--al-muted-soft);
     text-transform: lowercase;
+}
+
+.inasistencias-status {
+    font-size: 0.66rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    /* color asignado dinamicamente via JS */
 }
 
 /* ================================

@@ -193,8 +193,11 @@
                         <span class="inasistencias-head-meta">Este periodo</span>
                     </div>
                     <div class="inasistencias-body">
-                        <div class="inasistencias-value" id="inasistenciasValue">0</div>
-                        <div class="inasistencias-suffix">faltas</div>
+                        <div class="inasistencias-main">
+                            <div class="inasistencias-value" id="inasistenciasValue">0</div>
+                            <div class="inasistencias-suffix">faltas</div>
+                        </div>
+                        <div class="inasistencias-status" id="inasistenciasStatus">Sin penalizacion</div>
                     </div>
                 </div>
 
@@ -564,6 +567,7 @@
 
         const inasistenciasCard = document.getElementById('inasistenciasCard');
         const inasistenciasValue = document.getElementById('inasistenciasValue');
+        const inasistenciasStatus = document.getElementById('inasistenciasStatus');
 
         // Metric definitions (key = nombre real de la columna en Supabase)
         const metrics = [
@@ -721,6 +725,14 @@
             if (target) target.textContent = txt;
         }
 
+        // ====== INASISTENCIAS STATUS — escala de severidad ======
+        function getInasistenciasStatus(count) {
+            if (count === 0) return { label: 'Sin penalizacion', color: 'var(--al-success)' };
+            if (count === 1) return { label: 'Leve', color: 'var(--al-warning)' };
+            if (count === 2) return { label: 'Acumulando', color: 'var(--al-warning)' };
+            return { label: 'Requiere atencion', color: 'var(--al-danger)' };
+        }
+
         // ====== PLAYER IDENTITY CHIPS (Dorsal / Posición / Categoría / Equipo) ======
         function renderPlayerChips(profile) {
             const chips = [];
@@ -826,6 +838,11 @@
                     if (ev.inasistencias !== undefined && ev.inasistencias !== null) {
                         inasistenciasCard.style.display = 'grid';
                         inasistenciasValue.textContent = ev.inasistencias;
+                        const status = getInasistenciasStatus(Number(ev.inasistencias));
+                        if (inasistenciasStatus) {
+                            inasistenciasStatus.textContent = status.label;
+                            inasistenciasStatus.style.color = status.color;
+                        }
                     } else {
                         inasistenciasCard.style.display = 'none';
                     }

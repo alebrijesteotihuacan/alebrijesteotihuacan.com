@@ -520,11 +520,11 @@
 }
 
 /* ================================
-   KPI STRIP — métricas principales
+   KPI STRIP — métricas principales (scoreboard deportivo)
    ================================ */
 .kpi-row {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: var(--al-space-4);
     margin-bottom: var(--al-space-7);
 }
@@ -533,122 +533,144 @@
     background: var(--al-card);
     border: 1px solid var(--al-rule);
     border-radius: var(--al-radius);
-    padding: var(--al-space-5) var(--al-space-5);
-    transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
     position: relative;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    isolation: isolate;
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
 
-.kpi-card::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background: var(--kpi-accent, var(--al-brand));
-    opacity: 0.85;
-    transition: opacity 180ms ease;
-}
-
-.kpi-card[data-key="tecnico"]               { --kpi-accent: #F36A21; }
-.kpi-card[data-key="tactico"]               { --kpi-accent: #D85A18; }
-.kpi-card[data-key="fisico"]                { --kpi-accent: #C7490E; }
-.kpi-card[data-key="mental"]                { --kpi-accent: #9C3808; }
-.kpi-card[data-key="disciplina_cancha"]     { --kpi-accent: #3b82f6; }
-.kpi-card[data-key="disciplina_casa_club"]  { --kpi-accent: #1d4ed8; }
+.kpi-card[data-key="tecnico"]               { --kpi-tone: #F36A21; --kpi-tone-soft: rgba(243, 106, 33, 0.12); --kpi-tone-darker: #C7490E; }
+.kpi-card[data-key="tactico"]               { --kpi-tone: #D85A18; --kpi-tone-soft: rgba(216, 90, 24, 0.12);  --kpi-tone-darker: #A44315; }
+.kpi-card[data-key="fisico"]                { --kpi-tone: #C7490E; --kpi-tone-soft: rgba(199, 73, 14, 0.12);  --kpi-tone-darker: #8F3308; }
+.kpi-card[data-key="mental"]                { --kpi-tone: #9C3808; --kpi-tone-soft: rgba(156, 56, 8, 0.12);   --kpi-tone-darker: #6E2606; }
+.kpi-card[data-key="disciplina_cancha"]     { --kpi-tone: #2563eb; --kpi-tone-soft: rgba(37, 99, 235, 0.12);  --kpi-tone-darker: #1d4ed8; }
+.kpi-card[data-key="disciplina_casa_club"]  { --kpi-tone: #1d4ed8; --kpi-tone-soft: rgba(29, 78, 216, 0.14);  --kpi-tone-darker: #1e3a8a; }
 
 .kpi-card:hover {
     transform: translateY(-2px);
-    box-shadow: var(--al-shadow-lg);
-    border-color: var(--al-rule);
+    box-shadow: 0 10px 24px -14px var(--kpi-tone);
+    border-color: var(--kpi-tone);
 }
 
-.kpi-card:hover::after {
-    opacity: 1;
-}
-
-.kpi-card.is-promedio {
-    background: linear-gradient(135deg, var(--al-ink) 0%, var(--al-ink-soft) 100%);
-    border-color: var(--al-ink);
-    color: #fff;
-}
-
-.kpi-card.is-promedio .kpi-label {
-    color: rgba(255, 255, 255, 0.7);
-}
-
-.kpi-card.is-promedio .kpi-value {
-    color: #fff;
-}
-
-.kpi-card.is-promedio .kpi-foot {
-    color: rgba(255, 255, 255, 0.6);
-}
-
-.kpi-card.is-promedio .kpi-icon {
-    color: var(--al-brand);
-    background: rgba(243, 106, 33, 0.15);
-}
-
-.kpi-card.is-promedio::after {
-    background: var(--al-brand);
-}
-
+/* Header coloreado — fondo del color del criterio */
 .kpi-head {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 8px;
+    padding: 11px 14px;
+    background: var(--kpi-tone);
+    color: #fff;
+}
+
+.kpi-icon-inline {
+    width: 16px;
+    height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.kpi-icon-inline svg {
+    width: 14px;
+    height: 14px;
+    stroke-width: 2.25;
 }
 
 .kpi-label {
-    font-size: var(--al-eyebrow-size);
-    font-weight: 700;
-    color: var(--al-muted);
+    font-size: 0.74rem;
+    font-weight: 800;
+    color: #fff;
     text-transform: uppercase;
-    letter-spacing: var(--al-eyebrow-spacing);
-    line-height: 1.2;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    flex: 1;
 }
 
-.kpi-icon {
-    width: 32px;
-    height: 32px;
+.kpi-head-meta {
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.78);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    padding: 4px 7px;
+    background: rgba(255, 255, 255, 0.14);
+    border-radius: 999px;
+}
+
+/* Body con número prominente */
+.kpi-body {
+    padding: 18px 16px 12px;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--al-brand-soft);
-    color: var(--al-brand-darker);
-    border-radius: var(--al-radius-sm);
-    flex-shrink: 0;
-}
-
-.kpi-icon svg {
-    width: 18px;
-    height: 18px;
-    stroke-width: var(--al-icon-stroke);
+    align-items: baseline;
+    gap: 6px;
 }
 
 .kpi-value {
     font-family: 'Montserrat', sans-serif;
-    font-size: 1.85rem;
-    font-weight: 800;
+    font-size: clamp(2.4rem, 4vw + 0.4rem, 3.2rem);
+    font-weight: 900;
     color: var(--al-ink);
     line-height: 1;
     font-variant-numeric: tabular-nums;
-    letter-spacing: -0.8px;
+    letter-spacing: -0.04em;
 }
 
 .kpi-value.is-empty { color: var(--al-rule); }
 
-.kpi-foot {
-    font-size: 0.7rem;
+.kpi-value-suffix {
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: var(--al-muted-soft);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.01em;
+}
+
+/* Footer con barra de progreso + meta */
+.kpi-progress {
+    padding: 0 16px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.kpi-progress-track {
+    height: 6px;
+    background: var(--kpi-tone-soft);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.kpi-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--kpi-tone) 0%, var(--kpi-tone-darker) 100%);
+    border-radius: 3px;
+    transition: width 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.kpi-progress-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.66rem;
+    font-weight: 600;
+    color: var(--al-muted);
+    letter-spacing: 0.01em;
+}
+
+.kpi-progress-pct {
+    color: var(--kpi-tone-darker);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+
+.kpi-progress-target {
     color: var(--al-muted-soft);
     font-weight: 500;
-    letter-spacing: 0.02em;
 }
 
 /* ================================
@@ -826,7 +848,7 @@
 }
 
 .radar-svg {
-    max-width: 440px;
+    max-width: 480px;
     width: 100%;
     height: auto;
 }
@@ -2085,8 +2107,6 @@
 
 @media (max-width: 960px) {
     .analytics-row { grid-template-columns: 1fr; }
-    .kpi-row { grid-template-columns: repeat(3, 1fr); }
-    .kpi-row .kpi-card:nth-child(4) { grid-column: span 3; }
 }
 
 @media (max-width: 820px) {
@@ -2118,10 +2138,7 @@
         right: 12px;
     }
 
-    .kpi-row { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .kpi-row .kpi-card:nth-child(4) { grid-column: auto; }
-    .kpi-card { padding: 14px; }
-    .kpi-value { font-size: 1.5rem; }
+    .kpi-row { grid-template-columns: repeat(2, 1fr); gap: var(--al-space-4); }
 
     .eval-card { padding: var(--al-space-5); }
 
@@ -2150,15 +2167,26 @@
     .rendimiento-card .rendimiento-badge { margin: 0 auto; }
 
     .timeline-item {
-        flex-wrap: wrap;
+        flex-direction: column;
+        align-items: stretch;
         row-gap: var(--al-space-3);
     }
-    .timeline-date { width: 80px; }
-    .timeline-body { flex: 1 1 auto; min-width: 0; }
-    .timeline-score { margin-left: auto; order: 2; }
-    .timeline-detail-toggle { order: 3; margin-left: 0; }
-    .timeline-meta-row { order: 4; flex-basis: 100%; }
-    .timeline-detail { padding: 0 0 0 var(--al-space-5); order: 5; }
+    .timeline-dot { align-self: flex-start; }
+    .timeline-date { width: auto; }
+    .timeline-body { width: 100%; }
+    .timeline-meta-row { align-self: flex-start; }
+    .timeline-score {
+        margin-left: 0;
+        align-self: flex-start;
+        flex-direction: row;
+        gap: 8px;
+        padding: 8px 14px;
+    }
+    .timeline-detail-toggle {
+        margin-left: auto;
+        align-self: center;
+    }
+    .timeline-detail { padding: 0 0 0 var(--al-space-5); }
 
     .scoreboard-value { font-size: clamp(2.8rem, 8vw, 3.5rem); }
 
@@ -2169,11 +2197,7 @@
 }
 
 @media (max-width: 480px) {
-    .kpi-row { grid-template-columns: 1fr 1fr; gap: 8px; }
-    .kpi-card { padding: 12px; }
-    .kpi-value { font-size: 1.4rem; }
-    .kpi-icon { width: 28px; height: 28px; }
-    .kpi-icon svg { width: 16px; height: 16px; }
+    .kpi-row { grid-template-columns: 1fr 1fr; gap: 10px; }
 
     .player-hero-chips { gap: 6px; }
     .chip { padding: 6px 10px; min-height: 40px; }
@@ -2189,22 +2213,6 @@
     .radar-wrapper { padding: 0; }
     .radar-svg { max-width: 100%; }
     .empty-state-cta { width: 100%; justify-content: center; }
-
-    .timeline-item {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .timeline-date { width: auto; }
-    .timeline-body { width: 100%; }
-    .timeline-score {
-        margin-left: 0;
-        align-self: flex-start;
-        flex-direction: row;
-        gap: 8px;
-        padding: 6px 12px;
-    }
-    .timeline-meta-row { margin-top: 4px; }
-    .timeline-detail-toggle { margin-left: auto; align-self: center; }
 
     .scoreboard-value { font-size: 3rem; }
 }

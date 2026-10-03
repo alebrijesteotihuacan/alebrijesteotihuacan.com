@@ -179,18 +179,22 @@
                 </div>
 
                 <!-- Inasistencias (si aplica) -->
-                <div class="inasistencias-card" id="inasistenciasCard" style="display: none;">
-                    <div class="inasistencias-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="8" x2="12" y2="12"></line>
-                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                        </svg>
+                <div class="inasistencias-card" id="inasistenciasCard" data-tone="danger" style="display: none;">
+                    <div class="inasistencias-head">
+                        <span class="inasistencias-icon-inline">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                        </span>
+                        <span class="inasistencias-label">Inasistencias</span>
+                        <span class="inasistencias-head-meta">Este periodo</span>
                     </div>
-                    <div class="inasistencias-text">
-                        <div class="inasistencias-label">Inasistencias este periodo</div>
+                    <div class="inasistencias-body">
                         <div class="inasistencias-value" id="inasistenciasValue">0</div>
+                        <div class="inasistencias-suffix">faltas</div>
                     </div>
                 </div>
 
@@ -820,7 +824,7 @@
                     renderRendimientoCancha(ev);
 
                     if (ev.inasistencias !== undefined && ev.inasistencias !== null) {
-                        inasistenciasCard.style.display = 'flex';
+                        inasistenciasCard.style.display = 'grid';
                         inasistenciasValue.textContent = ev.inasistencias;
                     } else {
                         inasistenciasCard.style.display = 'none';
@@ -896,7 +900,6 @@
                             </div>
                             <div class="kpi-progress-meta">
                                 <span class="kpi-progress-pct">${pctStr}%</span>
-                                <span class="kpi-progress-target">Minimo 7.0</span>
                             </div>
                         </div>
                     </div>
@@ -925,7 +928,6 @@
                             </div>
                             <div class="kpi-progress-meta">
                                 <span class="kpi-progress-pct">0%</span>
-                                <span class="kpi-progress-target">Minimo 7.0</span>
                             </div>
                         </div>
                     </div>
@@ -970,11 +972,11 @@
         function renderDotChart(ev) {
             setSemana(ev, dotChartMeta);
             const ICONS = {
-                desempeno: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>',
-                disciplina: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>'
+                desempeno: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+                disciplina: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>'
             };
             const META = {
-                desempeno: 'Desempeno Deportivo',
+                desempeno: 'Desempeno',
                 disciplina: 'Conducta'
             };
 
@@ -984,32 +986,28 @@
                 const v = Number(raw);
                 const has = Number.isFinite(v);
                 const pct = has ? Math.min(100, Math.max(0, (v / 10) * 100)) : 0;
-                const intensity = has ? (v >= 8 ? 'is-high' : v >= 7 ? 'is-medium' : 'is-low') : '';
-                const isDiscipline = m.group === 'disciplina';
-                const iconWrap = isDiscipline ? 'dot-chart-icon is-discipline' : 'dot-chart-icon';
+                const pctStr = has ? Math.round(pct) : 0;
                 html += `
-                    <div class="dot-chart-row">
-                        <div class="dot-chart-row-head">
-                            <div class="${iconWrap}">${ICONS[m.group] || ''}</div>
-                            <div class="dot-chart-label">
-                                ${escapeText(m.label)}
-                                <div class="dot-chart-label-meta">${escapeText(META[m.group] || '')}</div>
-                            </div>
+                    <div class="dot-chart-row" data-key="${m.key}">
+                        <div class="dot-chart-head">
+                            <span class="dot-chart-icon-inline">${ICONS[m.group] || ''}</span>
+                            <span class="dot-chart-label">${escapeText(m.label)}</span>
+                            <span class="dot-chart-meta">${escapeText(META[m.group] || '')}</span>
                         </div>
-                        <div class="dot-chart-track">
-                            <div class="dot-chart-gridlines">${[0,1,2,3,4,5,6,7,8,9,10].map(() => '<div class="dot-chart-gridline"></div>').join('')}</div>
-                            <div class="dot-chart-bar ${isDiscipline ? 'is-discipline' : ''} ${intensity}" style="width: ${pct}%"></div>
+                        <div class="dot-chart-body">
                             <div class="dot-chart-value ${has ? '' : 'is-empty'}">${has ? v.toFixed(1) : '--'}</div>
+                            <div class="dot-chart-progress">
+                                <div class="dot-chart-progress-track">
+                                    <div class="dot-chart-progress-fill" style="width: ${pct}%"></div>
+                                </div>
+                                <div class="dot-chart-progress-meta">
+                                    <span>${pctStr}%</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `;
             });
-            html += `
-                <div class="dot-chart-scale">
-                    <div></div>
-                    <div class="dot-chart-scale-row"><span>0</span><span>2</span><span>4</span><span>6</span><span>8</span><span>10</span></div>
-                </div>
-            `;
             dotChart.innerHTML = html;
         }
 

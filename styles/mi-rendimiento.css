@@ -654,7 +654,7 @@
 
 .kpi-progress-meta {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     font-size: 0.66rem;
     font-weight: 600;
@@ -666,11 +666,6 @@
     color: var(--kpi-tone-darker);
     font-weight: 800;
     font-variant-numeric: tabular-nums;
-}
-
-.kpi-progress-target {
-    color: var(--al-muted-soft);
-    font-weight: 500;
 }
 
 /* ================================
@@ -688,153 +683,137 @@
 }
 
 /* ================================
-   BAR CHART (Rendimiento por Criterio)
+   DOT CHART — Rendimiento por Criterio (scoreboard row style)
    ================================ */
 .dot-chart-container {
     padding: 4px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .dot-chart-row {
     display: grid;
-    grid-template-columns: minmax(150px, 220px) 1fr;
-    align-items: center;
-    gap: var(--al-space-5);
-    padding: 14px 0;
-    border-bottom: 1px solid var(--al-rule-soft);
+    grid-template-columns: minmax(180px, 240px) 1fr;
+    align-items: stretch;
+    gap: 0;
+    border-radius: var(--al-radius);
+    overflow: hidden;
+    border: 1px solid var(--al-rule);
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
 
-.dot-chart-row:last-child { border-bottom: none; }
-
-.dot-chart-row-head {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-width: 0;
+.dot-chart-row:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px -10px var(--row-tone, var(--al-rule));
+    border-color: var(--row-tone, var(--al-rule));
 }
 
-.dot-chart-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: var(--al-radius-sm);
-    background: var(--al-brand-soft);
-    color: var(--al-brand-darker);
+.dot-chart-row[data-key="tecnico"]               { --row-tone: #F36A21; --row-tone-soft: rgba(243, 106, 33, 0.12); --row-tone-darker: #C7490E; }
+.dot-chart-row[data-key="tactico"]               { --row-tone: #D85A18; --row-tone-soft: rgba(216, 90, 24, 0.12);  --row-tone-darker: #A44315; }
+.dot-chart-row[data-key="fisico"]                { --row-tone: #C7490E; --row-tone-soft: rgba(199, 73, 14, 0.12);  --row-tone-darker: #8F3308; }
+.dot-chart-row[data-key="mental"]                { --row-tone: #9C3808; --row-tone-soft: rgba(156, 56, 8, 0.12);   --row-tone-darker: #6E2606; }
+.dot-chart-row[data-key="disciplina_cancha"]     { --row-tone: #2563eb; --row-tone-soft: rgba(37, 99, 235, 0.12);  --row-tone-darker: #1d4ed8; }
+.dot-chart-row[data-key="disciplina_casa_club"]  { --row-tone: #1d4ed8; --row-tone-soft: rgba(29, 78, 216, 0.14);  --row-tone-darker: #1e3a8a; }
+
+/* Header izquierdo coloreado */
+.dot-chart-head {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 12px 14px;
+    background: var(--row-tone);
+    color: #fff;
     justify-content: center;
-    flex-shrink: 0;
 }
 
-.dot-chart-icon svg {
+.dot-chart-icon-inline {
     width: 18px;
     height: 18px;
-    stroke-width: var(--al-icon-stroke);
+    color: rgba(255, 255, 255, 0.95);
+    flex-shrink: 0;
 }
-
-.dot-chart-icon.is-discipline {
-    background: var(--al-info-soft);
-    color: var(--al-info);
+.dot-chart-icon-inline svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2.25;
 }
 
 .dot-chart-label {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--al-ink);
-    line-height: 1.2;
+    font-size: 0.84rem;
+    font-weight: 800;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    line-height: 1;
     word-break: break-word;
 }
 
-.dot-chart-label-meta {
-    font-size: 0.66rem;
-    font-weight: 500;
-    color: var(--al-muted-soft);
+.dot-chart-meta {
+    font-size: 0.6rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.78);
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-top: 3px;
+    letter-spacing: 0.06em;
+    line-height: 1;
 }
 
-.dot-chart-track {
-    position: relative;
-    height: 32px;
-    background: var(--al-canvas);
-    border-radius: var(--al-radius-sm);
-    border: 1px solid var(--al-rule);
-    overflow: hidden;
-}
-
-.dot-chart-bar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    background: linear-gradient(90deg, var(--al-brand) 0%, var(--al-brand-darker) 100%);
-    border-radius: 7px 0 0 7px;
-    transition: width 700ms cubic-bezier(0.22, 1, 0.36, 1);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
-}
-
-.dot-chart-bar.is-discipline {
-    background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);
-}
-
-.dot-chart-bar.is-high   { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 0 1px rgba(243, 106, 33, 0.28); }
-.dot-chart-bar.is-medium { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2); }
-.dot-chart-bar.is-low    { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15); opacity: 0.85; }
-
-.dot-chart-gridlines {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+/* Body derecho con número + progress */
+.dot-chart-body {
+    padding: 12px 16px;
     display: flex;
-    justify-content: space-between;
-    padding: 0 11px;
-    pointer-events: none;
-}
-
-.dot-chart-gridline {
-    width: 1px;
-    height: 100%;
-    background: var(--al-rule);
-    opacity: 0.6;
+    flex-direction: column;
+    gap: 6px;
+    justify-content: center;
+    background: var(--al-card);
 }
 
 .dot-chart-value {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-family: var(--al-mono-num);
-    font-size: 0.86rem;
-    font-weight: 800;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.45rem;
+    font-weight: 900;
     color: var(--al-ink);
-    background: var(--al-card);
-    padding: 3px 8px;
-    border-radius: 5px;
-    z-index: 2;
+    line-height: 1;
     font-variant-numeric: tabular-nums;
-    border: 1px solid var(--al-rule);
-    box-shadow: 0 1px 3px rgba(15, 29, 46, 0.06);
+    letter-spacing: -0.03em;
 }
 
-.dot-chart-value.is-empty {
-    color: var(--al-muted-soft);
-}
+.dot-chart-value.is-empty { color: var(--al-rule); }
 
-.dot-chart-scale {
-    display: grid;
-    grid-template-columns: minmax(150px, 220px) 1fr;
-    gap: var(--al-space-5);
-    padding-top: 12px;
-    margin-top: 6px;
-    font-size: 0.66rem;
-    font-weight: 600;
-    color: var(--al-muted-soft);
-}
-
-.dot-chart-scale-row {
+.dot-chart-progress {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.dot-chart-progress-track {
+    height: 6px;
+    background: var(--row-tone-soft);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.dot-chart-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--row-tone) 0%, var(--row-tone-darker) 100%);
+    border-radius: 3px;
+    transition: width 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dot-chart-progress-meta {
+    display: flex;
+    justify-content: flex-start;
+    font-size: 0.62rem;
+    font-weight: 600;
+    color: var(--al-muted);
+    letter-spacing: 0.01em;
+}
+
+.dot-chart-progress-meta span {
+    color: var(--row-tone-darker);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
 }
 
 /* ================================
@@ -848,8 +827,7 @@
 }
 
 .radar-svg {
-    max-width: 480px;
-    width: 100%;
+    width: min(100%, 640px);
     height: auto;
 }
 
@@ -1950,59 +1928,97 @@
 .empty-state-cta svg { width: 14px; height: 14px; }
 
 /* ================================
-   INASISTENCIAS
+   INASISTENCIAS — scoreboard style
    ================================ */
 .inasistencias-card {
     background: var(--al-card);
     border: 1px solid var(--al-rule);
-    border-left: 4px solid var(--al-danger);
     border-radius: var(--al-radius);
-    padding: var(--al-space-5) var(--al-space-5);
+    overflow: hidden;
     margin-bottom: var(--al-space-7);
-    display: inline-flex;
-    align-items: center;
-    gap: var(--al-space-4);
-    max-width: 380px;
-    width: auto;
+    display: grid;
+    grid-template-columns: minmax(180px, 220px) 1fr;
+    max-width: 460px;
+    width: fit-content;
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
 
-.inasistencias-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: var(--al-radius-sm);
-    background: var(--al-danger-soft);
+.inasistencias-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px -10px var(--ina-tone, var(--al-danger));
+    border-color: var(--ina-tone, var(--al-danger));
+}
+
+.inasistencias-card[data-tone="danger"] {
+    --ina-tone: #b5403a;
+    --ina-tone-soft: rgba(181, 64, 58, 0.12);
+    --ina-tone-darker: #8a2e29;
+}
+
+.inasistencias-head {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 12px 14px;
+    background: var(--ina-tone);
+    color: #fff;
     justify-content: center;
-    color: var(--al-danger);
+}
+
+.inasistencias-icon-inline {
+    width: 18px;
+    height: 18px;
+    color: rgba(255, 255, 255, 0.95);
     flex-shrink: 0;
 }
-
-.inasistencias-icon svg {
-    width: 22px;
-    height: 22px;
-    stroke-width: var(--al-icon-stroke);
+.inasistencias-icon-inline svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2.25;
 }
 
-.inasistencias-text { flex: 1; }
-
 .inasistencias-label {
-    font-size: var(--al-eyebrow-size);
-    font-weight: 700;
-    color: var(--al-muted);
+    font-size: 0.84rem;
+    font-weight: 800;
+    color: #fff;
     text-transform: uppercase;
-    letter-spacing: var(--al-eyebrow-spacing);
+    letter-spacing: 0.06em;
+    line-height: 1;
+}
+
+.inasistencias-head-meta {
+    font-size: 0.6rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.78);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    line-height: 1;
+}
+
+.inasistencias-body {
+    padding: 12px 16px;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    background: var(--al-card);
 }
 
 .inasistencias-value {
     font-family: 'Montserrat', sans-serif;
-    font-size: 1.7rem;
-    font-weight: 800;
+    font-size: 1.85rem;
+    font-weight: 900;
     color: var(--al-ink);
+    line-height: 1;
     font-variant-numeric: tabular-nums;
-    line-height: 1.1;
-    margin-top: 4px;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.03em;
+}
+
+.inasistencias-suffix {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--al-muted-soft);
+    text-transform: lowercase;
 }
 
 /* ================================
@@ -2151,12 +2167,6 @@
 
     .dot-chart-row {
         grid-template-columns: 1fr;
-        gap: 10px;
-        padding: var(--al-space-4) 0;
-    }
-    .dot-chart-scale {
-        grid-template-columns: 1fr;
-        padding-left: 0;
     }
 
     .rendimiento-card .rendimiento-eyebrow-row {
@@ -2211,8 +2221,14 @@
     .pie-legend { grid-template-columns: 1fr; }
     .timeline-detail-grid { grid-template-columns: 1fr; }
     .radar-wrapper { padding: 0; }
-    .radar-svg { max-width: 100%; }
+    .radar-svg { width: 100%; }
     .empty-state-cta { width: 100%; justify-content: center; }
+
+    .dot-chart-row { grid-template-columns: 1fr; }
+    .dot-chart-head { padding: 10px 14px; }
+    .dot-chart-body { padding: 10px 14px; }
+
+    .inasistencias-card { grid-template-columns: 1fr; max-width: 100%; }
 
     .scoreboard-value { font-size: 3rem; }
 }
@@ -2230,7 +2246,7 @@
     .spinner { animation: none; }
     .player-hero-eyebrow-dot { animation: none; }
     .player-hero-photo img { transition: none; }
-    .dot-chart-bar { transition: none; }
+    .dot-chart-progress-fill { transition: none; }
     .trend-dot { transition: none; }
     *, *::before, *::after { transition: none !important; }
 }

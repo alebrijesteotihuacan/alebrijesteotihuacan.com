@@ -61,7 +61,15 @@ create table if not exists public.evaluaciones (
     disciplina_cancha numeric(3,1),
     disciplina_casa_club numeric(3,1),
     inasistencias integer default 0,
-    rendimiento_cancha numeric(3,1),
+    rendimiento_cancha numeric(3,1),  -- legacy numeric; see migration fix_evaluaciones_rendimiento_cancha_allow_rp
+    -- POST-MIGRATION (en rendimiento): changed to text with CHECK constraint
+    --   rendimiento_cancha text
+    --   CHECK (rendimiento_cancha IS NULL
+    --          OR rendimiento_cancha ~ '^(10|[0-9])(\.[0-9])?$'
+    --          OR rendimiento_cancha = 'RP')
+    -- Reason: el frontend envia 'RP' cuando el jugador no fue convocado.
+    -- Postgres rechazaba con 22P02 invalid input syntax for type numeric: "RP".
+    -- La vista 'featured_players_v' se dropea y recrea en esa misma migracion.
     minutos_jugados integer default 0,
     promedio_general numeric(3,1),
     observaciones text,

@@ -554,6 +554,30 @@ document.addEventListener('DOMContentLoaded', () => {
         // Últimos resultados (más reciente primero)
         const results = [
             {
+                jornada: 'Jornada 5',
+                eyebrow: 'Liga TDP · Grupo 9 · Temporada 2026–2027',
+                title: 'Último resultado',
+                meta: [
+                    { icon: 'calendar', label: 'Fecha y hora', value: 'Viernes 2 de octubre · 12:00 hrs' },
+                    { icon: 'location', label: 'Sede',         value: 'Centro Recreativo Pascual Boing' }
+                ],
+                homeTeam: {
+                    name: 'Alebrijes Teotihuacán',
+                    tag: 'Local',
+                    logo: '../assets/EquiposGrupo9_LigaTDP/AlebrijesTeotihuacán.png',
+                    id: 12621
+                },
+                awayTeam: {
+                    name: 'Centro de Talentos Volten',
+                    tag: 'Visitante',
+                    logo: '../assets/EquiposGrupo9_LigaTDP/CentroDeTalentosVolten.png',
+                    id: 14279
+                },
+                scoreValue: '0 – 2',
+                scoreStatus: 'Finalizado',
+                result: 'loss'
+            },
+            {
                 jornada: 'Jornada 4',
                 eyebrow: 'Liga TDP · Grupo 9 · Temporada 2026–2027',
                 title: 'Último resultado',

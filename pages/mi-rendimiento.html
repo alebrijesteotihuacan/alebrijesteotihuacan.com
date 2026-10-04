@@ -665,8 +665,25 @@
                 'Carlos_Ruben_Gamez_Lazcano_Portero_829'
             ];
 
+            const photoFilesSolesTDP = [
+                'Mauricio_Fuentes_Ramos_Portero_1', 'Jaffet_Sandoval_Martinez_Defensa_2', 'Ian_Alexander_Garcia_Martinez_Defensa_3',
+                'Farid_Omar_Avendaño_Vazquez_Defensa_4', 'Faviel_Isidro_Morales_Perez_Medio_5', 'Kevin_Alexander_Castro_Aguilar_Medio_6',
+                'Jose_Luis_Ruiz_Maldonado_Medio_7', 'Oliver_De_Jesus_Morales_Moreno_Medio_8', 'Jesus_Rodrigo_Vela_Ramos_Delantero_9',
+                'Cristian_Fabian_Ramirez_Martinez_Medio_10', 'Mauricio_Luna_Sanchez_Medio_11', 'Steve_Julian_Serrano_Luevanos_Portero_12',
+                'Julio_Axel_Delgado_Estrada_Portero_13', 'Ellioth_Omar_Cuevas_Alcala_Medio_14', 'Leandro_Gael_Contreras_Aviles_Delantero_15',
+                'Jonathan_Darío_Galindo_Guerrero_Medio_16', 'Cristobal_Rosas_Franco_Medio_17', 'Erick_Isaac_Lopez_Borjas_Medio_18',
+                'Jose_Godofredo_Pedro_Fiscal_Delantero_19', 'Lisandro_Alain_Contreras_Dorantes_Defensa_20', 'Julio_César_Gutiérrez_Díaz_Defensa_21',
+                'Carlos_Adrian_Suarez_Hernandez_Delantero_22', 'Pablo_Aldahir_Gomez_Archundia_Medio_23', 'Angel_David_Sanchez_Jimenez_Defensa_24',
+                'Cesar_Alexander_Hernandez_Zacarias_Portero_25', 'Luis_Antonio_Sanchez_Flores_Delantero_26', 'Johan_Ivan_Robles_Cid_Defensa_27',
+                'Samuel_Alexander_Hernandez_Romero_Portero_28', 'Jesus_Esteban_Ricardez_Zarate_Defensa_29', 'Fabricio_Santiago_Del_Angel_Defensa_30',
+                'Ricardo_Rodriguez_Montiel_Defensa_31', 'Gerardo_Antonio_Roman_Tellez_Delantero_32'
+            ];
+
             const tdpMatch = bestMatch(photoFiles);
             if (tdpMatch) return '../assets/PlantillaAlebrijesTeotihuacanLigaTDP/' + tdpMatch + '.jpg';
+
+            const solesMatch = bestMatch(photoFilesSolesTDP);
+            if (solesMatch) return '../assets/PlantillaSolesTeotihuacanSub16_TDP/' + solesMatch + '.jpg';
 
             const solesSub16Match = bestMatch(photoFilesSolesSub16);
             if (solesSub16Match) return '../assets/PlantillaSolesTeotihuacanSub16_TDP/' + solesSub16Match + '.jpg';
@@ -675,7 +692,7 @@
         }
 
         function setPlayerPhoto(nombre, apellido, fotoUrl) {
-            const avatarContainer = document.querySelector('.player-header-avatar');
+            const avatarContainer = document.querySelector('.player-hero-photo');
             if (fotoUrl) {
                 playerPhoto.src = fotoUrl;
                 return;
@@ -690,6 +707,10 @@
         }
 
         function showGenericAvatar(container) {
+            if (!container) {
+                console.warn('[mi-rendimiento] showGenericAvatar: container null, avatar genérico no renderizado');
+                return;
+            }
             container.innerHTML = `<div class="generic-avatar"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>`;
         }
 

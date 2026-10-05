@@ -15,39 +15,39 @@ import { supabase } from './supabase-client.js';
 
 // ── Categorías canónicas (orden de aparición) ────────────────────────────
 const CATEGORIES_ORDER = [
-    'Alebrijes TDP',
-    'Soles TDP',
-    'Alebrijes TDP Sub-16',
-    'Soles TDP Sub-16',
+    'Alebrijes Teotihuacán',
+    'Soles Teotihuacán',
+    'Alebrijes Sub - 16',
+    'Soles Sub - 16',
     'Liga de Expansión',
     'Liga Premier',
-    'Sub-18',
-    'Sub-16',
-    'Sub-14',
+    'Sub - 18',
+    'Sub - 16',
+    'Sub - 14',
 ];
 
 const CATEGORY_COLORS = {
-    'Alebrijes TDP':         'linear-gradient(90deg, #F36A21 0%, #C7490E 100%)',
-    'Soles TDP':             'linear-gradient(90deg, #FF8C42 0%, #E85D26 100%)',
-    'Alebrijes TDP Sub-16':  'linear-gradient(90deg, #f97316 0%, #c2410c 100%)',
-    'Soles TDP Sub-16':      'linear-gradient(90deg, #fb923c 0%, #ea580c 100%)',
+    'Alebrijes Teotihuacán': 'linear-gradient(90deg, #F36A21 0%, #C7490E 100%)',
+    'Soles Teotihuacán':     'linear-gradient(90deg, #FF8C42 0%, #E85D26 100%)',
+    'Alebrijes Sub - 16':    'linear-gradient(90deg, #f97316 0%, #c2410c 100%)',
+    'Soles Sub - 16':        'linear-gradient(90deg, #fb923c 0%, #ea580c 100%)',
     'Liga Premier':          'linear-gradient(90deg, #10b981 0%, #047857 100%)',
     'Liga de Expansión':     'linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%)',
-    'Sub-18':                'linear-gradient(90deg, #8b5cf6 0%, #6d28d9 100%)',
-    'Sub-16':                'linear-gradient(90deg, #0ea5e9 0%, #0369a1 100%)',
-    'Sub-14':                'linear-gradient(90deg, #f59e0b 0%, #b45309 100%)',
+    'Sub - 18':              'linear-gradient(90deg, #8b5cf6 0%, #6d28d9 100%)',
+    'Sub - 16':              'linear-gradient(90deg, #0ea5e9 0%, #0369a1 100%)',
+    'Sub - 14':              'linear-gradient(90deg, #f59e0b 0%, #b45309 100%)',
 };
 const FALLBACK_COLOR = 'linear-gradient(90deg, #F36A21 0%, #C7490E 100%)';
 const CATEGORY_INK = {
-    'Alebrijes TDP':         '#F36A21',
-    'Soles TDP':             '#FF8C42',
-    'Alebrijes TDP Sub-16':  '#f97316',
-    'Soles TDP Sub-16':      '#fb923c',
+    'Alebrijes Teotihuacán': '#F36A21',
+    'Soles Teotihuacán':     '#FF8C42',
+    'Alebrijes Sub - 16':    '#f97316',
+    'Soles Sub - 16':        '#fb923c',
     'Liga Premier':          '#10b981',
     'Liga de Expansión':     '#3b82f6',
-    'Sub-18':                '#8b5cf6',
-    'Sub-16':                '#0ea5e9',
-    'Sub-14':                '#f59e0b',
+    'Sub - 18':              '#8b5cf6',
+    'Sub - 16':              '#0ea5e9',
+    'Sub - 14':              '#f59e0b',
 };
 const FALLBACK_INK = '#F36A21';
 
@@ -59,20 +59,23 @@ function categoryFromPlayer(player) {
     }
     const eq = (player.equipo || '').trim();
     if (!eq) return { key: directCat || 'Otros', sub: '', label: directCat || 'Otros' };
-    if (eq === 'Alebrijes TDP') return { key: 'Alebrijes TDP', sub: '', label: 'Alebrijes TDP' };
+    if (eq === 'Alebrijes TDP') return { key: 'Alebrijes Teotihuacán', sub: '', label: 'Alebrijes Teotihuacán' };
 
     // Soles TDP: separar la version base de Sub-16 para que cada
     // categoria tenga su propio ganador (antes se colapsaban en una
-    // sola key y Soles TDP Sub-16 nunca aparecia como categoria).
-    if (eq === 'Soles TDP Sub-16') return { key: 'Soles TDP Sub-16', sub: 'Sub-16', label: 'Soles TDP' };
+    // sola key y Soles Sub - 16 nunca aparecia como categoria).
+    if (eq === 'Soles TDP Sub-16') return { key: 'Soles Sub - 16', sub: '', label: 'Soles Sub - 16' };
     const solesMatch = eq.match(/^Soles TDP$/i);
-    if (solesMatch) return { key: 'Soles TDP', sub: '', label: 'Soles TDP' };
+    if (solesMatch) return { key: 'Soles Teotihuacán', sub: '', label: 'Soles Teotihuacán' };
 
     // Alebrijes TDP Sub-16: misma logica que arriba.
-    if (eq === 'Alebrijes TDP Sub-16') return { key: 'Alebrijes TDP Sub-16', sub: 'Sub-16', label: 'Alebrijes TDP' };
+    if (eq === 'Alebrijes TDP Sub-16') return { key: 'Alebrijes Sub - 16', sub: '', label: 'Alebrijes Sub - 16' };
 
     const subMatch = eq.match(/^(Sub-\d+)$/);
-    if (subMatch) return { key: subMatch[1], sub: '', label: subMatch[1] };
+    if (subMatch) {
+        const k = subMatch[1].replace('-', ' - ');
+        return { key: k, sub: '', label: k };
+    }
 
     if (/Ligas?\s+de\s+Expansi(o|ó)n/i.test(eq)) return { key: 'Liga de Expansión', sub: '', label: 'Liga de Expansión' };
     if (/Liga\s+Premier/i.test(eq)) return { key: 'Liga Premier', sub: '', label: 'Liga Premier' };
@@ -293,23 +296,26 @@ function formatWeekRangeCompact(isoWeek) {
     return `${fmt(monday)} — ${fmt(sunday)}`;
 }
 
-// ── Card markup: vertical photo-dominant, categoria como chip sutil ────
+// ── Card markup: vertical photo-dominant, categoria como etiqueta afuera ──
 function renderCard({ cat, winner }) {
     const accent = CATEGORY_COLORS[cat.key] || FALLBACK_COLOR;
     const ink = CATEGORY_INK[cat.key] || FALLBACK_INK;
+    const tag = escapeHtml(cat.label);
 
     if (!winner) {
         return `
-            <article class="featured-player-card fpc-empty" style="--slot-accent:${accent}; --slot-ink:${ink};">
-                <div class="fpc-photo">
-                    <div class="fpc-initials">--</div>
-                </div>
-                <span class="fpc-chip">${escapeHtml(cat.label)}${cat.sub ? `<span class="fpc-chip-sub"> · ${escapeHtml(cat.sub)}</span>` : ''}</span>
-                <div class="fpc-score fpc-tone-na">
-                    <span class="fpc-num">--</span><span class="fpc-cap">/10</span>
-                </div>
-                <div class="fpc-name">Sin evaluacion esta semana</div>
-            </article>
+            <div class="featured-player-slot" style="--slot-accent:${accent}; --slot-ink:${ink};">
+                <span class="fpc-tag">${tag}</span>
+                <article class="featured-player-card fpc-empty">
+                    <div class="fpc-photo">
+                        <div class="fpc-initials">--</div>
+                    </div>
+                    <div class="fpc-score fpc-tone-na">
+                        <span class="fpc-num">--</span><span class="fpc-cap">/10</span>
+                    </div>
+                    <div class="fpc-name">Sin evaluacion esta semana</div>
+                </article>
+            </div>
         `;
     }
 
@@ -329,17 +335,19 @@ function renderCard({ cat, winner }) {
     const initialsHTML = `<div class="fpc-initials" ${imgSrc ? 'style="display:none;"' : ''}>${escapeHtml(initials)}</div>`;
 
     return `
-        <article class="featured-player-card" style="--slot-accent:${accent}; --slot-ink:${ink};">
-            <div class="fpc-photo">
-                ${photoHTML}
-                ${initialsHTML}
-                <span class="fpc-chip">${escapeHtml(cat.label)}${cat.sub ? `<span class="fpc-chip-sub"> · ${escapeHtml(cat.sub)}</span>` : ''}</span>
-                <div class="fpc-score ${tone}">
-                    <span class="fpc-num">${escapeHtml(scoreStr)}</span><span class="fpc-cap">/10</span>
+        <div class="featured-player-slot" style="--slot-accent:${accent}; --slot-ink:${ink};">
+            <span class="fpc-tag">${tag}</span>
+            <article class="featured-player-card">
+                <div class="fpc-photo">
+                    ${photoHTML}
+                    ${initialsHTML}
+                    <div class="fpc-score ${tone}">
+                        <span class="fpc-num">${escapeHtml(scoreStr)}</span><span class="fpc-cap">/10</span>
+                    </div>
                 </div>
-            </div>
-            <div class="fpc-name">${escapeHtml(fullName)}</div>
-        </article>
+                <div class="fpc-name">${escapeHtml(fullName)}</div>
+            </article>
+        </div>
     `;
 }
 

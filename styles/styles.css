@@ -3110,11 +3110,37 @@ footer {
 
 .fpc-slot { display: contents; }
 
+/* Featured player slot — wraps the category tag + the card.
+   Acts as the grid item so the tag can sit OUTSIDE the card's
+   visual boundary (border + radius). */
+.featured-player-slot {
+    display: flex;
+    flex-direction: column;
+    max-width: 260px;
+    width: 100%;
+    justify-self: center;
+}
+
+/* Etiqueta de categoria — vive arriba del card, fuera de su borde.
+   Mismo color que la banda 3px del card, sin fondo, para no competir
+   con la foto del jugador. */
+.fpc-tag {
+    margin: 0 0 10px 2px;
+    padding: 0;
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--slot-ink, #F36A21);
+    line-height: 1.2;
+    align-self: flex-start;
+}
+
 /* Featured player card — vertical photo-dominant.
-   La foto 4:5 ocupa el grueso de la tarjeta. El chip de categoria va
-   en la esquina superior izquierda, el score en la inferior izquierda
-   (ambos overlay sobre la foto). El nombre vive debajo de la foto.
-   Banda superior 3px del slot-accent como firma identitaria. */
+   La foto 4:5 ocupa el grueso de la tarjeta. El score en la
+   esquina inferior izquierda como overlay sobre la foto. El nombre
+   vive debajo de la foto. Banda superior 3px del slot-accent
+   como firma identitaria. */
 .featured-player-card {
     position: relative;
     background: #141414;
@@ -3123,8 +3149,6 @@ footer {
     border: 1px solid rgba(255,255,255,0.07);
     box-shadow: 0 10px 28px rgba(0,0,0,0.5);
     isolation: isolate;
-    max-width: 260px;
-    justify-self: center;
     transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
 }
 
@@ -3140,7 +3164,8 @@ footer {
     z-index: 5;
 }
 
-.featured-player-card:hover {
+.featured-player-card:hover,
+.featured-player-slot:hover .featured-player-card {
     transform: translateY(-6px);
     border-color: rgba(243,106,33,0.40);
     box-shadow: 0 22px 52px rgba(0,0,0,0.65), 0 0 0 1px rgba(243,106,33,0.20);
@@ -3183,34 +3208,8 @@ footer {
     line-height: 1;
 }
 
-/* Chip de categoria - sutil, no compite con la foto */
-.fpc-chip {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 3;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 5px 9px;
-    background: rgba(15,15,15,0.82);
-    backdrop-filter: blur(10px);
-    border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.10);
-    font-size: 0.58rem;
-    font-weight: 800;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-    color: var(--slot-ink, #F36A21);
-    line-height: 1.3;
-    max-width: calc(100% - 20px);
-}
-
-.fpc-chip-sub {
-    color: rgba(255,255,255,0.55);
-    font-weight: 700;
-    letter-spacing: 1px;
-}
+/* (fpc-chip eliminado — la etiqueta de categoria ahora vive en .fpc-tag,
+   arriba del card, fuera del borde visual) */
 
 /* Score overlay - el dato, vivo, junto a la foto */
 .fpc-score {

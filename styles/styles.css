@@ -3123,6 +3123,8 @@ footer {
     border: 1px solid rgba(255,255,255,0.07);
     box-shadow: 0 10px 28px rgba(0,0,0,0.5);
     isolation: isolate;
+    max-width: 240px;
+    justify-self: center;
     transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
 }
 

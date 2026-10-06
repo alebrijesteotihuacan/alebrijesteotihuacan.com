@@ -501,7 +501,7 @@ function renderResumen() {
     document.getElementById('kpiAvg').textContent = avg;
     document.getElementById('kpiAvgBase').textContent = evalsWithAvg.length;
 
-    // === Top 5 DE LA SEMANA ===
+    // === Top DE LA SEMANA — uno por categoría ===
     const wkLabel = weekLabel(state.referenceWeek);
     if (wkLabel) {
         document.getElementById('topWeekBadge').textContent = `${state.referenceWeek} · ${wkLabel.rangeLabel}`;
@@ -520,14 +520,22 @@ function renderResumen() {
             if (!cur || ts > curTs) refWeekEvalsByPlayer[ev.jugador_id] = ev;
         });
 
-    const topRanked = Object.values(refWeekEvalsByPlayer)
-        .map(ev => {
-            const p = state.players.find(pl => pl.id === ev.jugador_id);
-            return p ? { player: p, avg: Number(ev.promedio_general) } : null;
-        })
-        .filter(Boolean)
-        .sort((a, b) => b.avg - a.avg)
-        .slice(0, 5);
+    // Para cada categoría, encontrar al MEJOR jugador de esa semana
+    const bestByCategory = {}; // categoria -> { player, avg }
+    Object.values(refWeekEvalsByPlayer).forEach(ev => {
+        const p = state.players.find(pl => pl.id === ev.jugador_id);
+        if (!p || !p.categoria) return;
+        const c = p.categoria;
+        const avg = Number(ev.promedio_general);
+        const cur = bestByCategory[c];
+        if (!cur || avg > cur.avg) {
+            bestByCategory[c] = { player: p, avg };
+        }
+    });
+
+    // Convertir a array, ordenar por avg DESC
+    const topRanked = Object.values(bestByCategory)
+        .sort((a, b) => b.avg - a.avg);
 
     document.getElementById('topGrid').innerHTML = topRanked.length
         ? topRanked.map((r, i) => `
@@ -1377,7 +1385,7 @@ async function generatePdf() {
         );
         y += 18;
 
-        y = sectionTitle(doc, `TOP JUGADORES · ${state.referenceWeek}`, y);
+        y = sectionTitle(doc, `MEJOR POR CATEGORÍA · ${state.referenceWeek}`, y);
 
         const refWeekEvalsByPlayer = {};
         filteredEvals
@@ -1389,11 +1397,17 @@ async function generatePdf() {
                 if (!cur || ts > curTs) refWeekEvalsByPlayer[ev.jugador_id] = ev;
             });
 
-        const ranked = Object.values(refWeekEvalsByPlayer)
-            .map(ev => ({ p: filteredPlayers.find(pl => pl.id === ev.jugador_id), avg: Number(ev.promedio_general) }))
-            .filter(r => r.p)
-            .sort((a, b) => b.avg - a.avg)
-            .slice(0, 8);
+        // Mejor por categoría
+        const bestByCat = {};
+        Object.values(refWeekEvalsByPlayer).forEach(ev => {
+            const p = filteredPlayers.find(pl => pl.id === ev.jugador_id);
+            if (!p || !p.categoria) return;
+            const c = p.categoria;
+            const avg = Number(ev.promedio_general);
+            if (!bestByCat[c] || avg > bestByCat[c].avg) bestByCat[c] = { p, avg };
+        });
+        const ranked = Object.values(bestByCat)
+            .sort((a, b) => b.avg - a.avg);
 
         const topRows = ranked.map((r, i) => [
             `#${i + 1}`,

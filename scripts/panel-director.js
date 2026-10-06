@@ -370,13 +370,26 @@ async function loadAll() {
         supabase.from('evaluaciones').select('*')
     ]);
 
+    if (profRes.error) console.error('[director] profesores error:', profRes.error);
+    if (playerRes.error) console.error('[director] jugadores error:', playerRes.error);
+    if (evalRes.error) console.error('[director] evaluaciones error:', evalRes.error);
+
     state.professors = profRes.data || [];
     state.players = playerRes.data || [];
     state.evaluations = evalRes.data || [];
 
+    console.info('[director] Cargado:', {
+        profesores: state.professors.length,
+        jugadores: state.players.length,
+        evaluaciones: state.evaluations.length,
+        semanas: [...new Set(state.evaluations.map(e => e.semana).filter(Boolean))],
+        categorias: [...new Set(state.players.map(p => p.categoria).filter(Boolean))]
+    });
+
     state.categories = [...new Set(state.players.map(p => p.categoria).filter(Boolean))];
     state.weeks = [...new Set(state.evaluations.map(e => e.semana).filter(Boolean))].sort();
     state.referenceWeek = getReferenceWeek();
+    console.info('[director] referenceWeek =', state.referenceWeek);
 
     // Latest avg per player
     state.playerLatestAvg = {};
@@ -618,90 +631,13 @@ function renderResumen() {
         }).join('')
         : `<tr><td colspan="8" class="dir-empty">Sin historial reciente para los mejores de la semana.</td></tr>`;
 
-    // === Alertas ===
-    const alerts = [];
-    state.players.forEach(p => {
-        const ev = state.playerLatestAvg[p.id];
-        if (ev?.promedio_general != null && Number(ev.promedio_general) < 5) {
-            alerts.push({
-                dot: 'dot-red',
-                badge: 'Rendimiento',
-                cls: 'badge-red',
-                title: `${titleCase(p.nombre)} ${titleCase(p.apellido || '')}`,
-                meta: `${p.categoria || ''} · Última evaluación: ${avgText(ev.promedio_general)}`
-            });
-        }
-    });
-
-    const monthAgo = new Date(); monthAgo.setDate(monthAgo.getDate() - 30);
-    state.evaluations.forEach(ev => {
-        if (new Date(ev.fecha || 0) < monthAgo) return;
-        const n = Number(ev.inasistencias || 0);
-        if (n >= 3) {
-            const player = state.players.find(p => p.id === ev.jugador_id);
-            if (!player) return;
-            alerts.push({
-                dot: 'dot-yellow',
-                badge: 'Asistencia',
-                cls: 'badge-yellow',
-                title: `${titleCase(player.nombre)} ${titleCase(player.apellido || '')}`,
-                meta: `${player.categoria || ''} · ${n} inasistencias recientes`
-            });
-        }
-    });
-
-    const twoWeeks = 14 * 86400000;
-    state.players.forEach(p => {
-        const ev = state.playerLatestAvg[p.id];
-        if (!ev) {
-            alerts.push({
-                dot: 'dot-blue',
-                badge: 'Seguimiento',
-                cls: 'badge-blue',
-                title: `${titleCase(p.nombre)} ${titleCase(p.apellido || '')}`,
-                meta: `${p.categoria || ''} · Sin evaluaciones registradas`
-            });
-            return;
-        }
-        const ts = new Date(ev.fecha || ev.fecha_fin || 0).getTime();
-        if (Date.now() - ts > twoWeeks) {
-            alerts.push({
-                dot: 'dot-blue',
-                badge: 'Seguimiento',
-                cls: 'badge-blue',
-                title: `${titleCase(p.nombre)} ${titleCase(p.apellido || '')}`,
-                meta: `${p.categoria || ''} · Última evaluación ${fmtRelative(ev.fecha || ev.fecha_fin)}`
-            });
-        }
-    });
-
-    const seenAlert = new Set();
-    const alertsDedup = alerts.filter(a => {
-        const k = a.title + a.badge;
-        if (seenAlert.has(k)) return false;
-        seenAlert.add(k);
-        return true;
-    }).slice(0, 12);
-
-    document.getElementById('kpiAlerts').textContent = alertsDedup.length;
-    document.getElementById('alertCount').textContent = alertsDedup.length;
-    document.getElementById('alertsList').innerHTML = alertsDedup.length
-        ? alertsDedup.map(a => `
-            <div class="dir-alert">
-                <span class="dir-alert-dot ${a.dot}" aria-hidden="true"></span>
-                <div class="dir-alert-body">
-                    <div class="dir-alert-title">${escapeHtml(a.title)}</div>
-                    <div class="dir-alert-meta">${escapeHtml(a.meta)}</div>
-                </div>
-                <span class="dir-alert-badge ${a.cls}">${a.badge}</span>
-            </div>
-        `).join('')
-        : '<div class="dir-empty">Sin alertas activas. Todo en orden.</div>';
-
     // === Actividad reciente ===
     const recent = [...state.evaluations]
         .sort((a, b) => new Date(b.fecha || 0) - new Date(a.fecha || 0))
-        .slice(0, 8);
+        .slice(0, 12);
+
+    const activityCount = document.getElementById('activityCount');
+    if (activityCount) activityCount.textContent = recent.length;
 
     document.getElementById('activityFeed').innerHTML = recent.length
         ? recent.map(ev => {
@@ -710,6 +646,9 @@ function renderResumen() {
             const pname = player ? `${titleCase(player.nombre)} ${titleCase(player.apellido || '')}` : 'Jugador';
             const pname2 = prof?.nombre || 'Profesor';
             const avg = ev.promedio_general != null ? Number(ev.promedio_general).toFixed(1) : '—';
+            const avgToneCls = ev.promedio_general != null
+                ? (Number(ev.promedio_general) >= 7 ? 'tone-high' : Number(ev.promedio_general) >= 5 ? 'tone-mid' : 'tone-low')
+                : 'tone-none';
             return `
                 <div class="dir-activity-item">
                     <div class="dir-activity-bullet"></div>
@@ -720,7 +659,7 @@ function renderResumen() {
                         <div class="dir-activity-meta">
                             <span>${escapeHtml(fmtDate(ev.fecha || ev.fecha_fin))}</span>
                             <span>${escapeHtml(ev.semana || '')}</span>
-                            <span class="avg-pill">${avg}</span>
+                            <span class="avg-pill ${avgToneCls}">${avg}</span>
                         </div>
                     </div>
                 </div>`;
@@ -787,6 +726,9 @@ function renderPlantilla() {
     document.getElementById('plantillaGrid').innerHTML = filtered.length
         ? filtered.map(p => {
             const avg = state.playerLatestAvg[p.id]?.promedio_general ?? null;
+            const latestEv = state.playerLatestAvg[p.id];
+            const evalsCount = state.playerEvalsCount[p.id] || 0;
+            const lastDate = latestEv?.fecha ? fmtRelative(latestEv.fecha) : null;
             return `
                 <article class="dir-player" data-player-id="${p.id}" role="button" tabindex="0" aria-label="Ver historial de ${escapeHtml(p.nombre)} ${escapeHtml(p.apellido || '')}">
                     ${playerPhotoHTML(p, { cls: 'dir-player-photo' })}
@@ -795,6 +737,12 @@ function renderPlantilla() {
                     </div>
                     <div class="dir-player-name">${escapeHtml(titleCase((p.nombre || '').split(' ')[0]))} ${escapeHtml(titleCase((p.apellido || '').split(' ')[0]))}</div>
                     <div class="dir-player-pos">${escapeHtml(p.posicion || '—')}${p.numero_camiseta ? ` · #${p.numero_camiseta}` : ''}</div>
+                    <div class="dir-player-meta">
+                        <span class="dir-player-meta-cat">${escapeHtml(p.categoria || '—')}</span>
+                        <span class="dir-player-meta-evals">
+                            <strong>${evalsCount}</strong> eval${evalsCount === 1 ? '' : 's'}${lastDate ? ` · ${escapeHtml(lastDate)}` : ''}
+                        </span>
+                    </div>
                 </article>`;
         }).join('')
         : '<div class="dir-empty">Sin jugadores con esos filtros.</div>';

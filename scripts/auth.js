@@ -75,7 +75,7 @@ export function getCurrentUser() {
     return supabase.auth.getUser().then(({ data }) => data.user);
 }
 
-// Get user role (jugador, profesor, or admin)
+// Get user role (jugador, profesor, admin, or director_deportivo)
 export async function getUserRole(userId) {
     try {
         const { data: profData, error: profError } = await supabase
@@ -87,6 +87,9 @@ export async function getUserRole(userId) {
         if (profData) {
             if (profData.rol === 'admin') {
                 return 'admin';
+            }
+            if (profData.rol === 'director_deportivo') {
+                return 'director_deportivo';
             }
             return 'profesor';
         }

@@ -296,7 +296,7 @@
                                 <line x1="12" y1="16" x2="12" y2="12"></line>
                                 <line x1="12" y1="8" x2="12.01" y2="8"></line>
                             </svg>
-                            Acceso exclusivo para cuerpo técnico
+                            Acceso para cuerpo técnico y dirección deportiva
                         </p>
                     </div>
                 </div>
@@ -388,6 +388,8 @@
                 const role = await getUserRole(user.id);
                 if (role === 'admin') {
                     window.location.href = 'panel-admin.html';
+                } else if (role === 'director_deportivo') {
+                    window.location.href = 'panel-director.html';
                 } else if (role === 'profesor') {
                     window.location.href = 'panel-profesor.html';
                 } else {
@@ -530,6 +532,11 @@
                     showSuccessProf('¡Acceso de administrador! Redirigiendo...');
                     setTimeout(() => {
                         window.location.href = 'panel-admin.html';
+                    }, 1000);
+                } else if (role === 'director_deportivo') {
+                    showSuccessProf('¡Acceso de director deportivo! Redirigiendo...');
+                    setTimeout(() => {
+                        window.location.href = 'panel-director.html';
                     }, 1000);
                 } else if (role === 'profesor') {
                     showSuccessProf('¡Acceso autorizado! Redirigiendo...');

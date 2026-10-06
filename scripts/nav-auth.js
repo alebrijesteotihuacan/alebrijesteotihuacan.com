@@ -23,6 +23,21 @@ async function isProfesor(userId) {
     }
 }
 
+// Check if user is the sports director
+async function isDirector(userId) {
+    try {
+        const { data } = await supabase
+            .from('profesores')
+            .select('rol')
+            .eq('id', userId)
+            .maybeSingle();
+        return !!(data && data.rol === 'director_deportivo');
+    } catch (error) {
+        console.error('Error checking director status:', error);
+        return false;
+    }
+}
+
 // Wait for DOM to be ready
 document.addEventListener('DOMContentLoaded', () => {
     const loginBtn = document.getElementById('nav-login-btn');
@@ -53,10 +68,18 @@ async function updateNavButton(user, button) {
     console.log('Nav auth: isInPages =', isInPages, 'pathPrefix =', pathPrefix);
 
     if (user) {
-        // Check if user is a professor
-        const isProf = await isProfesor(user.id);
-        const portalLink = isProf ? 'panel-profesor.html' : 'mi-rendimiento.html';
-        const portalText = isProf ? 'Dashboard' : 'Mi Portal';
+        // Check if user is a director, professor, or player
+        const isDir = await isDirector(user.id);
+        const isProf = !isDir && await isProfesor(user.id);
+        let portalLink = 'mi-rendimiento.html';
+        let portalText = 'Mi Portal';
+        if (isDir) {
+            portalLink = 'panel-director.html';
+            portalText = 'Dirección';
+        } else if (isProf) {
+            portalLink = 'panel-profesor.html';
+            portalText = 'Dashboard';
+        }
 
         // User is logged in - show portal button
         button.innerHTML = `

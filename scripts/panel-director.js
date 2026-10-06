@@ -574,9 +574,14 @@ function renderResumen() {
             const cls = c.avg >= 7 ? 'fill-good' : c.avg >= 5 ? 'fill-mid' : 'fill-low';
             return `
                 <div class="dir-compact-row">
-                    <div class="dir-compact-name">${escapeHtml(c.cat)}</div>
-                    <div class="dir-compact-bar"><div class="dir-compact-bar-fill ${cls}" style="width:${pct}%"></div></div>
-                    <div class="dir-compact-value">${c.avg.toFixed(1)}</div>
+                    <div class="dir-compact-name-block">
+                        <span class="dir-compact-name">${escapeHtml(c.cat)}</span>
+                        <div class="dir-compact-bar"><div class="dir-compact-bar-fill ${cls}" style="width:${pct}%"></div></div>
+                    </div>
+                    <div class="dir-compact-value-block">
+                        <span class="dir-compact-value">${c.avg.toFixed(1)}</span>
+                        <span class="dir-compact-meta">${c.n} jug.</span>
+                    </div>
                 </div>`;
         }).join('')
         : '<div class="dir-empty">Sin datos por categoría.</div>';

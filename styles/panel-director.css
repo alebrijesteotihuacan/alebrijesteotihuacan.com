@@ -300,12 +300,22 @@ body {
 /* ===== BANNER ===== */
 .dir-banner {
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 24px;
     background: linear-gradient(135deg, #ffffff 0%, #fff7f0 100%);
     border-radius: 16px;
     border: 1px solid var(--dir-border);
     border-left: 4px solid var(--dir-primary);
-    padding: 28px 32px;
-    margin-bottom: 28px;
+    padding: 24px 32px;
+    margin-bottom: 24px;
+}
+
+.dir-banner-left {
+    flex: 1;
+    min-width: 0;
 }
 
 .dir-banner-eyebrow {
@@ -321,7 +331,7 @@ body {
     color: var(--dir-primary);
     text-transform: uppercase;
     letter-spacing: 1.2px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
 .dir-banner-eyebrow::before {
@@ -351,23 +361,28 @@ body {
     line-height: 1.5;
 }
 
+.dir-banner-right {
+    flex-shrink: 0;
+}
+
 .dir-banner-date {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    margin-top: 14px;
-    padding: 6px 14px;
+    gap: 8px;
+    padding: 10px 16px;
     background: var(--dir-card);
     border: 1px solid var(--dir-border);
-    border-radius: 8px;
-    font-size: 0.72rem;
-    color: var(--dir-text-muted);
+    border-radius: 10px;
+    font-size: 0.78rem;
+    color: var(--dir-text-dark);
     text-transform: capitalize;
+    font-weight: 600;
+    box-shadow: var(--dir-shadow-xs);
 }
 
 .dir-banner-date svg {
-    width: 13px;
-    height: 13px;
+    width: 14px;
+    height: 14px;
     color: var(--dir-primary);
 }
 
@@ -375,17 +390,20 @@ body {
 .dir-kpi-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-    margin-bottom: 28px;
+    gap: 16px;
+    margin-bottom: 24px;
 }
 
 .dir-kpi {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 132px;
     background: var(--dir-card);
     border: 1px solid var(--dir-border);
     border-left: 3px solid var(--dir-primary);
     border-radius: 12px;
-    padding: 20px;
+    padding: 18px 20px;
     transition: all 0.2s var(--dir-ease);
     box-shadow: var(--dir-shadow-xs);
 }
@@ -396,13 +414,13 @@ body {
 }
 
 .dir-kpi-icon {
-    width: 42px;
-    height: 42px;
+    width: 40px;
+    height: 40px;
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
 }
 
 .dir-kpi-icon svg {
@@ -435,7 +453,7 @@ body {
 }
 
 .dir-kpi-trend {
-    margin-top: 12px;
+    margin-top: auto;
     padding-top: 12px;
     border-top: 1px solid var(--dir-border-soft);
     font-size: 0.68rem;
@@ -452,16 +470,20 @@ body {
     background: var(--dir-card);
     border: 1px solid var(--dir-border);
     border-radius: var(--dir-radius-lg);
-    padding: 24px;
-    margin-bottom: 22px;
+    padding: 22px 24px;
+    margin-bottom: 20px;
     box-shadow: var(--dir-shadow-xs);
+}
+
+.dir-section:last-child {
+    margin-bottom: 0;
 }
 
 .dir-section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     flex-wrap: wrap;
     gap: 12px;
 }
@@ -470,9 +492,10 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 1.02rem;
+    font-size: 1rem;
     font-weight: 700;
     color: var(--dir-text-dark);
+    letter-spacing: -0.01em;
 }
 
 .dir-section-title svg {
@@ -483,25 +506,26 @@ body {
 
 .dir-section-title .section-count {
     font-size: 0.65rem;
-    padding: 3px 8px;
+    padding: 3px 9px;
     background: var(--dir-primary-soft);
     color: var(--dir-primary);
     border-radius: 6px;
     font-weight: 700;
+    margin-left: 4px;
 }
 
-/* ===== LAYOUT SPLIT ===== */
+/* ===== LAYOUT SPLIT (simétrico 1fr 1fr) ===== */
 .dir-grid-2 {
     display: grid;
-    grid-template-columns: 1.4fr 1fr;
-    gap: 20px;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
 }
 
-/* ===== TOP PLAYERS (mejor de la semana) — estilo featured-player-card ===== */
+/* ===== TOP PLAYERS (mejor de la semana) — 2x2 grid simétrico ===== */
 .dir-top-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 18px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
 }
 
 .dir-top-card {
@@ -623,18 +647,18 @@ body {
 .dir-top-score.tone-low .dir-top-score-num { color: #f87171; }
 
 .dir-top-name {
-    padding: 12px 12px 14px;
+    padding: 10px 12px 12px;
     text-align: center;
-    font-size: 0.92rem;
+    font-size: 0.9rem;
     font-weight: 700;
     color: #fff;
     background: linear-gradient(180deg, #1a1a1a 0%, #141414 100%);
 }
 
 .dir-top-meta {
-    padding: 0 12px 14px;
+    padding: 0 12px 12px;
     text-align: center;
-    font-size: 0.65rem;
+    font-size: 0.62rem;
     color: rgba(255, 255, 255, 0.5);
     text-transform: uppercase;
     letter-spacing: 0.6px;
@@ -714,36 +738,44 @@ body {
 .dir-activity {
     display: flex;
     flex-direction: column;
-    gap: 0;
+    gap: 4px;
     position: relative;
 }
 
 .dir-activity::before {
     content: '';
     position: absolute;
-    left: 7px;
-    top: 14px;
-    bottom: 14px;
+    left: 11px;
+    top: 18px;
+    bottom: 18px;
     width: 2px;
-    background: var(--dir-border);
+    background: var(--dir-border-soft);
 }
 
 .dir-activity-item {
     display: flex;
-    gap: 14px;
-    padding: 12px 0;
+    gap: 16px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    transition: background 0.15s;
     position: relative;
+}
+
+.dir-activity-item:hover {
+    background: var(--dir-card-hover);
 }
 
 .dir-activity-bullet {
     width: 12px;
     height: 12px;
-    background: var(--dir-primary);
+    background: var(--dir-card);
+    border: 3px solid var(--dir-primary);
     border-radius: 50%;
-    margin-top: 4px;
-    margin-left: 2px;
+    margin-top: 5px;
+    margin-left: 6px;
     flex-shrink: 0;
     z-index: 1;
+    box-shadow: 0 0 0 3px var(--dir-card);
 }
 
 .dir-activity-body {
@@ -752,10 +784,10 @@ body {
 }
 
 .dir-activity-headline {
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     font-weight: 600;
     color: var(--dir-text);
-    margin-bottom: 4px;
+    margin-bottom: 6px;
     line-height: 1.4;
 }
 
@@ -766,40 +798,60 @@ body {
 
 .dir-activity-meta {
     display: flex;
-    gap: 12px;
+    gap: 10px;
+    flex-wrap: wrap;
     font-size: 0.66rem;
     color: var(--dir-text-muted);
+    align-items: center;
 }
 
 .dir-activity-meta .avg-pill {
-    padding: 2px 8px;
+    padding: 2px 9px;
     background: var(--dir-primary-soft);
     color: var(--dir-primary);
-    border-radius: 4px;
-    font-weight: 700;
+    border-radius: var(--dir-radius-full);
+    font-weight: 800;
+    font-size: 0.7rem;
 }
+
+.dir-activity-meta .avg-pill.tone-high { background: var(--dir-success-soft); color: var(--dir-success); }
+.dir-activity-meta .avg-pill.tone-mid { background: var(--dir-warning-soft); color: var(--dir-warning); }
+.dir-activity-meta .avg-pill.tone-low { background: var(--dir-danger-soft); color: var(--dir-danger); }
 
 /* ===== HISTORIAL DE LOS MEJORES (semana) ===== */
 .dir-history-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     font-size: 0.78rem;
 }
 
-.dir-history-table th,
-.dir-history-table td {
-    padding: 10px 12px;
-    text-align: left;
-    border-bottom: 1px solid var(--dir-border-soft);
-}
-
-.dir-history-table th {
+.dir-history-table thead th {
     background: var(--dir-bg);
     font-size: 0.62rem;
     font-weight: 800;
     color: var(--dir-text-muted);
     text-transform: uppercase;
     letter-spacing: 0.7px;
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--dir-border);
+}
+
+.dir-history-table thead th:first-child {
+    border-top-left-radius: 8px;
+}
+.dir-history-table thead th:last-child {
+    border-top-right-radius: 8px;
+}
+
+.dir-history-table tbody td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--dir-border-soft);
+}
+
+.dir-history-table tbody tr:last-child td {
+    border-bottom: none;
 }
 
 .dir-history-table tbody tr:hover {
@@ -841,41 +893,58 @@ body {
     stroke-linecap: round;
 }
 
-/* ===== COMPARATIVA POR EQUIPO ===== */
+/* ===== COMPARATIVA POR CATEGORÍA — tarjetas simétricas ===== */
 .dir-compact-list {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 12px;
 }
 
 .dir-compact-row {
     display: grid;
-    grid-template-columns: 140px 1fr 60px;
+    grid-template-columns: 1fr auto;
     align-items: center;
     gap: 14px;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--dir-border-soft);
+    padding: 14px 18px;
+    background: var(--dir-bg);
+    border: 1px solid var(--dir-border);
+    border-left: 3px solid var(--dir-primary);
+    border-radius: 10px;
+    transition: border-color 0.2s, background 0.2s;
 }
 
-.dir-compact-row:last-child { border-bottom: none; }
+.dir-compact-row:hover {
+    border-color: var(--dir-border-strong);
+    background: var(--dir-card-hover);
+}
+
+.dir-compact-name-block {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
 
 .dir-compact-name {
-    font-size: 0.78rem;
+    font-size: 0.88rem;
     font-weight: 700;
     color: var(--dir-text-dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .dir-compact-bar {
-    height: 10px;
-    background: var(--dir-bg);
-    border-radius: 6px;
+    height: 8px;
+    background: var(--dir-card);
+    border-radius: 4px;
     overflow: hidden;
-    position: relative;
+    border: 1px solid var(--dir-border-soft);
 }
 
 .dir-compact-bar-fill {
     height: 100%;
-    border-radius: 6px;
+    border-radius: 4px;
     background: linear-gradient(90deg, var(--dir-primary) 0%, var(--dir-primary-light) 100%);
     transition: width 0.5s ease;
 }
@@ -884,13 +953,29 @@ body {
 .dir-compact-bar-fill.fill-mid { background: linear-gradient(90deg, var(--dir-warning) 0%, #fbbf24 100%); }
 .dir-compact-bar-fill.fill-low { background: linear-gradient(90deg, var(--dir-danger) 0%, #f87171 100%); }
 
+.dir-compact-value-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    min-width: 70px;
+}
+
 .dir-compact-value {
-    font-size: 0.9rem;
-    font-weight: 800;
+    font-size: 1.05rem;
+    font-weight: 900;
     color: var(--dir-text-dark);
-    text-align: right;
     letter-spacing: -0.3px;
     font-variant-numeric: tabular-nums;
+    line-height: 1;
+}
+
+.dir-compact-meta {
+    font-size: 0.62rem;
+    color: var(--dir-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    font-weight: 600;
 }
 
 /* ===== PLANTILLA (GRID) — cards grandes estilo featured-player-card ===== */
@@ -2007,13 +2092,15 @@ body {
 
 @media (max-width: 720px) {
     .dir-topbar { padding: 0 16px; }
-    .dir-banner { padding: 20px; }
+    .dir-banner { padding: 18px; gap: 16px; }
+    .dir-banner-right { width: 100%; }
+    .dir-banner-date { width: 100%; justify-content: center; }
     .dir-banner h1 { font-size: 1.25rem; }
-    .dir-section { padding: 18px; }
+    .dir-section { padding: 16px; }
     .dir-kpi-value { font-size: 1.75rem; }
     .dir-eval-metrics,
     .drawer-history-metrics { grid-template-columns: repeat(2, 1fr); }
-    .dir-compact-row { grid-template-columns: 100px 1fr 50px; }
+    .dir-compact-row { grid-template-columns: 1fr auto; padding: 12px 14px; }
     .drawer-tabs { font-size: 0.7rem; }
     .drawer-tab { padding: 8px 10px; }
 }

@@ -586,4 +586,31 @@ create policy "iafe_mensajes_insert" on iafe.mensajes
 --       FIX: register_player_atomic ahora pasa phone_change='' y
 --       phone_change_token='' (alineado con lo que GoTrue acepta).
 --       UPDATE in-place de los 4 jugadores rotos.
+--
+--   2026-10-06  cleanup_orphan_hazielmm321_post_intermediate_fix
+--       Lalo re-intentó registrar hazielmm321@gmail.com en algún punto
+--       entre el fix phone=NULL y el fix phone=random_hex. La versión
+--       intermedia del RPC insertó auth.users con phone=NULL y
+--       phone_change=NULL pero falló el INSERT a public.jugadores
+--       (quedó huérfano). Verificación:
+--         - 1 identity asociada, 0 jugadores, 0 profesores, 0 evals
+--         - auth.users (haziel) count: 0 post-DELETE
+--         - jugadores y profesores no afectados (no había rows)
+--         - Verificación masiva posterior: 0 huérfanos restantes
+--       Acciones tomadas:
+--         DELETE FROM auth.users WHERE email = 'hazielmm321@gmail.com'
+--       (la identity se borró en cascada por el FK ON DELETE CASCADE).
+--       Riesgo eliminado para futuros registros con ese email.
+--
+--   2026-10-06  alvmart953_registered_after_fix  (verificación positiva)
+--       Jugador registrado por Lalo (id = '974560f3-...') a las 19:51 UTC
+--       usando la versión final del RPC. Verificación:
+--         - phone = 'a0bb87d6' (encode(gen_random_bytes(4), 'hex'))
+--         - phone_change = '', phone_change_token = ''
+--         - auth.identities: 1 row OK
+--         - public.jugadores: row creada OK (ALVARO SANTIAGO MARTINEZ
+--           GONZALEZ, password 'Santiago10')
+--         - POST /auth/v1/token?grant_type=password → 200 + JWT
+--       Confirma que la versión final del RPC produce registros válidos
+--       para GoTrue /auth/v1/token sin necesidad de UPDATE in-place.
 -- =========================================================================

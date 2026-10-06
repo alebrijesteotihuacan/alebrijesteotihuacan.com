@@ -6,7 +6,7 @@
 import { supabase } from './supabase-client.js';
 
 // ==========================================
-// PHOTO LOOKUP (mismo algoritmo que panel-admin)
+// PHOTO LOOKUP — jugador (mismo algoritmo que panel-admin)
 // ==========================================
 const PLAYER_IMAGES = [
     'Rafael_Arturo_Tejeda_Arellano_DirectorTecnico.jpg',
@@ -135,6 +135,21 @@ const PLAYER_IMAGES_ALEBRIJES_SUB16 = [
     'Justin_Anderson_Aguilar_Hernandez_Medio_822.jpg'
 ];
 
+// Fotos de los miembros del Cuerpo Técnico (mismo lookup que panel-profesor.js)
+const PROF_PHOTO_LOOKUP = {
+    'arturo tejeda': '../assets/PlantillaAlebrijesTeotihuacanLigaTDP/Arturo_Tejeda(Dashboard).jpg',
+    'cesar benitez chaparro': '../assets/PlantillaSolesTeotihuacanSub16_TDP/César_Benítez_Chaparro_DirectorTecnico.jpg',
+    'ignacio morales': '../assets/PlantillaSolesTeotihuacanLigaTDP/Ignacio_Morales_Campos_DirectorTecnico.jpg',
+    'derk alexandro reyes rosas': '../assets/PlantillaAlebrijesTeotihuacanSub-16_TDP/Derk_Alexandro_Reyes_Rosas_DirectorTecnico.jpg'
+};
+
+const CARGO_LOOKUP = {
+    'arturo tejeda': 'Director Técnico · Liga TDP',
+    'cesar benitez chaparro': 'Director Técnico · Sub-16',
+    'ignacio morales': 'Director Técnico · Soles TDP',
+    'derk alexandro reyes rosas': 'Director Técnico · Sub-16'
+};
+
 function normalizeStr(s) {
     return (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
 }
@@ -171,22 +186,78 @@ function findPlayerImageInfo(nombre, apellido) {
     return null;
 }
 
+function findProfPhotoInfo(nombre) {
+    const key = normalizeStr(nombre);
+    return PROF_PHOTO_LOOKUP[key] || null;
+}
+
+function findProfCargo(nombre) {
+    const key = normalizeStr(nombre);
+    return CARGO_LOOKUP[key] || 'Cuerpo Técnico';
+}
+
+function initialsFromName(s) {
+    const parts = normalizeStr(s).split(/\s+/).filter(Boolean);
+    if (!parts.length) return 'DT';
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
 function titleCase(s) {
     return (s || '').trim().toLowerCase().split(' ').filter(w => w.length > 0)
         .map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 }
 
-function photoHTML(player, opts = {}) {
+function playerPhotoHTML(player, opts = {}) {
     const firstName = titleCase((player.nombre || 'Sin nombre').split(' ')[0]);
     const initials = ((player.nombre || '').charAt(0) + (player.apellido || '').charAt(0)).toUpperCase() || '?';
     const imgInfo = findPlayerImageInfo(player.nombre, player.apellido);
     const imgSrc = imgInfo ? `../assets/${imgInfo.folder}/${encodeURIComponent(imgInfo.file)}` : null;
-    const cls = opts.size === 'sm' ? 'dir-eval-photo' : (opts.size === 'xs' ? 'dir-top-photo' : 'dir-player-photo');
+    const cls = opts.cls || 'dir-player-photo';
 
     if (imgSrc) {
         return `<div class="${cls}"><img src="${imgSrc}" alt="${firstName}" onerror="this.parentElement.innerHTML='<div class=&quot;default-avatar&quot;>${initials}</div>'"></div>`;
     }
     return `<div class="${cls}"><div class="default-avatar">${initials}</div></div>`;
+}
+
+// Devuelve SOLO el contenido interior (img o avatar). Usar cuando ya
+// existe un wrapper con la clase correcta (ej: dir-drawer-photo).
+function playerPhotoInner(player) {
+    const firstName = titleCase((player.nombre || 'Sin nombre').split(' ')[0]);
+    const initials = ((player.nombre || '').charAt(0) + (player.apellido || '').charAt(0)).toUpperCase() || '?';
+    const imgInfo = findPlayerImageInfo(player.nombre, player.apellido);
+    const imgSrc = imgInfo ? `../assets/${imgInfo.folder}/${encodeURIComponent(imgInfo.file)}` : null;
+
+    if (imgSrc) {
+        return `<img src="${imgSrc}" alt="${firstName}" onerror="this.parentElement.innerHTML='<div class=&quot;default-avatar&quot;>${initials}</div>'">`;
+    }
+    return `<div class="default-avatar">${initials}</div>`;
+}
+
+function profPhotoHTML(prof, opts = {}) {
+    const initials = initialsFromName(prof.nombre);
+    const src = findProfPhotoInfo(prof.nombre);
+    const cls = opts.cls || 'dir-prof-photo';
+
+    if (src) {
+        return `<div class="${cls}"><img src="${src}" alt="${escapeHtml(prof.nombre)}" onerror="this.parentElement.innerHTML='<div class=&quot;default-avatar&quot;>${initials}</div>'"></div>`;
+    }
+    return `<div class="${cls}"><div class="default-avatar">${initials}</div></div>`;
+}
+
+function profPhotoInner(prof) {
+    const initials = initialsFromName(prof.nombre);
+    const src = findProfPhotoInfo(prof.nombre);
+
+    if (src) {
+        return `<img src="${src}" alt="${escapeHtml(prof.nombre)}" onerror="this.parentElement.innerHTML='<div class=&quot;default-avatar&quot;>${initials}</div>'">`;
+    }
+    return `<div class="default-avatar">${initials}</div>`;
+}
+
+function escapeHtml(s) {
+    return String(s || '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 }
 
 function avgClass(n) {
@@ -196,9 +267,16 @@ function avgClass(n) {
     return 'avg-low';
 }
 
+function avgTone(n) {
+    if (n == null || isNaN(n)) return 'tone-none';
+    if (n >= 7) return 'tone-high';
+    if (n >= 5) return 'tone-mid';
+    return 'tone-low';
+}
+
 function avgText(n) {
-    if (n == null || isNaN(n)) return '--';
-    return n.toFixed(1);
+    if (n == null || isNaN(n)) return '—';
+    return Number(n).toFixed(1);
 }
 
 function fmtDate(s) {
@@ -232,9 +310,12 @@ const state = {
     evaluations: [],
     categories: [],
     weeks: [],
+    referenceWeek: null,
     playerLatestAvg: {},
     playerEvalsCount: {},
+    playerEvalsByWeek: {},
     profEvalsThisWeek: {},
+    profEvalsAll: {},
     profLatestActivity: {}
 };
 
@@ -273,6 +354,7 @@ supabase.auth.onAuthStateChange(async (_event, session) => {
     setupNav();
     setupLogout();
     setupPdf();
+    setupDrawers();
 
     document.getElementById('dirLoading').style.display = 'none';
     document.getElementById('dirShell').style.display = 'grid';
@@ -294,24 +376,36 @@ async function loadAll() {
 
     state.categories = [...new Set(state.players.map(p => p.categoria).filter(Boolean))];
     state.weeks = [...new Set(state.evaluations.map(e => e.semana).filter(Boolean))].sort();
+    state.referenceWeek = getReferenceWeek();
 
     // Latest avg per player
+    state.playerLatestAvg = {};
+    state.playerEvalsCount = {};
+    state.playerEvalsByWeek = {};
     state.evaluations.forEach(ev => {
-        if (ev.promedio_general == null) return;
-        const cur = state.playerLatestAvg[ev.jugador_id];
-        const evDate = new Date(ev.fecha || ev.fecha_fin || 0).getTime();
-        const curDate = cur ? new Date(cur.fecha || cur.fecha_fin || 0).getTime() : 0;
-        if (!cur || evDate > curDate) state.playerLatestAvg[ev.jugador_id] = ev;
+        if (ev.promedio_general != null) {
+            const cur = state.playerLatestAvg[ev.jugador_id];
+            const evDate = new Date(ev.fecha || ev.fecha_fin || 0).getTime();
+            const curDate = cur ? new Date(cur.fecha || cur.fecha_fin || 0).getTime() : 0;
+            if (!cur || evDate > curDate) state.playerLatestAvg[ev.jugador_id] = ev;
+        }
         state.playerEvalsCount[ev.jugador_id] = (state.playerEvalsCount[ev.jugador_id] || 0) + 1;
+        const w = ev.semana || '';
+        if (!state.playerEvalsByWeek[ev.jugador_id]) state.playerEvalsByWeek[ev.jugador_id] = {};
+        if (!state.playerEvalsByWeek[ev.jugador_id][w]) state.playerEvalsByWeek[ev.jugador_id][w] = [];
+        state.playerEvalsByWeek[ev.jugador_id][w].push(ev);
     });
 
-    // This-week evals per professor
-    const weekNow = isoWeekNumber(new Date());
+    // Per professor stats
+    state.profEvalsThisWeek = {};
+    state.profEvalsAll = {};
+    state.profLatestActivity = {};
     state.evaluations.forEach(ev => {
         if (!ev.evaluador_id) return;
-        const eWeek = ev.semana || '';
-        const curWeek = state.profEvalsThisWeek[ev.evaluador_id];
-        if (eWeek && eWeek.includes(String(weekNow))) {
+        if (!state.profEvalsAll[ev.evaluador_id]) state.profEvalsAll[ev.evaluador_id] = [];
+        state.profEvalsAll[ev.evaluador_id].push(ev);
+
+        if (ev.semana === state.referenceWeek) {
             state.profEvalsThisWeek[ev.evaluador_id] = (state.profEvalsThisWeek[ev.evaluador_id] || 0) + 1;
         }
         const curAct = state.profLatestActivity[ev.evaluador_id];
@@ -321,12 +415,53 @@ async function loadAll() {
     });
 }
 
+// Devuelve la última semana CON DATOS. Si la semana actual ISO no tiene
+// evaluaciones, usa la última semana que sí tenga (evita panel "vacío"
+// al inicio de cada semana).
+function getReferenceWeek() {
+    const now = isoWeekNumber(new Date());
+    const currentLabel = `${new Date().getFullYear()}-W${now}`;
+    const allWeeks = state.weeks || [];
+    if (allWeeks.includes(currentLabel)) return currentLabel;
+    return allWeeks.length ? allWeeks[allWeeks.length - 1] : currentLabel;
+}
+
 function isoWeekNumber(date) {
     const d = new Date(date);
     d.setHours(0, 0, 0, 0);
     d.setDate(d.getDate() + 4 - (d.getDay() || 7));
     const yearStart = new Date(d.getFullYear(), 0, 1);
     return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+}
+
+// Etiqueta legible: "2026-W40 · 28 sept – 4 oct"
+function weekLabel(week) {
+    if (!week || !/^W\d+$/.test(week.replace(/^\d{4}-/, ''))) return null;
+    const m = week.match(/^(\d{4})-W(\d+)$/);
+    if (!m) return null;
+    const year = Number(m[1]);
+    const num = Number(m[2]);
+    // ISO week date: Jan 4 always in week 1
+    const jan4 = new Date(year, 0, 4);
+    const jan4Day = jan4.getDay() || 7;
+    const week1Mon = new Date(jan4);
+    week1Mon.setDate(jan4.getDate() - (jan4Day - 1));
+    const mon = new Date(week1Mon);
+    mon.setDate(week1Mon.getDate() + (num - 1) * 7);
+    const sun = new Date(mon);
+    sun.setDate(mon.getDate() + 6);
+
+    const fmt = (d) => d.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
+    const yr = (d) => d.getFullYear();
+    const sameYear = yr(mon) === yr(sun);
+    return {
+        year,
+        num,
+        start: mon,
+        end: sun,
+        label: `${week}`,
+        rangeLabel: `${fmt(mon)} – ${sameYear ? fmt(sun) : `${fmt(sun)} ${yr(sun)}`}`
+    };
 }
 
 // ==========================================
@@ -342,9 +477,8 @@ function renderResumen() {
     document.getElementById('kpiPlayers').textContent = state.players.length;
     document.getElementById('kpiPlayersCats').textContent = state.categories.length;
 
-    const weekNow = isoWeekNumber(new Date());
-    const evalsThisWeek = state.evaluations.filter(e => (e.semana || '').includes(String(weekNow))).length;
-    document.getElementById('kpiEvals').textContent = evalsThisWeek;
+    const evalsRef = state.evaluations.filter(e => e.semana === state.referenceWeek).length;
+    document.getElementById('kpiEvals').textContent = evalsRef;
     document.getElementById('kpiEvalsTotal').textContent = state.evaluations.length;
 
     const evalsWithAvg = state.evaluations.filter(e => e.promedio_general != null);
@@ -354,30 +488,50 @@ function renderResumen() {
     document.getElementById('kpiAvg').textContent = avg;
     document.getElementById('kpiAvgBase').textContent = evalsWithAvg.length;
 
-    // Top 5 del mes (top por promedio, top 5 por latest avg)
-    const ranked = state.players
-        .map(p => ({
-            ...p,
-            latestAvg: state.playerLatestAvg[p.id]?.promedio_general ?? null
-        }))
-        .filter(p => p.latestAvg != null)
-        .sort((a, b) => b.latestAvg - a.latestAvg)
+    // === Top 5 DE LA SEMANA ===
+    const wkLabel = weekLabel(state.referenceWeek);
+    if (wkLabel) {
+        document.getElementById('topWeekBadge').textContent = `${state.referenceWeek} · ${wkLabel.rangeLabel}`;
+    } else {
+        document.getElementById('topWeekBadge').textContent = state.referenceWeek;
+    }
+
+    // Agrupar evaluaciones de la referenceWeek por jugador, tomar la más reciente
+    const refWeekEvalsByPlayer = {};
+    state.evaluations
+        .filter(e => e.semana === state.referenceWeek && e.promedio_general != null)
+        .forEach(ev => {
+            const cur = refWeekEvalsByPlayer[ev.jugador_id];
+            const ts = new Date(ev.fecha || ev.fecha_fin || 0).getTime();
+            const curTs = cur ? new Date(cur.fecha || cur.fecha_fin || 0).getTime() : 0;
+            if (!cur || ts > curTs) refWeekEvalsByPlayer[ev.jugador_id] = ev;
+        });
+
+    const topRanked = Object.values(refWeekEvalsByPlayer)
+        .map(ev => {
+            const p = state.players.find(pl => pl.id === ev.jugador_id);
+            return p ? { player: p, avg: Number(ev.promedio_general) } : null;
+        })
+        .filter(Boolean)
+        .sort((a, b) => b.avg - a.avg)
         .slice(0, 5);
 
-    document.getElementById('topCount').textContent = ranked.length;
-    document.getElementById('topGrid').innerHTML = ranked.length
-        ? ranked.map((p, i) => `
-            <article class="dir-top-card">
-                    <span class="dir-top-rank">#${String(i + 1).padStart(2, '0')}</span>
-                    ${photoHTML(p, { size: 'xs' })}
-                    <div class="dir-top-name" title="${titleCase(p.nombre)} ${titleCase(p.apellido || '')}">${titleCase((p.nombre || '').split(' ')[0])} ${titleCase((p.apellido || '').split(' ')[0])}</div>
-                    <div class="dir-top-team">${p.categoria || ''} · ${p.posicion || ''}</div>
-                    <span class="dir-top-avg ${avgClass(p.latestAvg)}">${avgText(p.latestAvg)}</span>
-                </article>
-            `).join('')
-        : '<div class="dir-empty">Aún no hay evaluaciones registradas.</div>';
+    document.getElementById('topGrid').innerHTML = topRanked.length
+        ? topRanked.map((r, i) => `
+            <article class="dir-top-card" data-player-id="${r.player.id}" role="button" tabindex="0" aria-label="Ver historial de ${escapeHtml(r.player.nombre)}">
+                <span class="dir-top-rank">#${String(i + 1).padStart(2, '0')}</span>
+                ${playerPhotoHTML(r.player, { cls: 'dir-top-photo' })}
+                <div class="dir-top-score ${avgTone(r.avg)}">
+                    <span class="dir-top-score-num">${avgText(r.avg)}</span>
+                    <span class="dir-top-score-cap">PROM</span>
+                </div>
+                <div class="dir-top-name">${escapeHtml(titleCase((r.player.nombre || '').split(' ')[0]))} ${escapeHtml(titleCase((r.player.apellido || '').split(' ')[0]))}</div>
+                <div class="dir-top-meta">${escapeHtml(r.player.categoria || '')} · ${escapeHtml(r.player.posicion || '')}</div>
+            </article>
+        `).join('')
+        : `<div class="dir-empty">Aún no hay evaluaciones en ${state.referenceWeek}.</div>`;
 
-    // Comparativa por categoría
+    // Comparativa por categoría (mismo cálculo, ahora en su propio slot del grid-2)
     const catAvgs = {};
     state.players.forEach(p => {
         const ev = state.playerLatestAvg[p.id];
@@ -399,17 +553,73 @@ function renderResumen() {
             const cls = c.avg >= 7 ? 'fill-good' : c.avg >= 5 ? 'fill-mid' : 'fill-low';
             return `
                 <div class="dir-compact-row">
-                    <div class="dir-compact-name">${c.cat}</div>
+                    <div class="dir-compact-name">${escapeHtml(c.cat)}</div>
                     <div class="dir-compact-bar"><div class="dir-compact-bar-fill ${cls}" style="width:${pct}%"></div></div>
                     <div class="dir-compact-value">${c.avg.toFixed(1)}</div>
                 </div>`;
         }).join('')
         : '<div class="dir-empty">Sin datos por categoría.</div>';
 
-    // Alertas
-    const alerts = [];
+    // === HISTORIAL DE LOS MEJORES DE LA SEMANA ===
+    // Para los top 5 de la semana, traer TODAS sus evaluaciones de las últimas 6 semanas
+    const last6Weeks = state.weeks.slice(-6);
+    if (last6Weeks.length && wkLabel) {
+        document.getElementById('historyRange').textContent = `${last6Weeks.length} semanas`;
+    } else {
+        document.getElementById('historyRange').textContent = '—';
+    }
 
-    // 1) Jugadores con promedio < 5 en su última evaluación
+    const topPlayerIds = new Set(topRanked.map(r => r.player.id));
+    const historyRows = [];
+    topRanked.forEach(({ player }) => {
+        const evalsByWeek = state.playerEvalsByWeek[player.id] || {};
+        last6Weeks.forEach(w => {
+            const evs = evalsByWeek[w];
+            if (!evs || !evs.length) return;
+            // Última evaluación de esa semana
+            const ev = evs.slice().sort((a, b) => new Date(b.fecha || 0) - new Date(a.fecha || 0))[0];
+            if (ev.promedio_general == null) return;
+            historyRows.push({ player, ev, week: w });
+        });
+    });
+
+    // Ordenar: jugador (mismo orden que topRanked), semana desc
+    const playerOrder = {};
+    topRanked.forEach((r, i) => { playerOrder[r.player.id] = i; });
+    historyRows.sort((a, b) => {
+        if (playerOrder[a.player.id] !== playerOrder[b.player.id]) return playerOrder[a.player.id] - playerOrder[b.player.id];
+        return b.week.localeCompare(a.week);
+    });
+
+    const tbody = document.getElementById('historyTableBody');
+    tbody.innerHTML = historyRows.length
+        ? historyRows.map(r => {
+            const wk = weekLabel(r.week);
+            const wkRange = wk ? `${wk.label} · ${wk.rangeLabel}` : r.week;
+            // Sparkline: evolución de promedios en last6Weeks
+            const series = last6Weeks.map(w => {
+                const e = (state.playerEvalsByWeek[r.player.id]?.[w] || []);
+                return e.length ? Number(e[0].promedio_general) : null;
+            });
+            const spark = renderSparklineSvg(series, 60, 18, avgTone(r.ev.promedio_general));
+
+            return `
+                <tr>
+                    <td class="player-name">${escapeHtml(titleCase(r.player.nombre))} ${escapeHtml(titleCase((r.player.apellido || '').split(' ')[0]))}</td>
+                    <td>${escapeHtml(wkRange)}</td>
+                    <td>${r.ev.tecnico ?? '—'}</td>
+                    <td>${r.ev.tactico ?? '—'}</td>
+                    <td>${r.ev.fisico ?? '—'}</td>
+                    <td>${r.ev.mental ?? '—'}</td>
+                    <td><span class="dir-history-avg ${avgTone(r.ev.promedio_general)}">${avgText(r.ev.promedio_general)}</span></td>
+                    <td>${spark}</td>
+                </tr>
+            `;
+        }).join('')
+        : `<tr><td colspan="8" class="dir-empty">Sin historial reciente para los mejores de la semana.</td></tr>`;
+
+    // === Alertas ===
+    const alerts = [];
     state.players.forEach(p => {
         const ev = state.playerLatestAvg[p.id];
         if (ev?.promedio_general != null && Number(ev.promedio_general) < 5) {
@@ -423,7 +633,6 @@ function renderResumen() {
         }
     });
 
-    // 2) Inasistencias > 2 en evaluaciones recientes (último mes)
     const monthAgo = new Date(); monthAgo.setDate(monthAgo.getDate() - 30);
     state.evaluations.forEach(ev => {
         if (new Date(ev.fecha || 0) < monthAgo) return;
@@ -441,7 +650,6 @@ function renderResumen() {
         }
     });
 
-    // 3) Jugadores sin evaluar en los últimos 14 días
     const twoWeeks = 14 * 86400000;
     state.players.forEach(p => {
         const ev = state.playerLatestAvg[p.id];
@@ -467,7 +675,6 @@ function renderResumen() {
         }
     });
 
-    // Dedup + cap
     const seenAlert = new Set();
     const alertsDedup = alerts.filter(a => {
         const k = a.title + a.badge;
@@ -483,15 +690,15 @@ function renderResumen() {
             <div class="dir-alert">
                 <span class="dir-alert-dot ${a.dot}" aria-hidden="true"></span>
                 <div class="dir-alert-body">
-                    <div class="dir-alert-title">${a.title}</div>
-                    <div class="dir-alert-meta">${a.meta}</div>
+                    <div class="dir-alert-title">${escapeHtml(a.title)}</div>
+                    <div class="dir-alert-meta">${escapeHtml(a.meta)}</div>
                 </div>
                 <span class="dir-alert-badge ${a.cls}">${a.badge}</span>
             </div>
         `).join('')
         : '<div class="dir-empty">Sin alertas activas. Todo en orden.</div>';
 
-    // Actividad reciente
+    // === Actividad reciente ===
     const recent = [...state.evaluations]
         .sort((a, b) => new Date(b.fecha || 0) - new Date(a.fecha || 0))
         .slice(0, 8);
@@ -502,17 +709,17 @@ function renderResumen() {
             const prof = state.professors.find(p => p.id === ev.evaluador_id);
             const pname = player ? `${titleCase(player.nombre)} ${titleCase(player.apellido || '')}` : 'Jugador';
             const pname2 = prof?.nombre || 'Profesor';
-            const avg = ev.promedio_general != null ? Number(ev.promedio_general).toFixed(1) : '--';
+            const avg = ev.promedio_general != null ? Number(ev.promedio_general).toFixed(1) : '—';
             return `
                 <div class="dir-activity-item">
                     <div class="dir-activity-bullet"></div>
                     <div class="dir-activity-body">
                         <div class="dir-activity-headline">
-                            <strong>${pname2}</strong> evaluó a <strong>${pname}</strong>
+                            <strong>${escapeHtml(pname2)}</strong> evaluó a <strong>${escapeHtml(pname)}</strong>
                         </div>
                         <div class="dir-activity-meta">
-                            <span>${fmtDate(ev.fecha || ev.fecha_fin)}</span>
-                            <span>${ev.semana || ''}</span>
+                            <span>${escapeHtml(fmtDate(ev.fecha || ev.fecha_fin))}</span>
+                            <span>${escapeHtml(ev.semana || '')}</span>
                             <span class="avg-pill">${avg}</span>
                         </div>
                     </div>
@@ -524,6 +731,38 @@ function renderResumen() {
     document.getElementById('navPlayerCount').textContent = state.players.length;
     document.getElementById('navEvalCount').textContent = state.evaluations.length;
     document.getElementById('navProfCount').textContent = state.professors.filter(p => p.rol === 'profesor' || p.rol === 'admin').length;
+}
+
+// SVG sparkline inline. series: array de números o null.
+function renderSparklineSvg(series, w = 60, h = 18, tone = 'tone-mid') {
+    const points = series
+        .map((v, i) => v == null ? null : { v: Number(v), i })
+        .filter(Boolean);
+    if (points.length < 2) return `<svg class="dir-sparkline" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"></svg>`;
+
+    const min = Math.min(...points.map(p => p.v));
+    const max = Math.max(...points.map(p => p.v));
+    const range = max - min || 1;
+    const xs = (i) => (i / (series.length - 1)) * (w - 4) + 2;
+    const ys = (v) => h - 2 - ((v - min) / range) * (h - 4);
+
+    const colorMap = {
+        'tone-high': '#10b981',
+        'tone-mid': '#F36A21',
+        'tone-low': '#ef4444',
+        'tone-none': '#94a3b8'
+    };
+    const color = colorMap[tone] || '#F36A21';
+
+    const path = points.map((p, idx) => `${idx === 0 ? 'M' : 'L'}${xs(p.i).toFixed(2)},${ys(p.v).toFixed(2)}`).join(' ');
+    const last = points[points.length - 1];
+
+    return `
+        <svg class="dir-sparkline" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-label="Tendencia">
+            <path d="${path}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+            <circle cx="${xs(last.i).toFixed(2)}" cy="${ys(last.v).toFixed(2)}" r="2" fill="${color}"/>
+        </svg>
+    `;
 }
 
 // ==========================================
@@ -549,11 +788,13 @@ function renderPlantilla() {
         ? filtered.map(p => {
             const avg = state.playerLatestAvg[p.id]?.promedio_general ?? null;
             return `
-                <article class="dir-player">
-                    ${photoHTML(p)}
-                    <div class="dir-player-name" title="${titleCase(p.nombre)} ${titleCase(p.apellido || '')}">${titleCase((p.nombre || '').split(' ')[0])} ${titleCase((p.apellido || '').split(' ')[0])}</div>
-                    <div class="dir-player-pos">${p.posicion || '—'}</div>
-                    <span class="dir-player-avg ${avgClass(avg)}">${avgText(avg)}</span>
+                <article class="dir-player" data-player-id="${p.id}" role="button" tabindex="0" aria-label="Ver historial de ${escapeHtml(p.nombre)} ${escapeHtml(p.apellido || '')}">
+                    ${playerPhotoHTML(p, { cls: 'dir-player-photo' })}
+                    <div class="dir-player-avg-overlay ${avgTone(avg)}">
+                        <span class="avg-num">${avgText(avg)}</span>
+                    </div>
+                    <div class="dir-player-name">${escapeHtml(titleCase((p.nombre || '').split(' ')[0]))} ${escapeHtml(titleCase((p.apellido || '').split(' ')[0]))}</div>
+                    <div class="dir-player-pos">${escapeHtml(p.posicion || '—')}${p.numero_camiseta ? ` · #${p.numero_camiseta}` : ''}</div>
                 </article>`;
         }).join('')
         : '<div class="dir-empty">Sin jugadores con esos filtros.</div>';
@@ -613,22 +854,22 @@ function renderEvaluaciones() {
             const metrics = [
                 ['Técnico', ev.tecnico], ['Táctico', ev.tactico], ['Físico', ev.fisico], ['Mental', ev.mental]
             ];
-            const obs = ev.observaciones ? `<div class="dir-eval-obs">"${ev.observaciones}"</div>` : '';
+            const obs = ev.observaciones ? `<div class="dir-eval-obs">"${escapeHtml(ev.observaciones)}"</div>` : '';
 
             return `
                 <article class="dir-eval-card">
                     <header class="dir-eval-header">
-                        ${photoHTML(player, { size: 'sm' })}
+                        ${playerPhotoHTML(player, { cls: 'dir-eval-photo' })}
                         <div class="dir-eval-info">
-                            <h4>${titleCase((player.nombre || '').split(' ')[0])} ${titleCase((player.apellido || '').split(' ')[0])}</h4>
-                            <p>${player.posicion || ''} · ${player.categoria || ''}</p>
+                            <h4>${escapeHtml(titleCase((player.nombre || '').split(' ')[0]))} ${escapeHtml(titleCase((player.apellido || '').split(' ')[0]))}</h4>
+                            <p>${escapeHtml(player.posicion || '')} · ${escapeHtml(player.categoria || '')}</p>
                         </div>
                         <div class="dir-eval-avg-big ${avgClass(avg)}">${avgText(avg)}</div>
                     </header>
                     <div class="dir-eval-metrics">
                         ${metrics.map(([l, v]) => `
                             <div class="dir-eval-metric">
-                                <div class="dir-eval-metric-value">${v ?? '--'}</div>
+                                <div class="dir-eval-metric-value">${v ?? '—'}</div>
                                 <div class="dir-eval-metric-label">${l}</div>
                             </div>`).join('')}
                     </div>
@@ -640,9 +881,9 @@ function renderEvaluaciones() {
                                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="12" cy="7" r="4"></circle>
                             </svg>
-                            ${profName}
+                            ${escapeHtml(profName)}
                         </span>
-                        ${ev.semana ? `<span class="dir-eval-week">${ev.semana}</span>` : ''}
+                        ${ev.semana ? `<span class="dir-eval-week">${escapeHtml(ev.semana)}</span>` : ''}
                     </footer>
                 </article>`;
         }).join('')
@@ -665,13 +906,12 @@ function populateEvalFilters() {
     });
 
     const weekSel = document.getElementById('filterWeekEvals');
-    state.weeks.forEach(w => {
+    state.weeks.slice().reverse().forEach(w => {
         const opt = document.createElement('option');
         opt.value = w; opt.textContent = w;
         weekSel.appendChild(opt);
     });
 
-    // PDF filter uses same categories
     const pdfCatSel = document.getElementById('pdfCatFilter');
     state.categories.forEach(c => {
         const opt = document.createElement('option');
@@ -685,14 +925,6 @@ function populateEvalFilters() {
 // ==========================================
 function renderCuerpo() {
     const techs = state.professors.filter(p => p.rol === 'profesor' || p.rol === 'admin');
-    const gradColors = [
-        'linear-gradient(135deg,#8b5cf6,#6d28d9)',
-        'linear-gradient(135deg,#3b82f6,#1d4ed8)',
-        'linear-gradient(135deg,#10b981,#059669)',
-        'linear-gradient(135deg,#f59e0b,#d97706)',
-        'linear-gradient(135deg,#ef4444,#dc2626)',
-        'linear-gradient(135deg,#06b6d4,#0891b2)'
-    ];
 
     const playerCountByProf = {};
     state.players.forEach(p => {
@@ -701,23 +933,21 @@ function renderCuerpo() {
     });
 
     document.getElementById('profsCount').textContent = techs.length;
-    document.getElementById('profsGrid').innerHTML = techs.map((prof, i) => {
-        const initial = (prof.nombre || '?').charAt(0).toUpperCase();
+    document.getElementById('profsGrid').innerHTML = techs.map(prof => {
         const playersN = playerCountByProf[prof.id] || 0;
         const evalsWeek = state.profEvalsThisWeek[prof.id] || 0;
-        const lastAct = state.profLatestActivity[prof.id];
+        const evalsTotal = (state.profEvalsAll[prof.id] || []).length;
+        const cargo = findProfCargo(prof.nombre);
+
         return `
-            <article class="dir-prof-card">
-                <div class="dir-prof-avatar" style="background:${gradColors[i % gradColors.length]}">${initial}</div>
-                <div class="dir-prof-info">
-                    <div class="dir-prof-name">${prof.nombre || 'Sin nombre'}</div>
-                    <div class="dir-prof-team">${prof.equipo_restringido || 'Sin equipo restringido'}</div>
-                    <div class="dir-prof-stats">
-                        <span class="dir-prof-chip chip-players">${playersN} jugadores</span>
-                        <span class="dir-prof-chip chip-evals">${evalsWeek} evals/sem</span>
-                        ${lastAct ? `<span class="dir-prof-chip chip-active">Última: ${fmtRelative(lastAct)}</span>` : ''}
-                    </div>
+            <article class="dir-prof-card" data-prof-id="${prof.id}" role="button" tabindex="0" aria-label="Ver detalle de ${escapeHtml(prof.nombre)}">
+                <span class="dir-prof-role-tag">${escapeHtml(cargo.split(' · ')[1] || cargo)}</span>
+                ${profPhotoHTML(prof, { cls: 'dir-prof-photo' })}
+                <div class="dir-prof-stats-overlay">
+                    <span class="dir-prof-chip"><strong>${playersN}</strong> jug.</span>
+                    <span class="dir-prof-chip"><strong>${evalsWeek}</strong> ev/sem</span>
                 </div>
+                <div class="dir-prof-name">${escapeHtml(prof.nombre || 'Sin nombre')}</div>
             </article>`;
     }).join('');
 }
@@ -771,7 +1001,288 @@ function setupLogout() {
 }
 
 // ==========================================
-// PDF REPORT
+// DRAWERS
+// ==========================================
+function setupDrawers() {
+    const backdrop = document.getElementById('dirDrawerBackdrop');
+    backdrop.addEventListener('click', closeAllDrawers);
+
+    // Click en cards de plantilla + top-grid (delegación en document)
+    document.getElementById('plantillaGrid').addEventListener('click', (e) => {
+        const card = e.target.closest('.dir-player');
+        if (card) openPlayerDrawer(card.dataset.playerId);
+    });
+    document.getElementById('plantillaGrid').addEventListener('keydown', (e) => {
+        if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('dir-player')) {
+            e.preventDefault();
+            openPlayerDrawer(e.target.dataset.playerId);
+        }
+    });
+    document.getElementById('topGrid').addEventListener('click', (e) => {
+        const card = e.target.closest('.dir-top-card');
+        if (card) openPlayerDrawer(card.dataset.playerId);
+    });
+    document.getElementById('topGrid').addEventListener('keydown', (e) => {
+        if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('dir-top-card')) {
+            e.preventDefault();
+            openPlayerDrawer(e.target.dataset.playerId);
+        }
+    });
+
+    // Click en cards de cuerpo técnico
+    document.getElementById('profsGrid').addEventListener('click', (e) => {
+        const card = e.target.closest('.dir-prof-card');
+        if (card) openProfDrawer(card.dataset.profId);
+    });
+    document.getElementById('profsGrid').addEventListener('keydown', (e) => {
+        if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('dir-prof-card')) {
+            e.preventDefault();
+            openProfDrawer(e.target.dataset.profId);
+        }
+    });
+
+    // Botones close
+    document.getElementById('playerDrawerClose').addEventListener('click', () => {
+        closeDrawer(document.getElementById('playerDrawer'));
+    });
+    document.getElementById('profDrawerClose').addEventListener('click', () => {
+        closeDrawer(document.getElementById('profDrawer'));
+    });
+
+    // Tabs del drawer de profesor
+    document.querySelectorAll('.drawer-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            const tabKey = tab.dataset.tab;
+            document.querySelectorAll('.drawer-tab').forEach(t => {
+                t.classList.toggle('active', t.dataset.tab === tabKey);
+                t.setAttribute('aria-selected', t.dataset.tab === tabKey ? 'true' : 'false');
+            });
+            document.querySelectorAll('.drawer-tab-content').forEach(c => {
+                c.classList.toggle('active', c.id === `prof-tab-${tabKey.replace('prof-', '')}`);
+            });
+        });
+    });
+
+    // Esc para cerrar
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeAllDrawers();
+    });
+}
+
+function openDrawer(el) {
+    el.classList.add('active');
+    el.setAttribute('aria-hidden', 'false');
+    document.getElementById('dirDrawerBackdrop').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => el.focus(), 350);
+}
+
+function closeDrawer(el) {
+    if (!el) return;
+    el.classList.remove('active');
+    el.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    document.getElementById('dirDrawerBackdrop').classList.remove('active');
+}
+
+function closeAllDrawers() {
+    closeDrawer(document.getElementById('playerDrawer'));
+    closeDrawer(document.getElementById('profDrawer'));
+}
+
+// --- Player Drawer: historial ---
+function openPlayerDrawer(playerId) {
+    const player = state.players.find(p => p.id === playerId);
+    if (!player) return;
+
+    document.getElementById('playerDrawerTitle').textContent =
+        `${titleCase(player.nombre)} ${titleCase(player.apellido || '')}`;
+    document.getElementById('playerDrawerSubtitle').textContent =
+        `${player.posicion || '—'} · ${player.categoria || ''} · ${player.equipo || ''}`;
+
+    // Foto (inyectar solo contenido interior; el div wrapper ya existe en HTML)
+    document.getElementById('playerDrawerPhoto').innerHTML = playerPhotoInner(player);
+
+    // Body: historial cronológico
+    const evals = (state.playerEvalsByWeek[player.id] || {});
+    const allWeeks = Object.keys(evals).sort().reverse();
+    const wkLabel0 = weekLabel(state.referenceWeek);
+    const subtitle = wkLabel0 ? `Última semana con datos: ${state.referenceWeek} (${wkLabel0.rangeLabel})` : '';
+
+    let html = subtitle ? `<div style="font-size:0.72rem;color:var(--dir-text-muted);margin-bottom:16px;padding:8px 12px;background:var(--dir-bg);border-radius:8px;border-left:3px solid var(--dir-primary);">${subtitle}</div>` : '';
+
+    if (!allWeeks.length) {
+        html += '<div class="drawer-empty">Sin evaluaciones registradas aún.</div>';
+    } else {
+        allWeeks.forEach(w => {
+            const wk = weekLabel(w);
+            const wkTitle = wk ? `${wk.label} · <span style="font-weight:500;color:var(--dir-text-muted);">${wk.rangeLabel}</span>` : w;
+            const evs = evals[w].slice().sort((a, b) => new Date(b.fecha || 0) - new Date(a.fecha || 0));
+            evs.forEach(ev => {
+                const metrics = [
+                    ['Técnico', ev.tecnico],
+                    ['Táctico', ev.tactico],
+                    ['Físico', ev.fisico],
+                    ['Mental', ev.mental]
+                ];
+                const obs = ev.observaciones ? `<div class="drawer-history-obs">"${escapeHtml(ev.observaciones)}"</div>` : '';
+                const meta = [
+                    ev.inasistencias != null && ev.inasistencias !== '' ? `<span>${ev.inasistencias} inasistencias</span>` : '',
+                    ev.minutos_jugados != null && ev.minutos_jugados !== '' ? `<span>${ev.minutos_jugados} min jugados</span>` : '',
+                    ev.tipo ? `<span>${escapeHtml(ev.tipo)}</span>` : ''
+                ].filter(Boolean).join('');
+
+                html += `
+                    <div class="drawer-history-item">
+                        <div class="drawer-history-week">
+                            <span class="drawer-history-week-label">${wkTitle}</span>
+                            <span class="drawer-history-week-avg ${avgTone(ev.promedio_general)}">${avgText(ev.promedio_general)}</span>
+                        </div>
+                        <div class="drawer-history-metrics">
+                            ${metrics.map(([l, v]) => `
+                                <div class="drawer-history-metric">
+                                    <div class="drawer-history-metric-value">${v ?? '—'}</div>
+                                    <div class="drawer-history-metric-label">${l}</div>
+                                </div>`).join('')}
+                        </div>
+                        ${obs}
+                        ${meta ? `<div class="drawer-history-meta">${meta}</div>` : ''}
+                    </div>
+                `;
+            });
+        });
+    }
+
+    document.getElementById('playerDrawerBody').innerHTML = html;
+
+    // Reset scroll y abre
+    document.getElementById('playerDrawerBody').scrollTop = 0;
+    openDrawer(document.getElementById('playerDrawer'));
+}
+
+// --- Prof Drawer: jugadores + evaluaciones + resumen ---
+function openProfDrawer(profId) {
+    const prof = state.professors.find(p => p.id === profId);
+    if (!prof) return;
+
+    const cargo = findProfCargo(prof.nombre);
+    const equipo = prof.equipo_restringido || 'Acceso completo al club';
+
+    document.getElementById('profDrawerTitle').textContent = prof.nombre || 'Cuerpo Técnico';
+    document.getElementById('profDrawerSubtitle').textContent = prof.email || '';
+    document.getElementById('profDrawerRole').textContent = cargo;
+
+    document.getElementById('profDrawerPhoto').innerHTML = profPhotoInner(prof);
+
+    // === Jugadores a cargo ===
+    const ownPlayers = state.players.filter(p => p.registrado_por === prof.id);
+    const allEvalsByPlayer = (pid) => state.profEvalsAll[prof.id]?.filter(ev => ev.jugador_id === pid) || [];
+
+    // Jugadores evaluados (incluso si no los registró, han pasado por su evaluación)
+    const evaluatedPlayerIds = new Set((state.profEvalsAll[prof.id] || []).map(ev => ev.jugador_id));
+    const evaluatedPlayers = state.players.filter(p => evaluatedPlayerIds.has(p.id));
+
+    // Combinar (registrados únicos) sin duplicar
+    const seen = new Set();
+    const playersList = [];
+    ownPlayers.forEach(p => { if (!seen.has(p.id)) { seen.add(p.id); playersList.push({ player: p, source: 'registrado' }); } });
+    evaluatedPlayers.forEach(p => { if (!seen.has(p.id)) { seen.add(p.id); playersList.push({ player: p, source: 'evaluado' }); } });
+
+    document.getElementById('profTabPlayersCount').textContent = playersList.length;
+    document.getElementById('profPlayersGrid').innerHTML = playersList.length
+        ? playersList.map(({ player, source }) => {
+            const avg = state.playerLatestAvg[player.id]?.promedio_general ?? null;
+            const sourceLabel = source === 'registrado' ? 'Registró' : 'Evaluó';
+            return `
+                <div class="drawer-mini-card" data-player-id="${player.id}" role="button" tabindex="0" aria-label="Ver historial de ${escapeHtml(player.nombre)}">
+                    ${playerPhotoHTML(player, { cls: 'drawer-mini-photo' })}
+                    <div class="drawer-mini-name">${escapeHtml(titleCase((player.nombre || '').split(' ')[0]))} ${escapeHtml(titleCase((player.apellido || '').split(' ')[0]))}</div>
+                    <span class="drawer-mini-avg ${avgTone(avg)}">${avgText(avg)}</span>
+                    <div style="font-size:0.58rem;color:var(--dir-text-light);margin-top:3px;">${sourceLabel}</div>
+                </div>`;
+        }).join('')
+        : '<div class="drawer-empty">Aún no tiene jugadores asignados.</div>';
+
+    // Click en mini-card abre drawer del jugador
+    document.getElementById('profPlayersGrid').querySelectorAll('.drawer-mini-card').forEach(card => {
+        card.addEventListener('click', () => {
+            // Cierra este drawer y abre el del jugador
+            closeDrawer(document.getElementById('profDrawer'));
+            setTimeout(() => openPlayerDrawer(card.dataset.playerId), 250);
+        });
+    });
+
+    // === Evaluaciones realizadas ===
+    const profEvals = (state.profEvalsAll[prof.id] || []).slice().sort((a, b) => new Date(b.fecha || 0) - new Date(a.fecha || 0));
+    document.getElementById('profTabEvalsCount').textContent = profEvals.length;
+    document.getElementById('profEvalsList').innerHTML = profEvals.length
+        ? profEvals.slice(0, 30).map(ev => {
+            const player = state.players.find(p => p.id === ev.jugador_id);
+            const pname = player ? `${titleCase(player.nombre)} ${titleCase(player.apellido || '')}` : 'Jugador';
+            return `
+                <div class="drawer-eval-item">
+                    <div class="drawer-eval-item-info">
+                        <div class="drawer-eval-item-name">${escapeHtml(pname)}</div>
+                        <div class="drawer-eval-item-meta">${escapeHtml(ev.semana || '')} · ${escapeHtml(fmtDate(ev.fecha || ev.fecha_fin))}</div>
+                    </div>
+                    <div class="drawer-eval-item-avg ${avgTone(ev.promedio_general)}">${avgText(ev.promedio_general)}</div>
+                </div>`;
+        }).join('') + (profEvals.length > 30 ? `<div class="drawer-empty" style="padding:8px;">Mostrando 30 de ${profEvals.length} evaluaciones.</div>` : '')
+        : '<div class="drawer-empty">Sin evaluaciones realizadas.</div>';
+
+    // === Resumen semanal ===
+    document.getElementById('profSummaryTotal').textContent = profEvals.length;
+    document.getElementById('profSummaryPlayers').textContent = evaluatedPlayerIds.size;
+    const evalsWithAvg = profEvals.filter(e => e.promedio_general != null);
+    const avgImp = evalsWithAvg.length
+        ? (evalsWithAvg.reduce((a, e) => a + Number(e.promedio_general), 0) / evalsWithAvg.length).toFixed(1)
+        : '—';
+    document.getElementById('profSummaryAvg').textContent = avgImp;
+
+    // Sparkline por semana
+    const last6 = state.weeks.slice(-6);
+    const countsByWeek = last6.map(w => profEvals.filter(e => e.semana === w).length);
+    const maxCount = Math.max(...countsByWeek, 1);
+    const wW = 300, wH = 100;
+    const pts = countsByWeek.map((c, i) => {
+        const x = last6.length > 1 ? (i / (last6.length - 1)) * (wW - 20) + 10 : wW / 2;
+        const y = wH - 20 - (c / maxCount) * (wH - 30);
+        return { x, y, c, w: last6[i] };
+    });
+
+    const linePath = pts.map((p, idx) => `${idx === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+    const circles = pts.map(p =>
+        p.c > 0
+            ? `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.5" fill="#F36A21" stroke="#fff" stroke-width="1.5"/>
+               <text x="${p.x.toFixed(1)}" y="${(p.y - 8).toFixed(1)}" text-anchor="middle" font-family="Montserrat" font-size="9" font-weight="700" fill="#F36A21">${p.c}</text>`
+            : ''
+    ).join('');
+    const labels = pts.map(p =>
+        `<text x="${p.x.toFixed(1)}" y="${wH - 4}" text-anchor="middle" font-family="Montserrat" font-size="9" fill="#94a3b8">${(p.w || '').replace(/^\d{4}-/, '')}</text>`
+    ).join('');
+
+    document.getElementById('profSparkline').innerHTML = `
+        <line x1="10" y1="${wH - 20}" x2="${wW - 10}" y2="${wH - 20}" stroke="#e5e9f0" stroke-width="1"/>
+        ${linePath ? `<path d="${linePath}" fill="none" stroke="#F36A21" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>` : ''}
+        ${circles}
+        ${labels}
+    `;
+
+    // Reset tab to players
+    document.querySelectorAll('.drawer-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.tab === 'prof-players');
+        t.setAttribute('aria-selected', t.dataset.tab === 'prof-players' ? 'true' : 'false');
+    });
+    document.querySelectorAll('.drawer-tab-content').forEach(c => {
+        c.classList.toggle('active', c.id === 'prof-tab-players');
+    });
+
+    document.querySelector('.dir-drawer#profDrawer .dir-drawer-body').scrollTop = 0;
+    openDrawer(document.getElementById('profDrawer'));
+}
+
+// ==========================================
+// PDF REPORT (paleta naranja)
 // ==========================================
 function setupPdf() {
     document.getElementById('btnGeneratePDF').addEventListener('click', generatePdf);
@@ -811,7 +1322,6 @@ async function generatePdf() {
         const logo = await loadImageBase64('../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png');
         const selectedCat = document.getElementById('pdfCatFilter').value;
 
-        // Filtra jugadores y evals
         const filteredPlayers = selectedCat
             ? state.players.filter(p => p.categoria === selectedCat)
             : state.players;
@@ -831,7 +1341,9 @@ async function generatePdf() {
         const pageH = doc.internal.pageSize.getHeight();
         const m = 16;
 
-        const TEAL_DARK = [8, 145, 178];
+        // Paleta institucional naranja
+        const ORANGE_DARK = [243, 106, 33];
+        const ORANGE_LIGHT = [255, 140, 66];
         const BLACK = [20, 20, 20];
         const WHITE = [255, 255, 255];
         const GRAY_LIGHT = [245, 247, 250];
@@ -843,10 +1355,11 @@ async function generatePdf() {
 
         const catLabel = selectedCat || 'Todas las categorías';
         const nowStr = new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' });
+        const wkLabel = weekLabel(state.referenceWeek);
+        const wkText = wkLabel ? `${state.referenceWeek} · ${wkLabel.rangeLabel}` : state.referenceWeek;
 
-        // Header
         function addHeader(d, subtitle) {
-            d.setFillColor(...TEAL_DARK);
+            d.setFillColor(...ORANGE_DARK);
             d.rect(0, 0, pageW, 4, 'F');
             d.setFillColor(...WHITE);
             d.rect(0, 4, pageW, 28, 'F');
@@ -856,13 +1369,13 @@ async function generatePdf() {
             d.setTextColor(...BLACK);
             d.text('CLUB ALEBRIJES DE OAXACA', pageW / 2, 15, { align: 'center' });
             d.setFontSize(8);
-            d.setTextColor(...TEAL_DARK);
+            d.setTextColor(...ORANGE_DARK);
             d.text('DIRECCIÓN DEPORTIVA  ·  REPORTE EJECUTIVO', pageW / 2, 21, { align: 'center' });
             d.setFontSize(7.5);
             d.setTextColor(...GRAY_TEXT);
             d.setFont('helvetica', 'normal');
             d.text(subtitle, pageW / 2, 27, { align: 'center' });
-            d.setDrawColor(...TEAL_DARK);
+            d.setDrawColor(...ORANGE_DARK);
             d.setLineWidth(0.6);
             d.line(m, 32, pageW - m, 32);
         }
@@ -876,7 +1389,7 @@ async function generatePdf() {
             d.setFont('helvetica', 'normal');
             d.setTextColor(...GRAY_TEXT);
             d.text('Club Alebrijes de Oaxaca Teotihuacán  ·  Dirección Deportiva  ·  Confidencial', m, y);
-            d.setTextColor(...TEAL_DARK);
+            d.setTextColor(...ORANGE_DARK);
             d.setFont('helvetica', 'bold');
             d.text(`${pageNum} / ${totalPages}`, pageW - m, y, { align: 'right' });
             d.setTextColor(...GRAY_MID);
@@ -885,7 +1398,7 @@ async function generatePdf() {
         }
 
         function sectionTitle(d, text, yPos) {
-            d.setFillColor(...TEAL_DARK);
+            d.setFillColor(...ORANGE_DARK);
             d.rect(m, yPos, 3, 7, 'F');
             d.setFont('helvetica', 'bold');
             d.setFontSize(10);
@@ -895,17 +1408,15 @@ async function generatePdf() {
         }
 
         // ============ PAGE 1: SUMMARY ============
-        addHeader(doc, `Resumen Ejecutivo  ·  ${catLabel}`);
+        addHeader(doc, `Resumen Ejecutivo  ·  ${catLabel}  ·  ${wkText}`);
 
         let y = 38;
 
-        // Stats bar
         const evalsWithAvg = filteredEvals.filter(e => e.promedio_general != null);
         const avgClub = evalsWithAvg.length
             ? (evalsWithAvg.reduce((a, e) => a + Number(e.promedio_general), 0) / evalsWithAvg.length).toFixed(1)
-            : '--';
-        const weekNow = isoWeekNumber(new Date());
-        const evalsThisWeek = filteredEvals.filter(e => (e.semana || '').includes(String(weekNow))).length;
+            : '—';
+        const evalsRefWeek = filteredEvals.filter(e => e.semana === state.referenceWeek).length;
 
         doc.setFillColor(...GRAY_LIGHT);
         doc.roundedRect(m, y, pageW - m * 2, 12, 2, 2, 'F');
@@ -913,24 +1424,34 @@ async function generatePdf() {
         doc.setFont('helvetica', 'normal');
         doc.setTextColor(...GRAY_TEXT);
         doc.text(
-            `Jugadores: ${filteredPlayers.length}   ·   Evaluaciones: ${filteredEvals.length}   ·   Esta semana: ${evalsThisWeek}   ·   Promedio club: ${avgClub}   ·   Categoría: ${catLabel}`,
+            `Jugadores: ${filteredPlayers.length}   ·   Evaluaciones: ${filteredEvals.length}   ·   Esta semana (${state.referenceWeek}): ${evalsRefWeek}   ·   Promedio club: ${avgClub}   ·   Categoría: ${catLabel}`,
             pageW / 2, y + 7.5, { align: 'center' }
         );
         y += 18;
 
-        y = sectionTitle(doc, 'TOP JUGADORES', y);
+        y = sectionTitle(doc, `TOP JUGADORES · ${state.referenceWeek}`, y);
 
-        const ranked = filteredPlayers
-            .map(p => ({ p, avg: state.playerLatestAvg[p.id]?.promedio_general ?? null }))
-            .filter(r => r.avg != null)
+        const refWeekEvalsByPlayer = {};
+        filteredEvals
+            .filter(e => e.semana === state.referenceWeek && e.promedio_general != null)
+            .forEach(ev => {
+                const cur = refWeekEvalsByPlayer[ev.jugador_id];
+                const ts = new Date(ev.fecha || ev.fecha_fin || 0).getTime();
+                const curTs = cur ? new Date(cur.fecha || cur.fecha_fin || 0).getTime() : 0;
+                if (!cur || ts > curTs) refWeekEvalsByPlayer[ev.jugador_id] = ev;
+            });
+
+        const ranked = Object.values(refWeekEvalsByPlayer)
+            .map(ev => ({ p: filteredPlayers.find(pl => pl.id === ev.jugador_id), avg: Number(ev.promedio_general) }))
+            .filter(r => r.p)
             .sort((a, b) => b.avg - a.avg)
             .slice(0, 8);
 
         const topRows = ranked.map((r, i) => [
             `#${i + 1}`,
             `${titleCase((r.p.nombre || '').split(' ')[0])} ${titleCase((r.p.apellido || '').split(' ')[0])}`,
-            r.p.posicion || '--',
-            r.p.categoria || '--',
+            r.p.posicion || '—',
+            r.p.categoria || '—',
             Number(r.avg).toFixed(1)
         ]);
 
@@ -940,7 +1461,7 @@ async function generatePdf() {
             body: topRows,
             margin: { left: m, right: m },
             styles: { font: 'helvetica', fontSize: 8, cellPadding: 4, textColor: BLACK, lineColor: [225, 230, 235], lineWidth: 0.2 },
-            headStyles: { fillColor: TEAL_DARK, textColor: WHITE, fontStyle: 'bold', fontSize: 7.5 },
+            headStyles: { fillColor: ORANGE_DARK, textColor: WHITE, fontStyle: 'bold', fontSize: 7.5 },
             alternateRowStyles: { fillColor: GRAY_LIGHT },
             bodyStyles: { fillColor: WHITE },
             columnStyles: {
@@ -959,9 +1480,8 @@ async function generatePdf() {
             }
         });
 
-        // Comparativa por categoría
         y = doc.lastAutoTable.finalY + 12;
-        if (y > pageH - 60) { doc.addPage(); addHeader(doc, `Resumen Ejecutivo  ·  ${catLabel}`); y = 38; }
+        if (y > pageH - 60) { doc.addPage(); addHeader(doc, `Resumen Ejecutivo  ·  ${catLabel}  ·  ${wkText}`); y = 38; }
 
         y = sectionTitle(doc, 'COMPARATIVA POR CATEGORÍA', y);
 
@@ -981,7 +1501,7 @@ async function generatePdf() {
             body: catList.map(([cat, avg]) => [cat, avg, catAvgs[cat].n.toString()]),
             margin: { left: m, right: m },
             styles: { font: 'helvetica', fontSize: 8, cellPadding: 4, textColor: BLACK, lineColor: [225, 230, 235], lineWidth: 0.2 },
-            headStyles: { fillColor: TEAL_DARK, textColor: WHITE, fontStyle: 'bold', fontSize: 7.5 },
+            headStyles: { fillColor: ORANGE_DARK, textColor: WHITE, fontStyle: 'bold', fontSize: 7.5 },
             alternateRowStyles: { fillColor: GRAY_LIGHT },
             bodyStyles: { fillColor: WHITE },
             columnStyles: { 1: { halign: 'center', cellWidth: 30, fontStyle: 'bold' }, 2: { halign: 'center', cellWidth: 50 } },
@@ -997,9 +1517,8 @@ async function generatePdf() {
             }
         });
 
-        // Resumen cuerpo técnico
         y = doc.lastAutoTable.finalY + 12;
-        if (y > pageH - 50) { doc.addPage(); addHeader(doc, `Resumen Ejecutivo  ·  ${catLabel}`); y = 38; }
+        if (y > pageH - 50) { doc.addPage(); addHeader(doc, `Resumen Ejecutivo  ·  ${catLabel}  ·  ${wkText}`); y = 38; }
 
         y = sectionTitle(doc, 'ACTIVIDAD DEL CUERPO TÉCNICO', y);
 
@@ -1012,8 +1531,8 @@ async function generatePdf() {
         const profRows = state.professors
             .filter(p => p.rol === 'profesor' || p.rol === 'admin')
             .map(p => [
-                p.nombre || '--',
-                p.equipo_restringido || '--',
+                p.nombre || '—',
+                p.equipo_restringido || '—',
                 (playerCountByProf[p.id] || 0).toString(),
                 (state.profEvalsThisWeek[p.id] || 0).toString(),
                 state.profLatestActivity[p.id] ? fmtDate(state.profLatestActivity[p.id]) : '—'
@@ -1025,7 +1544,7 @@ async function generatePdf() {
             body: profRows,
             margin: { left: m, right: m },
             styles: { font: 'helvetica', fontSize: 7.5, cellPadding: 4, textColor: BLACK, lineColor: [225, 230, 235], lineWidth: 0.2 },
-            headStyles: { fillColor: TEAL_DARK, textColor: WHITE, fontStyle: 'bold', fontSize: 7 },
+            headStyles: { fillColor: ORANGE_DARK, textColor: WHITE, fontStyle: 'bold', fontSize: 7 },
             alternateRowStyles: { fillColor: GRAY_LIGHT },
             bodyStyles: { fillColor: WHITE },
             columnStyles: {
@@ -1035,7 +1554,6 @@ async function generatePdf() {
             }
         });
 
-        // Footers
         const total = doc.internal.getNumberOfPages();
         for (let i = 1; i <= total; i++) {
             doc.setPage(i);

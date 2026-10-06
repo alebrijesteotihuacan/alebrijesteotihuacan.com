@@ -541,4 +541,21 @@ create policy "iafe_mensajes_insert" on iafe.mensajes
 --       Reescribe register_player_atomic especificando TODOS los campos
 --       opcionales de auth.users como string vacia ('') en lugar de NULL,
 --       para que el bug 500 no vuelva a ocurrir para jugadores futuros.
+--   2026-10-06  fix_register_player_atomic_phone_null
+--       BUG: el cambio 2026-10-03 extendió NULL → '' a la columna phone,
+--       pero auth.users tiene la constraint users_phone_key UNIQUE (phone).
+--       Postgres trata NULL como distinto en UNIQUE, pero '' NO — el primer
+--       registro post-fix (luisyaelrodriguezmunoz@gmail.com) consumió el
+--       phone='' y todos los intentos siguientes de register_player_atomic
+--       reventaban con unique_violation en users_phone_key, que el handler
+--       genérico del RPC mostraba como "Ya existe un jugador con ese id
+--       o email." (sin relación con el email realmente intentado).
+--       FIX: phone, phone_change, phone_change_token, phone_change_sent_at
+--       vuelven a NULL. confirmation/recovery/email_change/reauth tokens
+--       se mantienen como '' (sus indexes son parciales WHERE not all
+--       digits, y el bug 500 original era en esos).
+--       Además, limpieza: 7 auth.users huérfanos (sin jugadores ni
+--       profesores) eliminados: eliotomar, ikergarciaramos, henryruben,
+--       mauricio, roberto, hazielmm321, haziel — bloqueaban registros
+--       futuros con esos emails por la pre-existencia en auth.users.
 -- =========================================================================

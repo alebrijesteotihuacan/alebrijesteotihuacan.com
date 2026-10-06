@@ -37,10 +37,96 @@
     <script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
     <script src="https://unpkg.com/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
 
+    <link rel="stylesheet" href="../styles/styles.css">
     <link rel="stylesheet" href="../styles/panel-director.css?v=1">
 </head>
 
 <body>
+    <!-- Site Navigation (global) -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="../index.html" class="logo">
+                <img src="../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png" alt="Alebrijes Fuerzas Básicas Logo">
+                <span class="logo-text">Alebrijes <br> Teotihuacán</span>
+            </a>
+
+            <button class="mobile-menu-btn" aria-label="Menú">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+
+            <ul class="nav-links">
+                <li class="nav-item">
+                    <a href="../index.html" class="nav-link">Inicio</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        Club
+                        <svg class="arrow-icon" viewBox="0 0 24 24">
+                            <path d="M7 10l5 5 5-5z" />
+                        </svg>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="nosotros.html">Nosotros</a></li>
+                        <li><a href="estadio.html">Estadio</a></li>
+                        <li><a href="casaclub.html">Casa Club</a></li>
+                        <li><a href="contacto.html">Contacto</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        Deportivo
+                        <svg class="arrow-icon" viewBox="0 0 24 24">
+                            <path d="M7 10l5 5 5-5z" />
+                        </svg>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="ligatdp.html">Liga TDP</a></li>
+                        <li><a href="fuerzasbasicas.html">Fuerzas Básicas</a></li>
+                        <li><a href="calendario.html">Calendario</a></li>
+                        <li class="dropdown-submenu-container">
+                            <a href="proyeccion.html" class="submenu-toggle">Proyección <span
+                                    class="arrow-right"></span></a>
+                            <ul class="submenu">
+                                <li><a href="equipos-tdp.html">Equipos TDP</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="articulos.html">Artículos</a></li>
+                        <li><a href="noticias.html">Noticias</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="escuela.html" class="nav-link">Escuela</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="brijitienda.html" class="nav-link">Brijitienda</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="../webvisorias/FormularioDeRegistroVisoria-main/index.html" class="nav-link nav-btn-cta"
+                        target="_blank" rel="noopener noreferrer">Visorias</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="login.html" id="nav-login-btn" class="nav-link nav-btn-login">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                            <polyline points="10 17 15 12 10 7"></polyline>
+                            <line x1="15" y1="12" x2="3" y2="12"></line>
+                        </svg>
+                        Iniciar Sesión
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
     <!-- Top Bar -->
     <header class="dir-topbar" role="banner">
         <div class="dir-topbar-left">
@@ -538,6 +624,55 @@
         </div>
     </aside>
 
+    <!-- Site Footer (global) -->
+    <footer id="contacto" class="dir-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <img src="../assets/Alebrijes Teotihuacan.png" alt="Logo Footer" class="footer-logo-img">
+                <p>Pasión y formación deportiva con identidad oaxaqueña.</p>
+            </div>
+
+            <div class="footer-links">
+                <h4>Navegación</h4>
+                <ul>
+                    <li><a href="../index.html">Inicio</a></li>
+                    <li><a href="nosotros.html">Nosotros</a></li>
+                    <li><a href="../webvisorias/FormularioDeRegistroVisoria-main/index.html" target="_blank"
+                            rel="noopener noreferrer">Visorias</a></li>
+                    <li><a href="ligatdp.html">Liga TDP</a></li>
+                    <li><a href="noticias.html">Noticias</a></li>
+                    <li><a href="fuerzasbasicas.html">Fuerzas Básicas</a></li>
+                    <li><a href="casaclub.html">Casa Club</a></li>
+                    <li><a href="escuela.html">Escuela</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-contact">
+                <h4>Contacto</h4>
+                <p>
+                    <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                    </svg>
+                    Centro Deportivo Pascual Boing
+                </p>
+                <p>
+                    <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                    </svg>
+                    alebrijesclub6@gmail.com
+                </p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Alebrijes de Oaxaca Teotihuacán. | <a href="politica-privacidad.html">Política de
+                    Privacidad</a> | <a href="terminos-condiciones.html">Términos y Condiciones</a></p>
+        </div>
+    </footer>
+
+    <script src="../scripts/script.js"></script>
+    <script type="module" src="../scripts/nav-auth.js"></script>
     <script type="module" src="../scripts/panel-director.js?v=2"></script>
 </body>
 

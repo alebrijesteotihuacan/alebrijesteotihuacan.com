@@ -352,6 +352,7 @@ supabase.auth.onAuthStateChange(async (_event, session) => {
     renderResumen();
     setupFilters();
     setupNav();
+    setupHamburger();
     setupLogout();
     setupPdf();
     setupDrawers();
@@ -631,14 +632,14 @@ function renderResumen() {
 
             return `
                 <tr>
-                    <td class="player-name">${escapeHtml(titleCase(r.player.nombre))} ${escapeHtml(titleCase((r.player.apellido || '').split(' ')[0]))}</td>
-                    <td>${escapeHtml(wkRange)}</td>
-                    <td>${r.ev.tecnico ?? '—'}</td>
-                    <td>${r.ev.tactico ?? '—'}</td>
-                    <td>${r.ev.fisico ?? '—'}</td>
-                    <td>${r.ev.mental ?? '—'}</td>
-                    <td><span class="dir-history-avg ${avgTone(r.ev.promedio_general)}">${avgText(r.ev.promedio_general)}</span></td>
-                    <td>${spark}</td>
+                    <td class="player-name" data-label="Jugador">${escapeHtml(titleCase(r.player.nombre))} ${escapeHtml(titleCase((r.player.apellido || '').split(' ')[0]))}</td>
+                    <td data-label="Semana">${escapeHtml(wkRange)}</td>
+                    <td data-label="Técnico">${r.ev.tecnico ?? '—'}</td>
+                    <td data-label="Táctico">${r.ev.tactico ?? '—'}</td>
+                    <td data-label="Físico">${r.ev.fisico ?? '—'}</td>
+                    <td data-label="Mental">${r.ev.mental ?? '—'}</td>
+                    <td data-label="Promedio"><span class="dir-history-avg ${avgTone(r.ev.promedio_general)}">${avgText(r.ev.promedio_general)}</span></td>
+                    <td data-label="Tendencia">${spark}</td>
                 </tr>
             `;
         }).join('')
@@ -950,6 +951,8 @@ function setupNav() {
                 if (view === 'evaluaciones') renderEvaluaciones();
                 if (view === 'cuerpo') renderCuerpo();
             }
+            // En móvil: cerrar sidebar al cambiar de vista
+            closeMobileSidebar();
         });
     });
 }
@@ -959,6 +962,46 @@ function setupLogout() {
         await supabase.auth.signOut();
         window.location.href = 'login.html';
     });
+}
+
+// ==========================================
+// MOBILE SIDEBAR (hamburger)
+// ==========================================
+
+function setupHamburger() {
+    const btn = document.getElementById('dirHamburger');
+    const sidebar = document.getElementById('dirSidebar');
+    const backdrop = document.getElementById('dirSidebarBackdrop');
+    if (!btn || !sidebar || !backdrop) return;
+
+    const open = () => {
+        sidebar.classList.add('dir-sidebar-mobile-open');
+        backdrop.classList.add('active');
+        btn.setAttribute('aria-expanded', 'true');
+        document.body.classList.add('dir-sidebar-open');
+    };
+    const close = () => {
+        sidebar.classList.remove('dir-sidebar-mobile-open');
+        backdrop.classList.remove('active');
+        btn.setAttribute('aria-expanded', 'false');
+        document.body.classList.remove('dir-sidebar-open');
+    };
+
+    btn.addEventListener('click', () => {
+        if (sidebar.classList.contains('dir-sidebar-mobile-open')) close();
+        else open();
+    });
+    backdrop.addEventListener('click', close);
+}
+
+function closeMobileSidebar() {
+    const sidebar = document.getElementById('dirSidebar');
+    const backdrop = document.getElementById('dirSidebarBackdrop');
+    const btn = document.getElementById('dirHamburger');
+    if (sidebar) sidebar.classList.remove('dir-sidebar-mobile-open');
+    if (backdrop) backdrop.classList.remove('active');
+    if (btn) btn.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('dir-sidebar-open');
 }
 
 // ==========================================
@@ -1024,9 +1067,12 @@ function setupDrawers() {
         });
     });
 
-    // Esc para cerrar
+    // Esc para cerrar drawers y sidebar móvil
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeAllDrawers();
+        if (e.key === 'Escape') {
+            closeAllDrawers();
+            closeMobileSidebar();
+        }
     });
 }
 

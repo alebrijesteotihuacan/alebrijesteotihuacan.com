@@ -44,6 +44,13 @@
     <!-- Top Bar -->
     <header class="dir-topbar" role="banner">
         <div class="dir-topbar-left">
+            <button class="dir-hamburger" id="dirHamburger" type="button" aria-label="Abrir menú" aria-controls="dirSidebar" aria-expanded="false">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
             <img src="../assets/03_TEOTIHUACAN_-_Fuerzas_Basicas.png" alt="Logo Alebrijes" class="dir-topbar-logo">
             <div class="dir-topbar-title">
                 <span>Alebrijes Teotihuacán</span>
@@ -58,17 +65,20 @@
                     <span class="dir-topbar-user-role">Director Deportivo</span>
                 </div>
             </div>
-            <button class="dir-logout-btn" id="dirLogoutBtn" aria-label="Cerrar sesión">
+            <button class="dir-logout-btn" id="dirLogoutBtn" aria-label="Cerrar sesión" type="button">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                     stroke-width="2" aria-hidden="true">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                     <polyline points="16 17 21 12 16 7"></polyline>
                     <line x1="21" y1="12" x2="9" y2="12"></line>
                 </svg>
-                Salir
+                <span class="dir-logout-btn-text">Salir</span>
             </button>
         </div>
     </header>
+
+    <!-- Sidebar backdrop (mobile) -->
+    <div class="dir-sidebar-backdrop" id="dirSidebarBackdrop" aria-hidden="true"></div>
 
     <!-- Loading -->
     <div class="dir-loading" id="dirLoading" role="status" aria-live="polite">
@@ -79,7 +89,7 @@
     <!-- Shell -->
     <div class="dir-shell" id="dirShell" style="display: none;">
         <!-- Sidebar -->
-        <nav class="dir-sidebar" aria-label="Navegación del panel">
+        <nav class="dir-sidebar" id="dirSidebar" aria-label="Navegación del panel">
             <span class="dir-sidebar-label">Vista</span>
             <ul class="dir-nav">
                 <li><a href="#" class="dir-nav-link active" data-view="resumen" aria-current="page">
@@ -211,41 +221,40 @@
                     </article>
                 </div>
 
-                <!-- Top de la semana (uno por categoría) + Comparativa por categoría -->
-                <div class="dir-grid-2">
-                    <section class="dir-section" aria-label="Mejor jugador por categoría">
-                        <header class="dir-section-header">
-                            <h2 class="dir-section-title">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                                </svg>
-                                Mejor jugador por categoría
-                                <span class="section-count" id="topWeekBadge">—</span>
-                            </h2>
-                        </header>
-                        <div class="dir-top-grid" id="topGrid">
-                            <div class="dir-empty">Cargando…</div>
-                        </div>
-                    </section>
+                <!-- Top de la semana (uno por categoría) — fila propia -->
+                <section class="dir-section" aria-label="Mejor jugador por categoría">
+                    <header class="dir-section-header">
+                        <h2 class="dir-section-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                            Mejor jugador por categoría
+                            <span class="section-count" id="topWeekBadge">—</span>
+                        </h2>
+                    </header>
+                    <div class="dir-top-grid" id="topGrid">
+                        <div class="dir-empty">Cargando…</div>
+                    </div>
+                </section>
 
-                    <section class="dir-section" aria-label="Comparativa por categoría">
-                        <header class="dir-section-header">
-                            <h2 class="dir-section-title">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                    <line x1="12" y1="20" x2="12" y2="10"></line>
-                                    <line x1="18" y1="20" x2="18" y2="4"></line>
-                                    <line x1="6" y1="20" x2="6" y2="16"></line>
-                                </svg>
-                                Comparativa por categoría
-                            </h2>
-                        </header>
-                        <div class="dir-compact-list" id="categoryBars">
-                            <div class="dir-empty">Cargando…</div>
-                        </div>
-                    </section>
-                </div>
+                <!-- Comparativa por categoría — fila propia -->
+                <section class="dir-section" aria-label="Comparativa por categoría">
+                    <header class="dir-section-header">
+                        <h2 class="dir-section-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <line x1="12" y1="20" x2="12" y2="10"></line>
+                                <line x1="18" y1="20" x2="18" y2="4"></line>
+                                <line x1="6" y1="20" x2="6" y2="16"></line>
+                            </svg>
+                            Comparativa por categoría
+                        </h2>
+                    </header>
+                    <div class="dir-compact-list" id="categoryBars">
+                        <div class="dir-empty">Cargando…</div>
+                    </div>
+                </section>
 
                 <!-- Historial de los mejores -->
                 <section class="dir-section" aria-label="Historial de los mejores de la semana">
@@ -260,18 +269,18 @@
                             <span class="section-count" id="historyRange">—</span>
                         </h2>
                     </header>
-                    <div style="overflow-x:auto;">
+                    <div class="dir-history-wrap">
                         <table class="dir-history-table" id="historyTable">
                             <thead>
                                 <tr>
-                                    <th>Jugador</th>
-                                    <th>Semana</th>
-                                    <th>Técnico</th>
-                                    <th>Táctico</th>
-                                    <th>Físico</th>
-                                    <th>Mental</th>
-                                    <th>Promedio</th>
-                                    <th>Tendencia</th>
+                                    <th scope="col">Jugador</th>
+                                    <th scope="col">Semana</th>
+                                    <th scope="col">Técnico</th>
+                                    <th scope="col">Táctico</th>
+                                    <th scope="col">Físico</th>
+                                    <th scope="col">Mental</th>
+                                    <th scope="col">Promedio</th>
+                                    <th scope="col">Tendencia</th>
                                 </tr>
                             </thead>
                             <tbody id="historyTableBody">

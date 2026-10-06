@@ -550,12 +550,27 @@ create policy "iafe_mensajes_insert" on iafe.mensajes
 --       reventaban con unique_violation en users_phone_key, que el handler
 --       genérico del RPC mostraba como "Ya existe un jugador con ese id
 --       o email." (sin relación con el email realmente intentado).
---       FIX: phone, phone_change, phone_change_token, phone_change_sent_at
---       vuelven a NULL. confirmation/recovery/email_change/reauth tokens
---       se mantienen como '' (sus indexes son parciales WHERE not all
---       digits, y el bug 500 original era en esos).
+--       FIX inicial (errado): phone, phone_change, phone_change_token,
+--       phone_change_sent_at vuelven a NULL. confirmation/recovery/
+--       email_change/reauth tokens se mantienen como '' (sus indexes son
+--       parciales WHERE not all digits, y el bug 500 original era en esos).
 --       Además, limpieza: 7 auth.users huérfanos (sin jugadores ni
 --       profesores) eliminados: eliotomar, ikergarciaramos, henryruben,
 --       mauricio, roberto, hazielmm321, haziel — bloqueaban registros
 --       futuros con esos emails por la pre-existencia en auth.users.
+--
+--   2026-10-06  fix_register_player_atomic_phone_random_hex
+--       El fix anterior (phone=NULL) y el 2026-10-03 (phone='')
+--       resolvieron el unique_violation pero rompieron el login: GoTrue
+--       /auth/v1/token responde 500 "Database error querying schema" si
+--       phone es NULL o ''. La causa: GoTrue espera un valor único
+--       aleatorio para phone en este schema (los jugadores viejos
+--       registrados por Ignacio/Arturo/Cesar/Derk en 2026-09-29 tienen
+--       phone = encode(gen_random_bytes(4), 'hex'), ej '4a609786').
+--       FIX: register_player_atomic vuelve a generar
+--         phone = encode(gen_random_bytes(4), 'hex')
+--       (8 chars hex únicos por user, idéntico al RPC original de
+--       2026-09-28). Los 5 jugadores registrados el 2026-10-06 por
+--       Lalo (phone='' o phone=NULL) se repararon in-place con un
+--       UPDATE masivo que les asignó phone aleatorio nuevo.
 -- =========================================================================

@@ -478,6 +478,18 @@ function weekLabel(week) {
     };
 }
 
+// Rango corto: "28-4 oct" si mismo mes, "28 sept - 4 oct" si no.
+function shortRangeLabel(week) {
+    const wk = weekLabel(week);
+    if (!wk) return week;
+    const sameMonth = wk.start.getMonth() === wk.end.getMonth()
+                   && wk.start.getFullYear() === wk.end.getFullYear();
+    const fmtDay = (d) => d.toLocaleDateString('es-MX', { day: 'numeric' });
+    const fmtDayMon = (d) => d.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
+    if (sameMonth) return `${fmtDay(wk.start)}-${fmtDayMon(wk.end)}`;
+    return `${fmtDayMon(wk.start)} - ${fmtDayMon(wk.end)}`;
+}
+
 // ==========================================
 // RENDER: RESUMEN
 // ==========================================
@@ -594,62 +606,38 @@ function renderResumen() {
         : '<div class="dir-empty">Sin datos por categoría.</div>';
 
     // === HISTORIAL DE LOS MEJORES DE LA SEMANA ===
-    // Para los top 5 de la semana, traer TODAS sus evaluaciones de las últimas 6 semanas
-    const last6Weeks = state.weeks.slice(-6);
-    if (last6Weeks.length && wkLabel) {
-        document.getElementById('historyRange').textContent = `${last6Weeks.length} semanas`;
-    } else {
-        document.getElementById('historyRange').textContent = '—';
-    }
+    // Solo la última semana. El badge muestra el rango corto "28-4 oct".
+    document.getElementById('historyRange').textContent = shortRangeLabel(state.referenceWeek);
 
-    const topPlayerIds = new Set(topRanked.map(r => r.player.id));
     const historyRows = [];
     topRanked.forEach(({ player }) => {
-        const evalsByWeek = state.playerEvalsByWeek[player.id] || {};
-        last6Weeks.forEach(w => {
-            const evs = evalsByWeek[w];
-            if (!evs || !evs.length) return;
-            // Última evaluación de esa semana
-            const ev = evs.slice().sort((a, b) => new Date(b.fecha || 0) - new Date(a.fecha || 0))[0];
-            if (ev.promedio_general == null) return;
-            historyRows.push({ player, ev, week: w });
-        });
+        const evs = (state.playerEvalsByWeek[player.id] || {})[state.referenceWeek];
+        if (!evs || !evs.length) return;
+        const ev = evs.slice().sort((a, b) => new Date(b.fecha || 0) - new Date(a.fecha || 0))[0];
+        if (ev.promedio_general == null) return;
+        historyRows.push({ player, ev });
     });
 
-    // Ordenar: jugador (mismo orden que topRanked), semana desc
+    // Ordenar por jugador (mismo orden que topRanked)
     const playerOrder = {};
     topRanked.forEach((r, i) => { playerOrder[r.player.id] = i; });
-    historyRows.sort((a, b) => {
-        if (playerOrder[a.player.id] !== playerOrder[b.player.id]) return playerOrder[a.player.id] - playerOrder[b.player.id];
-        return b.week.localeCompare(a.week);
-    });
+    historyRows.sort((a, b) => playerOrder[a.player.id] - playerOrder[b.player.id]);
 
     const tbody = document.getElementById('historyTableBody');
     tbody.innerHTML = historyRows.length
         ? historyRows.map(r => {
-            const wk = weekLabel(r.week);
-            const wkRange = wk ? `${wk.label} · ${wk.rangeLabel}` : r.week;
-            // Sparkline: evolución de promedios en last6Weeks
-            const series = last6Weeks.map(w => {
-                const e = (state.playerEvalsByWeek[r.player.id]?.[w] || []);
-                return e.length ? Number(e[0].promedio_general) : null;
-            });
-            const spark = renderSparklineSvg(series, 60, 18, avgTone(r.ev.promedio_general));
-
             return `
                 <tr>
                     <td class="player-name" data-label="Jugador">${escapeHtml(titleCase(r.player.nombre))} ${escapeHtml(titleCase((r.player.apellido || '').split(' ')[0]))}</td>
-                    <td data-label="Semana">${escapeHtml(wkRange)}</td>
                     <td data-label="Técnico">${r.ev.tecnico ?? '—'}</td>
                     <td data-label="Táctico">${r.ev.tactico ?? '—'}</td>
                     <td data-label="Físico">${r.ev.fisico ?? '—'}</td>
                     <td data-label="Mental">${r.ev.mental ?? '—'}</td>
                     <td data-label="Promedio"><span class="dir-history-avg ${avgTone(r.ev.promedio_general)}">${avgText(r.ev.promedio_general)}</span></td>
-                    <td data-label="Tendencia">${spark}</td>
                 </tr>
             `;
         }).join('')
-        : `<tr><td colspan="8" class="dir-empty">Sin historial reciente para los mejores de la semana.</td></tr>`;
+        : `<tr><td colspan="6" class="dir-empty">Sin historial reciente para los mejores de la semana.</td></tr>`;
 
     // === Actividad reciente ===
     const recent = [...state.evaluations]

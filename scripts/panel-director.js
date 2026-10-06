@@ -565,25 +565,31 @@ function renderResumen() {
     });
 
     const catList = Object.entries(catAvgs)
-        .map(([cat, v]) => ({ cat, avg: v.sum / v.n }))
+        .map(([cat, v]) => ({ cat, avg: v.sum / v.n, n: v.n }))
         .sort((a, b) => b.avg - a.avg);
 
     const maxAvg = Math.max(...catList.map(c => c.avg), 10);
     document.getElementById('categoryBars').innerHTML = catList.length
-        ? catList.map(c => {
+        ? catList.map((c, i) => {
             const pct = Math.min(100, (c.avg / maxAvg) * 100);
-            const cls = c.avg >= 7 ? 'fill-good' : c.avg >= 5 ? 'fill-mid' : 'fill-low';
+            const rank = i + 1;
+            const tier = rank === 1 ? 'top-rank' : '';
+            const noun = c.n === 1 ? 'jugador evaluado' : 'jugadores evaluados';
             return `
-                <div class="dir-compact-row">
-                    <div class="dir-compact-name-block">
-                        <span class="dir-compact-name">${escapeHtml(c.cat)}</span>
-                        <div class="dir-compact-bar"><div class="dir-compact-bar-fill ${cls}" style="width:${pct}%"></div></div>
+                <article class="dir-cat-row ${tier}" data-rank="${rank}" aria-label="${escapeHtml(c.cat)}: promedio ${c.avg.toFixed(1)} sobre 10, posición ${rank}">
+                    <span class="dir-cat-pos" aria-hidden="true">${String(rank).padStart(2, '0')}</span>
+                    <div class="dir-cat-team">
+                        <span class="dir-cat-name">${escapeHtml(c.cat)}</span>
+                        <span class="dir-cat-meta">${c.n} ${noun}</span>
                     </div>
-                    <div class="dir-compact-value-block">
-                        <span class="dir-compact-value">${c.avg.toFixed(1)}</span>
-                        <span class="dir-compact-meta">${c.n} jug.</span>
+                    <div class="dir-cat-stat" aria-label="Promedio ${c.avg.toFixed(1)} sobre 10">
+                        <span class="dir-cat-avg avg-pill ${avgTone(c.avg)}">${c.avg.toFixed(1)}</span>
+                        <span class="dir-cat-unit">/ 10</span>
                     </div>
-                </div>`;
+                    <div class="dir-cat-bar" aria-hidden="true">
+                        <div class="dir-cat-bar-fill" style="width:${pct}%"></div>
+                    </div>
+                </article>`;
         }).join('')
         : '<div class="dir-empty">Sin datos por categoría.</div>';
 

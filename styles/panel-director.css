@@ -885,7 +885,7 @@ body.dir-sidebar-open {
 }
 
 /* ====================================================
-   COMPARATIVA POR CATEGORÍA
+   COMPARATIVA POR CATEGORÍA — tabla de posiciones
    ==================================================== */
 
 .dir-compact-list {
@@ -894,116 +894,127 @@ body.dir-sidebar-open {
     gap: var(--dir-space-3);
 }
 
-.dir-compact-row {
+.dir-cat-row {
+    position: relative;
     display: grid;
-    grid-template-columns: 1fr;
-    align-items: stretch;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
     gap: var(--dir-space-3);
-    padding: var(--dir-space-4);
-    background: var(--dir-bg);
+    padding: var(--dir-space-3) var(--dir-space-4) calc(var(--dir-space-3) + 6px);
+    background: var(--dir-card);
     border: 1px solid var(--dir-border);
-    border-left: 3px solid var(--dir-primary);
     border-radius: var(--dir-radius-lg);
-    transition: border-color 0.2s, background 0.2s;
+    overflow: hidden;
+    transition: border-color 0.2s var(--dir-ease), transform 0.2s var(--dir-ease);
 }
 
 @media (min-width: 640px) {
-    .dir-compact-row {
-        grid-template-columns: 1fr auto;
-        align-items: center;
-        gap: var(--dir-space-4);
-        padding: var(--dir-space-4) var(--dir-space-5);
+    .dir-cat-row {
+        gap: var(--dir-space-5);
+        padding: var(--dir-space-4) var(--dir-space-5) calc(var(--dir-space-4) + 6px);
     }
 }
 
 @media (hover: hover) {
-    .dir-compact-row:hover {
+    .dir-cat-row:hover {
         border-color: var(--dir-border-strong);
-        background: var(--dir-card-hover);
+    }
+    .dir-cat-row.top-rank:hover {
+        transform: translateY(-1px);
     }
 }
 
-.dir-compact-name-block {
+/* Puesto */
+.dir-cat-pos {
+    font-size: clamp(1.4rem, 1.2rem + 1vw, 1.85rem);
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: var(--dir-text-muted);
+    min-width: 1.8ch;
+    text-align: left;
+}
+
+.dir-cat-row.top-rank .dir-cat-pos {
+    color: var(--dir-primary);
+}
+
+/* Equipo (nombre + meta apilados) */
+.dir-cat-team {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 2px;
     min-width: 0;
 }
 
-@media (min-width: 640px) {
-    .dir-compact-name-block {
-        flex-direction: row;
-        align-items: center;
-        gap: var(--dir-space-4);
-    }
-}
-
-.dir-compact-name {
-    font-size: var(--dir-text-sm);
-    font-weight: 700;
+.dir-cat-name {
+    font-size: var(--dir-text-base);
+    font-weight: 800;
     color: var(--dir-text-dark);
-    white-space: nowrap;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
     overflow: hidden;
     text-overflow: ellipsis;
-    flex-shrink: 1;
-    min-width: 0;
+    white-space: nowrap;
 }
 
-.dir-compact-bar {
-    flex: 1;
-    height: 8px;
-    background: var(--dir-card);
-    border-radius: 4px;
-    overflow: hidden;
-    border: 1px solid var(--dir-border-soft);
-    min-width: 80px;
-}
-
-.dir-compact-bar-fill {
-    height: 100%;
-    border-radius: 4px;
-    background: linear-gradient(90deg, var(--dir-primary) 0%, var(--dir-primary-light) 100%);
-    transition: width 0.5s ease;
-}
-
-.dir-compact-bar-fill.fill-good { background: linear-gradient(90deg, var(--dir-success) 0%, #34d399 100%); }
-.dir-compact-bar-fill.fill-mid { background: linear-gradient(90deg, var(--dir-warning) 0%, #fbbf24 100%); }
-.dir-compact-bar-fill.fill-low { background: linear-gradient(90deg, var(--dir-danger) 0%, #f87171 100%); }
-
-.dir-compact-value-block {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--dir-space-3);
-    min-width: 0;
-}
-
-@media (min-width: 640px) {
-    .dir-compact-value-block {
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 4px;
-        min-width: 80px;
-    }
-}
-
-.dir-compact-value {
-    font-size: var(--dir-text-lg);
-    font-weight: 900;
-    color: var(--dir-text-dark);
-    letter-spacing: -0.02em;
-    font-variant-numeric: tabular-nums;
-    line-height: 1;
-}
-
-.dir-compact-meta {
+.dir-cat-meta {
     font-size: var(--dir-text-2xs);
     color: var(--dir-text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.4px;
+    letter-spacing: 0.06em;
     font-weight: 600;
+}
+
+/* Stat: promedio grande + "/10" */
+.dir-cat-stat {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 2px;
+    text-align: right;
     white-space: nowrap;
+}
+
+.dir-cat-avg {
+    font-size: clamp(1.85rem, 1.55rem + 1.4vw, 2.5rem);
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.05em;
+    line-height: 1;
+    color: var(--dir-text-dark);
+}
+
+.dir-cat-row .dir-cat-avg.tone-high { color: var(--dir-success); }
+.dir-cat-row .dir-cat-avg.tone-mid  { color: var(--dir-warning); }
+.dir-cat-row .dir-cat-avg.tone-low  { color: var(--dir-danger); }
+
+.dir-cat-unit {
+    font-size: var(--dir-text-2xs);
+    color: var(--dir-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+}
+
+/* Track de progreso al fondo, edge-to-edge */
+.dir-cat-bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 4px;
+    background: var(--dir-border-soft);
+}
+
+.dir-cat-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--dir-primary) 0%, var(--dir-primary-dark) 100%);
+    transition: width 0.6s var(--dir-ease);
+}
+
+.dir-cat-row.top-rank .dir-cat-bar-fill {
+    background: linear-gradient(90deg, var(--dir-primary-light) 0%, var(--dir-primary) 50%, var(--dir-primary-dark) 100%);
 }
 
 /* ====================================================
@@ -2482,7 +2493,7 @@ body.dir-sidebar-open {
     }
     .dir-kpi,
     .dir-section,
-    .dir-compact-row,
+    .dir-cat-row,
     .drawer-history-item {
         border-width: 2px;
     }

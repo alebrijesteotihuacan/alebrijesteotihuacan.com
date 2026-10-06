@@ -573,4 +573,17 @@ create policy "iafe_mensajes_insert" on iafe.mensajes
 --       2026-09-28). Los 5 jugadores registrados el 2026-10-06 por
 --       Lalo (phone='' o phone=NULL) se repararon in-place con un
 --       UPDATE masivo que les asignó phone aleatorio nuevo.
+--
+--   2026-10-06  fix_register_player_atomic_phone_change_defaults
+--       El fix anterior arregló phone pero dejó phone_change y
+--       phone_change_token en NULL (mi función las pasaba NULL
+--       explícito, sobrescribiendo el DEFAULT '' del schema). Los 4 que
+--       se crearon con mi función fallaban con 500 en el login mientras
+--       que luisyaelrodriguezmunoz@gmail.com (creado por la versión
+--       vieja del RPC) tenía phone_change='' y podía entrar.
+--       Comparación binaria de columnas reveló exactamente esa
+--       diferencia.
+--       FIX: register_player_atomic ahora pasa phone_change='' y
+--       phone_change_token='' (alineado con lo que GoTrue acepta).
+--       UPDATE in-place de los 4 jugadores rotos.
 -- =========================================================================

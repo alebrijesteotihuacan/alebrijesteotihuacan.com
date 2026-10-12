@@ -3149,8 +3149,8 @@ footer {
 }
 
 /* Featured player card — vertical photo-dominant, fixed size.
-   aspect-ratio 1/1.35 (retrato) para fotos de jugador. Da
-   espacio vertical extra para la zona de nombre (4em) sin
+   aspect-ratio 1/1.5 (retrato) para fotos de jugador. Da
+   espacio vertical amplio para la zona de nombre (5em) sin
    reducir la foto. */
 .featured-player-card {
     position: relative;
@@ -3160,7 +3160,7 @@ footer {
     border: 1px solid rgba(255,255,255,0.07);
     box-shadow: 0 10px 28px rgba(0,0,0,0.5);
     isolation: isolate;
-    aspect-ratio: 1 / 1.35;
+    aspect-ratio: 1 / 1.5;
     display: flex;
     flex-direction: column;
     transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
@@ -3269,20 +3269,20 @@ footer {
 .fpc-tone-na   { color: rgba(255,255,255,0.35); }
 
 /* Nombre debajo de la foto — area reservada SIEMPRE en 2
-   renglones: nombre (linea 1) + apellido (linea 2). 4em de
+   renglones: nombre (linea 1) + apellido (linea 2). 5em de
    reserva da respiracion amplia para que el texto no se
    sienta apretado ni recortado. */
 .fpc-name {
     flex: 0 0 auto;
-    padding: 14px 10px 16px;
+    padding: 16px 12px 18px;
     text-align: center;
     background: linear-gradient(180deg, #1a1a1a 0%, #141414 100%);
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 3px;
-    min-height: 4em;
-    max-height: 4em;
+    gap: 4px;
+    min-height: 5em;
+    max-height: 5em;
     overflow: hidden;
 }
 

@@ -334,6 +334,15 @@ function renderCard({ cat, winner }) {
         : '';
     const initialsHTML = `<div class="fpc-initials" ${imgSrc ? 'style="display:none;"' : ''}>${escapeHtml(initials)}</div>`;
 
+    /* Nombre SIEMPRE en 2 renglones: nombre (linea 1) +
+       apellido (linea 2). Asi todas las cards tienen la
+       misma estructura visual, sin importar el largo. */
+    const nameHTML = (nombre || apellido)
+        ? `<div class="fpc-name-given">${escapeHtml(nombre || '—')}</div>
+           <div class="fpc-name-surname">${escapeHtml(apellido || '—')}</div>`
+        : `<div class="fpc-name-given">Jugador</div>
+           <div class="fpc-name-surname">&nbsp;</div>`;
+
     return `
         <div class="featured-player-slot" style="--slot-accent:${accent}; --slot-ink:${ink};">
             <span class="fpc-tag">${tag}</span>
@@ -345,7 +354,7 @@ function renderCard({ cat, winner }) {
                         <span class="fpc-num">${escapeHtml(scoreStr)}</span><span class="fpc-cap">/10</span>
                     </div>
                 </div>
-                <div class="fpc-name">${escapeHtml(fullName)}</div>
+                <div class="fpc-name">${nameHTML}</div>
             </article>
         </div>
     `;

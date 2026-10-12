@@ -3151,10 +3151,10 @@ footer {
 }
 
 /* Featured player card — vertical photo-dominant, fixed size.
-   aspect-ratio 4:5 (mismo que el original) garantiza que TODAS
-   las tarjetas tengan la misma proporción y, combinado con la
-   grid de 9 columnas iguales, que todas midan exactamente lo
-   mismo sin importar el largo del nombre del jugador. */
+   aspect-ratio 3/4 da mas alto que 4/5 para que el bloque de
+   nombre (2 lineas reservadas) quepa sin ser cortado por el
+   borde inferior. Combinado con grid de 9 columnas iguales,
+   todas las cards miden exactamente lo mismo. */
 .featured-player-card {
     position: relative;
     background: #141414;
@@ -3163,7 +3163,7 @@ footer {
     border: 1px solid rgba(255,255,255,0.07);
     box-shadow: 0 10px 28px rgba(0,0,0,0.5);
     isolation: isolate;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 3 / 4;
     display: flex;
     flex-direction: column;
     transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
@@ -3271,13 +3271,14 @@ footer {
 .fpc-tone-low  { color: #ef4444; }
 .fpc-tone-na   { color: rgba(255,255,255,0.35); }
 
-/* Nombre debajo de la foto — area reservada para 2 líneas exactas
-   mediante -webkit-line-clamp + min-height. Asi TODAS las tarjetas
-   reservan el mismo alto para el nombre, sin importar si el
-   jugador tiene un nombre corto o largo. */
+/* Nombre debajo de la foto — area reservada para 2 líneas COMPLETAS
+   (2.8em = 2 lineas con line-height 1.2 + buffer). min/max-height
+   garantizan que TODAS las cards reservan el mismo alto para el
+   nombre, sin importar si el jugador tiene nombre corto o largo,
+   y sin que el texto se corte por el borde de la card. */
 .fpc-name {
     flex: 0 0 auto;
-    padding: 8px 8px 12px;
+    padding: 10px 8px 12px;
     text-align: center;
     font-size: clamp(0.78rem, 0.9vw, 0.88rem);
     font-weight: 700;
@@ -3289,8 +3290,8 @@ footer {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    min-height: 2.2em;
-    max-height: 2.2em;
+    min-height: 2.8em;
+    max-height: 2.8em;
 }
 
 /* Empty state */

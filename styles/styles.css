@@ -3149,10 +3149,9 @@ footer {
 }
 
 /* Featured player card — vertical photo-dominant, fixed size.
-   aspect-ratio 4/5 (retrato) para fotos de jugador. El flex
-   column + el flex: 1 1 auto de la foto garantizan que el
-   nombre (con 2 lineas reservadas) no se corte por el borde
-   inferior, sin importar el largo del nombre. */
+   aspect-ratio 1/1.3 (retrato) para fotos de jugador. Da
+   espacio vertical extra para la zona de nombre (3.4em)
+   sin reducir la foto. */
 .featured-player-card {
     position: relative;
     background: #141414;
@@ -3161,7 +3160,7 @@ footer {
     border: 1px solid rgba(255,255,255,0.07);
     box-shadow: 0 10px 28px rgba(0,0,0,0.5);
     isolation: isolate;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 1 / 1.3;
     display: flex;
     flex-direction: column;
     transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
@@ -3269,14 +3268,12 @@ footer {
 .fpc-tone-low  { color: #ef4444; }
 .fpc-tone-na   { color: rgba(255,255,255,0.35); }
 
-/* Nombre debajo de la foto — area reservada para 2 líneas
-   COMPLETAS. min-height 2.8em con font-size 0.95rem +
-   line-height 1.2 deja ~17px de buffer sobre 2 lineas
-   (22.8px). Asi nombres largos tipo "Deivid Antony / Fuentes
-   Pier..." se ven enteros sin recorte por el border de la card. */
+/* Nombre debajo de la foto — area reservada con espacio
+   extra (3.4em) para que nombres largos tipo "Deivid Antony /
+   Fuentes Pier..." se vean COMPLETOS sin recorte. */
 .fpc-name {
     flex: 0 0 auto;
-    padding: 12px 10px 14px;
+    padding: 14px 10px 16px;
     text-align: center;
     font-size: 0.95rem;
     font-weight: 700;
@@ -3288,8 +3285,8 @@ footer {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    min-height: 2.8em;
-    max-height: 2.8em;
+    min-height: 3.4em;
+    max-height: 3.4em;
 }
 
 /* Empty state */

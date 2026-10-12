@@ -3099,51 +3099,52 @@ footer {
     color: #FF8C42;
 }
 
-/* Grid of featured player cards — always one row, equal-width cards.
-   Hasta 9 categorías pueden renderizar; usamos repeat(9, 1fr) y scroll
-   horizontal en pantallas chicas (ver breakpoints). */
+/* Grid de cards destacadas — flex centrado como grupo.
+   Independientemente de cuantas cards haya (siempre 6 por
+   la logica del JS), todas quedan centradas y con el mismo
+   tamaño. En mobile <600px se vuelve columna con scroll
+   vertical (ver breakpoints). */
 .featured-players-grid {
-    display: grid;
-    grid-template-columns: repeat(9, minmax(0, 1fr));
-    gap: 12px;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 20px;
     margin: 42px auto 0;
-    max-width: 1320px;
+    max-width: 1400px;
+    padding: 0 8px 8px;
     overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
-    padding: 0 4px 8px;
+    scrollbar-width: thin;
 }
 
 .fpc-slot { display: contents; }
 
 /* Featured player slot — wraps the category tag + the card.
-   Acts as the grid item so the tag can sit OUTSIDE the card's
-   visual boundary (border + radius). */
+   Ancho fijo base 210px (desktop), no encoge. En breakpoints
+   se reduce. La etiqueta de categoria vive fuera del borde
+   visual de la card. */
 .featured-player-slot {
     display: flex;
     flex-direction: column;
-    min-width: 0;
-    width: 100%;
-    scroll-snap-align: start;
+    flex: 0 0 210px;
 }
 
 /* Etiqueta de categoria — vive arriba del card, fuera de su borde.
-   Mismo color que la banda 3px del card, sin fondo, para no competir
-   con la foto del jugador. Se permite wrap a 2 líneas para que
-   nombres largos (ej. "Alebrijes Teotihuacán") se vean completos. */
+   Mismo color que la banda 3px del card. line-clamp 2 con
+   text-align center garantiza que etiquetas largas (ej.
+   "Alebrijes Teotihuacán") se vean COMPLETAS, sin ellipsis. */
 .fpc-tag {
-    margin: 0 0 8px 0;
+    margin: 0 0 10px 0;
     padding: 0;
-    font-size: 0.62rem;
+    font-size: 0.72rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.8px;
     color: var(--slot-ink, #F36A21);
-    line-height: 1.2;
+    line-height: 1.25;
     text-align: center;
     width: 100%;
-    min-height: 1.5em;
+    min-height: 1.6em;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -3151,10 +3152,10 @@ footer {
 }
 
 /* Featured player card — vertical photo-dominant, fixed size.
-   aspect-ratio 3/4 da mas alto que 4/5 para que el bloque de
-   nombre (2 lineas reservadas) quepa sin ser cortado por el
-   borde inferior. Combinado con grid de 9 columnas iguales,
-   todas las cards miden exactamente lo mismo. */
+   aspect-ratio 4/5 (retrato) para fotos de jugador. El flex
+   column + el flex: 1 1 auto de la foto garantizan que el
+   nombre (con 2 lineas reservadas) no se corte por el borde
+   inferior, sin importar el largo del nombre. */
 .featured-player-card {
     position: relative;
     background: #141414;
@@ -3163,7 +3164,7 @@ footer {
     border: 1px solid rgba(255,255,255,0.07);
     box-shadow: 0 10px 28px rgba(0,0,0,0.5);
     isolation: isolate;
-    aspect-ratio: 3 / 4;
+    aspect-ratio: 4 / 5;
     display: flex;
     flex-direction: column;
     transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
@@ -3271,16 +3272,16 @@ footer {
 .fpc-tone-low  { color: #ef4444; }
 .fpc-tone-na   { color: rgba(255,255,255,0.35); }
 
-/* Nombre debajo de la foto — area reservada para 2 líneas COMPLETAS
-   (2.8em = 2 lineas con line-height 1.2 + buffer). min/max-height
-   garantizan que TODAS las cards reservan el mismo alto para el
-   nombre, sin importar si el jugador tiene nombre corto o largo,
-   y sin que el texto se corte por el borde de la card. */
+/* Nombre debajo de la foto — area reservada para 2 líneas
+   COMPLETAS. min-height 2.8em con font-size 0.95rem +
+   line-height 1.2 deja ~17px de buffer sobre 2 lineas
+   (22.8px). Asi nombres largos tipo "Deivid Antony / Fuentes
+   Pier..." se ven enteros sin recorte por el border de la card. */
 .fpc-name {
     flex: 0 0 auto;
-    padding: 10px 8px 12px;
+    padding: 12px 10px 14px;
     text-align: center;
-    font-size: clamp(0.78rem, 0.9vw, 0.88rem);
+    font-size: 0.95rem;
     font-weight: 700;
     color: #fff;
     line-height: 1.2;
@@ -3331,58 +3332,47 @@ footer {
     padding: 60px 0;
 }
 
-/* Responsive — siempre 1 fila. En pantallas chicas el grid
-   se vuelve scrollable horizontalmente con ancho fijo por
-   card. NUNCA wrappeamos a 2 filas para mantener la regla
-   de "Mejores Jugadores de la Semana" en una sola línea. */
-@media (max-width: 1320px) {
-    .featured-players-grid {
-        grid-template-columns: repeat(9, 160px);
-        max-width: 100%;
-        padding: 0 16px 8px;
-    }
+/* Responsive — escalado del slot para mantener 1 fila centrada.
+   En <600px se rompe a 1 columna con scroll vertical. */
+@media (max-width: 1400px) {
+    .featured-player-slot { flex: 0 0 200px; }
+}
+
+@media (max-width: 1280px) {
+    .featured-player-slot { flex: 0 0 190px; }
+}
+
+@media (max-width: 1100px) {
+    .featured-player-slot { flex: 0 0 170px; }
+    .fpc-name { font-size: 0.88rem; }
+    .fpc-tag  { font-size: 0.68rem; }
 }
 
 @media (max-width: 900px) {
-    .featured-players-grid {
-        grid-template-columns: repeat(9, 150px);
-        gap: 10px;
-    }
+    .featured-player-slot { flex: 0 0 150px; }
+    .fpc-name { font-size: 0.82rem; }
+    .fpc-tag  { font-size: 0.62rem; }
 }
 
 @media (max-width: 720px) {
-    .featured-players-grid {
-        grid-template-columns: repeat(9, 140px);
-        gap: 10px;
-    }
-    .fpc-name {
-        font-size: 0.72rem;
-        padding: 8px 6px 10px;
-    }
-    .fpc-tag {
-        font-size: 0.55rem;
-        letter-spacing: 1px;
-    }
+    .featured-player-slot { flex: 0 0 140px; }
+    .featured-players-grid { gap: 14px; }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
     .featured-players-grid {
-        grid-template-columns: repeat(9, 130px);
-        gap: 8px;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+        overflow-x: visible;
     }
-    .featured-player-card {
-        border-radius: 12px;
+    .featured-player-slot {
+        flex: 0 0 auto;
+        width: 100%;
+        max-width: 320px;
     }
-}
-
-@media (max-width: 420px) {
-    .featured-players-grid {
-        grid-template-columns: repeat(9, 120px);
-        gap: 8px;
-    }
-    .fpc-score { padding: 6px 9px; }
-    .fpc-score .fpc-num { font-size: 1.2rem; }
-    .fpc-score .fpc-cap { font-size: 0.55rem; }
+    .fpc-name { font-size: 0.92rem; }
+    .fpc-tag  { font-size: 0.7rem; }
 }
 
 /* ============================================================
@@ -3849,15 +3839,6 @@ footer {
         padding: 50px 0;
     }
 
-    .featured-players-grid {
-        gap: 10px;
-        margin-top: 24px;
-    }
-
-    .fpc-name {
-        font-size: 0.78rem;
-    }
-
     .fpc-avg-val {
         font-size: 1.35rem;
     }
@@ -4008,14 +3989,7 @@ footer {
     }
 
     /* Featured players - keep 1 row on smallest screens
-       (ancho fijo por card, scroll horizontal, no wrappear). */
-    .featured-players-grid {
-        gap: 8px;
-    }
-
-    .fpc-name {
-        font-size: 0.68rem;
-    }
+       (columna + scroll vertical, ya cubierto por @media <600px). */
 
     /* Social section - very compact */
     .social-clubs-container {

@@ -554,6 +554,78 @@ document.addEventListener('DOMContentLoaded', () => {
         // Últimos resultados (más reciente primero)
         const results = [
             {
+                jornada: 'Jornada 8',
+                eyebrow: 'Liga TDP · Grupo 9 · Temporada 2026–2027',
+                title: 'Último resultado',
+                meta: [
+                    { icon: 'calendar', label: 'Fecha y hora', value: 'Viernes 23 de octubre · 10:00 hrs' },
+                    { icon: 'location', label: 'Sede',         value: 'Universidad del Fútbol' }
+                ],
+                homeTeam: {
+                    name: 'Pachuca',
+                    tag: 'Local',
+                    logo: '../assets/EquiposGrupo9_LigaTDP/Pachuca.png',
+                    id: 12628
+                },
+                awayTeam: {
+                    name: 'Alebrijes Teotihuacán',
+                    tag: 'Visitante',
+                    logo: '../assets/EquiposGrupo9_LigaTDP/AlebrijesTeotihuacán.png',
+                    id: 12621
+                },
+                scoreValue: '2 – 0',
+                scoreStatus: 'Finalizado',
+                result: 'loss'
+            },
+            {
+                jornada: 'Jornada 7',
+                eyebrow: 'Liga TDP · Grupo 9 · Temporada 2026–2027',
+                title: 'Último resultado',
+                meta: [
+                    { icon: 'calendar', label: 'Fecha y hora', value: 'Viernes 16 de octubre · 12:00 hrs' },
+                    { icon: 'location', label: 'Sede',         value: 'ND' }
+                ],
+                homeTeam: {
+                    name: 'Alebrijes Teotihuacán',
+                    tag: 'Local',
+                    logo: '../assets/EquiposGrupo9_LigaTDP/AlebrijesTeotihuacán.png',
+                    id: 12621
+                },
+                awayTeam: {
+                    name: 'Bombarderos de Tecámac FC',
+                    tag: 'Visitante',
+                    logo: '../assets/EquiposGrupo9_LigaTDP/BombarderosDeTecamacFC.png',
+                    id: 12139
+                },
+                scoreValue: '1 – 0',
+                scoreStatus: 'Finalizado',
+                result: 'win'
+            },
+            {
+                jornada: 'Jornada 6',
+                eyebrow: 'Liga TDP · Grupo 9 · Temporada 2026–2027',
+                title: 'Último resultado',
+                meta: [
+                    { icon: 'calendar', label: 'Fecha y hora', value: 'Sábado 10 de octubre · 11:00 hrs' },
+                    { icon: 'location', label: 'Sede',         value: 'Estadio Club Hidalguense' }
+                ],
+                homeTeam: {
+                    name: 'Club Hidalguense',
+                    tag: 'Local',
+                    logo: '../assets/EquiposGrupo9_LigaTDP/ClubHidalguense.png',
+                    id: 228
+                },
+                awayTeam: {
+                    name: 'Alebrijes Teotihuacán',
+                    tag: 'Visitante',
+                    logo: '../assets/EquiposGrupo9_LigaTDP/AlebrijesTeotihuacán.png',
+                    id: 12621
+                },
+                scoreValue: '2 (4) – (3) 2',
+                scoreStatus: 'Finalizado',
+                result: 'draw'
+            },
+            {
                 jornada: 'Jornada 5',
                 eyebrow: 'Liga TDP · Grupo 9 · Temporada 2026–2027',
                 title: 'Último resultado',
@@ -625,54 +697,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 scoreStatus: 'Finalizado',
                 result: 'loss'
             },
-            {
-                jornada: 'Jornada 2',
-                eyebrow: 'Liga TDP · Grupo 9 · Temporada 2026–2027',
-                title: 'Último resultado',
-                meta: [
-                    { icon: 'calendar', label: 'Fecha y hora', value: 'Viernes 11 de septiembre · 12:00 hrs' },
-                    { icon: 'location', label: 'Sede',         value: 'Centro Recreativo Pascual Boing' }
-                ],
-                homeTeam: {
-                    name: 'Alebrijes Teotihuacán',
-                    tag: 'Local',
-                    logo: '../assets/EquiposGrupo9_LigaTDP/AlebrijesTeotihuacán.png',
-                    id: 12621
-                },
-                awayTeam: {
-                    name: 'Industriales de Altamira FC',
-                    tag: 'Visitante',
-                    logo: '../assets/EquiposGrupo9_LigaTDP/IndustrialesDeAltamiraFC.png',
-                    id: 14478
-                },
-                scoreValue: '0 (7) – (8) 0',
-                scoreStatus: 'Finalizado',
-                result: 'draw'
-            },
-            {
-                jornada: 'Jornada 1',
-                eyebrow: 'Liga TDP · Grupo 9 · Temporada 2026–2027',
-                title: 'Último resultado',
-                meta: [
-                    { icon: 'calendar', label: 'Fecha y hora', value: 'Viernes 4 de septiembre · 11:00 hrs' },
-                    { icon: 'location', label: 'Sede',         value: 'Universidad del Fútbol' }
-                ],
-                homeTeam: {
-                    name: 'Tuzos Pachuca',
-                    tag: 'Local',
-                    logo: '../assets/EquiposGrupo9_LigaTDP/TuzosPachuca.png',
-                    id: 11002
-                },
-                awayTeam: {
-                    name: 'Alebrijes Teotihuacán',
-                    tag: 'Visitante',
-                    logo: '../assets/EquiposGrupo9_LigaTDP/AlebrijesTeotihuacán.png',
-                    id: 12621
-                },
-                scoreValue: '0 – 1',
-                scoreStatus: 'Final',
-                result: 'win'
-            }
         ];
 
         let resultIndex = 0;

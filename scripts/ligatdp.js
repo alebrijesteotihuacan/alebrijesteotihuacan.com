@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const playerFilesSolesSub16 = [
             // Director Técnico
-            'César_Benítez_Chaparro_DirectorTecnico.jpg',
+            'Florencio_Martinez_Salinas_DirectorTecnico.jpg',
 
             // Porteros
             'Iker_Alejandro_Lopez_Maldonado_Portero_801.jpg',

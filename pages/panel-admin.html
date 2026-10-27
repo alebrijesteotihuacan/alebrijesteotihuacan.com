@@ -1279,6 +1279,14 @@
         import { supabase } from '../scripts/supabase-client.js';
         const db = supabase;
 
+        // Credenciales de acceso al panel de profesores.
+        // La clave es el `username` de public.profesores (el mismo que usa
+        // el RPC get_email_for_username para resolver el email de login).
+        // Solo se listan las contraseñas conocidas; el resto muestra '---'.
+        const PROF_PASSWORDS = {
+            'florencio': 'florencio123'
+        };
+
         // Available player images (PlantillaAlebrijesTeotihuacanLigaTDP)
         // Formato: Name_Position_Number.jpg (DT sin número)
         const PLAYER_IMAGES = [
@@ -1609,8 +1617,8 @@
                 ];
                 document.getElementById('professorsGrid').innerHTML = professors.map((prof, i) => {
                     const initial = (prof.nombre || '?').charAt(0).toUpperCase();
-                    const nameKey = (prof.nombre || '').toLowerCase();
-                    const pass = PROF_PASSWORDS[nameKey] || '---';
+                    const username = prof.username || (prof.nombre || '').toLowerCase().split(' ')[0];
+                    const pass = PROF_PASSWORDS[username] || '---';
                     return `
                         <div class="prof-card">
                             <div class="prof-avatar" style="background:${profGrads[i % profGrads.length]}">${initial}</div>
@@ -1622,7 +1630,7 @@
                                     <span class="prof-chip chip-evals">${evalsByProf[prof.id] || 0} evals</span>
                                 </div>
                                 <div class="prof-creds">
-                                    Usuario: <strong>${nameKey}</strong> · Contraseña: <span class="pass-val">${pass}</span>
+                                    Usuario: <strong>${username}</strong> · Contraseña: <span class="pass-val">${pass}</span>
                                 </div>
                             </div>
                         </div>

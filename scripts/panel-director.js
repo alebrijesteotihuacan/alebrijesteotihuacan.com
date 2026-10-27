@@ -138,14 +138,14 @@ const PLAYER_IMAGES_ALEBRIJES_SUB16 = [
 // Fotos de los miembros del Cuerpo Técnico (mismo lookup que panel-profesor.js)
 const PROF_PHOTO_LOOKUP = {
     'arturo tejeda': '../assets/PlantillaAlebrijesTeotihuacanLigaTDP/Arturo_Tejeda(Dashboard).jpg',
-    'cesar benitez chaparro': '../assets/PlantillaSolesTeotihuacanSub16_TDP/César_Benítez_Chaparro_DirectorTecnico.jpg',
+    'florencio martinez salinas': '../assets/PlantillaSolesTeotihuacanSub16_TDP/Florencio_Martinez_Salinas_DirectorTecnico.jpg',
     'ignacio morales': '../assets/PlantillaSolesTeotihuacanLigaTDP/Ignacio_Morales_Campos_DirectorTecnico.jpg',
     'derk alexandro reyes rosas': '../assets/PlantillaAlebrijesTeotihuacanSub-16_TDP/Derk_Alexandro_Reyes_Rosas_DirectorTecnico.jpg'
 };
 
 const CARGO_LOOKUP = {
     'arturo tejeda': 'Director Técnico · Liga TDP',
-    'cesar benitez chaparro': 'Director Técnico · Sub-16',
+    'florencio martinez salinas': 'Director Técnico · Sub-16',
     'ignacio morales': 'Director Técnico · Soles TDP',
     'derk alexandro reyes rosas': 'Director Técnico · Sub-16'
 };

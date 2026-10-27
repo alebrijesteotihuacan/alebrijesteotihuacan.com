@@ -637,11 +637,11 @@ function initialsFromName(s) {
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-// Prof. Arturo / Prof. César / Prof. Ignacio / Prof. Derk: mapeo nombre-normalizado -> src de foto.
+// Prof. Arturo / Prof. Florencio / Prof. Ignacio / Prof. Derk: mapeo nombre-normalizado -> src de foto.
 // La foto se inyecta en HTML para evitar race conditions de load.
 const PROF_PHOTO_LOOKUP = {
     'arturo tejeda': '../assets/PlantillaAlebrijesTeotihuacanLigaTDP/Arturo_Tejeda(Dashboard).jpg',
-    'cesar benitez chaparro': '../assets/PlantillaSolesTeotihuacanSub16_TDP/César_Benítez_Chaparro_DirectorTecnico.jpg',
+    'florencio martinez salinas': '../assets/PlantillaSolesTeotihuacanSub16_TDP/Florencio_Martinez_Salinas_DirectorTecnico.jpg',
     'ignacio morales': '../assets/PlantillaSolesTeotihuacanLigaTDP/Ignacio_Morales_Campos_DirectorTecnico.jpg',
     'derk alexandro reyes rosas': '../assets/PlantillaAlebrijesTeotihuacanSub-16_TDP/Derk_Alexandro_Reyes_Rosas_DirectorTecnico.jpg',
 };
@@ -1742,7 +1742,7 @@ async function loadStats(semanaOverride) {
 
         // Total del equipo: jugadores cuyo campo `equipo` coincide con
         // el equipo_restringido del prof. Ignacio -> Soles TDP (32),
-        // Arturo -> Alebrijes TDP (32), Cesar -> Soles TDP Sub-16 (28),
+        // Arturo -> Alebrijes TDP (32), Florencio -> Soles TDP Sub-16 (28),
         // Derk -> Alebrijes TDP Sub-16 (22). Admin -> sin filtro, todos.
         let teamTotal = qualifiedCount;
         const teamFilter = (currentProfessor.rol === 'admin')

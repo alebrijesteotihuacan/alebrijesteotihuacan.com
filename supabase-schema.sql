@@ -613,4 +613,31 @@ create policy "iafe_mensajes_insert" on iafe.mensajes
 --         - POST /auth/v1/token?grant_type=password → 200 + JWT
 --       Confirma que la versión final del RPC produce registros válidos
 --       para GoTrue /auth/v1/token sin necesidad de UPDATE in-place.
+--
+--   2026-10-27  fix_profesor_cesar_a_florencio
+--       César Benítez Chaparro deja de ser el DT de Soles TDP Sub-16 y es
+--       reemplazado por Florencio Martinez Salinas. Se conserva el MISMO id
+--       (5ce0892b-783d-441a-be61-cf5fcfbcb302) para no perder el historial:
+--       142 evaluaciones y 28 jugadores registrados quedan vinculados
+--       automáticamente (evaluaciones.evaluador_id / jugadores.registrado_por).
+--       public.profesores:
+--         nombre   'César Benítez Chaparro' -> 'Florencio Martinez Salinas'
+--         username 'cesar'                  -> 'florencio'
+--         email    'cesar@alebrijes.local'  -> 'florencio@alebrijes.local'
+--         rol / equipo_restringido / categorias_permitidas sin cambio
+--         (sigue siendo el DT de 'Soles TDP Sub-16', categoría 'Sub-16')
+--       public.evaluaciones.evaluador_nombre (columna desnormalizada):
+--         142 filas actualizadas (140 con 'César Benítez Chaparro' +
+--         2 con 'Cesar') -> 'Florencio Martinez Salinas'
+--       auth.users (mismo id): email, email_confirm=true, password
+--         'florencio123' y user_metadata {nombre, rol, username}.
+--       Verificación:
+--         - POST /auth/v1/token?grant_type=password
+--           florencio@alebrijes.local / florencio123  -> 200 + JWT
+--         - mismo POST con la contraseña anterior      -> 400
+--         - mismo POST con el email anterior           -> 400
+--         - rpc get_email_for_username('florencio')    -> email
+--         - rpc get_email_for_username('cesar')        -> null
+--       Nota: GoTrue deja una fila residual en auth.identities con el email
+--       anterior, pero es inerte (el login con ese email devuelve 400).
 -- =========================================================================
